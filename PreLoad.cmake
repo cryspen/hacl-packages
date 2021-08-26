@@ -1,0 +1,1 @@
+set(CMAKE_GENERATOR "Ninja Multi-Config" CACHE INTERNAL "" FORCE)

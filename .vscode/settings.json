@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.in": "cpp",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "limits.h": "c",
+        "inttypes.h": "c"
+    }
+}
