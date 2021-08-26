@@ -2,7 +2,7 @@
 #
 # Helper script to build and test evercrypt with CMake, ctest, and ninja.
 
-set -e -x
+set -e
 
 # Set global variables.
 cwd=$(cd $(dirname $0); pwd -P)
@@ -15,7 +15,7 @@ options=""
 config="Debug" # The configuration to use; defaults to Debug
 
 # Display help
-show_help()
+display_help()
 {
     echo "Usage: mach.sh [-h] [-c] [-cc] [--full] [--test] [--release]"
     echo ""
@@ -29,6 +29,7 @@ show_help()
     echo "    --full    enable all available features"
     echo "    --test    run tests through ctest; build before if necessary"
     echo "    --release release builds and tests"
+    echo ""
 }
 
 # Parse command line arguments.
