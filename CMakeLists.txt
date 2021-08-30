@@ -19,13 +19,13 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Set configuration constants
-set(EVERCRYPT_TARGET_ARCHITECTURE_UNKNOWN 0)
-set(EVERCRYPT_TARGET_ARCHITECTURE_X86 1)
-set(EVERCRYPT_TARGET_ARCHITECTURE_X64 2)
-set(EVERCRYPT_TARGET_ARCHITECTURE_ARM32 3)
-set(EVERCRYPT_TARGET_ARCHITECTURE_ARM64 4)
-set(EVERCRYPT_TARGET_ARCHITECTURE_SYSTEMZ 5)
-set(EVERCRYPT_TARGET_ARCHITECTURE_POWERPC64 6)
+set(EVERCRYPT_ARCHITECTURE_UNKNOWN 0)
+set(EVERCRYPT_ARCHITECTURE_X86 1)
+set(EVERCRYPT_ARCHITECTURE_X64 2)
+set(EVERCRYPT_ARCHITECTURE_ARM32 3)
+set(EVERCRYPT_ARCHITECTURE_ARM64 4)
+set(EVERCRYPT_ARCHITECTURE_SYSTEMZ 5)
+set(EVERCRYPT_ARCHITECTURE_POWERPC64 6)
 
 ## Set variables
 set(EVERCRYPT_COMPILE_VEC256 0)
@@ -52,9 +52,12 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/Hacl_Blake2b_32.c
     )
 
 # x64
+# We set target and host architectures here.
+# For now they are always the same. This will change in future.
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     message(STATUS "Detected an x64 architecture")
-    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_X64})
+    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
     if(AVX)
         add_compile_options(-mavx)
     endif()
@@ -70,14 +73,17 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32")
     message(STATUS "Detected an x86 architecture")
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_X86})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_X86})
 # arm64
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
     message(STATUS "Detected an arm64 architecture")
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM64})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM64})
 # arm32
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armel|armhf|armv7|arm32v7")
     message(STATUS "Detected an arm32 architecture")
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM32})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM32})
 # unsupported architecture
 else()
     message(FATAL_ERROR "Unsupported architecture ${CMAKE_SYSTEM_PROCESSOR}")
@@ -111,3 +117,12 @@ target_link_libraries(test_blake2b evercrypt)
 
 enable_testing()
 add_test(NAME blake2b COMMAND test_blake2b)
+
+# Hardware detection
+message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
+add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
+                            ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
+                )
+target_include_directories(hw-detection PUBLIC
+                            ${PROJECT_SOURCE_DIR}/include
+                            )
