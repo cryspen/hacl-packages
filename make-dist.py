@@ -9,6 +9,7 @@
 
 
 from argparse import ArgumentParser
+import json
 
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
@@ -87,7 +88,39 @@ def snapshot(args):
             exit(1)
 
     print("sources: ", enabled_sources)
-    
+
+# Building and pretty printing the dependency graph
+
+@subcommand([argument("-f", "--file", help="The config file to read.", type=str)])
+def graph(args):
+    config_file = "config.json" # The default config file.
+    if args.file:
+        config_file = args.file
+    print("Doing graph with config file", config_file)
+
+    # read file
+    with open(config_file, 'r') as f:
+        data = f.read()
+
+    # parse file
+    config = json.loads(data)
+
+    # get hacl* files, dependencies, and features
+    hacl_files = config["hacl_sources"]
+    hacl_dependencies = config["hacl_dependencies"]
+    hacl_features = config["hacl_features"]
+    algorithms = config["algorithms"]
+    features = config["features"]
+
+    for algorithm in algorithms:
+        files_for_algorithm = hacl_files[algorithm]
+        print("files for %s: %s" % (algorithm, files_for_algorithm))
+
+        for hacl_file in files_for_algorithm:
+            if hacl_file in hacl_dependencies:
+                features_for_file = hacl_dependencies[hacl_file]
+                print("\tdependencies: %s" % (features_for_file))
+
 
 # Boiler plate
 def main():
@@ -99,4 +132,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
