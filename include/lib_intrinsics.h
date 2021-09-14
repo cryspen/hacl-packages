@@ -2,8 +2,8 @@
 
 #include <sys/types.h>
 
-#if __has_include("config.h")
-#include "config.h"
+#if __has_include("Config.h")
+#include "Config.h"
 #endif
 
 #if defined(COMPILE_INTRINSICS)

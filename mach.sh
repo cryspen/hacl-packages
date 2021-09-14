@@ -26,6 +26,7 @@ display_help()
     echo "    -h        display this help and exit"
     echo "    -c        clean before build"
     echo "    -cc       only clean"
+    echo "    --debug   enable cmake debug output"
     echo "    --full    enable all available features"
     echo "    --test    run tests through ctest; build before if necessary"
     echo "    --release release builds and tests"
@@ -38,6 +39,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         -c) clean=1 ;;
         -cc) clean=1; clean_only=1 ;;
+        --debug) options="$options --debug-output" ;;
         --full) full=1 ;;
         --test) test=1 ;;
         --release) config="Release" ;;
@@ -66,7 +68,7 @@ fi
 
 # Run cmake and ninja
 cd $build_dir
-cmake $options ../
+cmake $options --debug-trycompile ../
 ninja -f build-$config.ninja
 if [[ "$test" = 1 ]]; then
     echo " [mach] Run tests ..."

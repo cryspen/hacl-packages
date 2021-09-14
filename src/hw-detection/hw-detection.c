@@ -1,6 +1,7 @@
 /*
  * A standalone app to detect hardware features.
  */
+#include <stdio.h>
 
 #include "hw-detection/cpu-features.h"
 

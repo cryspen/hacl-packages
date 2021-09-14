@@ -4,7 +4,7 @@
 # modern CMake environment.
 # The Ninja Multi-Config generator is only available since 3.17
 # https://cmake.org/cmake/help/latest/generator/Ninja%20Multi-Config.html
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.17)
 
 # Library version and name
 project(evercrypt
@@ -29,17 +29,76 @@ set(EVERCRYPT_ARCHITECTURE_POWERPC64 6)
 
 ## Set variables
 set(EVERCRYPT_COMPILE_VEC256 0)
+set(COMPILE_INTRINSICS 1)
 
 # Configure different targets
 add_compile_options(
-    -Wall
-    -Wextra
-    -Wconversion
-    -Wsign-conversion
+    # -Wall
+    # -Wextra
+    # -Wconversion
+    # -Wsign-conversion
     $<$<CONFIG:DEBUG>:-g>
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  
 )
+
+set(GLOBAL_INCLUDE_PATHS
+    "${PROJECT_SOURCE_DIR}/include \
+     ${PROJECT_SOURCE_DIR}/kremlin/include \
+     ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+)
+# message(STATUS "Include paths: ${GLOBAL_INCLUDE_PATHS}")
+
+# Test the toolchain to get supported CPU features
+INCLUDE(CheckCCompilerFlag)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE EXECUTABLE)
+## Check for gcc compiler bug 81300
+if(NOT DEFINED BUG_81300)
+    try_compile(BUG_81300
+                        ${PROJECT_SOURCE_DIR}/config/build
+                        ${PROJECT_SOURCE_DIR}/config/bug81300.c
+                        # TODO: get the include paths from global variables
+                        COMPILE_DEFINITIONS "-DCOMPILE_INTRINSICS \
+                                             -march=native -O3\
+                                             -I${PROJECT_SOURCE_DIR}/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                )
+endif()
+message(STATUS "Bug 81300 check: ${BUG_81300}")
+## Check for int128 support
+if(NOT DEFINED INT128_SUPPORT)
+    try_compile(INT128_SUPPORT
+                        ${PROJECT_SOURCE_DIR}/config/build
+                        ${PROJECT_SOURCE_DIR}/config/int128.c
+                )
+endif()
+message(STATUS "int128 support: ${INT128_SUPPORT}")
+## Check for explicit_bzero support
+if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
+    try_compile(EXPLICIT_BZERO_SUPPORT
+                        ${PROJECT_SOURCE_DIR}/config/build
+                        ${PROJECT_SOURCE_DIR}/config/explicit_bzero.c
+                )
+endif()
+message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
+
+CHECK_C_COMPILER_FLAG(-mavx TOOLCHAIN_HAS_AVX)
+CHECK_C_COMPILER_FLAG(-mavx2 TOOLCHAIN_HAS_AVX2)
+CHECK_C_COMPILER_FLAG(-msse TOOLCHAIN_HAS_SSE)
+CHECK_C_COMPILER_FLAG(-msse2 TOOLCHAIN_HAS_SSE2)
+CHECK_C_COMPILER_FLAG(-msse3 TOOLCHAIN_HAS_SSE3)
+# We don't care about sse4a
+# CHECK_C_COMPILER_FLAG(-msse4a TOOLCHAIN_HAS_SSE4A)
+CHECK_C_COMPILER_FLAG(-msse4.1 TOOLCHAIN_HAS_SSE41)
+CHECK_C_COMPILER_FLAG(-msse4.2 TOOLCHAIN_HAS_SSE42)
+CHECK_C_COMPILER_FLAG(-maes TOOLCHAIN_HAS_AES)
+CHECK_C_COMPILER_FLAG(-mpclmul TOOLCHAIN_HAS_PCLMUL)
+CHECK_C_COMPILER_FLAG(-march=armv8-a+simd TOOLCHAIN_IS_ARMV8_WITH_SIMD)
+CHECK_C_COMPILER_FLAG(-m32 TOOLCHAIN_HAS_32_SUPPORT)
+CHECK_C_COMPILER_FLAG("-target arm64-apple-ios" TOOLCHAIN_HAS_IOS_TARGET)
+CHECK_C_COMPILER_FLAG("-target arm64-apple-macos11" TOOLCHAIN_HAS_APPLE_ARM_TARGET)
+CHECK_C_COMPILER_FLAG(-mcpu=power9 TOOLCHAIN_HAS_POWER9)
 
 # Options for features.
 # They all default to off and have to be explicitely enabled.
@@ -90,7 +149,7 @@ else()
 endif()
 
 # Write configuration
-configure_file(Config.h.in Config.h)
+configure_file(config/Config.h.in Config.h)
 
 # Set library config and files
 add_library(evercrypt STATIC ${SOURCES})
