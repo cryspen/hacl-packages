@@ -103,7 +103,7 @@ def snapshot(args):
 
 @subcommand([argument("-f", "--file", help="The config file to read.", type=str)])
 def graph(args):
-    config_file = "config.json"  # The default config file.
+    config_file = "config/config.json"  # The default config file.
     if args.file:
         config_file = args.file
     print("Doing graph with config file", config_file)
@@ -162,6 +162,7 @@ def dep(args):
     for line in stdout.splitlines():
         # New c file
         matched_line = re.match("(\w*).o: src/(\w*).c (.*.h) \\\\", line)
+        print(matched_line)
         if matched_line != None:
             if file.__len__() != 0:
                 files.append(file)
@@ -181,6 +182,7 @@ def dep(args):
                 pass
             file.extend(line)
 
+    print(files)
     # Now let's collect the c files from the included headers
     deps = {}
     for f in files:
@@ -198,8 +200,8 @@ def dep(args):
             if include in source_files:
                 dependencies.append("src/"+include+".c")
         deps[file_name] = dependencies
-    for d in deps:
-        print("%s:\n\t%s" % (d, deps[d]))
+    # for d in deps:
+    #     print("%s:\n\t%s" % (d, deps[d]))
 
 # Boiler plate
 

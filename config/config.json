@@ -1,0 +1,68 @@
+{
+    "kremlin_sources": [],
+    "kremlin_include_paths": [
+        "kremlin/include/",
+        "kremlin/kremlib/dist/minimal"
+    ],
+    "include_paths": [
+        "include"
+    ],
+    "hacl_sources": {
+        "ed25519": [
+            "Hacl_Ed25519.c"
+        ],
+        "blake2b": [
+            "Hacl_Blake2b_32.c",
+            "Hacl_Blake2b_256.c",
+            "Hacl_Streaming_Blake2b_256.c"
+        ]
+    },
+    "evercrypt_sources": {
+        "drbg": [
+            "EverCrypt_DRBG.c"
+        ],
+        "ed25519": [
+            "EverCrypt_Ed25519.c"
+        ],
+        "curve25519": [
+            "EverCrypt_Curve25519.c"
+        ],
+        "ctr": [
+            "EverCrypt_CTR.c"
+        ],
+        "hkdf": [
+            "EverCrypt_HKDF.c"
+        ],
+        "hmac": [
+            "EverCrypt_HMAC.c"
+        ],
+        "cipher": [
+            "EverCrypt_Cipher.c"
+        ],
+        "chacha20poly1305": [
+            "EverCrypt_Chacha20Poly1305.c"
+        ],
+        "hash": [
+            "EverCrypt_Hash.c"
+        ],
+        "poly1305": [
+            "EverCrypt_Poly1305.c"
+        ],
+        "aead": [
+            "EverCrypt_AEAD.c"
+        ]
+    },
+    "features": {
+        "Hacl_Blake2b_256.c": [
+            "avx2"
+        ],
+        "Hacl_Streaming_Blake2b_256.c": [
+            "avx2"
+        ]
+    },
+    "tests": {
+        "blake2b": [
+            "blake2b.c"
+        ]
+    }
+}

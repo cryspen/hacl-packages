@@ -2,6 +2,7 @@
 #
 # We only support Ninja as target, which is set in PreLoad.cmake, and require a
 # modern CMake environment.
+# WARNING: Preload.cmake is undocumented und apparently unfinished.
 # The Ninja Multi-Config generator is only available since 3.17
 # https://cmake.org/cmake/help/latest/generator/Ninja%20Multi-Config.html
 cmake_minimum_required(VERSION 3.17)
@@ -12,6 +13,12 @@ project(evercrypt
         DESCRIPTION "The Evercrypt High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/evercrypt"
         )
+
+# Load global config from exteral file.
+# This file must be generated before running cmake with ./mach.py --configure
+# If the build is invoked through ./mach.py, a separate configuration is not
+# needed.
+include(config/config.cmake)
 
 # Configure C globally
 # https://cmake.org/cmake/help/latest/prop_tgt/C_STANDARD.html#prop_tgt:C_STANDARD
