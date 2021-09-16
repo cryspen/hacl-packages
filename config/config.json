@@ -15,6 +15,27 @@
             "Hacl_Blake2b_32.c",
             "Hacl_Blake2b_256.c",
             "Hacl_Streaming_Blake2b_256.c"
+        ],
+        "chacha20poly1305": [
+            "Hacl_Chacha20Poly1305_32.c",
+            "Hacl_Chacha20Poly1305_128.c",
+            "Hacl_Chacha20Poly1305_256.c"
+        ],
+        "curve25519": [
+            "Hacl_Curve25519_51.c",
+            "Hacl_Curve25519_64.c"
+        ],
+        "p256": [
+            "Hacl_P256.c"
+        ],
+        "sha3": [
+            "Hacl_SHA3.c"
+        ],
+        "hkdf": [
+            "Hacl_HKDF.c"
+        ],
+        "rsapss": [
+            "Hacl_RSAPSS.c"
         ]
     },
     "evercrypt_sources": {

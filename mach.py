@@ -13,6 +13,7 @@ import subprocess
 import re
 import json
 import os
+import shutil
 
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
@@ -50,7 +51,7 @@ def dependencies(algorithm, source_file):
         stdout=subprocess.PIPE,
         shell=True)
     stdout = result.stdout.decode('utf-8')
-    # print("clang -MM result: ", stdout)
+
     files = []
     for line in stdout.splitlines():
         # Remove object file and the c file itself
@@ -84,25 +85,15 @@ def dependencies(algorithm, source_file):
             deps.append("src/"+include+".c")
     return deps
 
-# === SUBCOMMANDS === #
 
-
-@subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
-             argument("-o", "--out", help="The config.cmake file to write.", type=str)])
-def configure(args):
-    """Configure sub command to configure the cmake build from config.json
+def run_configure(config_file, out_file):
+    """Configure the build and write config.cmake
 
     This will parse the json config file, build the dependency graph, and write
     out the cmake config file for the build.
     It is also used to generate hacl or evercrypt distributions with a subset of
     algorithms.
     """
-    config_file = "config/config.json"  # The default config.json file.
-    if args.file:
-        config_file = args.file
-    out_file = "config/config.cmake"  # The default config.cmake file.
-    if args.file:
-        out_file = args.out
     print(" [mach] Using %s to configure %s" % (config_file, out_file))
     print(" [mach] ⚠️  THIS OVERRIDES %s. (But it's too late now ... )" % out_file)
 
@@ -127,8 +118,9 @@ def configure(args):
     # TODO: evercrypt dependencies.
 
     with open(out_file, 'w') as out:
-        out.write("set(KREMLIN_FILES %s)\n" %
-                  " ".join(f for f in kremlin_files))
+        if len(kremlin_files) > 0:
+            out.write("set(KREMLIN_FILES %s)\n" %
+                      " ".join(f for f in kremlin_files))
 
         out.write("set(ALGORITHMS %s)\n" % " ".join(a for a in hacl_files))
         out.write("set(ALGORITHM_HACL_FILES %s)\n" %
@@ -136,13 +128,13 @@ def configure(args):
 
         for a in hacl_compile_files:
             out.write("set(HACL_FILES_%s %s)\n" %
-                      (a, " ".join(f for f in hacl_compile_files[a])))
+                      (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in hacl_compile_files[a])))
 
         out.write("set(ALGORITHM_EVERCRYPT_FILES %s)\n" %
                   " ".join("EVERCRYPT_FILES_"+a for a in evercrypt_files))
         for a in evercrypt_files:
             out.write("set(EVERCRYPT_FILES_%s %s)\n" %
-                      (a, " ".join(f for f in evercrypt_files[a])))
+                      (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in evercrypt_files[a])))
 
         for f in features:
             out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
@@ -154,37 +146,65 @@ def configure(args):
             out.write("set(TEST_FILES_%s %s)\n" %
                       (a, " ".join(f for f in tests[a])))
 
+# === SUBCOMMANDS === #
+
+
+@subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
+             argument("-o", "--out", help="The config.cmake file to write.", type=str)])
+def configure(args):
+    """Configure sub command to configure the cmake build from config.json
+
+    See `run_configure` for details.
+    """
+    config_file = "config/config.json"  # The default config.json file.
+    if args.file:
+        config_file = args.file
+    out_file = "config/config.cmake"  # The default config.cmake file.
+    if args.file:
+        out_file = args.out
+
+    run_configure(config_file, out_file)
+
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
-             argument("-t", "--test", help="Run tests after building.", action='store_true'),
+             argument("-t", "--test", help="Run tests after building.",
+                      action='store_true'),
              argument("-r", "--release", help="Build in release mode.", action='store_true')])
 def build(args):
     """Main entry point for building Evercrypt
 
     For convenience it is possible to run tests right after building using -t.
     """
+    # Set config
     config = "Debug"
     if args.release:
         config = "Release"
+
     # Clean if requested
     if args.clean:
         print(" [mach] Cleaning ...")
-        os.rmdir("build")
-        os.remove("config/config.cmake")
+        try:
+            shutil.rmtree("build")
+            os.remove("config/config.cmake")
+        except:
+            pass # We don't really care
     try:
         os.mkdir("build")
     except:
         pass  # We ignore the error if the directory exists already
 
+    # Generate config.cmake
+    run_configure("config/config.json", "config/config.cmake")
+
     # build
     os.chdir("build")
-    result = subprocess.run(['cmake', '--debug-trycompile', '../'])
-    result = subprocess.run(['ninja', '-f', 'build-%s.ninja' % config])
+    subprocess.run(['cmake', '--debug-trycompile', '../'], check=True)
+    subprocess.run(['ninja', '-f', 'build-%s.ninja' % config], check=True)
     print(" [mach] Build finished.")
 
     # test if requested
     if args.test:
-        result = subprocess.run(['ctest', '-C', config])
+        subprocess.run(['ctest', '-C', config], check=True)
 
 
 @subcommand()

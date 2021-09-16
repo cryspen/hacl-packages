@@ -113,6 +113,9 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/Hacl_Blake2b_32.c
             ${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
     )
 
+list(APPEND SOURCES ${HACL_FILES_ed25519})
+message(STATUS "SOURCES: ${SOURCES}")
+
 # x64
 # We set target and host architectures here.
 # For now they are always the same. This will change in future.
