@@ -34,9 +34,11 @@ set(EVERCRYPT_ARCHITECTURE_ARM64 4)
 set(EVERCRYPT_ARCHITECTURE_SYSTEMZ 5)
 set(EVERCRYPT_ARCHITECTURE_POWERPC64 6)
 
-## Set variables
+# Set variables ## TODO: drop
 set(EVERCRYPT_COMPILE_VEC256 0)
-set(COMPILE_INTRINSICS 1)
+
+# Read config from file
+include(config/config.cmake)
 
 # Configure different targets
 add_compile_options(
@@ -49,12 +51,6 @@ add_compile_options(
     $<$<CONFIG:RELEASE>:-O3>  
 )
 
-set(GLOBAL_INCLUDE_PATHS
-    "${PROJECT_SOURCE_DIR}/include \
-     ${PROJECT_SOURCE_DIR}/kremlin/include \
-     ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
-)
-# message(STATUS "Include paths: ${GLOBAL_INCLUDE_PATHS}")
 
 # Test the toolchain to get supported CPU features
 INCLUDE(CheckCCompilerFlag)

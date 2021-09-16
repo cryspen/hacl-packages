@@ -86,8 +86,6 @@ def dependencies(algorithm, source_file):
 
 # === SUBCOMMANDS === #
 
-# Build the config.cmake file from config.json
-
 
 @subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
              argument("-o", "--out", help="The config.cmake file to write.", type=str)])
@@ -156,6 +154,44 @@ def configure(args):
             out.write("set(TEST_FILES_%s %s)\n" %
                       (a, " ".join(f for f in tests[a])))
 
+
+@subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
+             argument("-t", "--test", help="Run tests after building.", action='store_true'),
+             argument("-r", "--release", help="Build in release mode.", action='store_true')])
+def build(args):
+    """Main entry point for building Evercrypt
+
+    For convenience it is possible to run tests right after building using -t.
+    """
+    config = "Debug"
+    if args.release:
+        config = "Release"
+    # Clean if requested
+    if args.clean:
+        print(" [mach] Cleaning ...")
+        os.rmdir("build")
+        os.remove("config/config.cmake")
+    try:
+        os.mkdir("build")
+    except:
+        pass  # We ignore the error if the directory exists already
+
+    # build
+    os.chdir("build")
+    result = subprocess.run(['cmake', '--debug-trycompile', '../'])
+    result = subprocess.run(['ninja', '-f', 'build-%s.ninja' % config])
+    print(" [mach] Build finished.")
+
+    # test if requested
+    if args.test:
+        result = subprocess.run(['ctest', '-C', config])
+
+
+@subcommand()
+def clean():
+    """Remove all build and config artifacts"""
+    os.rmdir("build")
+    os.remove("config/config.cmake")
 
 # === Boiler plate === #
 
