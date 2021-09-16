@@ -109,16 +109,34 @@ option(AVX "Enable code requiring AVX")
 option(AVX2 "Enable code requiring AVX2")
 
 # Select source files to compile depending on the configuration and the platform.
-set(SOURCES ${PROJECT_SOURCE_DIR}/src/Hacl_Blake2b_32.c
-            ${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
-    )
+set(SOURCES "")
 
-list(APPEND SOURCES ${HACL_FILES_ed25519})
-message(STATUS "SOURCES: ${SOURCES}")
+foreach(ALG ${ALGORITHMS})
+    message(STATUS "Adding ${ALG}")
+    list(APPEND SOURCES ${HACL_FILES_${ALG}})
+endforeach()
+
+# Remove duplicates from the list
+list(REMOVE_DUPLICATES SOURCES)
+
+set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
+if(NOT TOOLCHAIN_HAS_AVX)
+    message(STATUS "Disabling sources that require AVX")
+    foreach(HACL_FILE ${CPU_FEATURE_avx})
+        list(REMOVE_ITEM SOURCES ${HACL_FILE})
+    endforeach()
+endif()
+if(NOT TOOLCHAIN_HAS_AVX2)
+    message(STATUS "Disabling sources that require AVX2")
+    foreach(HACL_FILE ${CPU_FEATURE_avx2})
+        list(REMOVE_ITEM SOURCES ${HACL_FILE})
+    endforeach()
+endif()
+
+# message(STATUS "SOURCES: ${SOURCES}")
 
 # x64
-# We set target and host architectures here.
-# For now they are always the same. This will change in future.
+# Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     message(STATUS "Detected an x64 architecture")
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})

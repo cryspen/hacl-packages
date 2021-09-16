@@ -86,7 +86,7 @@ def dependencies(algorithm, source_file):
     return deps
 
 
-def run_configure(config_file, out_file):
+def run_configure(config_file, out_file, algorithms=[]):
     """Configure the build and write config.cmake
 
     This will parse the json config file, build the dependency graph, and write
@@ -109,11 +109,27 @@ def run_configure(config_file, out_file):
     features = config["features"]
     tests = config["tests"]
 
+    # Filter algorithms in hacl_files
+    # In the default case (empty list of algorithms) we don't do anything.
+    if len(algorithms) != 0:
+        for a, v in list(hacl_files.items()):
+            if not a in algorithms:
+                del hacl_files[a]
+
     # Collect dependencies for the hacl files.
     hacl_compile_files = {}
     for a in hacl_files:
         for source_file in hacl_files[a]:
             hacl_compile_files[a] = dependencies(a, source_file)
+
+    # Collect features, inverting the features map
+    cpu_features = {}
+    for file in features:
+        for feature in features[file]:
+            if feature in cpu_features:
+                cpu_features[feature].append(file)
+            else:
+                cpu_features[feature] = [file]
 
     # TODO: evercrypt dependencies.
 
@@ -123,6 +139,8 @@ def run_configure(config_file, out_file):
                       " ".join(f for f in kremlin_files))
 
         out.write("set(ALGORITHMS %s)\n" % " ".join(a for a in hacl_files))
+        # for a in hacl_files:
+        #     out.write("option(%s \"\" ON)\n" % a)
         out.write("set(ALGORITHM_HACL_FILES %s)\n" %
                   " ".join("HACL_FILES_"+a for a in hacl_files))
 
@@ -139,6 +157,10 @@ def run_configure(config_file, out_file):
         for f in features:
             out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
                 f)[0], " ".join(feature for feature in features[f])))
+
+        for f in cpu_features:
+            out.write("set(CPU_FEATURE_%s %s)\n" % (os.path.splitext(
+                f)[0], " ".join("${PROJECT_SOURCE_DIR}/src/"+file for file in cpu_features[f])))
 
         out.write("set(ALGORITHM_TEST_FILES %s)\n" %
                   " ".join("TEST_FILES_"+a for a in tests))
@@ -169,7 +191,9 @@ def configure(args):
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
              argument("-t", "--test", help="Run tests after building.",
                       action='store_true'),
-             argument("-r", "--release", help="Build in release mode.", action='store_true')])
+             argument("-r", "--release", help="Build in release mode.",
+                      action='store_true'),
+             argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str)])
 def build(args):
     """Main entry point for building Evercrypt
 
@@ -187,14 +211,18 @@ def build(args):
             shutil.rmtree("build")
             os.remove("config/config.cmake")
         except:
-            pass # We don't really care
+            pass  # We don't really care
     try:
         os.mkdir("build")
     except:
         pass  # We ignore the error if the directory exists already
 
-    # Generate config.cmake
-    run_configure("config/config.json", "config/config.cmake")
+    # Generate config.cmake using the algorithms argument if any given
+    algorithms = []
+    if args.algorithms:
+        algorithms = re.split(r"\W+", args.algorithms)
+    run_configure("config/config.json", "config/config.cmake",
+                  algorithms=algorithms)
 
     # build
     os.chdir("build")
