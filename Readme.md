@@ -7,22 +7,49 @@ This is the "high-level" C library that will be generated and maintained.
 
 ## Build
 Evercrypt uses [cmake] to configure the build and [ninja] to build.
-To make building easier the [mach.sh] can be used to trigger cmake and ninja.
+
+Quick start: `./mach.py build --test`
+
+### mach
+To make building easier the [mach.py] can be used to trigger cmake and ninja.
 
 ```
-Usage: mach.sh [-h] [-c] [-cc] [--full] [--test] [--release]
+usage: mach.py [-h] {configure,build,clean} ...
 
-Helper script to build and test evercrypt with CMake, ctest, and ninja.
+positional arguments:
+  {configure,build,clean}
 
-Options:
+optional arguments:
+  -h, --help            show this help message and exit
+```
 
-    -h        display this help and exit
-    -c        clean before build
-    -cc       only clean
-    --full    enable all available features
-    --test    run tests through ctest; build before if necessary
-    --release release builds and tests
+#### Build
+```
+usage: mach.py build [-h] [-c] [-t] [-r] [-a ALGORITHMS]
 
+Main entry point for building Evercrypt For convenience it is possible to run tests right
+after building using -t.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c, --clean           Clean before building.
+  -t, --test            Run tests after building.
+  -r, --release         Build in release mode.
+  -a ALGORITHMS, --algorithms ALGORITHMS
+                        A list of algorithms to enable. Defaults to all.
+```
+
+#### Configure
+```
+usage: mach.py configure [-h] [-f FILE] [-o OUT]
+
+Configure sub command to configure the cmake build from config.json See `run_configure` for
+details.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  The config.json file to read.
+  -o OUT, --out OUT     The config.cmake file to write.
 ```
 
 ## Testing
@@ -31,6 +58,6 @@ But all tests can be run through their respective binaries if needed.
 
 [cmake]: https://cmake.org/
 [ninja]: https://ninja-build.org/
-[mach.sh]: ./mach.sh
+[mach.py]: ./mach.py
 [ctest]: https://cmake.org/cmake/help/latest/manual/ctest.1.html
 [Status]: https://img.shields.io/badge/status-experimental-red.svg?style=for-the-badge
