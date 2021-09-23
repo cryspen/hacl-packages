@@ -5,7 +5,6 @@ import subprocess
 import os
 from tempfile import mkdtemp
 from tools.utils import argument, subcommand
-from distutils.dir_util import copy_tree
 
 
 def all_files(directory, extension):
@@ -18,7 +17,7 @@ def all_files(directory, extension):
 @subcommand()
 def update(args):
     """Update HACL* from upstream
-    
+
     ⚠️  This will remove all local .c and .h files.
     """
     upstream_url = "https://github.com/project-everest/hacl-star.git"

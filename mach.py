@@ -78,7 +78,7 @@ def run_configure(config_file, out_file, algorithms=[]):
     algorithms.
     """
     print(" [mach] Using %s to configure %s" % (config_file, out_file))
-    print(" [mach] ⚠️  THIS OVERRIDES %s. (But it's too late now ... )" % out_file)
+    print(" [mach] THIS OVERRIDES %s. (But it's too late now ... )" % out_file)
 
     # read file
     with open(config_file, 'r') as f:
@@ -95,7 +95,12 @@ def run_configure(config_file, out_file, algorithms=[]):
     # Filter algorithms in hacl_files
     # In the default case (empty list of algorithms) we don't do anything.
     if len(algorithms) != 0:
-        for a, v in list(hacl_files.items()):
+        # Check if the algorithms are actually valid
+        for alg in algorithms:
+            if not alg in hacl_files:
+                print(" [mach] ⚠️  Unsupported algorithm requested: %s" % alg)
+                exit(1)
+        for a, _ in list(hacl_files.items()):
             if not a in algorithms:
                 del hacl_files[a]
 

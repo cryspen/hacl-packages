@@ -119,18 +119,31 @@ endforeach()
 # Remove duplicates from the list
 list(REMOVE_DUPLICATES SOURCES)
 
-set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
+# set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
+# Remove files that require missing toolchain features
+# and enable the features for compilation that are available.
+# TODO: make compilation units for each flag
 if(NOT TOOLCHAIN_HAS_AVX)
     message(STATUS "Disabling sources that require AVX")
     foreach(HACL_FILE ${CPU_FEATURE_avx})
         list(REMOVE_ITEM SOURCES ${HACL_FILE})
     endforeach()
+else()
+    add_compile_options(
+        -mavx
+        -DHACL_CAN_COMPILE_VEC256
+    )
 endif()
 if(NOT TOOLCHAIN_HAS_AVX2)
     message(STATUS "Disabling sources that require AVX2")
     foreach(HACL_FILE ${CPU_FEATURE_avx2})
         list(REMOVE_ITEM SOURCES ${HACL_FILE})
     endforeach()
+else()
+    add_compile_options(
+        -mavx2
+        -DHACL_CAN_COMPILE_VEC256
+    )
 endif()
 
 # message(STATUS "SOURCES: ${SOURCES}")
