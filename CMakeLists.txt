@@ -190,16 +190,18 @@ target_include_directories(evercrypt PUBLIC
                            )
 
 # Testing
-add_executable(test_blake2b ${PROJECT_SOURCE_DIR}/tests/blake2b.c)
-target_include_directories(test_blake2b PUBLIC
-                            ${PROJECT_SOURCE_DIR}/include
-                            ${PROJECT_SOURCE_DIR}/kremlin/include
-                            ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                            )
-target_link_libraries(test_blake2b evercrypt)
-
 enable_testing()
-add_test(NAME blake2b COMMAND test_blake2b)
+if("blake2" IN_LIST ALGORITHMS)
+    add_executable(test_blake2b ${PROJECT_SOURCE_DIR}/tests/blake2b.c)
+    target_include_directories(test_blake2b PUBLIC
+                                ${PROJECT_SOURCE_DIR}/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                )
+    target_link_libraries(test_blake2b evercrypt)
+    add_test(NAME blake2b COMMAND test_blake2b)
+endif()
+
 
 # Hardware detection
 message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
