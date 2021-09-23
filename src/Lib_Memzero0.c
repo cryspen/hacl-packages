@@ -1,5 +1,5 @@
-#if __has_include("Config.h")
-#include "Config.h"
+#if __has_include("config.h")
+#include "config.h"
 #endif
 
 #ifdef _WIN32

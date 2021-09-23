@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Blake2s_32_H
-#define __Hacl_Blake2s_32_H
+#ifndef __Hacl_Hash_Base_H
+#define __Hacl_Hash_Base_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,61 +37,19 @@ extern "C" {
 #include "kremlin/internal/target.h"
 
 
-#include "Hacl_Kremlib.h"
-#include "Lib_Memzero0.h"
-#include "Hacl_Impl_Blake2_Constants.h"
+#include "Hacl_Spec.h"
 
-void
-Hacl_Blake2s_32_blake2s_init(
-  uint32_t *wv,
-  uint32_t *hash,
-  uint32_t kk,
-  uint8_t *k,
-  uint32_t nn
-);
+uint32_t Hacl_Hash_Definitions_word_len(Spec_Hash_Definitions_hash_alg a);
 
-void
-Hacl_Blake2s_32_blake2s_update_multi(
-  uint32_t len,
-  uint32_t *wv,
-  uint32_t *hash,
-  uint64_t prev,
-  uint8_t *blocks,
-  uint32_t nb
-);
+uint32_t Hacl_Hash_Definitions_block_len(Spec_Hash_Definitions_hash_alg a);
 
-void
-Hacl_Blake2s_32_blake2s_update_last(
-  uint32_t len,
-  uint32_t *wv,
-  uint32_t *hash,
-  uint64_t prev,
-  uint32_t rem,
-  uint8_t *d
-);
+uint32_t Hacl_Hash_Definitions_hash_word_len(Spec_Hash_Definitions_hash_alg a);
 
-typedef struct K___uint32_t_uint32_t_s
-{
-  uint32_t fst;
-  uint32_t snd;
-}
-K___uint32_t_uint32_t;
-
-void Hacl_Blake2s_32_blake2s_finish(uint32_t nn, uint8_t *output, uint32_t *hash);
-
-void
-Hacl_Blake2s_32_blake2s(
-  uint32_t nn,
-  uint8_t *output,
-  uint32_t ll,
-  uint8_t *d,
-  uint32_t kk,
-  uint8_t *k
-);
+uint32_t Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_hash_alg a);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Blake2s_32_H_DEFINED
+#define __Hacl_Hash_Base_H_DEFINED
 #endif

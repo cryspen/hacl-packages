@@ -1,5 +1,5 @@
-#include "Hacl_Blake2b_32.h"
-#include "Config.h"
+#include "Hacl_Hash_Blake2.h"
+#include "config.h"
 
 typedef struct
 {

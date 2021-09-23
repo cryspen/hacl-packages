@@ -3,11 +3,11 @@
 
 #include <sys/types.h>
 
-/* We include Config.h here to ensure that the various feature-flags are
+/* We include config.h here to ensure that the various feature-flags are
  * properly brought into scope. Users can either run the configure script, or
- * write a Config.h themselves and put it under version control. */
-#if __has_include("Config.h")
-#include "Config.h"
+ * write a config.h themselves and put it under version control. */
+#if __has_include("config.h")
+#include "config.h"
 #endif
 
 /* # DEBUGGING:

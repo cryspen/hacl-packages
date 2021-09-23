@@ -2,8 +2,8 @@
 #define __EVERCRYPT_TARGETCONFIG_H
 
 // Instead of listing the identifiers for the target architectures
-// then defining the constant TARGET_ARCHITECTURE in Config.h, we might simply
-// define exactly one tag of the form TARGET_ARCHITECTURE_IS_... in Config.h.
+// then defining the constant TARGET_ARCHITECTURE in config.h, we might simply
+// define exactly one tag of the form TARGET_ARCHITECTURE_IS_... in config.h.
 // However, for maintenance purposes, we use the first method in
 // order to have all the possible values listed in one place.
 // Note that for now, the only important id is TARGET_ARCHITECTURE_ID_X64,
@@ -18,8 +18,8 @@
 #define TARGET_ARCHITECTURE_ID_SYSTEMZ 5
 #define TARGET_ARCHITECTURE_ID_POWERPC64 6
 
-#if __has_include("Config.h")
-#include "Config.h"
+#if __has_include("config.h")
+#include "config.h"
 #else
 #define TARGET_ARCHITECTURE TARGET_ARCHITECTURE_ID_UNKNOWN
 #endif

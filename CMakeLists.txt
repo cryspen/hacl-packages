@@ -173,7 +173,7 @@ else()
 endif()
 
 # Write configuration
-configure_file(config/Config.h.in Config.h)
+configure_file(config/Config.h.in config.h)
 
 # Set library config and files
 add_library(evercrypt STATIC ${SOURCES})
@@ -184,7 +184,7 @@ target_include_directories(evercrypt PRIVATE
                             )
 
 
-# Include Config.h
+# Include config.h
 target_include_directories(evercrypt PUBLIC
                            "${PROJECT_BINARY_DIR}"
                            )

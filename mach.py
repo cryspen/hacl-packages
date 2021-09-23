@@ -8,33 +8,15 @@
 #     must be provided as input.
 
 
-from argparse import ArgumentParser
 import subprocess
 import re
 import json
 import os
 import shutil
 
-# The main parser to attach to with the decorator.
-cli = ArgumentParser()
-subparsers = cli.add_subparsers(dest="subcommand")
+from tools.utils import *
+from tools.vcs import *
 
-
-def subcommand(args=[], parent=subparsers):
-    """Decorator for sub commands."""
-    def decorator(func):
-        parser = parent.add_parser(func.__name__, description=func.__doc__)
-        for arg in args:
-            parser.add_argument(*arg[0], **arg[1])
-        parser.set_defaults(func=func)
-    return decorator
-
-
-def argument(*name_or_flags, **kwargs):
-    """Helper for subcommand decorator"""
-    return ([*name_or_flags], kwargs)
-
-# === END MACH HELPERS === #
 
 # === HELPER FUNCTIONS === #
 
@@ -49,7 +31,8 @@ def dependencies(algorithm, source_file):
     result = subprocess.run(
         'clang -I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -MM src/'+source_file,
         stdout=subprocess.PIPE,
-        shell=True)
+        shell=True,
+        check=True)
     stdout = result.stdout.decode('utf-8')
 
     files = []
@@ -176,7 +159,7 @@ def run_configure(config_file, out_file, algorithms=[]):
 def configure(args):
     """Configure sub command to configure the cmake build from config.json
 
-    See `run_configure` for details.
+    ⚠️  This will override your config.cmake.
     """
     config_file = "config/config.json"  # The default config.json file.
     if args.file:
