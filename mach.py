@@ -13,158 +13,78 @@ import re
 import json
 import os
 import shutil
+from tools.configure import Config
 
 from tools.utils import *
 from tools.vcs import *
-
-
-# === HELPER FUNCTIONS === #
-
-
-def dependencies(algorithm, source_file):
-    """Collect dependencies for a given c file
-
-    Use `clang -MM` to collect dependencies for a given c file assuming header
-    and source files are named the same.
-    """
-    # Build dependency graph
-    result = subprocess.run(
-        'clang -I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -MM src/'+source_file,
-        stdout=subprocess.PIPE,
-        shell=True,
-        check=True)
-    stdout = result.stdout.decode('utf-8')
-
-    files = []
-    for line in stdout.splitlines():
-        # Remove object file and the c file itself
-        line = re.sub("(\w*).o: src/(\w*).c", "", line)
-        line = line.strip()
-        line = line.split(' ')
-        try:
-            line.remove("\\")
-        except:
-            # This is fine
-            pass
-        files.extend(line)
-
-    # Get all source files in src/
-    result = subprocess.run(
-        'ls -1a src/*.c', stdout=subprocess.PIPE, shell=True)
-    source_files = result.stdout.decode('utf-8')
-    source_files = source_files.splitlines()
-    # remove src/ and .c
-    source_files = list(map(lambda s: s[4:-2], source_files))
-
-    # Now let's collect the c files from the included headers
-    deps = []
-    for include in files:
-        # Get the file name from the path (could be done more efficiently before)
-        include_match = re.match(
-            "^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", include)
-        include = include_match.group(2)
-        # Only add the dependency if there's a corresponding source file.
-        if include in source_files:
-            deps.append("src/"+include+".c")
-    return deps
-
-
-def run_configure(config_file, out_file, algorithms=[]):
-    """Configure the build and write config.cmake
-
-    This will parse the json config file, build the dependency graph, and write
-    out the cmake config file for the build.
-    It is also used to generate hacl or evercrypt distributions with a subset of
-    algorithms.
-    """
-    print(" [mach] Using %s to configure %s" % (config_file, out_file))
-    print(" [mach] THIS OVERRIDES %s. (But it's too late now ... )" % out_file)
-
-    # read file
-    with open(config_file, 'r') as f:
-        data = f.read()
-
-    # parse file
-    config = json.loads(data)
-    kremlin_files = config["kremlin_sources"]
-    hacl_files = config["hacl_sources"]
-    evercrypt_files = config["evercrypt_sources"]
-    features = config["features"]
-    tests = config["tests"]
-
-    # Filter algorithms in hacl_files
-    # In the default case (empty list of algorithms) we don't do anything.
-    if len(algorithms) != 0:
-        # Check if the algorithms are actually valid
-        for alg in algorithms:
-            if not alg in hacl_files:
-                print(" [mach] ⚠️  Unsupported algorithm requested: %s" % alg)
-                exit(1)
-        for a, _ in list(hacl_files.items()):
-            if not a in algorithms:
-                del hacl_files[a]
-
-    # Collect dependencies for the hacl files.
-    hacl_compile_files = {}
-    for a in hacl_files:
-        for source_file in hacl_files[a]:
-            hacl_compile_files[a] = dependencies(a, source_file)
-
-    # Collect features, inverting the features map
-    cpu_features = {}
-    for file in features:
-        for feature in features[file]:
-            if feature in cpu_features:
-                cpu_features[feature].append(file)
-            else:
-                cpu_features[feature] = [file]
-
-    # TODO: evercrypt dependencies.
-
-    with open(out_file, 'w') as out:
-        if len(kremlin_files) > 0:
-            out.write("set(KREMLIN_FILES %s)\n" %
-                      " ".join(f for f in kremlin_files))
-
-        out.write("set(ALGORITHMS %s)\n" % " ".join(a for a in hacl_files))
-        # for a in hacl_files:
-        #     out.write("option(%s \"\" ON)\n" % a)
-        out.write("set(ALGORITHM_HACL_FILES %s)\n" %
-                  " ".join("HACL_FILES_"+a for a in hacl_files))
-
-        for a in hacl_compile_files:
-            out.write("set(HACL_FILES_%s %s)\n" %
-                      (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in hacl_compile_files[a])))
-
-        out.write("set(ALGORITHM_EVERCRYPT_FILES %s)\n" %
-                  " ".join("EVERCRYPT_FILES_"+a for a in evercrypt_files))
-        for a in evercrypt_files:
-            out.write("set(EVERCRYPT_FILES_%s %s)\n" %
-                      (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in evercrypt_files[a])))
-
-        for f in features:
-            out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
-                f)[0], " ".join(feature for feature in features[f])))
-
-        for f in cpu_features:
-            out.write("set(CPU_FEATURE_%s %s)\n" % (os.path.splitext(
-                f)[0], " ".join("${PROJECT_SOURCE_DIR}/src/"+file for file in cpu_features[f])))
-
-        out.write("set(ALGORITHM_TEST_FILES %s)\n" %
-                  " ".join("TEST_FILES_"+a for a in tests))
-        for a in tests:
-            out.write("set(TEST_FILES_%s %s)\n" %
-                      (a, " ".join(f for f in tests[a])))
 
 # === SUBCOMMANDS === #
 
 
 @subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
+             argument("-p", "--path",
+                      help="The path to write the snapshot to.", type=str),
+             argument("-n", "--name",
+                      help="Name of the named snapshot.", type=str),
+             argument("-a", "--algorithms",
+                      help="The algorithms to include in the snapshot.", type=str),
+             argument("-c", "--clean",
+                      help="Clean the path if it exists.", action='store_true')])
+def snapshot(args):
+    """Generate a snapshot with the requested distribution
+
+    By default config.json is used. This should not be changed unless you know
+    what you are doing!
+
+    There are two different types of snapshots: named snapshots and algorithm-based
+
+    Available named snapshots (TBD):
+        - Mozilla
+    """
+    config_file = "config/config.json"  # The default config.json file.
+    if args.file:
+        config_file = args.file
+    algorithms = []
+    if args.algorithms:
+        algorithms = re.split(r"\W+", args.algorithms)
+    if args.name:
+        print(" [mach] ⚠️  Named snapshots aren't implemented yet!")
+        exit(1)
+    out_dir = args.path
+    if os.path.exists(out_dir):
+        if args.clean:
+            shutil.rmtree(out_dir)
+        else:
+            print(
+                " [mach] ⚠️  %s exists! Please remove it or choose a different path." % out_dir)
+            exit(1)
+    os.mkdir(out_dir)
+    config = Config(config_file, algorithms=algorithms)
+
+    # Write snapshot
+    # First the source files
+    dst_src_dir = join(out_dir, "src")
+    os.mkdir(dst_src_dir)
+    for source_file in config.source_files():
+        f = os.path.abspath(source_file)
+        shutil.copy(f, dst_src_dir)
+    
+    # Now the header files
+    # TODO: use config.header_files()
+
+
+# XXX: Not needed?
+@subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
              argument("-o", "--out", help="The config.cmake file to write.", type=str)])
 def configure(args):
-    """Configure sub command to configure the cmake build from config.json
+    """Configure command to configure the cmake build from config.json
 
     ⚠️  This will override your config.cmake.
+
+    This will parse the json config file, build the dependency graph, and write
+    out the cmake config file for the build.
+    It is also used to generate hacl or evercrypt distributions with a subset of
+    algorithms.
     """
     config_file = "config/config.json"  # The default config.json file.
     if args.file:
@@ -173,7 +93,8 @@ def configure(args):
     if args.file:
         out_file = args.out
 
-    run_configure(config_file, out_file)
+    config = Config(config_file)
+    config.write_cmake_config(out_file)
 
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
@@ -209,8 +130,8 @@ def build(args):
     algorithms = []
     if args.algorithms:
         algorithms = re.split(r"\W+", args.algorithms)
-    run_configure("config/config.json", "config/config.cmake",
-                  algorithms=algorithms)
+    config = Config("config/config.json", algorithms=algorithms)
+    config.write_cmake_config("config/config.cmake")
 
     # build
     os.chdir("build")

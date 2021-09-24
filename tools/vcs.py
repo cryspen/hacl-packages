@@ -24,7 +24,7 @@ def update(args):
     try:
         subprocess.run(['git', '--version'], check=True)
     except:
-        print(" ⚠️  Please make sure that git is installed and in your path.")
+        print(" [mach] ⚠️  Please make sure that git is installed and in your path.")
         exit(1)
 
     # get absolute src and include directories
@@ -53,4 +53,4 @@ def update(args):
         f for f in files if isfile(join(d, f)) and f[-2:] != '.h']
     copytree(new_dist, include_dir, ignore=only_h, dirs_exist_ok=True)
 
-    print(" 💪  Copied all new .c and .h files from hacl-star.")
+    print(" [mach] 💪  Copied all new .c and .h files from hacl-star.")
