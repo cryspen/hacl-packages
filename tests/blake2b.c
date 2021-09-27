@@ -1,4 +1,5 @@
 #include "Hacl_Hash_Blake2.h"
+#include "util.h"
 #include "config.h"
 
 typedef struct
@@ -39,35 +40,6 @@ static uint8_t expected2b1[64] = {
     0xe0U, 0xfdU, 0x5fU, 0x8dU, 0xdfU, 0x82U, 0x37U, 0x18U,
     0xd8U, 0x6dU, 0x1eU, 0x16U, 0xc6U, 0x09U, 0x00U, 0x71U};
 
-static inline bool compare_and_print(size_t len, uint8_t *comp, uint8_t *exp)
-{
-    bool ok = true;
-    for (size_t i = 0; i < len; i++)
-    {
-        ok = ok & (exp[i] == comp[i]);
-    }
-    if (ok)
-    {
-        printf("Success!\n");
-    }
-    else
-    {
-        printf("**FAILED**\n");
-        printf("computed:");
-        for (size_t i = 0; i < len; i++)
-        {
-            printf("%02x", comp[i]);
-        }
-        printf("\n");
-        printf("expected:");
-        for (size_t i = 0; i < len; i++)
-        {
-            printf("%02x", exp[i]);
-        }
-        printf("\n");
-    }
-    return ok;
-}
 
 int main(int argc, char const *argv[])
 {

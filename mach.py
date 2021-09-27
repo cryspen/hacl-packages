@@ -109,9 +109,9 @@ def build(args):
     For convenience it is possible to run tests right after building using -t.
     """
     # Set config
-    config = "Debug"
+    build_config = "Debug"
     if args.release:
-        config = "Release"
+        build_config = "Release"
 
     # Clean if requested
     if args.clean:
@@ -136,12 +136,12 @@ def build(args):
     # build
     os.chdir("build")
     subprocess.run(['cmake', '--debug-trycompile', '../'], check=True)
-    subprocess.run(['ninja', '-f', 'build-%s.ninja' % config], check=True)
+    subprocess.run(['ninja', '-f', 'build-%s.ninja' % build_config], check=True)
     print(" [mach] Build finished.")
 
     # test if requested
     if args.test:
-        subprocess.run(['ctest', '-C', config], check=True)
+        subprocess.run(['ctest', '-C', build_config], check=True)
 
 
 @subcommand()

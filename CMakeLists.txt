@@ -214,7 +214,16 @@ if("blake2" IN_LIST ALGORITHMS)
     target_link_libraries(test_blake2b evercrypt)
     add_test(NAME blake2b COMMAND test_blake2b)
 endif()
-
+if("p256" IN_LIST ALGORITHMS)
+    add_executable(test_p256 ${PROJECT_SOURCE_DIR}/tests/p256.c)
+    target_include_directories(test_p256 PUBLIC
+                                ${PROJECT_SOURCE_DIR}/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                )
+    target_link_libraries(test_p256 evercrypt)
+    add_test(NAME p256 COMMAND test_p256)
+endif()
 
 # Hardware detection
 message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")

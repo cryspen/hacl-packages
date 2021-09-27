@@ -32,6 +32,9 @@
         "sha3": [
             "Hacl_SHA3.c"
         ],
+        "hmac": [
+            "Hacl_HMAC.c"
+        ],
         "hkdf": [
             "Hacl_HKDF.c"
         ],
@@ -100,6 +103,9 @@
     "tests": {
         "blake2b": [
             "blake2b.c"
+        ],
+        "p256": [
+            "p256.c"
         ]
     }
 }
