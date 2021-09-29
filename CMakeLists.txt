@@ -86,6 +86,7 @@ if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
 endif()
 message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
 
+# XXX: This doesn't work! Use try_compile instead
 CHECK_C_COMPILER_FLAG(-mavx TOOLCHAIN_HAS_AVX)
 CHECK_C_COMPILER_FLAG(-mavx2 TOOLCHAIN_HAS_AVX2)
 CHECK_C_COMPILER_FLAG(-msse TOOLCHAIN_HAS_SSE)
@@ -119,7 +120,8 @@ endforeach()
 # Remove duplicates from the list
 list(REMOVE_DUPLICATES SOURCES)
 
-# set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
+set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
+set(TOOLCHAIN_HAS_AVX OFF) # XXX: FOR TESTING ONLY
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
@@ -152,6 +154,7 @@ endif()
 # Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     message(STATUS "Detected an x64 architecture")
+    set(ARCHITECTURE intel)
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
     set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
     if(AVX)
@@ -168,18 +171,21 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
 # x86
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32")
     message(STATUS "Detected an x86 architecture")
-    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_X86})
-    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_X86})
+    set(ARCHITECTURE intel)
+    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X86})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X86})
 # arm64
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
     message(STATUS "Detected an arm64 architecture")
-    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM64})
-    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM64})
+    set(ARCHITECTURE arm)
+    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_ARM64})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_ARM64})
 # arm32
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armel|armhf|armv7|arm32v7")
     message(STATUS "Detected an arm32 architecture")
-    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM32})
-    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_TARGET_ARCHITECTURE_ARM32})
+    set(ARCHITECTURE arm)
+    set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_ARM32})
+    set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_ARM32})
 # unsupported architecture
 else()
     message(FATAL_ERROR "Unsupported architecture ${CMAKE_SYSTEM_PROCESSOR}")
@@ -226,10 +232,12 @@ if("p256" IN_LIST ALGORITHMS)
 endif()
 
 # Hardware detection
-message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
-add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
-                            ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
-                )
-target_include_directories(hw-detection PUBLIC
-                            ${PROJECT_SOURCE_DIR}/include
-                            )
+if(ARCHITECTURE MATCHES "intel")
+    message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
+    add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
+                                ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
+                    )
+    target_include_directories(hw-detection PUBLIC
+                                ${PROJECT_SOURCE_DIR}/include
+                                )
+endif()
