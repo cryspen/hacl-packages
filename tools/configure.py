@@ -88,7 +88,12 @@ class Config:
         self.hacl_compile_files = {}
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                self.hacl_compile_files[a] = self.dependencies(a, source_file)
+                files = self.dependencies(a, source_file)
+                if a in self.hacl_compile_files:
+                    self.hacl_compile_files[a].extend(files)
+                else:
+                    # Add the new algorithm dependency
+                    self.hacl_compile_files[a] = files
 
         # Collect features, inverting the features map
         self.cpu_features = {}

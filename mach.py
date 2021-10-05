@@ -50,6 +50,9 @@ def snapshot(args):
     if args.name:
         print(" [mach] ⚠️  Named snapshots aren't implemented yet!")
         exit(1)
+    if args.path is None:
+        print(" [mach] ⚠️  Please provide an output path with --path!")
+        exit(1)
     out_dir = args.path
     if os.path.exists(out_dir):
         if args.clean:
