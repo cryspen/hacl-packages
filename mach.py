@@ -105,11 +105,15 @@ def configure(args):
                       action='store_true'),
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
-             argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str)])
+             argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str),
+             argument("-p", "--target", help="Define compile target for cross compilation", type=str)])
 def build(args):
     """Main entry point for building Evercrypt
 
     For convenience it is possible to run tests right after building using -t.
+
+    Supported cross compilation targets:
+        - x64-macos
     """
     # Set config
     build_config = "Debug"
@@ -136,15 +140,22 @@ def build(args):
     config = Config("config/config.json", algorithms=algorithms)
     config.write_cmake_config("config/config.cmake")
 
+    # Set target toolchain if cross compiling
+    cmake_args = []
+    if args.target:
+        cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+
     # build
-    os.chdir("build")
-    subprocess.run(['cmake', '--debug-trycompile', '../'], check=True)
-    subprocess.run(['ninja', '-f', 'build-%s.ninja' % build_config], check=True)
+    cmake_cmd = ['cmake', '--debug-trycompile', '-B', 'build']
+    cmake_cmd.extend(cmake_args)
+    subprocess.run(cmake_cmd, check=True)
+    subprocess.run(['ninja', '-v', '-f', 'build-%s.ninja' % build_config, '-C', 'build'], check=True)
     print(" [mach] Build finished.")
 
     # test if requested
     if args.test:
-        subprocess.run(['ctest', '-C', build_config], check=True)
+        # --build-two-config
+        subprocess.run(['ctest', '-C', build_config, '--test-dir', 'build'], check=True)
 
 
 @subcommand()

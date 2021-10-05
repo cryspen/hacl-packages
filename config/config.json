@@ -79,25 +79,25 @@
     },
     "features": {
         "Hacl_Hash_Blake2b_256.c": [
-            "avx2"
+            "vec256"
         ],
         "Hacl_Streaming_Blake2b_256.c": [
-            "avx2"
+            "vec256"
         ],
         "Hacl_Hash_Blake2s_128.c": [
-            "avx"
+            "vec128"
         ],
         "Hacl_Chacha20Poly1305_128.c": [
-            "avx"
+            "vec128"
         ],
         "Hacl_Chacha20Poly1305_256.c": [
-            "avx2"
+            "vec256"
         ],
         "Hacl_Chacha20_Vec256.c": [
-            "avx2"
+            "vec256"
         ],
         "Hacl_Poly1305_256.c": [
-            "avx2"
+            "vec256"
         ]
     },
     "tests": {

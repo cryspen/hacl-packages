@@ -4,7 +4,8 @@
         "stdio.h": "c",
         "stdlib.h": "c",
         "limits.h": "c",
-        "inttypes.h": "c"
+        "inttypes.h": "c",
+        "libintvector.h": "c"
     },
     "python.pythonPath": "/usr/bin/python"
 }

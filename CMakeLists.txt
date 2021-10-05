@@ -36,6 +36,7 @@ set(EVERCRYPT_ARCHITECTURE_POWERPC64 6)
 
 # Set variables ## TODO: drop
 set(EVERCRYPT_COMPILE_VEC256 0)
+set(EVERCRYPT_COMPILE_VEC128 0)
 
 # Read config from file
 include(config/config.cmake)
@@ -51,6 +52,15 @@ add_compile_options(
     $<$<CONFIG:RELEASE>:-O3>  
 )
 
+# Set target platform
+# This is defined through the CMAKE_TOOLCHAIN_FILE. But CMAKE_OSX_ARCHITECTURES
+# is not picked up correctly. So we set it again here.
+if(DEFINED CMAKE_C_COMPILER_TARGET)
+    if(${CMAKE_C_COMPILER_TARGET} STREQUAL x86_64-apple-darwin)
+        set(CMAKE_SYSTEM_PROCESSOR x86_64)
+        set(CMAKE_OSX_ARCHITECTURES x86_64)
+    endif()
+endif()
 
 # Test the toolchain to get supported CPU features
 INCLUDE(CheckCCompilerFlag)
@@ -61,6 +71,7 @@ if(NOT DEFINED BUG_81300)
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/bug81300.c
                         # TODO: get the include paths from global variables
+                        #       We should probably get rid of the march=native!
                         COMPILE_DEFINITIONS "-DCOMPILE_INTRINSICS \
                                              -march=native -O3\
                                              -I${PROJECT_SOURCE_DIR}/include \
@@ -85,27 +96,56 @@ if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
                 )
 endif()
 message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
+## Check for vec128 support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
+    try_compile(TOOLCHAIN_CAN_COMPILE_VEC128
+                        ${PROJECT_SOURCE_DIR}/config/build
+                        ${PROJECT_SOURCE_DIR}/config/vec128.c
+                        # TODO: get the include paths from global variables
+                        #       When do we need -march=armv8-a+simd?
+                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC128 \
+                                             -I${PROJECT_SOURCE_DIR}/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                )
+endif()
+message(STATUS "vec128 support: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
+## Check for vec256 support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
+    try_compile(TOOLCHAIN_CAN_COMPILE_VEC256
+                        ${PROJECT_SOURCE_DIR}/config/build
+                        ${PROJECT_SOURCE_DIR}/config/vec256.c
+                        # TODO: get the include paths from global variables
+                        #       When do we need -march=armv8-a+simd?
+                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 \
+                                             -I${PROJECT_SOURCE_DIR}/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                )
+endif()
+message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")
 
-# XXX: This doesn't work! Use try_compile instead
-CHECK_C_COMPILER_FLAG(-mavx TOOLCHAIN_HAS_AVX)
-CHECK_C_COMPILER_FLAG(-mavx2 TOOLCHAIN_HAS_AVX2)
-CHECK_C_COMPILER_FLAG(-msse TOOLCHAIN_HAS_SSE)
-CHECK_C_COMPILER_FLAG(-msse2 TOOLCHAIN_HAS_SSE2)
-CHECK_C_COMPILER_FLAG(-msse3 TOOLCHAIN_HAS_SSE3)
-# We don't care about sse4a
-# CHECK_C_COMPILER_FLAG(-msse4a TOOLCHAIN_HAS_SSE4A)
-CHECK_C_COMPILER_FLAG(-msse4.1 TOOLCHAIN_HAS_SSE41)
-CHECK_C_COMPILER_FLAG(-msse4.2 TOOLCHAIN_HAS_SSE42)
-CHECK_C_COMPILER_FLAG(-maes TOOLCHAIN_HAS_AES)
-CHECK_C_COMPILER_FLAG(-mpclmul TOOLCHAIN_HAS_PCLMUL)
-CHECK_C_COMPILER_FLAG(-march=armv8-a+simd TOOLCHAIN_IS_ARMV8_WITH_SIMD)
-CHECK_C_COMPILER_FLAG(-m32 TOOLCHAIN_HAS_32_SUPPORT)
-CHECK_C_COMPILER_FLAG("-target arm64-apple-ios" TOOLCHAIN_HAS_IOS_TARGET)
-CHECK_C_COMPILER_FLAG("-target arm64-apple-macos11" TOOLCHAIN_HAS_APPLE_ARM_TARGET)
-CHECK_C_COMPILER_FLAG(-mcpu=power9 TOOLCHAIN_HAS_POWER9)
+# # XXX: This doesn't work! Use try_compile instead
+# CHECK_C_COMPILER_FLAG(-mavx TOOLCHAIN_HAS_AVX)
+# CHECK_C_COMPILER_FLAG(-mavx2 TOOLCHAIN_HAS_AVX2)
+# CHECK_C_COMPILER_FLAG(-msse TOOLCHAIN_HAS_SSE)
+# CHECK_C_COMPILER_FLAG(-msse2 TOOLCHAIN_HAS_SSE2)
+# CHECK_C_COMPILER_FLAG(-msse3 TOOLCHAIN_HAS_SSE3)
+# # We don't care about sse4a
+# # CHECK_C_COMPILER_FLAG(-msse4a TOOLCHAIN_HAS_SSE4A)
+# CHECK_C_COMPILER_FLAG(-msse4.1 TOOLCHAIN_HAS_SSE41)
+# CHECK_C_COMPILER_FLAG(-msse4.2 TOOLCHAIN_HAS_SSE42)
+# CHECK_C_COMPILER_FLAG(-maes TOOLCHAIN_HAS_AES)
+# CHECK_C_COMPILER_FLAG(-mpclmul TOOLCHAIN_HAS_PCLMUL)
+# CHECK_C_COMPILER_FLAG(-march=armv8-a+simd TOOLCHAIN_IS_ARMV8_WITH_SIMD)
+# CHECK_C_COMPILER_FLAG(-m32 TOOLCHAIN_HAS_32_SUPPORT)
+# CHECK_C_COMPILER_FLAG("-target arm64-apple-ios" TOOLCHAIN_HAS_IOS_TARGET)
+# CHECK_C_COMPILER_FLAG("-target arm64-apple-macos11" TOOLCHAIN_HAS_APPLE_ARM_TARGET)
+# CHECK_C_COMPILER_FLAG(-mcpu=power9 TOOLCHAIN_HAS_POWER9)
 
 # Options for features.
 # They all default to off and have to be explicitely enabled.
+## TODO: Change to DISABLE_VEC128 and DISABLE_VEC256
 option(AVX "Enable code requiring AVX")
 option(AVX2 "Enable code requiring AVX2")
 
@@ -120,32 +160,46 @@ endforeach()
 # Remove duplicates from the list
 list(REMOVE_DUPLICATES SOURCES)
 
-set(TOOLCHAIN_HAS_AVX2 OFF) # XXX: FOR TESTING ONLY
-set(TOOLCHAIN_HAS_AVX OFF) # XXX: FOR TESTING ONLY
+# set(TOOLCHAIN_CAN_COMPILE_VEC256 OFF) # XXX: FOR TESTING ONLY TOOLCHAIN_HAS_AVX2
+# set(TOOLCHAIN_CAN_COMPILE_VEC128 OFF) # XXX: FOR TESTING ONLY TOOLCHAIN_HAS_AVX
+set(TOOLCHAIN_CAN_COMPILE_VALE OFF) # XXX: FOR TESTING ONLY
+set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF) # XXX: FOR TESTING ONLY
+set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
+
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
-if(NOT TOOLCHAIN_HAS_AVX)
+if(NOT TOOLCHAIN_CAN_COMPILE_VEC128)
     message(STATUS "Disabling sources that require AVX")
-    foreach(HACL_FILE ${CPU_FEATURE_avx})
+    foreach(HACL_FILE ${CPU_FEATURE_vec128})
         list(REMOVE_ITEM SOURCES ${HACL_FILE})
     endforeach()
 else()
-    add_compile_options(
-        -mavx
-        -DHACL_CAN_COMPILE_VEC256
-    )
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        add_compile_options(
+            -mavx
+            -DHACL_CAN_COMPILE_VEC128
+        )
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+        add_compile_options(
+            -march=armv8-a+simd
+            -DHACL_CAN_COMPILE_VEC128
+        )
+    endif()
 endif()
-if(NOT TOOLCHAIN_HAS_AVX2)
+if(NOT TOOLCHAIN_CAN_COMPILE_VEC256)
     message(STATUS "Disabling sources that require AVX2")
-    foreach(HACL_FILE ${CPU_FEATURE_avx2})
+    foreach(HACL_FILE ${CPU_FEATURE_vec256})
         list(REMOVE_ITEM SOURCES ${HACL_FILE})
     endforeach()
 else()
-    add_compile_options(
-        -mavx2
-        -DHACL_CAN_COMPILE_VEC256
-    )
+    # We really should only get here on x86 architectures. But let's make sure.
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        add_compile_options(
+            -mavx2
+            -DHACL_CAN_COMPILE_VEC256
+        )
+    endif()
 endif()
 
 # message(STATUS "SOURCES: ${SOURCES}")
