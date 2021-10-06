@@ -102,7 +102,7 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/vec128.c
                         # TODO: get the include paths from global variables
-                        #       When do we need -march=armv8-a+simd?
+                        #       When do we need -march=armv8-a+simd or something else here?
                         COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC128 \
                                              -I${PROJECT_SOURCE_DIR}/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/include \
@@ -116,7 +116,7 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/vec256.c
                         # TODO: get the include paths from global variables
-                        #       When do we need -march=armv8-a+simd?
+                        #       When do we need -march=armv8-a+simd or something else here?
                         COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 \
                                              -I${PROJECT_SOURCE_DIR}/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/include \
@@ -125,32 +125,19 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
 endif()
 message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")
 
-# # XXX: This doesn't work! Use try_compile instead
-# CHECK_C_COMPILER_FLAG(-mavx TOOLCHAIN_HAS_AVX)
-# CHECK_C_COMPILER_FLAG(-mavx2 TOOLCHAIN_HAS_AVX2)
-# CHECK_C_COMPILER_FLAG(-msse TOOLCHAIN_HAS_SSE)
-# CHECK_C_COMPILER_FLAG(-msse2 TOOLCHAIN_HAS_SSE2)
-# CHECK_C_COMPILER_FLAG(-msse3 TOOLCHAIN_HAS_SSE3)
-# # We don't care about sse4a
-# # CHECK_C_COMPILER_FLAG(-msse4a TOOLCHAIN_HAS_SSE4A)
-# CHECK_C_COMPILER_FLAG(-msse4.1 TOOLCHAIN_HAS_SSE41)
-# CHECK_C_COMPILER_FLAG(-msse4.2 TOOLCHAIN_HAS_SSE42)
-# CHECK_C_COMPILER_FLAG(-maes TOOLCHAIN_HAS_AES)
-# CHECK_C_COMPILER_FLAG(-mpclmul TOOLCHAIN_HAS_PCLMUL)
-# CHECK_C_COMPILER_FLAG(-march=armv8-a+simd TOOLCHAIN_IS_ARMV8_WITH_SIMD)
-# CHECK_C_COMPILER_FLAG(-m32 TOOLCHAIN_HAS_32_SUPPORT)
-# CHECK_C_COMPILER_FLAG("-target arm64-apple-ios" TOOLCHAIN_HAS_IOS_TARGET)
-# CHECK_C_COMPILER_FLAG("-target arm64-apple-macos11" TOOLCHAIN_HAS_APPLE_ARM_TARGET)
-# CHECK_C_COMPILER_FLAG(-mcpu=power9 TOOLCHAIN_HAS_POWER9)
+# XXX: Investigate whether we can use CHECK_C_COMPILER_FLAG here at all
 
 # Options for features.
 # They all default to off and have to be explicitely enabled.
-## TODO: Change to DISABLE_VEC128 and DISABLE_VEC256
-option(AVX "Enable code requiring AVX")
-option(AVX2 "Enable code requiring AVX2")
+# TODO: Actually honor these options
+option(DISABLE_VEC128 "Disable code requiring vec128 hardware support")
+option(DISABLE_VEC256 "Disable code requiring vec256 hardware support")
+option(DISABLE_VALE "Disable vale code")
 
 # Select source files to compile depending on the configuration and the platform.
 set(SOURCES "")
+set(VEC128_SOURCES "")
+set(VEC256_SOURCES "")
 
 foreach(ALG ${ALGORITHMS})
     message(STATUS "Adding ${ALG}")
@@ -160,8 +147,6 @@ endforeach()
 # Remove duplicates from the list
 list(REMOVE_DUPLICATES SOURCES)
 
-# set(TOOLCHAIN_CAN_COMPILE_VEC256 OFF) # XXX: FOR TESTING ONLY TOOLCHAIN_HAS_AVX2
-# set(TOOLCHAIN_CAN_COMPILE_VEC128 OFF) # XXX: FOR TESTING ONLY TOOLCHAIN_HAS_AVX
 set(TOOLCHAIN_CAN_COMPILE_VALE OFF) # XXX: FOR TESTING ONLY
 set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF) # XXX: FOR TESTING ONLY
 set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
@@ -169,19 +154,34 @@ set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
-if(NOT TOOLCHAIN_CAN_COMPILE_VEC128)
-    message(STATUS "Disabling sources that require AVX")
+# if(NOT TOOLCHAIN_CAN_COMPILE_VEC128)
+#     message(STATUS "Disabling sources that require AVX")
+#     foreach(HACL_FILE ${CPU_FEATURE_vec128})
+#         list(REMOVE_ITEM SOURCES ${HACL_FILE})
+#     endforeach()
+# else()
+if(TOOLCHAIN_CAN_COMPILE_VEC128)
+    ## We make separate static libraries for each hardware feature
     foreach(HACL_FILE ${CPU_FEATURE_vec128})
-        list(REMOVE_ITEM SOURCES ${HACL_FILE})
+        if(${HACL_FILE} IN_LIST SOURCES)
+            # Remove vec128 files from SOURCES and add them to VEC128_SOURCES
+            list(APPEND VEC128_SOURCES ${HACL_FILE})
+            list(REMOVE_ITEM SOURCES ${HACL_FILE})
+        endif()
     endforeach()
-else()
+    add_library(hacl_vec128 OBJECT ${VEC128_SOURCES})
+    target_include_directories(hacl_vec128 PRIVATE
+                                ${PROJECT_SOURCE_DIR}/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                )
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-        add_compile_options(
+        target_compile_options(hacl_vec128 PRIVATE
             -mavx
             -DHACL_CAN_COMPILE_VEC128
         )
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
-        add_compile_options(
+        target_compile_options(hacl_vec128 PRIVATE
             -march=armv8-a+simd
             -DHACL_CAN_COMPILE_VEC128
         )
@@ -211,11 +211,14 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     set(ARCHITECTURE intel)
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
     set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
-    if(AVX)
+    if(TOOLCHAIN_CAN_COMPILE_VALE)
+        # TODO: include VALE source code
+    endif()
+    if(TOOLCHAIN_CAN_COMPILE_VEC128)
         add_compile_options(-mavx)
     endif()
     # We assume that all processors with AVX2 also support AVX
-    if(AVX2)
+    if(TOOLCHAIN_CAN_COMPILE_VEC256)
         set(EVERCRYPT_COMPILE_VEC256 1)
         add_compile_options(-mavx2)
         set(SOURCES ${SOURCES}
@@ -249,7 +252,14 @@ endif()
 configure_file(config/Config.h.in config.h)
 
 # Set library config and files
-add_library(hacl STATIC ${SOURCES})
+## Now combine everything into the hacl library
+## TODO: static and dynamic builds
+add_library(hacl SHARED ${SOURCES})
+if(TOOLCHAIN_CAN_COMPILE_VEC128)
+    # XXX: move this further up to avoid the additional condition here.
+    add_dependencies(hacl hacl_vec128)
+    target_link_libraries(hacl PUBLIC hacl_vec128)
+endif()
 target_include_directories(hacl PRIVATE
                             ${PROJECT_SOURCE_DIR}/include
                             ${PROJECT_SOURCE_DIR}/kremlin/include
