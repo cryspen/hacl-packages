@@ -3,6 +3,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
 subparsers = cli.add_subparsers(dest="subcommand")
+verbose = False
 
 
 def subcommand(args=[], parent=subparsers):
@@ -19,3 +20,13 @@ def subcommand(args=[], parent=subparsers):
 def argument(*name_or_flags, **kwargs):
     """Helper for subcommand decorator"""
     return ([*name_or_flags], kwargs)
+
+
+def mprint(*args, **kwargs):
+    """Print with mach indicators"""
+    print( " [mach] "+" ".join(map(str,args)), **kwargs)
+
+def vprint(*args, **kwargs):
+    """Print with mach indicators but only if verbose is set"""
+    if verbose:
+        mprint(args, kwargs)

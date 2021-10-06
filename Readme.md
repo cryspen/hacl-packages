@@ -1,12 +1,12 @@
-# Evercrypt C
+# HACL
 
 ![][Status]
 
-This is an attempt to get a build system for the Evercrypt C library.
+This is an attempt to get a build system for the HACL C library.
 This is the "high-level" C library that will be generated and maintained.
 
 ## Build
-Evercrypt uses [cmake] to configure the build and [ninja] to build.
+HACL uses [cmake] to configure the build and [ninja] to build.
 
 Quick start: `./mach.py build --test`
 
@@ -27,7 +27,7 @@ optional arguments:
 ```
 usage: mach.py build [-h] [-c] [-t] [-r] [-a ALGORITHMS]
 
-Main entry point for building Evercrypt For convenience it is possible to run tests right
+Main entry point for building HACL For convenience it is possible to run tests right
 after building using -t.
 
 optional arguments:

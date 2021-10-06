@@ -1,4 +1,4 @@
-# CMake configuration for Evercrypt.
+# CMake configuration for HACL.
 #
 # We only support Ninja as target, which is set in PreLoad.cmake, and require a
 # modern CMake environment.
@@ -8,10 +8,10 @@
 cmake_minimum_required(VERSION 3.17)
 
 # Library version and name
-project(evercrypt
+project(hacl
         VERSION 1.0.0.0
-        DESCRIPTION "The Evercrypt High Assurance Crypto Library"
-        HOMEPAGE_URL "https://cryspen.com/evercrypt"
+        DESCRIPTION "The HACL High Assurance Crypto Library"
+        HOMEPAGE_URL "https://cryspen.com/hacl"
         )
 
 # Load global config from exteral file.
@@ -249,8 +249,8 @@ endif()
 configure_file(config/Config.h.in config.h)
 
 # Set library config and files
-add_library(evercrypt STATIC ${SOURCES})
-target_include_directories(evercrypt PRIVATE
+add_library(hacl STATIC ${SOURCES})
+target_include_directories(hacl PRIVATE
                             ${PROJECT_SOURCE_DIR}/include
                             ${PROJECT_SOURCE_DIR}/kremlin/include
                             ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
@@ -258,7 +258,7 @@ target_include_directories(evercrypt PRIVATE
 
 
 # Include config.h
-target_include_directories(evercrypt PUBLIC
+target_include_directories(hacl PUBLIC
                            "${PROJECT_BINARY_DIR}"
                            )
 
@@ -271,7 +271,7 @@ if("blake2" IN_LIST ALGORITHMS)
                                 ${PROJECT_SOURCE_DIR}/kremlin/include
                                 ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
                                 )
-    target_link_libraries(test_blake2b evercrypt)
+    target_link_libraries(test_blake2b hacl)
     add_test(NAME blake2b COMMAND test_blake2b)
 endif()
 if("p256" IN_LIST ALGORITHMS)
@@ -281,7 +281,7 @@ if("p256" IN_LIST ALGORITHMS)
                                 ${PROJECT_SOURCE_DIR}/kremlin/include
                                 ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
                                 )
-    target_link_libraries(test_p256 evercrypt)
+    target_link_libraries(test_p256 hacl)
     add_test(NAME p256 COMMAND test_p256)
 endif()
 

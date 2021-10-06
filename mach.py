@@ -15,7 +15,7 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import *
+from tools.utils import subcommand, argument, cli, subparsers, mprint as print, vprint, verbose
 from tools.vcs import *
 
 # === SUBCOMMANDS === #
@@ -48,10 +48,10 @@ def snapshot(args):
     if args.algorithms:
         algorithms = re.split(r"\W+", args.algorithms)
     if args.name:
-        print(" [mach] ⚠️  Named snapshots aren't implemented yet!")
+        print("⚠️  Named snapshots aren't implemented yet!")
         exit(1)
     if args.path is None:
-        print(" [mach] ⚠️  Please provide an output path with --path!")
+        print("⚠️  Please provide an output path with --path!")
         exit(1)
     out_dir = args.path
     if os.path.exists(out_dir):
@@ -59,7 +59,7 @@ def snapshot(args):
             shutil.rmtree(out_dir)
         else:
             print(
-                " [mach] ⚠️  %s exists! Please remove it or choose a different path." % out_dir)
+                "⚠️  %s exists! Please remove it or choose a different path." % out_dir)
             exit(1)
     os.mkdir(out_dir)
     config = Config(config_file, algorithms=algorithms)
@@ -106,7 +106,8 @@ def configure(args):
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
              argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str),
-             argument("-p", "--target", help="Define compile target for cross compilation", type=str)])
+             argument("-p", "--target", help="Define compile target for cross compilation", type=str),
+             argument("-v", "--verbose", help="Make builds verbose", action='store_true')])
 def build(args):
     """Main entry point for building Evercrypt
 
@@ -115,6 +116,10 @@ def build(args):
     Supported cross compilation targets:
         - x64-macos
     """
+    # Verbosity
+    global verbose
+    if args.verbose:
+        verbose = True
     # Set config
     build_config = "Debug"
     if args.release:
@@ -122,7 +127,7 @@ def build(args):
 
     # Clean if requested
     if args.clean:
-        print(" [mach] Cleaning ...")
+        print("Cleaning ...")
         try:
             shutil.rmtree("build")
             os.remove("config/config.cmake")
@@ -145,12 +150,19 @@ def build(args):
     if args.target:
         cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
 
+    # Set ninja arguments
+    ninja_args = []
+    if verbose:
+        ninja_args.append('-v')
+
     # build
     cmake_cmd = ['cmake', '--debug-trycompile', '-B', 'build']
     cmake_cmd.extend(cmake_args)
     subprocess.run(cmake_cmd, check=True)
-    subprocess.run(['ninja', '-v', '-f', 'build-%s.ninja' % build_config, '-C', 'build'], check=True)
-    print(" [mach] Build finished.")
+    ninja_cmd = ['ninja', '-f', 'build-%s.ninja' % build_config, '-C', 'build']
+    ninja_cmd.extend(ninja_args)
+    subprocess.run(ninja_cmd, check=True)
+    print("Build finished.")
 
     # test if requested
     if args.test:
