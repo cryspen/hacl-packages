@@ -129,10 +129,18 @@ message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")
 
 # Options for features.
 # They all default to off and have to be explicitely enabled.
-# TODO: Actually honor these options
 option(DISABLE_VEC128 "Disable code requiring vec128 hardware support")
 option(DISABLE_VEC256 "Disable code requiring vec256 hardware support")
 option(DISABLE_VALE "Disable vale code")
+if(DISABLE_VEC128)
+    set(TOOLCHAIN_CAN_COMPILE_VEC128 OFF)
+endif()
+if(DISABLE_VEC256)
+    set(TOOLCHAIN_CAN_COMPILE_VEC256 OFF)
+endif()
+if(DISABLE_VALE)
+    set(TOOLCHAIN_CAN_COMPILE_VALE OFF)
+endif()
 
 # Select source files to compile depending on the configuration and the platform.
 set(SOURCES "")
@@ -154,12 +162,6 @@ set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
-# if(NOT TOOLCHAIN_CAN_COMPILE_VEC128)
-#     message(STATUS "Disabling sources that require AVX")
-#     foreach(HACL_FILE ${CPU_FEATURE_vec128})
-#         list(REMOVE_ITEM SOURCES ${HACL_FILE})
-#     endforeach()
-# else()
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
     ## We make separate static libraries for each hardware feature
     foreach(HACL_FILE ${CPU_FEATURE_vec128})
@@ -186,9 +188,14 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
             -DHACL_CAN_COMPILE_VEC128
         )
     endif()
+else()
+    message(STATUS "Disabling sources that require VEC128")
+    foreach(HACL_FILE ${CPU_FEATURE_vec128})
+        list(REMOVE_ITEM SOURCES ${HACL_FILE})
+    endforeach()
 endif()
 if(NOT TOOLCHAIN_CAN_COMPILE_VEC256)
-    message(STATUS "Disabling sources that require AVX2")
+    message(STATUS "Disabling sources that require VEC256")
     foreach(HACL_FILE ${CPU_FEATURE_vec256})
         list(REMOVE_ITEM SOURCES ${HACL_FILE})
     endforeach()
@@ -275,6 +282,7 @@ target_include_directories(hacl PUBLIC
 # Testing
 enable_testing()
 if("blake2" IN_LIST ALGORITHMS)
+    # TODO: read from config.json
     add_executable(test_blake2b ${PROJECT_SOURCE_DIR}/tests/blake2b.c)
     target_include_directories(test_blake2b PUBLIC
                                 ${PROJECT_SOURCE_DIR}/include
@@ -283,6 +291,19 @@ if("blake2" IN_LIST ALGORITHMS)
                                 )
     target_link_libraries(test_blake2b hacl)
     add_test(NAME blake2b COMMAND test_blake2b)
+    add_executable(test_blake2s ${PROJECT_SOURCE_DIR}/tests/blake2s.c)
+    target_include_directories(test_blake2s PUBLIC
+                                ${PROJECT_SOURCE_DIR}/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/include
+                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                )
+    if(TOOLCHAIN_CAN_COMPILE_VEC128)
+        target_compile_options(test_blake2s PRIVATE
+            -DHACL_CAN_COMPILE_VEC128
+        )
+    endif()
+    target_link_libraries(test_blake2s hacl)
+    add_test(NAME blake2s COMMAND test_blake2s)
 endif()
 if("p256" IN_LIST ALGORITHMS)
     add_executable(test_p256 ${PROJECT_SOURCE_DIR}/tests/p256.c)

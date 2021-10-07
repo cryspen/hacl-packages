@@ -15,7 +15,7 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import subcommand, argument, cli, subparsers, mprint as print, vprint, verbose
+from tools.utils import subcommand, argument, cli, subparsers, mprint as print
 from tools.vcs import *
 
 # === SUBCOMMANDS === #
@@ -106,8 +106,9 @@ def configure(args):
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
              argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str),
-             argument("-p", "--target", help="Define compile target for cross compilation", type=str),
-             argument("-v", "--verbose", help="Make builds verbose", action='store_true')])
+             argument("-p", "--target", help="Define compile target for cross compilation.", type=str),
+             argument("-d", "--disable", help="Disable hardware features even if available.", type=str),
+             argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
     """Main entry point for building Evercrypt
 
@@ -115,11 +116,20 @@ def build(args):
 
     Supported cross compilation targets:
         - x64-macos
+
+    Features that can be disabled:
+        - vec128 (avx/neon)
+        - vec256 (avx)
+        - vale (x64 assembly)
     """
     # Verbosity
-    global verbose
+    verbose = False
     if args.verbose:
         verbose = True
+        def vprint(*args, **kwargs):
+            print(args, kwargs)
+    else:
+        vprint = lambda *a, **k: None
     # Set config
     build_config = "Debug"
     if args.release:
@@ -147,27 +157,36 @@ def build(args):
 
     # Set target toolchain if cross compiling
     cmake_args = []
+    ctest_args = []
     if args.target:
         cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+    if args.disable:
+        features_to_disable = list(map(lambda f : "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
+        cmake_args.extend(features_to_disable)
 
     # Set ninja arguments
     ninja_args = []
     if verbose:
         ninja_args.append('-v')
+        ctest_args.append('--verbose')
 
     # build
     cmake_cmd = ['cmake', '--debug-trycompile', '-B', 'build']
     cmake_cmd.extend(cmake_args)
+    vprint(str(cmake_cmd))
     subprocess.run(cmake_cmd, check=True)
     ninja_cmd = ['ninja', '-f', 'build-%s.ninja' % build_config, '-C', 'build']
     ninja_cmd.extend(ninja_args)
+    vprint(str(ninja_cmd))
     subprocess.run(ninja_cmd, check=True)
     print("Build finished.")
 
     # test if requested
     if args.test:
-        # --build-two-config
-        subprocess.run(['ctest', '-C', build_config, '--test-dir', 'build'], check=True)
+        ctest_cmd = ['ctest', '-C', build_config, '--test-dir', 'build']
+        ctest_cmd.extend(ctest_args)
+        vprint(ctest_cmd)
+        subprocess.run(ctest_cmd, check=True)
 
 
 @subcommand()

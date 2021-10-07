@@ -101,8 +101,9 @@
         ]
     },
     "tests": {
-        "blake2b": [
-            "blake2b.c"
+        "blake": [
+            "blake2b.c",
+            "blake2s.c"
         ],
         "p256": [
             "p256.c"
