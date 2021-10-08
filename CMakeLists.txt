@@ -20,19 +20,14 @@ project(hacl
 # needed.
 include(config/config.cmake)
 
+# Constants used throughout hacl and the build.
+include(config/constants.cmake)
+
 # Configure C globally
 # https://cmake.org/cmake/help/latest/prop_tgt/C_STANDARD.html#prop_tgt:C_STANDARD
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-# Set configuration constants
-set(EVERCRYPT_ARCHITECTURE_UNKNOWN 0)
-set(EVERCRYPT_ARCHITECTURE_X86 1)
-set(EVERCRYPT_ARCHITECTURE_X64 2)
-set(EVERCRYPT_ARCHITECTURE_ARM32 3)
-set(EVERCRYPT_ARCHITECTURE_ARM64 4)
-set(EVERCRYPT_ARCHITECTURE_SYSTEMZ 5)
-set(EVERCRYPT_ARCHITECTURE_POWERPC64 6)
 
 # Set variables ## TODO: drop
 set(EVERCRYPT_COMPILE_VEC256 0)
@@ -63,90 +58,22 @@ if(DEFINED CMAKE_C_COMPILER_TARGET)
 endif()
 
 # Test the toolchain to get supported CPU features
-INCLUDE(CheckCCompilerFlag)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE EXECUTABLE)
-## Check for gcc compiler bug 81300
-if(NOT DEFINED BUG_81300)
-    try_compile(BUG_81300
-                        ${PROJECT_SOURCE_DIR}/config/build
-                        ${PROJECT_SOURCE_DIR}/config/bug81300.c
-                        # TODO: get the include paths from global variables
-                        #       We should probably get rid of the march=native!
-                        COMPILE_DEFINITIONS "-DCOMPILE_INTRINSICS \
-                                             -march=native -O3\
-                                             -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
-                )
-endif()
-message(STATUS "Bug 81300 check: ${BUG_81300}")
-## Check for int128 support
-if(NOT DEFINED INT128_SUPPORT)
-    try_compile(INT128_SUPPORT
-                        ${PROJECT_SOURCE_DIR}/config/build
-                        ${PROJECT_SOURCE_DIR}/config/int128.c
-                )
-endif()
-message(STATUS "int128 support: ${INT128_SUPPORT}")
-## Check for explicit_bzero support
-if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
-    try_compile(EXPLICIT_BZERO_SUPPORT
-                        ${PROJECT_SOURCE_DIR}/config/build
-                        ${PROJECT_SOURCE_DIR}/config/explicit_bzero.c
-                )
-endif()
-message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
-## Check for vec128 support
-if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
-    try_compile(TOOLCHAIN_CAN_COMPILE_VEC128
-                        ${PROJECT_SOURCE_DIR}/config/build
-                        ${PROJECT_SOURCE_DIR}/config/vec128.c
-                        # TODO: get the include paths from global variables
-                        #       When do we need -march=armv8-a+simd or something else here?
-                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC128 \
-                                             -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
-                )
-endif()
-message(STATUS "vec128 support: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
-## Check for vec256 support
-if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
-    try_compile(TOOLCHAIN_CAN_COMPILE_VEC256
-                        ${PROJECT_SOURCE_DIR}/config/build
-                        ${PROJECT_SOURCE_DIR}/config/vec256.c
-                        # TODO: get the include paths from global variables
-                        #       When do we need -march=armv8-a+simd or something else here?
-                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 \
-                                             -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
-                )
-endif()
-message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")
+include(config/toolchain.cmake)
 
 # XXX: Investigate whether we can use CHECK_C_COMPILER_FLAG here at all
 
-# Options for features.
-# They all default to off and have to be explicitely enabled.
-option(DISABLE_VEC128 "Disable code requiring vec128 hardware support")
-option(DISABLE_VEC256 "Disable code requiring vec256 hardware support")
-option(DISABLE_VALE "Disable vale code")
-if(DISABLE_VEC128)
-    set(TOOLCHAIN_CAN_COMPILE_VEC128 OFF)
-endif()
-if(DISABLE_VEC256)
-    set(TOOLCHAIN_CAN_COMPILE_VEC256 OFF)
-endif()
-if(DISABLE_VALE)
-    set(TOOLCHAIN_CAN_COMPILE_VALE OFF)
-endif()
+# Get command line options.
+# This has to happen after the toolchain detection because it might disable
+# toolchain features.
+include(config/options.cmake)
 
 # Select source files to compile depending on the configuration and the platform.
 set(SOURCES "")
 set(VEC128_SOURCES "")
 set(VEC256_SOURCES "")
 
+# Add all sources requested by the algorithms.
+# XXX: We could simplifiy this in mach and write it out to config.cmake.
 foreach(ALG ${ALGORITHMS})
     message(STATUS "Adding ${ALG}")
     list(APPEND SOURCES ${HACL_FILES_${ALG}})
@@ -155,15 +82,11 @@ endforeach()
 # Remove duplicates from the list
 list(REMOVE_DUPLICATES SOURCES)
 
-set(TOOLCHAIN_CAN_COMPILE_VALE OFF) # XXX: FOR TESTING ONLY
-set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF) # XXX: FOR TESTING ONLY
-set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
-
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
-    ## We make separate static libraries for each hardware feature
+    ## We make separate compilation units (object files) for each hardware feature
     foreach(HACL_FILE ${CPU_FEATURE_vec128})
         if(${HACL_FILE} IN_LIST SOURCES)
             # Remove vec128 files from SOURCES and add them to VEC128_SOURCES
