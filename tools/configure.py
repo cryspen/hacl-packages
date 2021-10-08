@@ -2,6 +2,7 @@ import os
 import json
 import re
 import subprocess
+from os.path import join
 
 
 class Config:
@@ -34,6 +35,7 @@ class Config:
             files.extend(line)
 
         # Get all source files in src/
+        # FIXME: Does this work on Windows?
         result = subprocess.run(
             'ls -1a src/*.c', stdout=subprocess.PIPE, shell=True)
         source_files = result.stdout.decode('utf-8')
@@ -42,6 +44,7 @@ class Config:
         source_files = list(map(lambda s: s[4:-2], source_files))
 
         # Now let's collect the c files from the included headers
+        # This adds all files without looking at the feature requirements into deps.
         deps = []
         for include in files:
             # Get the file name from the path (could be done more efficiently before)
@@ -50,11 +53,11 @@ class Config:
             include = include_match.group(2)
             # Only add the dependency if there's a corresponding source file.
             if include in source_files:
-                deps.append("src/"+include+".c")
+                deps.append(join("src", include+".c"))
         return deps
 
     def __init__(self, config_file, algorithms=[]):
-        """Configure the build and write config.cmake if requested"""
+        """Read the build config from the json file"""
         print(" [mach] Using %s to configure ..." % (config_file))
 
         # read file
@@ -98,6 +101,7 @@ class Config:
         # Collect features, inverting the features map
         self.cpu_features = {}
         for file in self.features:
+            # FIXME: Only add files required by the requested algorithms
             for feature in self.features[file]:
                 if feature in self.cpu_features:
                     self.cpu_features[feature].append(file)
