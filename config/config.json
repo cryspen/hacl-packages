@@ -9,44 +9,93 @@
     ],
     "hacl_sources": {
         "ed25519": [
-            "Hacl_Ed25519.c"
+            {
+                "file": "Hacl_Ed25519.c",
+                "features": "std"
+            }
         ],
         "blake2": [
-            "Hacl_Hash_Blake2.c",
-            "Hacl_Hash_Blake2b_256.c",
-            "Hacl_Streaming_Blake2b_256.c",
-            "Hacl_Hash_Blake2s_128.c"
+            {
+                "file": "Hacl_Hash_Blake2.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Hash_Blake2b_256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_Streaming_Blake2b_256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_Hash_Blake2s_128.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_Streaming_Blake2s_128.c",
+                "features": "vec128"
+            }
         ],
         "chacha20poly1305": [
-            "Hacl_Chacha20Poly1305_32.c",
-            "Hacl_Chacha20Poly1305_128.c",
-            "Hacl_Chacha20Poly1305_256.c"
+            {
+                "file": "Hacl_Chacha20Poly1305_32.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Chacha20Poly1305_128.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_Chacha20Poly1305_256.c",
+                "features": "vec256"
+            }
         ],
         "curve25519": [
-            "Hacl_Curve25519_51.c",
-            "Hacl_Curve25519_64.c"
+            {
+                "file": "Hacl_Curve25519_51.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Curve25519_64.c",
+                "features": "vale"
+            }
         ],
         "p256": [
-            "Hacl_P256.c"
+            {
+                "file": "Hacl_P256.c",
+                "features": "std"
+            }
         ],
         "sha3": [
-            "Hacl_SHA3.c"
+            {
+                "file": "Hacl_SHA3.c",
+                "features": "std"
+            }
         ],
         "hmac": [
-            "Hacl_HMAC.c"
+            {
+                "file": "Hacl_HMAC.c",
+                "features": "std"
+            }
         ],
         "hkdf": [
-            "Hacl_HKDF.c"
+            {
+                "file": "Hacl_HKDF.c",
+                "features": "std"
+            }
         ],
         "rsapss": [
-            "Hacl_RSAPSS.c"
+            {
+                "file": "Hacl_RSAPSS.c",
+                "features": "std"
+            }
         ]
     },
     "evercrypt_sources": {
         "drbg": [
             "EverCrypt_DRBG.c"
         ],
-        "ed25519": [
+        "_ed25519": [
             "EverCrypt_Ed25519.c"
         ],
         "curve25519": [
@@ -75,29 +124,6 @@
         ],
         "aead": [
             "EverCrypt_AEAD.c"
-        ]
-    },
-    "features": {
-        "Hacl_Hash_Blake2b_256.c": [
-            "vec256"
-        ],
-        "Hacl_Streaming_Blake2b_256.c": [
-            "vec256"
-        ],
-        "Hacl_Hash_Blake2s_128.c": [
-            "vec128"
-        ],
-        "Hacl_Chacha20Poly1305_128.c": [
-            "vec128"
-        ],
-        "Hacl_Chacha20Poly1305_256.c": [
-            "vec256"
-        ],
-        "Hacl_Chacha20_Vec256.c": [
-            "vec256"
-        ],
-        "Hacl_Poly1305_256.c": [
-            "vec256"
         ]
     },
     "tests": {

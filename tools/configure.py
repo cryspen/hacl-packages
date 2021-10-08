@@ -13,6 +13,11 @@ class Config:
         Use `clang -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
+        # We only get dependencies for files that don't require features.
+        # Any feature file will require a top level file.
+        if source_file["features"] != "std":
+            return join("src", source_file["file"])
+        source_file = source_file["file"]
         # Build dependency graph
         result = subprocess.run(
             'clang -I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -MM src/'+source_file,
@@ -69,7 +74,6 @@ class Config:
         self.kremlin_files = self.config["kremlin_sources"]
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
-        self.features = self.config["features"]
         self.tests = self.config["tests"]
 
         # Filter algorithms in hacl_files
@@ -89,31 +93,50 @@ class Config:
 
         # Collect dependencies for the hacl files.
         self.hacl_compile_files = {}
+        self.hacl_compile_feature = {}
+        all_feature_files = [] # Only a helper to filer hacl_compile_files
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
                 files = self.dependencies(a, source_file)
                 if a in self.hacl_compile_files:
-                    self.hacl_compile_files[a].extend(files)
+                    self.hacl_compile_files[a].extend(files if type(files) == list else [files])
                 else:
                     # Add the new algorithm dependency
                     self.hacl_compile_files[a] = files
-
-        # Collect features, inverting the features map
-        self.cpu_features = {}
-        for file in self.features:
-            # FIXME: Only add files required by the requested algorithms
-            for feature in self.features[file]:
-                if feature in self.cpu_features:
-                    self.cpu_features[feature].append(file)
+                feature = source_file["features"]
+                all_feature_files.extend(files if type(files) == list else [files])
+                if feature in self.hacl_compile_feature:
+                    self.hacl_compile_feature[feature].extend(files if type(files) == list else [files])
                 else:
-                    self.cpu_features[feature] = [file]
+                    # Add the new feature dependency
+                    self.hacl_compile_feature[feature] = files if type(files) == list else [files]
+        # Remove files that require additional features from hacl_compile_files
+        for a, files in list(self.hacl_compile_files.items()):
+            for file in files:
+                if file in all_feature_files:
+                    self.hacl_compile_files[a].remove(file)
+
+        print(self.hacl_compile_files)
+        for f in self.hacl_compile_feature:
+            print(f+": "+str(self.hacl_compile_feature[f]))
+        # exit(1)
+
+        # # Collect features, inverting the features map
+        # self.cpu_features = {}
+        # for file in self.features:
+        #     # FIXME: Only add files required by the requested algorithms
+        #     for feature in self.features[file]:
+        #         if feature in self.cpu_features:
+        #             self.cpu_features[feature].append(file)
+        #         else:
+        #             self.cpu_features[feature] = [file]
 
         # TODO: evercrypt dependencies and features.
-        self.evercrypt_compile_files = {}
-        for a in self.evercrypt_files:
-            for source_file in self.evercrypt_files[a]:
-                self.evercrypt_compile_files[a] = self.dependencies(
-                    a, source_file)
+        # self.evercrypt_compile_files = {}
+        # for a in self.evercrypt_files:
+        #     for source_file in self.evercrypt_files[a]:
+        #         self.evercrypt_compile_files[a] = self.dependencies(
+        #             a, source_file)
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
@@ -124,30 +147,34 @@ class Config:
                 out.write("set(KREMLIN_FILES %s)\n" %
                           " ".join(f for f in self.kremlin_files))
 
+            for a in self.hacl_compile_feature:
+                out.write("set(SOURCES_%s %s)\n" %
+                          (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a])))
+
             out.write("set(ALGORITHMS %s)\n" %
                       " ".join(a for a in self.hacl_files))
-            # for a in hacl_files:
-            #     out.write("option(%s \"\" ON)\n" % a)
-            out.write("set(ALGORITHM_HACL_FILES %s)\n" %
-                      " ".join("HACL_FILES_"+a for a in self.hacl_files))
+            # # for a in hacl_files:
+            # #     out.write("option(%s \"\" ON)\n" % a)
+            # out.write("set(ALGORITHM_HACL_FILES %s)\n" %
+            #           " ".join("HACL_FILES_"+a for a in self.hacl_files))
 
-            for a in self.hacl_compile_files:
-                out.write("set(HACL_FILES_%s %s)\n" %
-                          (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.hacl_compile_files[a])))
+            # for a in self.hacl_compile_files:
+            #     out.write("set(HACL_FILES_%s %s)\n" %
+            #               (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.hacl_compile_files[a])))
 
-            out.write("set(ALGORITHM_EVERCRYPT_FILES %s)\n" %
-                      " ".join("EVERCRYPT_FILES_"+a for a in self.evercrypt_files))
-            for a in self.evercrypt_files:
-                out.write("set(EVERCRYPT_FILES_%s %s)\n" %
-                          (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.evercrypt_files[a])))
+            # out.write("set(ALGORITHM_EVERCRYPT_FILES %s)\n" %
+            #           " ".join("EVERCRYPT_FILES_"+a for a in self.evercrypt_files))
+            # for a in self.evercrypt_files:
+            #     out.write("set(EVERCRYPT_FILES_%s %s)\n" %
+            #               (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.evercrypt_files[a])))
 
-            for f in self.features:
-                out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
-                    f)[0], " ".join(feature for feature in self.features[f])))
+            # for f in self.features:
+            #     out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
+            #         f)[0], " ".join(feature for feature in self.features[f])))
 
-            for f in self.cpu_features:
-                out.write("set(CPU_FEATURE_%s %s)\n" % (os.path.splitext(
-                    f)[0], " ".join("${PROJECT_SOURCE_DIR}/src/"+file for file in self.cpu_features[f])))
+            # for f in self.cpu_features:
+            #     out.write("set(CPU_FEATURE_%s %s)\n" % (os.path.splitext(
+            #         f)[0], " ".join("${PROJECT_SOURCE_DIR}/src/"+file for file in self.cpu_features[f])))
 
             out.write("set(ALGORITHM_TEST_FILES %s)\n" %
                       " ".join("TEST_FILES_"+a for a in self.tests))

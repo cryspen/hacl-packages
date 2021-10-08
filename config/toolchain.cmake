@@ -54,7 +54,7 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
                         ${PROJECT_SOURCE_DIR}/config/vec256.c
                         # TODO: get the include paths from global variables
                         #       When do we need -march=armv8-a+simd or something else here?
-                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 \
+                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 -mavx2 \
                                              -I${PROJECT_SOURCE_DIR}/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"

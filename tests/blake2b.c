@@ -2,6 +2,10 @@
 #include "util.h"
 #include "config.h"
 
+#ifdef HACL_CAN_COMPILE_VEC256
+#include "Hacl_Hash_Blake2b_256.h"
+#endif
+
 typedef struct
 {
     uint8_t *input;

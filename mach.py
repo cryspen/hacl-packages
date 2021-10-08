@@ -159,7 +159,12 @@ def build(args):
     cmake_args = []
     ctest_args = []
     if args.target:
-        cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+        if args.target == "x64-macos":
+            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+        else:
+            print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
+            print("   Available targets: x64-macos")
+            exit(1)
     if args.disable:
         features_to_disable = list(map(lambda f : "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
         cmake_args.extend(features_to_disable)

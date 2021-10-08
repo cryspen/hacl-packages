@@ -67,69 +67,63 @@ include(config/toolchain.cmake)
 # toolchain features.
 include(config/options.cmake)
 
-# Select source files to compile depending on the configuration and the platform.
-set(SOURCES "")
-set(VEC128_SOURCES "")
-set(VEC256_SOURCES "")
-
-# Add all sources requested by the algorithms.
-# XXX: We could simplifiy this in mach and write it out to config.cmake.
-foreach(ALG ${ALGORITHMS})
-    message(STATUS "Adding ${ALG}")
-    list(APPEND SOURCES ${HACL_FILES_${ALG}})
-endforeach()
-
-# Remove duplicates from the list
-list(REMOVE_DUPLICATES SOURCES)
+# Sources are written by mach.py into the following lists
+# - SOURCES_std: All regular files
+# - SOURCES_vec128: Files that require vec128 hardware
+# - SOURCES_vec256: Files that require vec256 hardware
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
 # TODO: make compilation units for each flag
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
-    ## We make separate compilation units (object files) for each hardware feature
-    foreach(HACL_FILE ${CPU_FEATURE_vec128})
-        if(${HACL_FILE} IN_LIST SOURCES)
-            # Remove vec128 files from SOURCES and add them to VEC128_SOURCES
-            list(APPEND VEC128_SOURCES ${HACL_FILE})
-            list(REMOVE_ITEM SOURCES ${HACL_FILE})
+    add_compile_options(
+        -DHACL_CAN_COMPILE_VEC128
+    )
+    ## We make separate compilation units (static libraries) for each hardware feature
+    list(LENGTH SOURCES_vec128 SOURCES_VEC128_LEN)
+    if(NOT SOURCES_VEC128_LEN EQUAL 0)
+        set(HACL_VEC128_O ON)
+        add_library(hacl_vec128 STATIC ${SOURCES_vec128})
+        target_include_directories(hacl_vec128 PRIVATE
+                                    ${PROJECT_SOURCE_DIR}/include
+                                    ${PROJECT_SOURCE_DIR}/kremlin/include
+                                    ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                    )
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+            target_compile_options(hacl_vec128 PRIVATE
+                -mavx
+            )
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+            target_compile_options(hacl_vec128 PRIVATE
+                -march=armv8-a+simd
+            )
         endif()
-    endforeach()
-    add_library(hacl_vec128 OBJECT ${VEC128_SOURCES})
-    target_include_directories(hacl_vec128 PRIVATE
-                                ${PROJECT_SOURCE_DIR}/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                )
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-        target_compile_options(hacl_vec128 PRIVATE
-            -mavx
-            -DHACL_CAN_COMPILE_VEC128
-        )
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
-        target_compile_options(hacl_vec128 PRIVATE
-            -march=armv8-a+simd
-            -DHACL_CAN_COMPILE_VEC128
-        )
     endif()
-else()
-    message(STATUS "Disabling sources that require VEC128")
-    foreach(HACL_FILE ${CPU_FEATURE_vec128})
-        list(REMOVE_ITEM SOURCES ${HACL_FILE})
-    endforeach()
 endif()
-if(NOT TOOLCHAIN_CAN_COMPILE_VEC256)
-    message(STATUS "Disabling sources that require VEC256")
-    foreach(HACL_FILE ${CPU_FEATURE_vec256})
-        list(REMOVE_ITEM SOURCES ${HACL_FILE})
-    endforeach()
-else()
-    # We really should only get here on x86 architectures. But let's make sure.
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-        add_compile_options(
-            -mavx2
-            -DHACL_CAN_COMPILE_VEC256
-        )
+if(TOOLCHAIN_CAN_COMPILE_VEC256)
+    add_compile_options(
+        -DHACL_CAN_COMPILE_VEC256
+    )
+    ## We make separate compilation units (static libraries) for each hardware feature
+    list(LENGTH SOURCES_vec256 SOURCES_VEC256_LEN)
+    if(NOT SOURCES_VEC256_LEN EQUAL 0)
+        set(HACL_VEC256_O ON)
+        add_library(hacl_vec256 STATIC ${SOURCES_vec256})
+        target_include_directories(hacl_vec256 PRIVATE
+                                    ${PROJECT_SOURCE_DIR}/include
+                                    ${PROJECT_SOURCE_DIR}/kremlin/include
+                                    ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
+                                    )
+        # We really should only get here on x86 architectures. But let's make sure.
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+            target_compile_options(hacl_vec256 PRIVATE
+                -mavx2
+            )
+        endif()
     endif()
+endif()
+if(TOOLCHAIN_CAN_COMPILE_VALE)
+    # TODO: include VALE source code
 endif()
 
 # message(STATUS "SOURCES: ${SOURCES}")
@@ -141,20 +135,6 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     set(ARCHITECTURE intel)
     set(EVERCRYPT_TARGET_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
     set(EVERCRYPT_ARCHITECTURE ${EVERCRYPT_ARCHITECTURE_X64})
-    if(TOOLCHAIN_CAN_COMPILE_VALE)
-        # TODO: include VALE source code
-    endif()
-    if(TOOLCHAIN_CAN_COMPILE_VEC128)
-        add_compile_options(-mavx)
-    endif()
-    # We assume that all processors with AVX2 also support AVX
-    if(TOOLCHAIN_CAN_COMPILE_VEC256)
-        set(EVERCRYPT_COMPILE_VEC256 1)
-        add_compile_options(-mavx2)
-        set(SOURCES ${SOURCES}
-        ${PROJECT_SOURCE_DIR}/src/Hacl_Blake2b_256.c
-            )
-    endif()
 # x86
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32")
     message(STATUS "Detected an x86 architecture")
@@ -184,11 +164,14 @@ configure_file(config/Config.h.in config.h)
 # Set library config and files
 ## Now combine everything into the hacl library
 ## TODO: static and dynamic builds
-add_library(hacl SHARED ${SOURCES})
-if(TOOLCHAIN_CAN_COMPILE_VEC128)
-    # XXX: move this further up to avoid the additional condition here.
+add_library(hacl SHARED ${SOURCES_std})
+if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
     target_link_libraries(hacl PUBLIC hacl_vec128)
+endif()
+if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
+    add_dependencies(hacl hacl_vec256)
+    target_link_libraries(hacl PUBLIC hacl_vec256)
 endif()
 target_include_directories(hacl PRIVATE
                             ${PROJECT_SOURCE_DIR}/include
@@ -220,11 +203,6 @@ if("blake2" IN_LIST ALGORITHMS)
                                 ${PROJECT_SOURCE_DIR}/kremlin/include
                                 ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
                                 )
-    if(TOOLCHAIN_CAN_COMPILE_VEC128)
-        target_compile_options(test_blake2s PRIVATE
-            -DHACL_CAN_COMPILE_VEC128
-        )
-    endif()
     target_link_libraries(test_blake2s hacl)
     add_test(NAME blake2s COMMAND test_blake2s)
 endif()
