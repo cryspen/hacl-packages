@@ -88,6 +88,7 @@ include(config/options.cmake)
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
+# message(FATAL_ERROR "vec128: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC128

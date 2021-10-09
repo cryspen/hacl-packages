@@ -122,10 +122,16 @@ class Config:
                     self.hacl_compile_feature[feature] = files if type(files) == list else [
                         files]
         # Remove files that require additional features from hacl_compile_files
-        for a, files in list(self.hacl_compile_files.items()):
-            for file in files:
-                if file in all_feature_files:
-                    self.hacl_compile_files[a].remove(file)
+        # print(self.hacl_compile_feature["std"])
+        self.hacl_compile_feature["std"] = [
+            file for file in self.hacl_compile_feature["std"] if file not in all_feature_files]
+        # for file in self.hacl_compile_feature["std"]:
+        #     print(file)
+        #     if file in all_feature_files:
+        #         self.hacl_compile_feature["std"].remove(file)
+        # print(all_feature_files)
+        # print(self.hacl_compile_feature["std"])
+        # exit(1)
 
         # Set kremlin as include paths
         self.include_paths.extend(self.kremlin_include_paths)

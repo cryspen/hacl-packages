@@ -37,11 +37,15 @@ bool print_test2s(int in_len, uint8_t *in, int key_len, uint8_t *key, int exp_le
     return ok;
 }
 
-// FIXME: Make this a TEST_P
-TEST(Blake2sTest, BasicKAT)
+class Blake2sTesting : public ::testing::TestWithParam<blake2_test_vector>
 {
-    for (int i = 0; i < sizeof(vectors2s) / sizeof(blake2_test_vector); ++i)
-    {
-        EXPECT_TRUE(print_test2s(vectors2s[i].input_len, vectors2s[i].input, vectors2s[i].key_len, vectors2s[i].key, vectors2s[i].expected_len, vectors2s[i].expected));
-    }
+};
+
+TEST_P(Blake2sTesting, TryTestVectors)
+{
+    const blake2_test_vector &vectors2s(GetParam());
+    EXPECT_TRUE(print_test2s(vectors2s.input_len, vectors2s.input, vectors2s.key_len, vectors2s.key, vectors2s.expected_len, vectors2s.expected));
 }
+
+INSTANTIATE_TEST_SUITE_P(TestVectors, Blake2sTesting,
+                         ::testing::ValuesIn(vectors2s));
