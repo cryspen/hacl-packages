@@ -188,10 +188,12 @@ def build(args):
 
     # test if requested
     if args.test:
-        ctest_cmd = ['ctest', '-C', build_config, '--test-dir', 'build']
+        ctest_env = os.environ.copy()
+        ctest_env["GTEST_COLOR"] = "1"
+        ctest_cmd = ['ctest', '-C', build_config, '--test-dir', 'build', ]
         ctest_cmd.extend(ctest_args)
         vprint(ctest_cmd)
-        subprocess.run(ctest_cmd, check=True)
+        subprocess.run(ctest_cmd, check=True, env=ctest_env)
 
 
 @subcommand()

@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,11 +74,6 @@ static uint8_t scalar0[32] = {
 
 };
 
-bool print_result(int in_len, uint8_t *comp, uint8_t *exp)
-{
-    return compare_and_print(in_len, comp, exp);
-}
-
 bool testImplementationHacl()
 {
     uint8_t *result = (uint8_t *)malloc(sizeof(uint8_t) * 64);
@@ -91,12 +88,7 @@ void handleErrors()
     printf("%s\n", "OpenSSl exception");
 }
 
-int main()
+TEST(P256Test, BasicTest)
 {
-    if (!testImplementationHacl())
-    {
-        printf("%s\n", "ECDSA test failed");
-        return -1;
-    }
-    printf("%s\n", "ECDSA test successful");
+    EXPECT_TRUE(testImplementationHacl());
 }

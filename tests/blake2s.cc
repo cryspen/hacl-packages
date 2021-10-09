@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,11 +20,6 @@
 #include "EverCrypt_AutoConfig2.h"
 #include "blake2_vectors.h"
 
-bool print_result(int in_len, uint8_t *comp, uint8_t *exp)
-{
-    return compare_and_print(in_len, comp, exp);
-}
-
 bool print_test2s(int in_len, uint8_t *in, int key_len, uint8_t *key, int exp_len, uint8_t *exp)
 {
     uint8_t comp[exp_len];
@@ -40,20 +37,11 @@ bool print_test2s(int in_len, uint8_t *in, int key_len, uint8_t *key, int exp_le
     return ok;
 }
 
-int main()
+// FIXME: Make this a TEST_P
+TEST(Blake2sTest, BasicKAT)
 {
-    bool success = true;
     for (int i = 0; i < sizeof(vectors2s) / sizeof(blake2_test_vector); ++i)
     {
-        success &= print_test2s(vectors2s[i].input_len, vectors2s[i].input, vectors2s[i].key_len, vectors2s[i].key, vectors2s[i].expected_len, vectors2s[i].expected);
-    }
-
-    if (success)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
+        EXPECT_TRUE(print_test2s(vectors2s[i].input_len, vectors2s[i].input, vectors2s[i].key_len, vectors2s[i].key, vectors2s[i].expected_len, vectors2s[i].expected));
     }
 }

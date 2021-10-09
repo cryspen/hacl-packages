@@ -30,3 +30,8 @@ static inline bool compare_and_print(size_t len, uint8_t *comp, uint8_t *exp)
     }
     return ok;
 }
+
+static inline bool print_result(int in_len, uint8_t *comp, uint8_t *exp)
+{
+    return compare_and_print(in_len, comp, exp);
+}

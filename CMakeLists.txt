@@ -14,6 +14,17 @@ project(hacl
         HOMEPAGE_URL "https://cryspen.com/hacl"
         )
 
+# Dependencies
+# gtests are used for testing
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # Load global config from exteral file.
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
@@ -58,7 +69,7 @@ if(DEFINED CMAKE_C_COMPILER_TARGET)
 endif()
 
 # Set include paths
-include_directories(${INCLUDE_PATHS})
+include_directories(${INCLUDE_PATHS} ${PROJECT_BINARY_DIR})
 
 # Test the toolchain to get supported CPU features
 include(config/toolchain.cmake)
@@ -77,7 +88,6 @@ include(config/options.cmake)
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
-# TODO: make compilation units for each flag
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC128
@@ -119,6 +129,12 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VALE)
     # TODO: include VALE source code
+endif()
+if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
+    # TODO: include inline assembly source code
+endif()
+if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
+    # TODO: include intrinsics source code
 endif()
 
 # message(STATUS "SOURCES: ${SOURCES}")
@@ -170,31 +186,19 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
 endif()
 target_include_directories(hacl PRIVATE)
 
-
-# Include config.h
-target_include_directories(hacl PUBLIC
-                           "${PROJECT_BINARY_DIR}"
-                           )
-
 # Testing
+# It's only one binary. Everything else is done with gtest arguments.
 enable_testing()
-if("blake2" IN_LIST ALGORITHMS)
-    # TODO: read from config.json
-    add_executable(test_blake2b ${PROJECT_SOURCE_DIR}/tests/blake2b.c)
-    target_include_directories(test_blake2b PUBLIC)
-    target_link_libraries(test_blake2b hacl)
-    add_test(NAME blake2b COMMAND test_blake2b)
-    add_executable(test_blake2s ${PROJECT_SOURCE_DIR}/tests/blake2s.c)
-    target_include_directories(test_blake2s PUBLIC)
-    target_link_libraries(test_blake2s hacl)
-    add_test(NAME blake2s COMMAND test_blake2s)
-endif()
-if("p256" IN_LIST ALGORITHMS)
-    add_executable(test_p256 ${PROJECT_SOURCE_DIR}/tests/p256.c)
-    target_include_directories(test_p256 PUBLIC)
-    target_link_libraries(test_p256 hacl)
-    add_test(NAME p256 COMMAND test_p256)
-endif()
+add_executable(hacl_test
+    ${TEST_SOURCES}
+)
+target_link_libraries(hacl_test
+    gtest_main
+    hacl
+)
+
+include(GoogleTest)
+gtest_discover_tests(hacl_test)
 
 # Hardware detection
 if(ARCHITECTURE MATCHES "intel")

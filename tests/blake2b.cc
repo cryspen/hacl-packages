@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "Hacl_Hash_Blake2.h"
 #include "util.h"
 #include "config.h"
@@ -44,9 +46,10 @@ static uint8_t expected2b1[64] = {
     0xe0U, 0xfdU, 0x5fU, 0x8dU, 0xdfU, 0x82U, 0x37U, 0x18U,
     0xd8U, 0x6dU, 0x1eU, 0x16U, 0xc6U, 0x09U, 0x00U, 0x71U};
 
-
-int main(int argc, char const *argv[])
+// FIXME: Make this a TEST_P
+TEST(Blake2bTest, BasicKAT)
 {
+
     uint32_t exp_len = sizeof(expected2b1) / sizeof(uint8_t);
     uint8_t comp[exp_len];
     memset(comp, 0, exp_len * sizeof comp[0]);
@@ -57,7 +60,7 @@ int main(int argc, char const *argv[])
                             input2b1,
                             sizeof(key2b1) / sizeof(uint8_t),
                             key2b1);
-    bool success = compare_and_print(exp_len, comp, expected2b1);
+    EXPECT_TRUE(compare_and_print(exp_len, comp, expected2b1));
 
 #ifdef HACL_CAN_COMPILE_VEC256
     memset(comp, 0, exp_len * sizeof comp[0]);
@@ -67,15 +70,6 @@ int main(int argc, char const *argv[])
                              input2b1,
                              sizeof(key2b1) / sizeof(uint8_t),
                              key2b1);
-    success &= compare_and_print(exp_len, comp, expected2b1);
+    EXPECT_TRUE(compare_and_print(exp_len, comp, expected2b1));
 #endif
-
-    if (success)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
 }

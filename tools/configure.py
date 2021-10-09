@@ -92,6 +92,9 @@ class Config:
             for a, _ in list(self.evercrypt_files.items()):
                 if not a in algorithms:
                     del self.evercrypt_files[a]
+            for a, _ in list(self.tests.items()):
+                if not a in algorithms:
+                    del self.tests[a]
 
         # Collect dependencies for the hacl files.
         self.hacl_compile_files = {}
@@ -106,7 +109,9 @@ class Config:
                     # Add the new algorithm dependency
                     self.hacl_compile_files[a] = files
                 feature = source_file["features"]
-                all_feature_files.extend(files if type(files) == list else [files])
+                if feature != "std":
+                    # Collect all files requiring features to filter std sources later
+                    all_feature_files.extend(files if type(files) == list else [files])
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(files if type(files) == list else [files])
                 else:
@@ -118,8 +123,12 @@ class Config:
                 if file in all_feature_files:
                     self.hacl_compile_files[a].remove(file)
 
+
         # Set kremlin as include paths
         self.include_paths.extend(self.kremlin_include_paths)
+
+        # Flatten test sources
+        self.test_sources = [f for files in  [self.tests[b] for b in self.tests] for f in files]
 
         # TODO: evercrypt dependencies and features.
         # self.evercrypt_compile_files = {}
@@ -127,6 +136,12 @@ class Config:
         #     for source_file in self.evercrypt_files[a]:
         #         self.evercrypt_compile_files[a] = self.dependencies(
         #             a, source_file)
+
+        # Remove duplicates from all lists
+        for k in self.hacl_compile_files:
+            self.hacl_compile_files[k] = list(dict.fromkeys(self.hacl_compile_files[k]))
+        for k in self.hacl_compile_feature:
+            self.hacl_compile_feature[k] = list(dict.fromkeys(self.hacl_compile_feature[k]))
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
@@ -146,6 +161,9 @@ class Config:
 
             out.write("set(INCLUDE_PATHS %s)\n" %
                       " ".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths))
+
+            out.write("set(TEST_SOURCES %s)\n" %
+                      (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources)))
             # # for a in hacl_files:
             # #     out.write("option(%s \"\" ON)\n" % a)
             # out.write("set(ALGORITHM_HACL_FILES %s)\n" %
