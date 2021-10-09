@@ -57,6 +57,9 @@ if(DEFINED CMAKE_C_COMPILER_TARGET)
     endif()
 endif()
 
+# Set include paths
+include_directories(${INCLUDE_PATHS})
+
 # Test the toolchain to get supported CPU features
 include(config/toolchain.cmake)
 
@@ -84,11 +87,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
     if(NOT SOURCES_VEC128_LEN EQUAL 0)
         set(HACL_VEC128_O ON)
         add_library(hacl_vec128 STATIC ${SOURCES_vec128})
-        target_include_directories(hacl_vec128 PRIVATE
-                                    ${PROJECT_SOURCE_DIR}/include
-                                    ${PROJECT_SOURCE_DIR}/kremlin/include
-                                    ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                    )
+        target_include_directories(hacl_vec128 PRIVATE)
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
             target_compile_options(hacl_vec128 PRIVATE
                 -mavx
@@ -109,11 +108,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
     if(NOT SOURCES_VEC256_LEN EQUAL 0)
         set(HACL_VEC256_O ON)
         add_library(hacl_vec256 STATIC ${SOURCES_vec256})
-        target_include_directories(hacl_vec256 PRIVATE
-                                    ${PROJECT_SOURCE_DIR}/include
-                                    ${PROJECT_SOURCE_DIR}/kremlin/include
-                                    ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                    )
+        target_include_directories(hacl_vec256 PRIVATE)
         # We really should only get here on x86 architectures. But let's make sure.
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
             target_compile_options(hacl_vec256 PRIVATE
@@ -173,11 +168,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     add_dependencies(hacl hacl_vec256)
     target_link_libraries(hacl PUBLIC hacl_vec256)
 endif()
-target_include_directories(hacl PRIVATE
-                            ${PROJECT_SOURCE_DIR}/include
-                            ${PROJECT_SOURCE_DIR}/kremlin/include
-                            ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                            )
+target_include_directories(hacl PRIVATE)
 
 
 # Include config.h
@@ -190,29 +181,17 @@ enable_testing()
 if("blake2" IN_LIST ALGORITHMS)
     # TODO: read from config.json
     add_executable(test_blake2b ${PROJECT_SOURCE_DIR}/tests/blake2b.c)
-    target_include_directories(test_blake2b PUBLIC
-                                ${PROJECT_SOURCE_DIR}/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                )
+    target_include_directories(test_blake2b PUBLIC)
     target_link_libraries(test_blake2b hacl)
     add_test(NAME blake2b COMMAND test_blake2b)
     add_executable(test_blake2s ${PROJECT_SOURCE_DIR}/tests/blake2s.c)
-    target_include_directories(test_blake2s PUBLIC
-                                ${PROJECT_SOURCE_DIR}/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                )
+    target_include_directories(test_blake2s PUBLIC)
     target_link_libraries(test_blake2s hacl)
     add_test(NAME blake2s COMMAND test_blake2s)
 endif()
 if("p256" IN_LIST ALGORITHMS)
     add_executable(test_p256 ${PROJECT_SOURCE_DIR}/tests/p256.c)
-    target_include_directories(test_p256 PUBLIC
-                                ${PROJECT_SOURCE_DIR}/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/include
-                                ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal
-                                )
+    target_include_directories(test_p256 PUBLIC)
     target_link_libraries(test_p256 hacl)
     add_test(NAME p256 COMMAND test_p256)
 endif()
@@ -223,7 +202,5 @@ if(ARCHITECTURE MATCHES "intel")
     add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
                                 ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
                     )
-    target_include_directories(hw-detection PUBLIC
-                                ${PROJECT_SOURCE_DIR}/include
-                                )
+    target_include_directories(hw-detection PUBLIC)
 endif()

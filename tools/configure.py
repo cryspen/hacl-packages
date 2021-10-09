@@ -72,6 +72,8 @@ class Config:
         # parse file
         self.config = json.loads(data)
         self.kremlin_files = self.config["kremlin_sources"]
+        self.kremlin_include_paths = self.config["kremlin_include_paths"]
+        self.include_paths = self.config["include_paths"]
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
         self.tests = self.config["tests"]
@@ -116,20 +118,8 @@ class Config:
                 if file in all_feature_files:
                     self.hacl_compile_files[a].remove(file)
 
-        print(self.hacl_compile_files)
-        for f in self.hacl_compile_feature:
-            print(f+": "+str(self.hacl_compile_feature[f]))
-        # exit(1)
-
-        # # Collect features, inverting the features map
-        # self.cpu_features = {}
-        # for file in self.features:
-        #     # FIXME: Only add files required by the requested algorithms
-        #     for feature in self.features[file]:
-        #         if feature in self.cpu_features:
-        #             self.cpu_features[feature].append(file)
-        #         else:
-        #             self.cpu_features[feature] = [file]
+        # Set kremlin as include paths
+        self.include_paths.extend(self.kremlin_include_paths)
 
         # TODO: evercrypt dependencies and features.
         # self.evercrypt_compile_files = {}
@@ -153,6 +143,9 @@ class Config:
 
             out.write("set(ALGORITHMS %s)\n" %
                       " ".join(a for a in self.hacl_files))
+
+            out.write("set(INCLUDE_PATHS %s)\n" %
+                      " ".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths))
             # # for a in hacl_files:
             # #     out.write("option(%s \"\" ON)\n" % a)
             # out.write("set(ALGORITHM_HACL_FILES %s)\n" %

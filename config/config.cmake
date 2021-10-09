@@ -2,6 +2,7 @@ set(SOURCES_std ${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c ${PROJECT_SOURCE_DIR}
 set(SOURCES_vec256 ${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_256.c ${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2b_256.c)
 set(SOURCES_vec128 ${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_128.c ${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2s_128.c)
 set(ALGORITHMS ed25519 blake2)
+set(INCLUDE_PATHS ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/kremlin/include/ ${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal)
 set(ALGORITHM_TEST_FILES TEST_FILES_blake TEST_FILES_p256)
 set(TEST_FILES_blake blake2b.c blake2s.c)
 set(TEST_FILES_p256 p256.c)
