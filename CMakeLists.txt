@@ -188,17 +188,17 @@ target_include_directories(hacl PRIVATE)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
-enable_testing()
-add_executable(hacl_test
-    ${TEST_SOURCES}
-)
-target_link_libraries(hacl_test
-    gtest_main
-    hacl
-)
-
-include(GoogleTest)
-gtest_discover_tests(hacl_test)
+foreach(TEST_FILE IN LISTS TEST_SOURCES)
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    # message(STATUS "Compiling test ${TEST_FILE} into ${TEST_NAME}")
+    add_executable(${TEST_NAME}
+        ${TEST_FILE}
+    )
+    target_link_libraries(${TEST_NAME}
+        gtest_main
+        hacl
+    )
+endforeach()
 
 # Hardware detection
 if(ARCHITECTURE MATCHES "intel")

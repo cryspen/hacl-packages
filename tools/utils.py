@@ -1,9 +1,19 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
+import os
 
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
 subparsers = cli.add_subparsers(dest="subcommand")
 
+def json_config():
+    return os.path.join("config", "config.json")
+
+def cmake_config():
+    return os.path.join("config", "config.cmake")
+
+# FIXME: add config.type (Debug/Release)
+def binary_path():
+    return os.path.join("build", "Debug")
 
 def subcommand(args=[], parent=subparsers):
     """Decorator for sub commands."""

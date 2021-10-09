@@ -15,8 +15,9 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import subcommand, argument, cli, subparsers, mprint as print
+from tools.utils import subcommand, argument, json_config, cmake_config, cli, subparsers, mprint as print
 from tools.vcs import *
+from tools.test import run_tests, test
 
 # === SUBCOMMANDS === #
 
@@ -41,7 +42,7 @@ def snapshot(args):
     Available named snapshots (TBD):
         - Mozilla
     """
-    config_file = "config/config.json"  # The default config.json file.
+    config_file = json_config()
     if args.file:
         config_file = args.file
     algorithms = []
@@ -76,28 +77,28 @@ def snapshot(args):
     # TODO: use config.header_files()
 
 
-# XXX: Not needed?
-@subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
-             argument("-o", "--out", help="The config.cmake file to write.", type=str)])
-def configure(args):
-    """Configure command to configure the cmake build from config.json
+# # XXX: Not needed?
+# @subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
+#              argument("-o", "--out", help="The config.cmake file to write.", type=str)])
+# def configure(args):
+#     """Configure command to configure the cmake build from config.json
 
-    ⚠️  This will override your config.cmake.
+#     ⚠️  This will override your config.cmake.
 
-    This will parse the json config file, build the dependency graph, and write
-    out the cmake config file for the build.
-    It is also used to generate hacl or evercrypt distributions with a subset of
-    algorithms.
-    """
-    config_file = "config/config.json"  # The default config.json file.
-    if args.file:
-        config_file = args.file
-    out_file = "config/config.cmake"  # The default config.cmake file.
-    if args.file:
-        out_file = args.out
+#     This will parse the json config file, build the dependency graph, and write
+#     out the cmake config file for the build.
+#     It is also used to generate hacl or evercrypt distributions with a subset of
+#     algorithms.
+#     """
+#     config_file = "config/config.json"  # The default config.json file.
+#     if args.file:
+#         config_file = args.file
+#     out_file = "config/config.cmake"  # The default config.cmake file.
+#     if args.file:
+#         out_file = args.out
 
-    config = Config(config_file)
-    config.write_cmake_config(out_file)
+#     config = Config(config_file)
+#     config.write_cmake_config(out_file)
 
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
@@ -144,7 +145,7 @@ def build(args):
         print("Cleaning ...")
         try:
             shutil.rmtree("build")
-            os.remove("config/config.cmake")
+            os.remove(cmake_config())
         except:
             pass  # We don't really care
     try:
@@ -156,8 +157,8 @@ def build(args):
     algorithms = []
     if args.algorithms:
         algorithms = re.split(r"\W+", args.algorithms)
-    config = Config("config/config.json", algorithms=algorithms)
-    config.write_cmake_config("config/config.cmake")
+    config = Config(json_config(), algorithms=algorithms)
+    config.write_cmake_config(cmake_config())
 
     # Set target toolchain if cross compiling
     cmake_args = []
@@ -194,12 +195,7 @@ def build(args):
 
     # test if requested
     if args.test:
-        ctest_env = os.environ.copy()
-        ctest_env["GTEST_COLOR"] = "1"
-        ctest_cmd = ['ctest', '-C', build_config, '--test-dir', 'build', ]
-        ctest_cmd.extend(ctest_args)
-        vprint(ctest_cmd)
-        subprocess.run(ctest_cmd, check=True, env=ctest_env)
+        run_tests(config)
 
 
 @subcommand()
