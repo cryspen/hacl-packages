@@ -71,7 +71,7 @@ def snapshot(args):
     for source_file in config.source_files():
         f = os.path.abspath(source_file)
         shutil.copy(f, dst_src_dir)
-    
+
     # Now the header files
     # TODO: use config.header_files()
 
@@ -105,9 +105,12 @@ def configure(args):
                       action='store_true'),
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
-             argument("-a", "--algorithms", help="A list of algorithms to enable. Defaults to all.", type=str),
-             argument("-p", "--target", help="Define compile target for cross compilation.", type=str),
-             argument("-d", "--disable", help="Disable hardware features even if available.", type=str),
+             argument("-a", "--algorithms",
+                      help="A list of algorithms to enable. Defaults to all.", type=str),
+             argument(
+                 "-p", "--target", help="Define compile target for cross compilation.", type=str),
+             argument(
+                 "-d", "--disable", help="Disable hardware features even if available.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
     """Main entry point for building Evercrypt
@@ -126,6 +129,7 @@ def build(args):
     verbose = False
     if args.verbose:
         verbose = True
+
         def vprint(*args, **kwargs):
             print(args, kwargs)
     else:
@@ -160,13 +164,15 @@ def build(args):
     ctest_args = []
     if args.target:
         if args.target == "x64-macos":
-            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
         else:
             print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
             print("   Available targets: x64-macos")
             exit(1)
     if args.disable:
-        features_to_disable = list(map(lambda f : "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
+        features_to_disable = list(
+            map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
         cmake_args.extend(features_to_disable)
 
     # Set ninja arguments

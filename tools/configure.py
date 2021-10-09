@@ -99,36 +99,40 @@ class Config:
         # Collect dependencies for the hacl files.
         self.hacl_compile_files = {}
         self.hacl_compile_feature = {}
-        all_feature_files = [] # Only a helper to filer hacl_compile_files
+        all_feature_files = []  # Only a helper to filer hacl_compile_files
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
                 files = self.dependencies(a, source_file)
                 if a in self.hacl_compile_files:
-                    self.hacl_compile_files[a].extend(files if type(files) == list else [files])
+                    self.hacl_compile_files[a].extend(
+                        files if type(files) == list else [files])
                 else:
                     # Add the new algorithm dependency
                     self.hacl_compile_files[a] = files
                 feature = source_file["features"]
                 if feature != "std":
                     # Collect all files requiring features to filter std sources later
-                    all_feature_files.extend(files if type(files) == list else [files])
+                    all_feature_files.extend(
+                        files if type(files) == list else [files])
                 if feature in self.hacl_compile_feature:
-                    self.hacl_compile_feature[feature].extend(files if type(files) == list else [files])
+                    self.hacl_compile_feature[feature].extend(
+                        files if type(files) == list else [files])
                 else:
                     # Add the new feature dependency
-                    self.hacl_compile_feature[feature] = files if type(files) == list else [files]
+                    self.hacl_compile_feature[feature] = files if type(files) == list else [
+                        files]
         # Remove files that require additional features from hacl_compile_files
         for a, files in list(self.hacl_compile_files.items()):
             for file in files:
                 if file in all_feature_files:
                     self.hacl_compile_files[a].remove(file)
 
-
         # Set kremlin as include paths
         self.include_paths.extend(self.kremlin_include_paths)
 
         # Flatten test sources
-        self.test_sources = [f for files in  [self.tests[b] for b in self.tests] for f in files]
+        self.test_sources = [f for files in [self.tests[b]
+                                             for b in self.tests] for f in files]
 
         # TODO: evercrypt dependencies and features.
         # self.evercrypt_compile_files = {}
@@ -139,9 +143,11 @@ class Config:
 
         # Remove duplicates from all lists
         for k in self.hacl_compile_files:
-            self.hacl_compile_files[k] = list(dict.fromkeys(self.hacl_compile_files[k]))
+            self.hacl_compile_files[k] = list(
+                dict.fromkeys(self.hacl_compile_files[k]))
         for k in self.hacl_compile_feature:
-            self.hacl_compile_feature[k] = list(dict.fromkeys(self.hacl_compile_feature[k]))
+            self.hacl_compile_feature[k] = list(
+                dict.fromkeys(self.hacl_compile_feature[k]))
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))

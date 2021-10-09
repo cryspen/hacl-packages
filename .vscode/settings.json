@@ -11,5 +11,5 @@
         "hacl_streaming_blake2s_128.h": "c",
         "hacl_streaming_blake2.h": "c"
     },
-    "python.pythonPath": "/usr/bin/python"
+    "python.pythonPath": "/opt/homebrew/bin/python3"
 }

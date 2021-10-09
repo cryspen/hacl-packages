@@ -23,4 +23,4 @@ def argument(*name_or_flags, **kwargs):
 
 def mprint(*args, **kwargs):
     """Print with mach indicators"""
-    print( " [mach] "+" ".join(map(str,args)), **kwargs)
+    print(" [mach] "+" ".join(map(str, args)), **kwargs)
