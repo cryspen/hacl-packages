@@ -13,10 +13,6 @@ class Config:
         Use `clang -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
-        # We only get dependencies for files that don't require features.
-        # Any feature file will require a top level file.
-        # if source_file["features"] != "std":
-        #     return join("src", source_file["file"])
         source_file = source_file["file"]
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
@@ -26,8 +22,6 @@ class Config:
             shell=True,
             check=True)
         stdout = result.stdout.decode('utf-8')
-        # print("Dependencies for ", source_file)
-        # print(stdout)
 
         files = []
         for line in stdout.splitlines():
@@ -100,30 +94,11 @@ class Config:
                     del self.tests[a]
 
         # Collect dependencies for the hacl files.
-        # 1. Get all dependencies for all files
-        # 2. Build map { file, feature, [dependencies] }
-        #   files = [ map, ... ]
-        # 3. build { feature: [files] } map
-        # 4. for file in files: if file.feature != std && file in files["std"]  -> remove
-        # self.hacl_compile_files = {}
         self.hacl_compile_feature = {}
-        # all_std_files = []  # Only a helper to filer hacl_compile_files
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                # print("Dependencies for %s with feature %s" % (source_file["file"], source_file["features"]))
                 files = self.dependencies(a, source_file)
-                # print(files)
-                # if a in self.hacl_compile_files:
-                #     self.hacl_compile_files[a].extend(
-                #         files if type(files) == list else [files])
-                # else:
-                #     # Add the new algorithm dependency
-                #     self.hacl_compile_files[a] = files
                 feature = source_file["features"]
-                # if feature == "std":
-                #     # Collect all files requiring no features to filter feature sources later
-                #     all_std_files.extend(
-                #         files if type(files) == list else [files])
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(
                         files if type(files) == list else [files])
@@ -132,20 +107,11 @@ class Config:
                     self.hacl_compile_feature[feature] = files if type(files) == list else [
                         files]
         # Remove files that require additional features from hacl_compile_files
-        print(self.hacl_compile_feature)
         for feature in self.hacl_compile_feature:
             if feature != "std":
                 # Filter all feature files to remove std files.
                 self.hacl_compile_feature[feature] = [
                     file for file in self.hacl_compile_feature[feature] if file not in self.hacl_compile_feature["std"]]
-        print(self.hacl_compile_feature)
-        # exit(1)
-        # for file in self.hacl_compile_feature["std"]:
-        #     print(file)
-        #     if file in all_feature_files:
-        #         self.hacl_compile_feature["std"].remove(file)
-        # print(all_feature_files)
-        # print(self.hacl_compile_feature["std"])
 
         # Set kremlin as include paths
         self.include_paths.extend(self.kremlin_include_paths)
@@ -162,9 +128,6 @@ class Config:
         #             a, source_file)
 
         # Remove duplicates from all lists
-        # for k in self.hacl_compile_files:
-        #     self.hacl_compile_files[k] = list(
-        #         dict.fromkeys(self.hacl_compile_files[k]))
         for k in self.hacl_compile_feature:
             self.hacl_compile_feature[k] = list(
                 dict.fromkeys(self.hacl_compile_feature[k]))
@@ -190,28 +153,6 @@ class Config:
 
             out.write("set(TEST_SOURCES %s)\n" %
                       (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources)))
-            # # for a in hacl_files:
-            # #     out.write("option(%s \"\" ON)\n" % a)
-            # out.write("set(ALGORITHM_HACL_FILES %s)\n" %
-            #           " ".join("HACL_FILES_"+a for a in self.hacl_files))
-
-            # for a in self.hacl_compile_files:
-            #     out.write("set(HACL_FILES_%s %s)\n" %
-            #               (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.hacl_compile_files[a])))
-
-            # out.write("set(ALGORITHM_EVERCRYPT_FILES %s)\n" %
-            #           " ".join("EVERCRYPT_FILES_"+a for a in self.evercrypt_files))
-            # for a in self.evercrypt_files:
-            #     out.write("set(EVERCRYPT_FILES_%s %s)\n" %
-            #               (a, " ".join("${PROJECT_SOURCE_DIR}/"+f for f in self.evercrypt_files[a])))
-
-            # for f in self.features:
-            #     out.write("set(REQUIRED_FEATURES_%s %s)\n" % (os.path.splitext(
-            #         f)[0], " ".join(feature for feature in self.features[f])))
-
-            # for f in self.cpu_features:
-            #     out.write("set(CPU_FEATURE_%s %s)\n" % (os.path.splitext(
-            #         f)[0], " ".join("${PROJECT_SOURCE_DIR}/src/"+file for file in self.cpu_features[f])))
 
             out.write("set(ALGORITHM_TEST_FILES %s)\n" %
                       " ".join("TEST_FILES_"+a for a in self.tests))
