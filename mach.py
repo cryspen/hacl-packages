@@ -87,7 +87,7 @@ def snapshot(args):
 
 #     This will parse the json config file, build the dependency graph, and write
 #     out the cmake config file for the build.
-#     It is also used to generate hacl or evercrypt distributions with a subset of
+#     It is also used to generate HACL distributions with a subset of
 #     algorithms.
 #     """
 #     config_file = "config/config.json"  # The default config.json file.
@@ -114,7 +114,7 @@ def snapshot(args):
                  "-d", "--disable", help="Disable hardware features even if available.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
-    """Main entry point for building Evercrypt
+    """Main entry point for building HACL
 
     For convenience it is possible to run tests right after building using -t.
 
@@ -123,7 +123,7 @@ def build(args):
 
     Features that can be disabled:
         - vec128 (avx/neon)
-        - vec256 (avx)
+        - vec256 (avx2)
         - vale (x64 assembly)
     """
     # Verbosity

@@ -72,6 +72,24 @@
                 "features": "std"
             }
         ],
+        "sha2": [
+            {
+                "file": "Hacl_Hash_SHA2.c",
+                "features": "std"
+            }
+        ],
+        "sha1": [
+            {
+                "file": "Hacl_Hash_SHA1.c",
+                "features": "std"
+            }
+        ],
+        "md5": [
+            {
+                "file": "Hacl_Hash_MD5.c",
+                "features": "std"
+            }
+        ],
         "hmac": [
             {
                 "file": "Hacl_HMAC.c",
