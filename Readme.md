@@ -84,6 +84,9 @@ optional arguments:
 
 Testing is done with [gtest] and requires a C++11 compiler.
 
+### Dependencies
+Tests require the [nlohmann_json] package to read json test files.
+
 ## Code Style
 Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 
@@ -91,4 +94,5 @@ Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 [ninja]: https://ninja-build.org/
 [mach.py]: ./mach.py
 [gtest]: https://google.github.io/googletest/
+[nlohmann_json]: https://github.com/nlohmann/json
 [status]: https://img.shields.io/badge/status-experimental-red.svg?style=for-the-badge

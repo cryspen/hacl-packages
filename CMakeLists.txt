@@ -186,24 +186,31 @@ target_include_directories(hacl PRIVATE)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
-foreach(TEST_FILE IN LISTS TEST_SOURCES)
-    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
-    # message(STATUS "Compiling test ${TEST_FILE} into ${TEST_NAME}")
-    add_executable(${TEST_NAME}
-        ${TEST_FILE}
-    )
-    add_dependencies(${TEST_NAME} hacl)
-    target_link_libraries(${TEST_NAME}
-        gtest_main
-        hacl
-    )
-endforeach()
-
-# Hardware detection
-if(ARCHITECTURE MATCHES "intel")
-    message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
-    add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
-                                ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
-                    )
-    target_include_directories(hw-detection PUBLIC)
+if(ENABLE_TESTS)
+    find_package(nlohmann_json REQUIRED)
+    foreach(TEST_FILE IN LISTS TEST_SOURCES)
+        get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+        # message(STATUS "Compiling test ${TEST_FILE} into ${TEST_NAME}")
+        add_executable(${TEST_NAME}
+            ${TEST_FILE}
+        )
+        target_compile_definitions(${TEST_NAME} PRIVATE
+            TEST_DIR="${PROJECT_SOURCE_DIR}/tests/"
+        )
+        add_dependencies(${TEST_NAME} hacl)
+        target_link_libraries(${TEST_NAME} PRIVATE
+            gtest_main
+            hacl
+            nlohmann_json::nlohmann_json
+        )
+    endforeach()
 endif()
+
+# # Hardware detection
+# if(ARCHITECTURE MATCHES "intel")
+#     message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
+#     add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
+#                                 ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
+#                     )
+#     target_include_directories(hw-detection PUBLIC)
+# endif()

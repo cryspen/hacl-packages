@@ -162,7 +162,6 @@ def build(args):
 
     # Set target toolchain if cross compiling
     cmake_args = []
-    ctest_args = []
     if args.target:
         if args.target == "x64-macos":
             cmake_args.extend(
@@ -175,12 +174,13 @@ def build(args):
         features_to_disable = list(
             map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
         cmake_args.extend(features_to_disable)
+    if args.test:
+        cmake_args.append("-DENABLE_TESTS=ON")
 
     # Set ninja arguments
     ninja_args = []
     if verbose:
         ninja_args.append('-v')
-        ctest_args.append('--verbose')
 
     # build
     # '--debug-trycompile'

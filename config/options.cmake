@@ -21,3 +21,7 @@ endif()
 if(DISABLE_INTRINSICS)
     set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF)
 endif()
+
+# Enable tests.
+# By default tests aren't built
+option(ENABLE_TESTS "Enable HACL tests.")
