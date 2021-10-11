@@ -2,6 +2,7 @@
 
 INCLUDE(CheckCCompilerFlag)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE EXECUTABLE)
+
 ## Check for gcc compiler bug 81300
 if(NOT DEFINED BUG_81300)
     try_compile(BUG_81300
@@ -10,13 +11,11 @@ if(NOT DEFINED BUG_81300)
                         # TODO: get the include paths from global variables
                         #       We should probably get rid of the march=native!
                         COMPILE_DEFINITIONS "-DCOMPILE_INTRINSICS \
-                                             -march=native -O3\
-                                             -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                                             -O3"
                 )
 endif()
 message(STATUS "Bug 81300 check: ${BUG_81300}")
+
 ## Check for int128 support
 if(NOT DEFINED INT128_SUPPORT)
     try_compile(INT128_SUPPORT
@@ -25,6 +24,7 @@ if(NOT DEFINED INT128_SUPPORT)
                 )
 endif()
 message(STATUS "int128 support: ${INT128_SUPPORT}")
+
 ## Check for explicit_bzero support
 if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
     try_compile(EXPLICIT_BZERO_SUPPORT
@@ -33,6 +33,7 @@ if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)
                 )
 endif()
 message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
+
 ## Check for vec128 support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
     try_compile(TOOLCHAIN_CAN_COMPILE_VEC128
@@ -47,6 +48,7 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
                 )
 endif()
 message(STATUS "vec128 support: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
+
 ## Check for vec256 support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
     try_compile(TOOLCHAIN_CAN_COMPILE_VEC256
@@ -62,7 +64,39 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
 endif()
 message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")
 
+## Check for vale support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VALE)
+    # Always enable for x64
+    set(TOOLCHAIN_CAN_COMPILE_VALE FALSE)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+        set(TOOLCHAIN_CAN_COMPILE_VALE TRUE)
+    endif()
+endif()
+
+# Check for inline assembly support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
+    set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF)
+    # Only available on x64
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+        execute_process(COMMAND
+            ${PROJECT_SOURCE_DIR}/config/osx_c.sh ${CMAKE_C_COMPILER}
+            RESULT_VARIABLE BAD_CC
+        )
+        if(${BAD_CC} EQUAL 1)
+            set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM TRUE)
+        endif()
+    endif()
+endif()
+
+# Check for intrinsics support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INTRINSICS)
+    set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF)
+    # x86 or x86_64
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64|i386|i586|i686|i86pc|ia32")
+        if(NOT BUG_81300)
+            set(TOOLCHAIN_CAN_COMPILE_INTRINSICS TRUE)
+        endif()
+    endif()
+endif()
 # TODO: Check for these
-set(TOOLCHAIN_CAN_COMPILE_VALE OFF) # XXX: FOR TESTING ONLY
-set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF) # XXX: FOR TESTING ONLY
 set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
