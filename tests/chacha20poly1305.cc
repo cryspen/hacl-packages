@@ -12,7 +12,7 @@
 
 #include "chacha20poly1305_vectors.h"
 
-// Function point to multiplex between the different implementations.
+// Function pointer to multiplex between the different implementations.
 typedef void (*test_encrypt)(uint8_t *, uint8_t *, uint32_t, uint8_t *, uint32_t, uint8_t *, uint8_t *, uint8_t *);
 typedef uint32_t (*test_decrypt)(uint8_t *, uint8_t *, uint32_t, uint8_t *, uint32_t, uint8_t *, uint8_t *, uint8_t *);
 

@@ -1,75 +1,61 @@
 #include <gtest/gtest.h>
 
 #include "Hacl_Hash_Blake2.h"
-#include "util.h"
+#include "blake2_vectors.h"
 #include "config.h"
+#include "util.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_Blake2b_256.h"
 #endif
 
-typedef struct
-{
-    uint8_t *input;
-    size_t input_len;
-    uint8_t *key;
-    size_t key_len;
-    uint8_t *expected;
-    size_t expected_len;
-} blake2_test_vector;
+// Function pointer to multiplex between the different implementations.
+typedef void (
+  *test_blake)(uint32_t, uint8_t*, uint32_t, uint8_t*, uint32_t, uint8_t*);
 
-static uint8_t input2b1[44] = {
-    0x00U, 0x01U, 0x02U, 0x03U, 0x04U, 0x05U, 0x06U, 0x07U,
-    0x08U, 0x09U, 0x0aU, 0x0bU, 0x0cU, 0x0dU, 0x0eU, 0x0fU,
-    0x10U, 0x11U, 0x12U, 0x13U, 0x14U, 0x15U, 0x16U, 0x17U,
-    0x18U, 0x19U, 0x1aU, 0x1bU, 0x1cU, 0x1dU, 0x1eU, 0x1fU,
-    0x20U, 0x21U, 0x22U, 0x23U, 0x24U, 0x25U, 0x26U, 0x27U,
-    0x28U, 0x29U, 0x2aU, 0x2bU};
-
-static uint8_t key2b1[64] = {
-    0x00U, 0x01U, 0x02U, 0x03U, 0x04U, 0x05U, 0x06U, 0x07U,
-    0x08U, 0x09U, 0x0aU, 0x0bU, 0x0cU, 0x0dU, 0x0eU, 0x0fU,
-    0x10U, 0x11U, 0x12U, 0x13U, 0x14U, 0x15U, 0x16U, 0x17U,
-    0x18U, 0x19U, 0x1aU, 0x1bU, 0x1cU, 0x1dU, 0x1eU, 0x1fU,
-    0x20U, 0x21U, 0x22U, 0x23U, 0x24U, 0x25U, 0x26U, 0x27U,
-    0x28U, 0x29U, 0x2aU, 0x2bU, 0x2cU, 0x2dU, 0x2eU, 0x2fU,
-    0x30U, 0x31U, 0x32U, 0x33U, 0x34U, 0x35U, 0x36U, 0x37U,
-    0x38U, 0x39U, 0x3aU, 0x3bU, 0x3cU, 0x3dU, 0x3eU, 0x3fU};
-
-static uint8_t expected2b1[64] = {
-    0xc8U, 0xf6U, 0x8eU, 0x69U, 0x6eU, 0xd2U, 0x82U, 0x42U,
-    0xbfU, 0x99U, 0x7fU, 0x5bU, 0x3bU, 0x34U, 0x95U, 0x95U,
-    0x08U, 0xe4U, 0x2dU, 0x61U, 0x38U, 0x10U, 0xf1U, 0xe2U,
-    0xa4U, 0x35U, 0xc9U, 0x6eU, 0xd2U, 0xffU, 0x56U, 0x0cU,
-    0x70U, 0x22U, 0xf3U, 0x61U, 0xa9U, 0x23U, 0x4bU, 0x98U,
-    0x37U, 0xfeU, 0xeeU, 0x90U, 0xbfU, 0x47U, 0x92U, 0x2eU,
-    0xe0U, 0xfdU, 0x5fU, 0x8dU, 0xdfU, 0x82U, 0x37U, 0x18U,
-    0xd8U, 0x6dU, 0x1eU, 0x16U, 0xc6U, 0x09U, 0x00U, 0x71U};
-
-// FIXME: Make this a TEST_P
-TEST(Blake2bTest, BasicKAT)
+bool
+test_blake2b(test_blake blake,
+             size_t input_len,
+             uint8_t* input,
+             size_t key_len,
+             uint8_t* key,
+             size_t expected_len,
+             uint8_t* expected)
 {
 
-    uint32_t exp_len = sizeof(expected2b1) / sizeof(uint8_t);
-    uint8_t comp[exp_len];
-    memset(comp, 0, exp_len * sizeof comp[0]);
+  uint8_t comp[expected_len];
+  memset(comp, 0, expected_len * sizeof comp[0]);
+  (*blake)(expected_len, comp, input_len, input, key_len, key);
+  return compare_and_print(expected_len, comp, expected);
+}
 
-    Hacl_Blake2b_32_blake2b(exp_len,
-                            comp,
-                            sizeof(input2b1) / sizeof(uint8_t),
-                            input2b1,
-                            sizeof(key2b1) / sizeof(uint8_t),
-                            key2b1);
-    EXPECT_TRUE(compare_and_print(exp_len, comp, expected2b1));
+class Blake2bTesting : public ::testing::TestWithParam<blake2_test_vector>
+{};
+
+TEST_P(Blake2bTesting, TryTestVectors)
+{
+  const blake2_test_vector& vectors2b(GetParam());
+  bool test = test_blake2b(&Hacl_Blake2b_32_blake2b,
+                           vectors2b.input_len,
+                           vectors2b.input,
+                           vectors2b.key_len,
+                           vectors2b.key,
+                           vectors2b.expected_len,
+                           vectors2b.expected);
+  EXPECT_TRUE(test);
 
 #ifdef HACL_CAN_COMPILE_VEC256
-    memset(comp, 0, exp_len * sizeof comp[0]);
-    Hacl_Blake2b_256_blake2b(exp_len,
-                             comp,
-                             sizeof(input2b1) / sizeof(uint8_t),
-                             input2b1,
-                             sizeof(key2b1) / sizeof(uint8_t),
-                             key2b1);
-    EXPECT_TRUE(compare_and_print(exp_len, comp, expected2b1));
+  test = test_blake2b(&Hacl_Blake2b_256_blake2b,
+                      vectors2b.input_len,
+                      vectors2b.input,
+                      vectors2b.key_len,
+                      vectors2b.key,
+                      vectors2b.expected_len,
+                      vectors2b.expected);
+  EXPECT_TRUE(test);
 #endif
 }
+
+INSTANTIATE_TEST_SUITE_P(TestVectors,
+                         Blake2bTesting,
+                         ::testing::ValuesIn(vectors2b));

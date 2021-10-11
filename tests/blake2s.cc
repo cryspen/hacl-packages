@@ -1,23 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <time.h>
-#include <stdbool.h>
-
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_128.h"
 #endif
 
 #include "util.h"
-
-#include "EverCrypt_AutoConfig2.h"
 #include "blake2_vectors.h"
 
 bool print_test2s(int in_len, uint8_t *in, int key_len, uint8_t *key, int exp_len, uint8_t *exp)

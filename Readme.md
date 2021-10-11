@@ -84,6 +84,9 @@ optional arguments:
 
 Testing is done with [gtest] and requires a C++11 compiler.
 
+## Code Style
+Handwritten C and CPP code is formatted with the Mozilla clang-format style.
+
 [cmake]: https://cmake.org/
 [ninja]: https://ninja-build.org/
 [mach.py]: ./mach.py
