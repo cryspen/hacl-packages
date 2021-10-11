@@ -183,7 +183,8 @@ def build(args):
         ctest_args.append('--verbose')
 
     # build
-    cmake_cmd = ['cmake', '--debug-trycompile', '-B', 'build']
+    # '--debug-trycompile'
+    cmake_cmd = ['cmake', '-B', 'build']
     cmake_cmd.extend(cmake_args)
     vprint(str(cmake_cmd))
     subprocess.run(cmake_cmd, check=True)
