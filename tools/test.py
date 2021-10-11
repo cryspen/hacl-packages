@@ -14,7 +14,7 @@ def run_tests(config, test_args=[]):
     for algorithm in config.tests:
         for test in config.tests[algorithm]:
             file_name = Path(test).stem
-            test_cmd = ['./'+file_name]
+            test_cmd = ['./'+file_name] #FIXME: Windows?
             test_cmd.extend(test_args)
             print(" ".join(test_cmd))
             subprocess.run(test_cmd, check=True)

@@ -93,11 +93,11 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC128
     )
-    ## We make separate compilation units (static libraries) for each hardware feature
+    ## We make separate compilation units (objects) for each hardware feature
     list(LENGTH SOURCES_vec128 SOURCES_VEC128_LEN)
     if(NOT SOURCES_VEC128_LEN EQUAL 0)
         set(HACL_VEC128_O ON)
-        add_library(hacl_vec128 STATIC ${SOURCES_vec128})
+        add_library(hacl_vec128 OBJECT ${SOURCES_vec128})
         target_include_directories(hacl_vec128 PRIVATE)
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
             target_compile_options(hacl_vec128 PRIVATE
@@ -114,11 +114,11 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC256
     )
-    ## We make separate compilation units (static libraries) for each hardware feature
+    ## We make separate compilation units (objects) for each hardware feature
     list(LENGTH SOURCES_vec256 SOURCES_VEC256_LEN)
     if(NOT SOURCES_VEC256_LEN EQUAL 0)
         set(HACL_VEC256_O ON)
-        add_library(hacl_vec256 STATIC ${SOURCES_vec256})
+        add_library(hacl_vec256 OBJECT ${SOURCES_vec256})
         target_include_directories(hacl_vec256 PRIVATE)
         # We really should only get here on x86 architectures. But let's make sure.
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
@@ -173,13 +173,14 @@ configure_file(config/Config.h.in config.h)
 ## Now combine everything into the hacl library
 ## TODO: static and dynamic builds
 add_library(hacl SHARED ${SOURCES_std})
+# message(FATAL_ERROR "TOOLCHAIN_CAN_COMPILE_VEC128: ${TOOLCHAIN_CAN_COMPILE_VEC128} | HACL_VEC128_O: ${HACL_VEC128_O}")
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
-    target_link_libraries(hacl PUBLIC hacl_vec128)
+    target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec128>)
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     add_dependencies(hacl hacl_vec256)
-    target_link_libraries(hacl PUBLIC hacl_vec256)
+    target_link_libraries(hacl PUBLIC $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 target_include_directories(hacl PRIVATE)
 
@@ -191,6 +192,7 @@ foreach(TEST_FILE IN LISTS TEST_SOURCES)
     add_executable(${TEST_NAME}
         ${TEST_FILE}
     )
+    add_dependencies(${TEST_NAME} hacl)
     target_link_libraries(${TEST_NAME}
         gtest_main
         hacl

@@ -13,12 +13,9 @@ class Config:
         Use `clang -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
-        # We only get dependencies for files that don't require features.
-        # Any feature file will require a top level file.
-        if source_file["features"] != "std":
-            return join("src", source_file["file"])
         source_file = source_file["file"]
         # Build dependency graph
+        # FIXME: read include paths and CC from config.json
         result = subprocess.run(
             'clang -I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -MM src/'+source_file,
             stdout=subprocess.PIPE,

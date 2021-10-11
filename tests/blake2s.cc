@@ -44,7 +44,8 @@ class Blake2sTesting : public ::testing::TestWithParam<blake2_test_vector>
 TEST_P(Blake2sTesting, TryTestVectors)
 {
     const blake2_test_vector &vectors2s(GetParam());
-    EXPECT_TRUE(print_test2s(vectors2s.input_len, vectors2s.input, vectors2s.key_len, vectors2s.key, vectors2s.expected_len, vectors2s.expected));
+    bool test = print_test2s(vectors2s.input_len, vectors2s.input, vectors2s.key_len, vectors2s.key, vectors2s.expected_len, vectors2s.expected);
+    EXPECT_TRUE(test);
 }
 
 INSTANTIATE_TEST_SUITE_P(TestVectors, Blake2sTesting,
