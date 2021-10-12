@@ -45,10 +45,36 @@ TEST(Ed25519Test, WycheprofTest)
         EXPECT_TRUE(result == "invalid");
         continue;
       }
+
+      // First sign and check that the signature is correct.
+      auto signature_bytes = from_hex(sig);
+      uint8_t my_signature[64] = { 0 };
+      Hacl_Ed25519_sign(&my_signature[0],
+                        from_hex(sk).data(),
+                        msg_bytes.size(),
+                        msg_bytes.data());
+      std::vector<uint8_t> my_signature_vector(my_signature, my_signature + 64);
+      if (result == "valid") {
+        EXPECT_EQ(my_signature_vector, signature_bytes)
+          << "Got: " << to_hex(my_signature_vector) << std::endl
+          << "Expected: " << sig << std::endl;
+
+        bool self_test = Hacl_Ed25519_verify(from_hex(pk).data(),
+                                             msg_bytes.size(),
+                                             msg_bytes.data(),
+                                             &my_signature[0]);
+        EXPECT_TRUE(self_test);
+      } else {
+        EXPECT_NE(my_signature_vector, signature_bytes)
+          << "Got: " << to_hex(my_signature_vector) << std::endl
+          << "Unexpected: " << sig << std::endl;
+      }
+
+      // Now verify the signature from the KAT.
       bool valid = Hacl_Ed25519_verify(from_hex(pk).data(),
                                        msg_bytes.size(),
                                        msg_bytes.data(),
-                                       from_hex(sig).data());
+                                       signature_bytes.data());
       if (result == "valid") {
         EXPECT_TRUE(valid);
       } else {

@@ -49,3 +49,14 @@ from_hex(const std::string& hex)
 
   return out;
 }
+
+std::string
+to_hex(const std::vector<uint8_t>& data)
+{
+  std::stringstream hex(std::ios_base::out);
+  hex.flags(std::ios::hex);
+  for (const auto& byte : data) {
+    hex << std::setw(2) << std::setfill('0') << int(byte);
+  }
+  return hex.str();
+}
