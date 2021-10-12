@@ -20,6 +20,10 @@
                 "features": "std"
             },
             {
+                "file": "Hacl_Streaming_Blake2.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Hash_Blake2b_256.c",
                 "features": "vec256"
             },
