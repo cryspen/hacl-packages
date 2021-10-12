@@ -10,7 +10,7 @@ compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
     ok = ok & (exp[i] == comp[i]);
   }
   if (ok) {
-    printf("Success!\n");
+    // printf("Success!\n");
   } else {
     printf("**FAILED**\n");
     printf("computed:");

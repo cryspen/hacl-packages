@@ -9,7 +9,7 @@
 
 using json = nlohmann::json;
 
-TEST(Ed25519Test, WycheprofTest)
+TEST(Ed25519Test, WycheproofTest)
 {
   // Read JSON test vector
   std::string test_dir = TEST_DIR;
