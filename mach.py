@@ -112,6 +112,8 @@ def snapshot(args):
                  "-p", "--target", help="Define compile target for cross compilation.", type=str),
              argument(
                  "-d", "--disable", help="Disable hardware features even if available.", type=str),
+             argument(
+                 "-s", "--sanitizer", help="Enable sanitizers.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
@@ -125,6 +127,10 @@ def build(args):
         - vec128 (avx/neon)
         - vec256 (avx2)
         - vale (x64 assembly)
+
+    Supported sanitizers:
+        - asan
+        - ubsan
     """
     # Verbosity
     verbose = False
@@ -176,6 +182,10 @@ def build(args):
         cmake_args.extend(features_to_disable)
     if args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
+    if args.sanitizer:
+        sanitizers = list(
+            map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
+        cmake_args.extend(sanitizers)
 
     # Set ninja arguments
     ninja_args = []

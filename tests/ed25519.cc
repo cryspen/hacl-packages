@@ -34,12 +34,15 @@ TEST(Ed25519Test, WycheprofTest)
       auto msg_bytes = from_hex(msg);
       // XXX: HACL can't handle invalid lengths ...
       if (sig.length() == 0) {
+        EXPECT_TRUE(result == "invalid");
         continue;
       }
       if (sig.length() > 128) {
-        // std::cout << "sig length: " << sig.length() << std::endl;
-        // std::cout << "sign(" << msg << ") := " << sig << " is " << result <<
-        // "\n";
+        EXPECT_TRUE(result == "invalid");
+        continue;
+      }
+      if (sig.length() < 128) {
+        EXPECT_TRUE(result == "invalid");
         continue;
       }
       bool valid = Hacl_Ed25519_verify(from_hex(pk).data(),
@@ -49,7 +52,6 @@ TEST(Ed25519Test, WycheprofTest)
       if (result == "valid") {
         EXPECT_TRUE(valid);
       } else {
-        // FIXME: Failing on a case
         EXPECT_FALSE(valid)
           << "HACL result: "
           << "sign(" << msg << ") := " << sig << " is " << result << std::endl;

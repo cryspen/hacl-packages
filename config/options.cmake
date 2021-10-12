@@ -25,3 +25,7 @@ endif()
 # Enable tests.
 # By default tests aren't built
 option(ENABLE_TESTS "Enable HACL tests.")
+
+# Sannitaizers
+option(ENABLE_ASAN "Enable address sanitizers.")
+option(ENABLE_UBSAN "Enable undefined behaviour sanitizers.")

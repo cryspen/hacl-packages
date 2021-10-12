@@ -138,8 +138,6 @@ if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     # TODO: include intrinsics source code
 endif()
 
-# message(STATUS "SOURCES: ${SOURCES}")
-
 # x64
 # Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
@@ -168,6 +166,16 @@ endif()
 
 # Write configuration
 configure_file(config/Config.h.in config.h)
+
+# Sanitizer
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
+if(ENABLE_UBSAN)
+    add_compile_options(-fsanitize=undefined)
+    add_link_options(-fsanitize=undefined)
+endif()
 
 # Set library config and files
 ## Now combine everything into the hacl library
