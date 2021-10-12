@@ -4,3 +4,4 @@
 /tmp
 /tools/__pycache__
 /config/config.cmake
+config/.dependency_check

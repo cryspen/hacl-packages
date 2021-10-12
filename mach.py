@@ -213,7 +213,7 @@ def build(args):
 def clean():
     """Remove all build and config artifacts"""
     os.rmdir("build")
-    os.remove("config/config.cmake")
+    os.remove(cmake_config())
 
 # === Boiler plate === #
 
