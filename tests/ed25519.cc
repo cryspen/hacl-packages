@@ -9,7 +9,6 @@
 
 using json = nlohmann::json;
 
-// FIXME: change to TEST_P
 TEST(Ed25519Test, WycheprofTest)
 {
   // Read JSON test vector
@@ -39,7 +38,8 @@ TEST(Ed25519Test, WycheprofTest)
       }
       if (sig.length() > 128) {
         // std::cout << "sig length: " << sig.length() << std::endl;
-        // std::cout << "sign(" << msg << ") := " << sig << " is " << result << "\n";
+        // std::cout << "sign(" << msg << ") := " << sig << " is " << result <<
+        // "\n";
         continue;
       }
       bool valid = Hacl_Ed25519_verify(from_hex(pk).data(),
