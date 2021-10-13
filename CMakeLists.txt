@@ -195,7 +195,17 @@ target_include_directories(hacl PRIVATE)
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
 if(ENABLE_TESTS)
-    find_package(nlohmann_json REQUIRED)
+    # Get nlohmann json
+    FetchContent_Declare(json
+        URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
+    )
+
+    FetchContent_GetProperties(json)
+    if(NOT json_POPULATED)
+        FetchContent_Populate(json)
+        add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+
     foreach(TEST_FILE IN LISTS TEST_SOURCES)
         get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
         # message(STATUS "Compiling test ${TEST_FILE} into ${TEST_NAME}")
