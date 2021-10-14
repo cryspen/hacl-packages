@@ -117,14 +117,33 @@ INSTANTIATE_TEST_SUITE_P(TestVectors,
                          Chacha20Poly1305Testing,
                          ::testing::ValuesIn(vectors));
 
-TEST(Chacha20Poly1305Test, WycheproofTest)
+// === Wycheproof tests === //
+
+#define bytes std::vector<uint8_t>
+
+typedef struct
 {
+  bytes msg;
+  bytes key;
+  bytes iv;
+  bytes aad;
+  bytes ct;
+  bytes tag;
+  bool valid;
+} TestCase;
+
+std::vector<TestCase>
+read_json()
+{
+
   // Read JSON test vector
   std::string test_dir = TEST_DIR;
   test_dir += "/chacha20_poly1305_test.json";
   std::ifstream json_test_file(test_dir);
   json test_vectors;
   json_test_file >> test_vectors;
+
+  std::vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors["testGroups"].items()) {
@@ -148,92 +167,81 @@ TEST(Chacha20Poly1305Test, WycheproofTest)
       auto result = test_case_value["result"];
       bool valid = result == "valid";
 
-      auto msg_size = msg.size();
-      uint8_t plaintext[msg_size];
-      memset(plaintext, 0, msg_size * sizeof plaintext[0]);
-      uint8_t ciphertext[msg_size];
-      memset(ciphertext, 0, msg_size * sizeof ciphertext[0]);
-      uint8_t mac[16] = { 0 };
+      tests_out.push_back({ msg, key, iv, aad, ct, tag, valid });
+    }
+  }
 
-      // Check that encryption yields the expected cipher text.
-      Hacl_Chacha20Poly1305_32_aead_encrypt(key.data(),
-                                            iv.data(),
-                                            aad.size(),
-                                            aad.data(),
-                                            msg_size,
-                                            msg.data(),
-                                            ciphertext,
-                                            mac);
-      if (valid) {
-        EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size), ct);
-        EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), tag);
-      }
+  return tests_out;
+}
 
-      int res = Hacl_Chacha20Poly1305_32_aead_decrypt(key.data(),
-                                                      iv.data(),
-                                                      aad.size(),
-                                                      aad.data(),
-                                                      msg_size,
-                                                      plaintext,
-                                                      ct.data(),
-                                                      tag.data());
-      EXPECT_EQ(res, valid ? 0 : 1);
+class Chacha20Poly1305Wycheproof : public ::testing::TestWithParam<TestCase>
+{};
+
+TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
+{
+  const TestCase& test_case(GetParam());
+
+  auto msg_size = test_case.msg.size();
+  uint8_t plaintext[msg_size];
+  memset(plaintext, 0, msg_size * sizeof plaintext[0]);
+  uint8_t ciphertext[msg_size];
+  memset(ciphertext, 0, msg_size * sizeof ciphertext[0]);
+  uint8_t mac[16] = { 0 };
+
+  // Stupid const
+  uint8_t* key = const_cast<uint8_t*>(test_case.key.data());
+  uint8_t* iv = const_cast<uint8_t*>(test_case.iv.data());
+  uint8_t* aad = const_cast<uint8_t*>(test_case.aad.data());
+  uint8_t* msg = const_cast<uint8_t*>(test_case.msg.data());
+  uint8_t* tag = const_cast<uint8_t*>(test_case.tag.data());
+  uint8_t* ct = const_cast<uint8_t*>(test_case.ct.data());
+
+  // Check that encryption yields the expected cipher text.
+  Hacl_Chacha20Poly1305_32_aead_encrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+  if (test_case.valid) {
+    EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
+              test_case.ct);
+    EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
+  }
+
+  int res = Hacl_Chacha20Poly1305_32_aead_decrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+  EXPECT_EQ(res, test_case.valid ? 0 : 1);
 
 // XXX: do less c&p
 #ifdef HACL_CAN_COMPILE_VEC128
-      std::cout << "ChaCha20Poly1305 Vec128 ...\n";
-      // Check that encryption yields the expected cipher text.
-      Hacl_Chacha20Poly1305_128_aead_encrypt(key.data(),
-                                             iv.data(),
-                                             aad.size(),
-                                             aad.data(),
-                                             msg_size,
-                                             msg.data(),
-                                             ciphertext,
-                                             mac);
-      if (valid) {
-        EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size), ct);
-        EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), tag);
-      }
+  // Check that encryption yields the expected cipher text.
+  Hacl_Chacha20Poly1305_128_aead_encrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+  if (test_case.valid) {
+    EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
+              test_case.ct);
+    EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
+  }
 
-      res = Hacl_Chacha20Poly1305_128_aead_decrypt(key.data(),
-                                                   iv.data(),
-                                                   aad.size(),
-                                                   aad.data(),
-                                                   msg_size,
-                                                   plaintext,
-                                                   ct.data(),
-                                                   tag.data());
-      EXPECT_EQ(res, valid ? 0 : 1);
+  res = Hacl_Chacha20Poly1305_128_aead_decrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+  EXPECT_EQ(res, test_case.valid ? 0 : 1);
 #endif //  HACL_CAN_COMPILE_VEC128
 
 // XXX: do less c&p
 #ifdef HACL_CAN_COMPILE_VEC256
-      std::cout << "ChaCha20Poly1305 Vec256 ...\n";
-      // Check that encryption yields the expected cipher text.
-      Hacl_Chacha20Poly1305_256_aead_encrypt(key.data(),
-                                             iv.data(),
-                                             aad.size(),
-                                             aad.data(),
-                                             msg_size,
-                                             msg.data(),
-                                             ciphertext,
-                                             mac);
-      if (valid) {
-        EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size), ct);
-        EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), tag);
-      }
-
-      res = Hacl_Chacha20Poly1305_256_aead_decrypt(key.data(),
-                                                   iv.data(),
-                                                   aad.size(),
-                                                   aad.data(),
-                                                   msg_size,
-                                                   plaintext,
-                                                   ct.data(),
-                                                   tag.data());
-      EXPECT_EQ(res, valid ? 0 : 1);
-#endif //  HACL_CAN_COMPILE_VEC256
-    }
+  // Check that encryption yields the expected cipher text.
+  Hacl_Chacha20Poly1305_256_aead_encrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+  if (test_case.valid) {
+    EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
+              test_case.ct);
+    EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
   }
+
+  res = Hacl_Chacha20Poly1305_256_aead_decrypt(
+    key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+  EXPECT_EQ(res, test_case.valid ? 0 : 1);
+#endif //  HACL_CAN_COMPILE_VEC256
 }
+
+INSTANTIATE_TEST_SUITE_P(Wycheproof,
+                         Chacha20Poly1305Wycheproof,
+                         ::testing::ValuesIn(read_json()));

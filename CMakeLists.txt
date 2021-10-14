@@ -28,11 +28,6 @@ include(config/constants.cmake)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-
-# Set variables ## TODO: drop
-set(HACL_COMPILE_VEC256 0)
-set(HACL_COMPILE_VEC128 0)
-
 # Read config from file
 include(config/config.cmake)
 
