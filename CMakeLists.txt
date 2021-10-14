@@ -12,6 +12,7 @@ project(hacl
         VERSION 1.0.0.0
         DESCRIPTION "The HACL High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/hacl"
+        LANGUAGES C CXX ASM
         )
 
 # Load global config from exteral file.
@@ -72,7 +73,6 @@ include(config/options.cmake)
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
-# message(FATAL_ERROR "vec128: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
 if(TOOLCHAIN_CAN_COMPILE_VEC128)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC128
@@ -126,8 +126,6 @@ if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     # TODO: include intrinsics source code
 endif()
 
-# message(FATAL_ERROR "Sources ${SOURCES_std}")
-
 # x64
 # Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
@@ -169,9 +167,8 @@ endif()
 
 # Set library config and files
 ## Now combine everything into the hacl library
-## TODO: static and dynamic builds
+## TODO: #11 static and dynamic builds
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
-# message(FATAL_ERROR "TOOLCHAIN_CAN_COMPILE_VEC128: ${TOOLCHAIN_CAN_COMPILE_VEC128} | HACL_VEC128_O: ${HACL_VEC128_O}")
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec128>)

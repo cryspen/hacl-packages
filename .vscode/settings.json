@@ -28,7 +28,8 @@
         "unordered_set": "cpp",
         "utility": "cpp",
         "vector": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "iosfwd": "cpp"
     },
     "python.pythonPath": "/opt/homebrew/bin/python3",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"

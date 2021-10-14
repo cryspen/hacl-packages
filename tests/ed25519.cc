@@ -9,6 +9,7 @@
 
 using json = nlohmann::json;
 
+// TODO: Use TEST_P, see chachapoly test for example
 TEST(Ed25519Test, WycheproofTest)
 {
   // Read JSON test vector
