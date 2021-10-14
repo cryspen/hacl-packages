@@ -100,3 +100,23 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INTRINSICS)
 endif()
 # TODO: Check for these
 set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
+
+# Set OS consistently for compiling, independent of cross-compilation
+# Note that HACL_TARGET_OS is set by the cross-compilation tool chain when using
+# one.
+if(NOT HACL_TARGET_OS)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        set(HACL_TARGET_OS linux)
+    endif()
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(HACL_TARGET_OS osx)
+    endif()
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        if(${MINGW})
+            set(HACL_TARGET_OS mingw)
+        else()
+            # FIXME: What about clang on Windows? I think that's what we really want.
+            set(HACL_TARGET_OS msvc)
+        endif()
+    endif()
+endif()

@@ -73,6 +73,7 @@ class Config:
         self.include_paths = self.config["include_paths"]
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
+        self.vale_files = self.config["vale_sources"]
         self.tests = self.config["tests"]
 
         # Filter algorithms in hacl_files
@@ -92,6 +93,9 @@ class Config:
             for a, _ in list(self.tests.items()):
                 if not a in algorithms:
                     del self.tests[a]
+            for a, _ in list(self.vale_files.items()):
+                if not a in algorithms:
+                    del self.vale_files[a]
 
         # Collect dependencies for the hacl files.
         self.hacl_compile_feature = {}
@@ -119,6 +123,18 @@ class Config:
         # Flatten test sources
         self.test_sources = [f for files in [self.tests[b]
                                              for b in self.tests] for f in files]
+
+        # Flatten vale files into a single list for each platform.
+        # This is all or nothing.
+        platforms = {}
+        for algorithm in self.vale_files:
+            platform = []
+            for p in self.vale_files[algorithm]:
+                if p in platforms:
+                    platforms[p].extend(self.vale_files[algorithm][p])
+                else:
+                    platforms[p] = self.vale_files[algorithm][p]
+        self.vale_files = platforms
 
         # TODO: evercrypt dependencies and features.
         # self.evercrypt_compile_files = {}
@@ -153,6 +169,10 @@ class Config:
 
             out.write("set(TEST_SOURCES %s)\n" %
                       (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources)))
+
+            for os in self.vale_files:
+                out.write("set(VALE_SOURCES_%s %s)\n" %
+                        (os, " ".join(join("${PROJECT_SOURCE_DIR}", "src", "vale", f) for f in self.vale_files[os])))
 
             out.write("set(ALGORITHM_TEST_FILES %s)\n" %
                       " ".join("TEST_FILES_"+a for a in self.tests))

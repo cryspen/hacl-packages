@@ -181,6 +181,7 @@ TEST(Chacha20Poly1305Test, WycheproofTest)
 
 // XXX: do less c&p
 #ifdef HACL_CAN_COMPILE_VEC128
+      std::cout << "ChaCha20Poly1305 Vec128 ...\n";
       // Check that encryption yields the expected cipher text.
       Hacl_Chacha20Poly1305_128_aead_encrypt(key.data(),
                                              iv.data(),
@@ -208,6 +209,7 @@ TEST(Chacha20Poly1305Test, WycheproofTest)
 
 // XXX: do less c&p
 #ifdef HACL_CAN_COMPILE_VEC256
+      std::cout << "ChaCha20Poly1305 Vec256 ...\n";
       // Check that encryption yields the expected cipher text.
       Hacl_Chacha20Poly1305_256_aead_encrypt(key.data(),
                                              iv.data(),

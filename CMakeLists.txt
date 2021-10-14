@@ -14,17 +14,6 @@ project(hacl
         HOMEPAGE_URL "https://cryspen.com/hacl"
         )
 
-# Dependencies
-# gtests are used for testing
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
 # Load global config from exteral file.
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
@@ -129,7 +118,11 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
     endif()
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VALE)
-    # TODO: include VALE source code
+    # Select the files for the target OS/Compiler
+    set(VALE_OBJECTS ${VALE_SOURCES_${HACL_TARGET_OS}})
+    # Add SOURCES_vale to SOURCES_std as we don't need any
+    # special compiler flags for it.
+    list(APPEND SOURCES_std ${SOURCES_vale})
 endif()
 if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     # TODO: include inline assembly source code
@@ -137,6 +130,8 @@ endif()
 if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     # TODO: include intrinsics source code
 endif()
+
+# message(FATAL_ERROR "Sources ${SOURCES_std}")
 
 # x64
 # Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
@@ -180,7 +175,7 @@ endif()
 # Set library config and files
 ## Now combine everything into the hacl library
 ## TODO: static and dynamic builds
-add_library(hacl SHARED ${SOURCES_std})
+add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 # message(FATAL_ERROR "TOOLCHAIN_CAN_COMPILE_VEC128: ${TOOLCHAIN_CAN_COMPILE_VEC128} | HACL_VEC128_O: ${HACL_VEC128_O}")
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
@@ -195,16 +190,20 @@ target_include_directories(hacl PRIVATE)
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
 if(ENABLE_TESTS)
+    # Get gtests
+    include(FetchContent)
+    FetchContent_Declare(googletest
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
     # Get nlohmann json
     FetchContent_Declare(json
         URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
     )
-
-    FetchContent_GetProperties(json)
-    if(NOT json_POPULATED)
-        FetchContent_Populate(json)
-        add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
-    endif()
+    FetchContent_MakeAvailable(json)
 
     foreach(TEST_FILE IN LISTS TEST_SOURCES)
         get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
