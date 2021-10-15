@@ -52,16 +52,14 @@ def update(args):
 
     # copy new .c and .h files to the src/include directory
     def only_c(d, files):
-        files = [f for f in files if isfile(join(d, f)) and f[-2:] != '.c']
-        # filter vale files
-        files = [f for f in files if not "vale" in f.lower()]
+        files = [f for f in files if isfile(
+            join(d, f)) and f[-2:] != '.c' or "vale" in f.lower()]
         return files
     copytree(new_dist, src_dir, ignore=only_c, dirs_exist_ok=True)
 
     def only_h(d, files):
-        files = [f for f in files if isfile(join(d, f)) and f[-2:] != '.h']
-        # filter vale files
-        files = [f for f in files if not "vale" in f.lower()]
+        files = [f for f in files if isfile(
+            join(d, f)) and f[-2:] != '.h' or "vale" in f.lower()]
         return files
     copytree(new_dist, include_dir, ignore=only_h, dirs_exist_ok=True)
 
