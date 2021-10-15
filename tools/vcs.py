@@ -4,7 +4,7 @@ from shutil import copytree
 import subprocess
 import os
 from tempfile import mkdtemp
-from tools.utils import argument, subcommand
+from tools.utils import argument, subcommand, mprint as print
 
 
 def all_files(directory, extension):
@@ -18,13 +18,19 @@ def all_files(directory, extension):
 def update(args):
     """Update HACL* from upstream
 
-    ⚠️  This will remove all local .c and .h files.
+    ⚠️  This will remove all local HACL files.
+    Note that this will not update Vale files. Vale has to be updated manually.
     """
     upstream_url = "https://github.com/project-everest/hacl-star.git"
     try:
         subprocess.run(['git', '--version'], check=True)
     except:
-        print(" [mach] ⚠️  Please make sure that git is installed and in your path.")
+        print("⚠️  Please make sure that git is installed and in your path.")
+        exit(1)
+    print(" ⚠️  This will remove all local HACL files.")
+    really = input(" > Continue? [y/N] ")
+    if not really.lower() in ["y", "yes"]:
+        print(" 💡 Aborting update.")
         exit(1)
 
     # get absolute src and include directories
@@ -45,12 +51,18 @@ def update(args):
         os.remove(f)
 
     # copy new .c and .h files to the src/include directory
-    def only_c(d, files): return [
-        f for f in files if isfile(join(d, f)) and f[-2:] != '.c']
+    def only_c(d, files):
+        files = [f for f in files if isfile(join(d, f)) and f[-2:] != '.c']
+        # filter vale files
+        files = [f for f in files if not "vale" in f.lower()]
+        return files
     copytree(new_dist, src_dir, ignore=only_c, dirs_exist_ok=True)
 
-    def only_h(d, files): return [
-        f for f in files if isfile(join(d, f)) and f[-2:] != '.h']
+    def only_h(d, files):
+        files = [f for f in files if isfile(join(d, f)) and f[-2:] != '.h']
+        # filter vale files
+        files = [f for f in files if not "vale" in f.lower()]
+        return files
     copytree(new_dist, include_dir, ignore=only_h, dirs_exist_ok=True)
 
     print(" [mach] 💪  Copied all new .c and .h files from hacl-star.")
