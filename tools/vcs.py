@@ -41,6 +41,7 @@ def update(args):
     subprocess.run(['git', 'clone', '--depth', '1',
                    upstream_url, temp_hacl_dir], check=True)
 
+    # TODO: #12 Only copy files that we want
     def copy_files(new_dist, src_dir, include_dir):
         # remove all .c and .h files from the src/include directory
         for f in all_files(src_dir, '.c'):
