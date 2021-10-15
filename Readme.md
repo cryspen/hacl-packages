@@ -13,10 +13,17 @@ C code and must not be changed manually.
 This also pulls in upstream tests.
 (Note however that these tests are very limited.)
 
+By default the top-level `src` and `include` directories are used.
+When compiling for `c89` or specific `msvc` versions, the respective `src` and `include` subdirectories are used.
+
 ```
 - src/
+- src/c89
+- src/msvc
 - include/
-- tests/
+- include/c89
+- include/msvc
+- tests/remote
 ```
 
 Vale is considered an external dependency and is pulled into a separate `vale` directory.
@@ -26,7 +33,10 @@ Vale is considered an external dependency and is pulled into a separate `vale` d
 - vale/include
 ```
 
-The handwritten C code for tests is stored in `testing`.
+The handwritten C++ code for tests is stored in
+```
+/tests
+```
 
 ## Build
 
@@ -86,6 +96,7 @@ Testing is done with [gtest] and requires a C++11 compiler.
 
 ### Dependencies
 Tests require the [nlohmann_json] package to read json test files.
+CMake takes care of pulling and building the package.
 
 ## Code Style
 Handwritten C and CPP code is formatted with the Mozilla clang-format style.

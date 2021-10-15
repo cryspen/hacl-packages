@@ -16,8 +16,9 @@ class Config:
         source_file = source_file["file"]
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
+        includes = "-I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -I vale/include"
         result = subprocess.run(
-            'clang -I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -MM src/'+source_file,
+            'clang ' + includes + ' -MM src/'+source_file,
             stdout=subprocess.PIPE,
             shell=True,
             check=True)
@@ -120,6 +121,10 @@ class Config:
         # Set kremlin as include paths
         self.include_paths.extend(self.kremlin_include_paths)
 
+        # If vale is compiled add the include path
+        if len(self.vale_files) != 0:
+            self.include_paths.append(join("vale", "include"))
+
         # Flatten test sources
         self.test_sources = [f for files in [self.tests[b]
                                              for b in self.tests] for f in files]
@@ -172,7 +177,7 @@ class Config:
 
             for os in self.vale_files:
                 out.write("set(VALE_SOURCES_%s %s)\n" %
-                        (os, " ".join(join("${PROJECT_SOURCE_DIR}", "src", "vale", f) for f in self.vale_files[os])))
+                          (os, " ".join(join("${PROJECT_SOURCE_DIR}", "vale", "src", f) for f in self.vale_files[os])))
 
             out.write("set(ALGORITHM_TEST_FILES %s)\n" %
                       " ".join("TEST_FILES_"+a for a in self.tests))

@@ -111,7 +111,7 @@ def snapshot(args):
              argument(
                  "-p", "--target", help="Define compile target for cross compilation.", type=str),
              argument(
-                 "-d", "--disable", help="Disable hardware features even if available.", type=str),
+                 "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
              argument(
                  "-s", "--sanitizer", help="Enable sanitizers.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
