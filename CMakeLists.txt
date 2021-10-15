@@ -214,12 +214,3 @@ if(ENABLE_TESTS)
         )
     endforeach()
 endif()
-
-# # Hardware detection
-# if(ARCHITECTURE MATCHES "intel")
-#     message("Adding ${PROJECT_SOURCE_DIR}/hw-detection/hw-detection.c")
-#     add_executable(hw-detection ${PROJECT_SOURCE_DIR}/src/hw-detection/hw-detection.c
-#                                 ${PROJECT_SOURCE_DIR}/src/hw-detection/cpu-features.c
-#                     )
-#     target_include_directories(hw-detection PUBLIC)
-# endif()
