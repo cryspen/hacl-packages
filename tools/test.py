@@ -10,10 +10,16 @@ from pathlib import Path
 
 def run_tests(config, test_args=[]):
     print("Running tests 🏃🏻‍♀️")
+    if not os.path.exists(binary_path()):
+        print("⚠️  Nothing is built! Please build first. Aborting!")
+        exit(1)
     os.chdir(binary_path())
     for algorithm in config.tests:
         for test in config.tests[algorithm]:
             file_name = Path(test).stem
+            if not os.path.exists(file_name):
+                print("⚠️  Test '%s' doesn't exist. Aborting!" % (file_name))
+                exit(1)
             test_cmd = ['./'+file_name] #FIXME: Windows?
             test_cmd.extend(test_args)
             print(" ".join(test_cmd))
@@ -24,7 +30,7 @@ def run_tests(config, test_args=[]):
 
 @subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
              argument("-a", "--algorithms",
-                      help="The algorithms to include in the snapshot.", type=str)])
+                      help="The algorithms to test.", type=str)])
 def test(args):
     """Test HACL*
     """

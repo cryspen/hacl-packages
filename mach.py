@@ -210,9 +210,9 @@ def build(args):
 
 
 @subcommand()
-def clean():
+def clean(args):
     """Remove all build and config artifacts"""
-    os.rmdir("build")
+    shutil.rmtree("build")
     os.remove(cmake_config())
 
 # === Boiler plate === #
