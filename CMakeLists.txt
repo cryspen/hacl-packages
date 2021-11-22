@@ -25,8 +25,11 @@ include(config/config.cmake)
 include(config/constants.cmake)
 
 # Configure C globally
+# This defaults to C11 but C90 might be set on the outside.
 # https://cmake.org/cmake/help/latest/prop_tgt/C_STANDARD.html#prop_tgt:C_STANDARD
-set(CMAKE_C_STANDARD 11)
+if(NOT CMAKE_C_STANDARD)
+    set(CMAKE_C_STANDARD 11)
+endif(NOT CMAKE_C_STANDARD)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Read config from file
@@ -38,6 +41,7 @@ add_compile_options(
     # -Wextra
     # -Wconversion
     # -Wsign-conversion
+    -Werror=gcc-compat
     $<$<CONFIG:DEBUG>:-g>
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  

@@ -10,6 +10,7 @@
 
 import subprocess
 import re
+import sys
 import json
 import os
 import shutil
@@ -114,6 +115,8 @@ def snapshot(args):
                  "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
              argument(
                  "-s", "--sanitizer", help="Enable sanitizers.", type=str),
+             argument(
+                 "-e", "--edition", help="Choose a different HACL* edition.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
@@ -131,7 +134,13 @@ def build(args):
     Supported sanitizers:
         - asan
         - ubsan
+
+    Use an edition if you want a different build. Note that this build will
+    use the MSVC version by default on Windows.
+    Supported editions:
+        - c89
     """
+    cmake_args = []
     # Verbosity
     verbose = False
     if args.verbose:
@@ -159,15 +168,28 @@ def build(args):
     except:
         pass  # We ignore the error if the directory exists already
 
+    # Select the source folder to use (regular, c89, msvc)
+    source_dir = "src"
+    include_dir = "include"
+    if args.edition == "c89":
+        source_dir = join(source_dir, "c89")
+        include_dir = join(include_dir, "c89")
+        cmake_args.append("-DCMAKE_C_STANDARD=90")
+    # Set MSVC if detecting Windows.
+    # TODO: make it possible to cross-compile for Windows
+    if sys.platform == "win32":
+        source_dir = join(source_dir, "msvc")
+        include_dir = join(include_dir, "msvc")
+
     # Generate config.cmake using the algorithms argument if any given
     algorithms = []
     if args.algorithms:
         algorithms = re.split(r"\W+", args.algorithms)
-    config = Config(json_config(), algorithms=algorithms)
+    config = Config(json_config(), source_dir,
+                    include_dir, algorithms=algorithms)
     config.write_cmake_config(cmake_config())
 
     # Set target toolchain if cross compiling
-    cmake_args = []
     if args.target:
         if args.target == "x64-macos":
             cmake_args.extend(

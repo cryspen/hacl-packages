@@ -7,7 +7,7 @@ from os.path import join
 
 class Config:
 
-    def dependencies(self, algorithm, source_file):
+    def dependencies(self, source_dir, algorithm, source_file):
         """Collect dependencies for a given c file
 
         Use `clang -MM` to collect dependencies for a given c file assuming header
@@ -18,7 +18,7 @@ class Config:
         # FIXME: read include paths and CC from config.json
         includes = "-I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -I vale/include"
         result = subprocess.run(
-            'clang ' + includes + ' -MM src/'+source_file,
+            'clang ' + includes + ' -MM '+join(source_dir, source_file),
             stdout=subprocess.PIPE,
             shell=True,
             check=True)
@@ -27,7 +27,8 @@ class Config:
         files = []
         for line in stdout.splitlines():
             # Remove object file and the c file itself
-            line = re.sub("(\w*).o: src/(\w*).c", "", line)
+            # FIXME: Does this work on Windows?
+            line = re.sub("(\w*).o: "+source_dir+"/(\w*).c", "", line)
             line = line.strip()
             line = line.split(' ')
             try:
@@ -37,14 +38,15 @@ class Config:
                 pass
             files.extend(line)
 
-        # Get all source files in src/
+        # Get all source files in source_dir
         # FIXME: Does this work on Windows?
         result = subprocess.run(
-            'ls -1a src/*.c', stdout=subprocess.PIPE, shell=True)
+            'ls -1a '+source_dir+'/*.c', stdout=subprocess.PIPE, shell=True)
         source_files = result.stdout.decode('utf-8')
         source_files = source_files.splitlines()
-        # remove src/ and .c
-        source_files = list(map(lambda s: s[4:-2], source_files))
+        # remove source_dir and .c
+        source_files = list(
+            map(lambda s: s[len(source_dir)+1:-2], source_files))
 
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
@@ -56,10 +58,10 @@ class Config:
             include = include_match.group(2)
             # Only add the dependency if there's a corresponding source file.
             if include in source_files:
-                deps.append(join("src", include+".c"))
+                deps.append(join(source_dir, include+".c"))
         return deps
 
-    def __init__(self, config_file, algorithms=[]):
+    def __init__(self, config_file, source_dir, include_dir, algorithms=[]):
         """Read the build config from the json file"""
         print(" [mach] Using %s to configure ..." % (config_file))
 
@@ -71,11 +73,12 @@ class Config:
         self.config = json.loads(data)
         self.kremlin_files = self.config["kremlin_sources"]
         self.kremlin_include_paths = self.config["kremlin_include_paths"]
-        self.include_paths = self.config["include_paths"]
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
         self.vale_files = self.config["vale_sources"]
         self.tests = self.config["tests"]
+
+        self.include_paths = [include_dir]
 
         # Filter algorithms in hacl_files
         # In the default case (empty list of algorithms) we don't do anything.
@@ -102,7 +105,7 @@ class Config:
         self.hacl_compile_feature = {}
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files = self.dependencies(a, source_file)
+                files = self.dependencies(source_dir, a, source_file)
                 feature = source_file["features"]
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(

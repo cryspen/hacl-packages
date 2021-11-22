@@ -4,9 +4,6 @@
         "kremlin/include/",
         "kremlin/kremlib/dist/minimal"
     ],
-    "include_paths": [
-        "include"
-    ],
     "hacl_sources": {
         "aesgcm": [],
         "ed25519": [
