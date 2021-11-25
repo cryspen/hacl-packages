@@ -105,8 +105,8 @@ TEST(P256Test, BasicTest)
 typedef struct
 {
   bytes public_key;
-  bytes private_key;
-  bytes shared;
+  bytes msg;
+  bytes sig;
   bool valid;
 } TestCase;
 
@@ -116,7 +116,7 @@ read_json()
 
   // Read JSON test vector
   std::string test_dir = TEST_DIR;
-  test_dir += "/ecdh_secp256r1_ecpoint_test.json";
+  test_dir += "/ecdsa_secp256r1_sha256_test.json";
   std::ifstream json_test_file(test_dir);
   json test_vectors;
   json_test_file >> test_vectors;
@@ -127,32 +127,35 @@ read_json()
   for (auto& test : test_vectors["testGroups"].items()) {
     auto test_value = test.value();
 
+    // Read the key
+    auto key = test_value["key"];
+    auto public_key = from_hex(key["uncompressed"]);
+
     auto tests = test_value["tests"];
     for (auto& test_case : tests.items()) {
       auto test_case_value = test_case.value();
-      auto private_key = from_hex(test_case_value["private"]);
-      auto public_key = from_hex(test_case_value["public"]);
-      auto shared = from_hex(test_case_value["shared"]);
+      auto msg = from_hex(test_case_value["msg"]);
+      auto sig = from_hex(test_case_value["sig"]);
       auto result = test_case_value["result"];
       bool valid = result == "valid" || result == "acceptable";
 
-      tests_out.push_back({ public_key, private_key, shared, valid });
+      tests_out.push_back({ public_key, msg, sig, valid });
     }
   }
 
   return tests_out;
 }
 
-class P256Wycheproof : public ::testing::TestWithParam<TestCase>
+class P256EcdsaWycheproof : public ::testing::TestWithParam<TestCase>
 {};
 
-TEST_P(P256Wycheproof, TryWycheproof)
+TEST_P(P256EcdsaWycheproof, TryWycheproof)
 {
   const TestCase& test_case(GetParam());
 
   // Stupid const
-  uint8_t* private_key = const_cast<uint8_t*>(test_case.private_key.data());
   uint8_t* public_key = const_cast<uint8_t*>(test_case.public_key.data());
+  uint8_t* msg = const_cast<uint8_t*>(test_case.msg.data());
 
   // Convert public key first
   uint8_t plain_public_key[64] = { 0 };
@@ -168,28 +171,62 @@ TEST_P(P256Wycheproof, TryWycheproof)
   }
   EXPECT_TRUE(uncompressed_point || compressed_point || !test_case.valid);
 
-  // Convert the private key
-  uint8_t plain_private_key[32] = { 0 };
-  size_t sk_len = test_case.private_key.size();
-  if (sk_len > 32) {
-    sk_len = 32;
-  }
-  for (size_t i = 0; i < sk_len; i++) {
-    plain_private_key[31 - i] =
-      test_case.private_key[test_case.private_key.size() - 1 - i];
-  }
-
-  uint8_t computed_shared[64] = { 0 };
-  Hacl_P256_ecp256dh_r(computed_shared, plain_public_key, plain_private_key);
+  // Parse DER signature.
+  // FIXME: This should really be in the HACL* libraray.
+  //        The parsing here is opportunistic and not robust.
+  size_t sig_pointer = 0;
   if (test_case.valid) {
-    EXPECT_EQ(std::vector<uint8_t>(computed_shared, computed_shared + 32),
-              test_case.shared);
-  } else {
-    EXPECT_NE(std::vector<uint8_t>(computed_shared, computed_shared + 32),
-              test_case.shared);
+    EXPECT_TRUE(test_case.sig.size() >= 2);
+  }
+  bytes r, s;
+
+  if (test_case.sig.size() > 2) {
+    if (test_case.valid) {
+      size_t pos = 0;
+      EXPECT_EQ(test_case.sig[pos++], 0x30); // Sequence tag
+      auto der_length = test_case.sig[pos++];
+      EXPECT_FALSE(der_length & 0x80);
+      EXPECT_EQ(test_case.sig[pos++], 0x02); // Integer
+      auto x_length = test_case.sig[pos++];
+      r = bytes(&test_case.sig[pos], &test_case.sig[pos] + x_length);
+      pos += x_length;
+      EXPECT_EQ(test_case.sig[pos++], 0x02); // Integer
+      auto y_length = test_case.sig[pos++];
+      s = bytes(&test_case.sig[pos], &test_case.sig[pos] + y_length);
+      pos += y_length;
+      EXPECT_EQ(pos, der_length + 2);
+    }
+  }
+  if (r.size() != 0 && s.size() != 0) {
+    // Removing leading 0s and make r and s 32 bytes each
+    while (r[0] == 0x00) {
+      r.erase(r.begin());
+    }
+    while (r.size() < 32) {
+      r.insert(r.begin(), 0);
+    }
+    while (s[0] == 0x00) {
+      s.erase(s.begin());
+    }
+    while (s.size() < 32) {
+      s.insert(s.begin(), 0);
+    }
+    EXPECT_EQ(32, r.size());
+    EXPECT_EQ(32, s.size());
+
+    // Due to https://github.com/project-everest/hacl-star/issues/327
+    // we fake the msg pointer here for now if it's NULL.
+    if (!msg) {
+      msg = r.data(); // the length is 0 so we never do anything with this.
+      EXPECT_EQ(0, test_case.msg.size());
+    }
+    EXPECT_EQ(
+      test_case.valid,
+      Hacl_P256_ecdsa_verif_p256_sha2(
+        test_case.msg.size(), msg, plain_public_key, r.data(), s.data()));
   }
 }
 
 INSTANTIATE_TEST_SUITE_P(Wycheproof,
-                         P256Wycheproof,
+                         P256EcdsaWycheproof,
                          ::testing::ValuesIn(read_json()));

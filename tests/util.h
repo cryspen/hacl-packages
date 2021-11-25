@@ -51,12 +51,23 @@ from_hex(const std::string& hex)
 }
 
 std::string
-to_hex(const std::vector<uint8_t>& data)
+bytes_to_hex(const std::vector<uint8_t>& data)
 {
   std::stringstream hex(std::ios_base::out);
   hex.flags(std::ios::hex);
   for (const auto& byte : data) {
     hex << std::setw(2) << std::setfill('0') << int(byte);
+  }
+  return hex.str();
+}
+
+std::string
+array_to_hex(const uint8_t* data, size_t len)
+{
+  std::stringstream hex(std::ios_base::out);
+  hex.flags(std::ios::hex);
+  for (size_t i = 0; i < len; i++) {
+    hex << std::setw(2) << std::setfill('0') << int(data[i]);
   }
   return hex.str();
 }
