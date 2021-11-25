@@ -57,7 +57,7 @@ TEST(Ed25519Test, WycheproofTest)
       std::vector<uint8_t> my_signature_vector(my_signature, my_signature + 64);
       if (result == "valid") {
         EXPECT_EQ(my_signature_vector, signature_bytes)
-          << "Got: " << to_hex(my_signature_vector) << std::endl
+          << "Got: " << bytes_to_hex(my_signature_vector) << std::endl
           << "Expected: " << sig << std::endl;
 
         bool self_test = Hacl_Ed25519_verify(from_hex(pk).data(),
@@ -67,7 +67,7 @@ TEST(Ed25519Test, WycheproofTest)
         EXPECT_TRUE(self_test);
       } else {
         EXPECT_NE(my_signature_vector, signature_bytes)
-          << "Got: " << to_hex(my_signature_vector) << std::endl
+          << "Got: " << bytes_to_hex(my_signature_vector) << std::endl
           << "Unexpected: " << sig << std::endl;
       }
 
