@@ -13,4 +13,4 @@ fi
 # Essentially this, with a few customizations:
 # https://raw.githubusercontent.com/project-everest/everest-ci/master/server-infra/linux/.docker/Dockerfile
 docker build -t everest_base_image:1 everest --progress=plain
-docker build . --progress=plain --build_arg hacl_revision=$1
+docker build . --progress=plain --build-arg hacl_revision=$1
