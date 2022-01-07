@@ -9,4 +9,4 @@ RUN ./everest --yes hacl-star pull_projects
 RUN ./everest --yes pull_vale
 RUN ./everest --yes FStar pull_projects FStar make --admit -j 4
 RUN ./everest --yes kremlin pull_projects kremlin make --admit -j 4
-RUN OTHERFLAGS="--warn_error -282+19" OCAMLRUNPARAM=b=1 ./everest --yes hacl-star make -j 2
+RUN OTHERFLAGS="--warn_error -282+16+19" OCAMLRUNPARAM=b=1 ./everest --yes hacl-star make -j 2
