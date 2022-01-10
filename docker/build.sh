@@ -12,5 +12,7 @@ fi
 
 # Essentially this, with a few customizations:
 # https://raw.githubusercontent.com/project-everest/everest-ci/master/server-infra/linux/.docker/Dockerfile
-docker build -t everest_base_image:1 everest --progress=plain
-docker build . --progress=plain --build-arg everest_revision=$1
+docker build -t everest_base_image:1 everest --progress=plain # --no-cache
+docker build . --progress=plain --build-arg everest_revision=$1 |& tee build-log
+warning_count=$(cat build-log | grep -e '(Warning \(19\|16\))' | wc -l)
+echo Build succeeded with $warning_count verification errors
