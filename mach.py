@@ -16,7 +16,7 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import subcommand, argument, json_config, cmake_config, cli, subparsers, mprint as print
+from tools.utils import subcommand, argument, json_config, cmake_config, cli, subparsers, mprint as print, check_cmd
 from tools.vcs import *
 from tools.test import run_tests, test
 
@@ -117,6 +117,8 @@ def snapshot(args):
                  "-s", "--sanitizer", help="Enable sanitizers.", type=str),
              argument(
                  "-e", "--edition", help="Choose a different HACL* edition.", type=str),
+             argument(
+                 "-l", "--language", help="Build language bindings for the given language.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
@@ -139,6 +141,13 @@ def build(args):
     use the MSVC version by default on Windows.
     Supported editions:
         - c89
+
+    HACL can be built for another language than C.
+    Note that bindings will always require the full C library such that the
+    algorithm flag will be ignored.
+        - rust
+        - ocaml (TBD)
+        - wasm (TBD)
     """
     cmake_args = []
     # Verbosity
@@ -168,6 +177,11 @@ def build(args):
     except:
         pass  # We ignore the error if the directory exists already
 
+    bindings = False
+    if args.language == "rust":
+        bindings = True
+        language = "Rust"
+
     # Select the source folder to use (regular, c89, msvc)
     source_dir = "src"
     include_dir = "include"
@@ -183,7 +197,7 @@ def build(args):
 
     # Generate config.cmake using the algorithms argument if any given
     algorithms = []
-    if args.algorithms:
+    if args.algorithms and not bindings:
         algorithms = re.split(r"\W+", args.algorithms)
     config = Config(json_config(), source_dir,
                     include_dir, algorithms=algorithms)
@@ -214,7 +228,7 @@ def build(args):
     if verbose:
         ninja_args.append('-v')
 
-    # build
+    # build C library
     # '--debug-trycompile'
     cmake_cmd = ['cmake', '-B', 'build']
     cmake_cmd.extend(cmake_args)
@@ -224,6 +238,15 @@ def build(args):
     ninja_cmd.extend(ninja_args)
     vprint(str(ninja_cmd))
     subprocess.run(ninja_cmd, check=True)
+
+    # build bindings if requested
+    if bindings:
+        check_cmd('cargo')
+        cmake_cmd = ['cmake', '--install', 'build', '--prefix', 'build/installed', '--config', build_config]
+        vprint(str(cmake_cmd))
+        subprocess.run(cmake_cmd, check=True)
+        # shutil.copy("build".join("%s", build_config).join(""), )
+
     print("Build finished.")
 
     # test if requested

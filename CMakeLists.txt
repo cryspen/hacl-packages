@@ -170,8 +170,8 @@ if(ENABLE_UBSAN)
 endif()
 
 # Set library config and files
-## Now combine everything into the hacl library
-## TODO: #11 static and dynamic builds
+# Now combine everything into the hacl library
+## Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
@@ -181,7 +181,31 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     add_dependencies(hacl hacl_vec256)
     target_link_libraries(hacl PUBLIC $<TARGET_OBJECTS:hacl_vec256>)
 endif()
-target_include_directories(hacl PRIVATE)
+target_include_directories(hacl PUBLIC)
+file(GLOB_RECURSE HDR_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
+set_target_properties(hacl PROPERTIES PUBLIC_HEADER "${HDR_FILES}")
+
+## Static library
+add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
+if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
+    add_dependencies(hacl_static hacl_vec128)
+    target_link_libraries(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec128>)
+endif()
+if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
+    add_dependencies(hacl_static hacl_vec256)
+    target_link_libraries(hacl_static PUBLIC $<TARGET_OBJECTS:hacl_vec256>)
+endif()
+target_include_directories(hacl_static PUBLIC)
+set_target_properties(hacl_static PROPERTIES PUBLIC_HEADER "${HDR_FILES}")
+
+# Install
+## This allows package maintainers to control the install destination by setting
+## the appropriate cache variables.
+include(GNUInstallDirs)
+install(TARGETS hacl_static hacl
+        PUBLIC_HEADER
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl
+)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.

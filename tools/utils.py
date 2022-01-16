@@ -49,6 +49,16 @@ def mprint(*args, **kwargs):
     """Print with mach indicators"""
     print(" [mach] "+" ".join(map(str, args)), **kwargs)
 
+def check_cmd(cmd):
+    return_code = subprocess.run(
+        [cmd, '--version'], capture_output=True).returncode
+    if return_code == 0:
+        mprint("%s ✅" % cmd, end="  ")
+    else:
+        print()
+        mprint(
+            '⚠️  Please make sure that "%s" is installed and in your path.' % (cmd))
+        exit(1)
 
 def dependency_check():
     """Check that all necessary commands and dependencies are available."""
@@ -59,16 +69,6 @@ def dependency_check():
 
     mprint("🧶  Dependency checks ...")
 
-    def check_cmd(cmd):
-        return_code = subprocess.run(
-            [cmd, '--version'], capture_output=True).returncode
-        if return_code == 0:
-            mprint("%s ✅" % cmd, end="  ")
-        else:
-            print()
-            mprint(
-                '⚠️  Please make sure that "%s" is installed and in your path.' % (cmd))
-            exit(1)
     check_cmd('cmake')
     check_cmd("ninja")
     check_cmd("clang")
