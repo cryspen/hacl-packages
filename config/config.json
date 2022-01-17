@@ -6,6 +6,12 @@
     ],
     "hacl_sources": {
         "aesgcm": [],
+        "drbg": [
+            {
+                "file": "Hacl_HMAC_DRBG.c",
+                "features": "std"
+            }
+        ],
         "ed25519": [
             {
                 "file": "Hacl_Ed25519.c",
@@ -149,7 +155,7 @@
         "drbg": [
             "EverCrypt_DRBG.c"
         ],
-        "_ed25519": [
+        "ed25519": [
             "EverCrypt_Ed25519.c"
         ],
         "curve25519": [

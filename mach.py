@@ -242,10 +242,13 @@ def build(args):
     # build bindings if requested
     if bindings:
         check_cmd('cargo')
-        cmake_cmd = ['cmake', '--install', 'build', '--prefix', 'build/installed', '--config', build_config]
+        cmake_cmd = ['cmake', '--install', 'build', '--prefix',
+                     'build/installed', '--config', build_config]
         vprint(str(cmake_cmd))
         subprocess.run(cmake_cmd, check=True)
-        # shutil.copy("build".join("%s", build_config).join(""), )
+        cargo_cmd = ['cargo', 'test', '--manifest-path',
+                     'rust/evercrypt-rs/Cargo.toml']
+        subprocess.run(cargo_cmd, check=True)
 
     print("Build finished.")
 

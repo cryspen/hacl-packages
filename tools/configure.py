@@ -13,7 +13,6 @@ class Config:
         Use `clang -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
-        source_file = source_file["file"]
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = "-I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -I vale/include"
@@ -105,7 +104,7 @@ class Config:
         self.hacl_compile_feature = {}
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files = self.dependencies(source_dir, a, source_file)
+                files = self.dependencies(source_dir, a, source_file["file"])
                 feature = source_file["features"]
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(
@@ -144,17 +143,24 @@ class Config:
                     platforms[p] = self.vale_files[algorithm][p]
         self.vale_files = platforms
 
-        # TODO: evercrypt dependencies and features.
-        # self.evercrypt_compile_files = {}
-        # for a in self.evercrypt_files:
-        #     for source_file in self.evercrypt_files[a]:
-        #         self.evercrypt_compile_files[a] = self.dependencies(
-        #             a, source_file)
+        # Evercrypt has feature detection and we don't disable anything.
+        self.evercrypt_compile_files = []
+        for a in self.evercrypt_files:
+            for source_file in self.evercrypt_files[a]:
+                files = self.dependencies(source_dir, a, source_file)
+                self.evercrypt_compile_files.extend(files)
 
         # Remove duplicates from all lists
         for k in self.hacl_compile_feature:
             self.hacl_compile_feature[k] = list(
                 dict.fromkeys(self.hacl_compile_feature[k]))
+        self.evercrypt_compile_files = list(
+            dict.fromkeys(self.evercrypt_compile_files))
+        # Drop Hacl_ files from evercrypt
+        self.evercrypt_compile_files = [
+            f for f in self.evercrypt_compile_files if "/Hacl_" not in f]
+        # print(self.evercrypt_compile_files)
+        self.hacl_compile_feature['std'].extend(self.evercrypt_compile_files)
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
