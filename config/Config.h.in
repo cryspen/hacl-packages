@@ -19,6 +19,13 @@
 
 #define TARGET_ARCHITECTURE @HACL_TARGET_ARCHITECTURE@
 
+#cmakedefine HACL_CAN_COMPILE_VEC128 @HACL_CAN_COMPILE_VEC128@
+#cmakedefine HACL_CAN_COMPILE_VEC256 @HACL_CAN_COMPILE_VEC256@
+#cmakedefine HACL_CAN_COMPILE_UINT128 @HACL_CAN_COMPILE_UINT128@
+
+#ifndef HACL_CAN_COMPILE_VEC128
+    #define Lib_IntVector_Intrinsics_vec128 void *
+#endif
 #ifndef HACL_CAN_COMPILE_VEC256
     #define Lib_IntVector_Intrinsics_vec256 void *
 #endif

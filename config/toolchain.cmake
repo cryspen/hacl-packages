@@ -24,6 +24,9 @@ if(NOT DEFINED INT128_SUPPORT)
                 )
 endif()
 message(STATUS "int128 support: ${INT128_SUPPORT}")
+if(${INT128_SUPPORT})
+    set(HACL_CAN_COMPILE_UINT128 1)
+endif()
 
 ## Check for explicit_bzero support
 if(NOT DEFINED EXPLICIT_BZERO_SUPPORT)

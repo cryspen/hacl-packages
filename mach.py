@@ -246,7 +246,7 @@ def build(args):
                      'build/installed', '--config', build_config]
         vprint(str(cmake_cmd))
         subprocess.run(cmake_cmd, check=True)
-        cargo_cmd = ['cargo', 'test', '--manifest-path',
+        cargo_cmd = ['cargo', 'build', '--manifest-path',
                      'rust/evercrypt-rs/Cargo.toml']
         subprocess.run(cargo_cmd, check=True)
 

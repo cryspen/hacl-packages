@@ -81,6 +81,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC128
     )
+    set(HACL_CAN_COMPILE_VEC128 1)
     ## We make separate compilation units (objects) for each hardware feature
     list(LENGTH SOURCES_vec128 SOURCES_VEC128_LEN)
     if(NOT SOURCES_VEC128_LEN EQUAL 0)
@@ -102,6 +103,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
     add_compile_options(
         -DHACL_CAN_COMPILE_VEC256
     )
+    set(HACL_CAN_COMPILE_VEC256 1)
     ## We make separate compilation units (objects) for each hardware feature
     list(LENGTH SOURCES_vec256 SOURCES_VEC256_LEN)
     if(NOT SOURCES_VEC256_LEN EQUAL 0)
@@ -200,10 +202,21 @@ set_target_properties(hacl_static PROPERTIES PUBLIC_HEADER "${HDR_FILES}")
 ## This allows package maintainers to control the install destination by setting
 ## the appropriate cache variables.
 include(GNUInstallDirs)
+set(CMAKE_INSTALL_MESSAGE LAZY)
 install(TARGETS hacl_static hacl
         PUBLIC_HEADER
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl
 )
+## Copy kremlin headers
+install(DIRECTORY kremlin/include/kremlin/ DESTINATION include/kremlin
+        FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY kremlin/kremlib/dist/minimal/ DESTINATION include/kremlin
+        FILES_MATCHING PATTERN "*.h")
+## Install vale headers
+install(DIRECTORY vale/include/ DESTINATION include/vale
+        FILES_MATCHING PATTERN "*.h")
+## Install config.h
+install(FILES build/config.h DESTINATION include/hacl)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
