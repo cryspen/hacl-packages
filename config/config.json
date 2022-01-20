@@ -132,6 +132,20 @@
                 "cpuid-x86_64-msvc.asm"
             ]
         },
+        "sha2": {
+            "osx": [
+                "sha256-x86_64-darwin.S"
+            ],
+            "linux": [
+                "sha256-x86_64-linux.S"
+            ],
+            "mingw": [
+                "sha256-x86_64-mingw.S"
+            ],
+            "msvc": [
+                "sha256-x86_64-msvc.asm"
+            ]
+        },
         "aesgcm": {
             "osx": [
                 "aesgcm-x86_64-darwin.S",
