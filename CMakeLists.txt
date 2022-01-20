@@ -41,7 +41,7 @@ add_compile_options(
     # -Wextra
     # -Wconversion
     # -Wsign-conversion
-    -Werror=gcc-compat
+    # -Werror=gcc-compat
     $<$<CONFIG:DEBUG>:-g>
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  
@@ -124,6 +124,7 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Add SOURCES_vale to SOURCES_std as we don't need any
     # special compiler flags for it.
     list(APPEND SOURCES_std ${SOURCES_vale})
+    set(HACL_CAN_COMPILE_VALE 1)
 endif()
 if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     # TODO: include inline assembly source code
