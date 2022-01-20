@@ -97,7 +97,7 @@ class Config:
                 if not a in algorithms:
                     del self.tests[a]
             for a, _ in list(self.vale_files.items()):
-                if not a in algorithms:
+                if not a in algorithms and a is not "std":
                     del self.vale_files[a]
 
         # Collect dependencies for the hacl files.

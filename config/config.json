@@ -118,6 +118,20 @@
         ]
     },
     "vale_sources": {
+        "std": {
+            "osx": [
+                "cpuid-x86_64-darwin.S"
+            ],
+            "linux": [
+                "cpuid-x86_64-linux.S"
+            ],
+            "mingw": [
+                "cpuid-x86_64-mingw.S"
+            ],
+            "msvc": [
+                "cpuid-x86_64-msvc.asm"
+            ]
+        },
         "aesgcm": {
             "osx": [
                 "aesgcm-x86_64-darwin.S",
