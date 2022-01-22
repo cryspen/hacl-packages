@@ -47,13 +47,6 @@ add_compile_options(
     $<$<CONFIG:RELEASE>:-O3>  
 )
 
-if(${HACL_TARGET_OS} MATCHES linux)
-    add_compile_options(
-        -fPIC
-    )
-endif(${HACL_TARGET_OS} MATCHES linux)
-
-
 # Set target platform
 # This is defined through the CMAKE_TOOLCHAIN_FILE. But CMAKE_OSX_ARCHITECTURES
 # is not picked up correctly. So we set it again here.
@@ -69,6 +62,12 @@ include_directories(${INCLUDE_PATHS} ${PROJECT_BINARY_DIR})
 
 # Test the toolchain to get supported CPU features
 include(config/toolchain.cmake)
+
+if(${HACL_TARGET_OS} MATCHES linux)
+    add_compile_options(
+        -fPIC
+    )
+endif(${HACL_TARGET_OS} MATCHES linux)
 
 # XXX: Investigate whether we can use CHECK_C_COMPILER_FLAG here at all
 
@@ -191,18 +190,15 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     add_dependencies(hacl hacl_vec256)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
-target_include_directories(hacl PUBLIC)
-file(GLOB HACL_HDR_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
 
 ## Static library
 add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
-    target_sources(hacl_static PUBLIC $<TARGET_OBJECTS:hacl_vec128>)
+    target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec128>)
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
-    target_sources(hacl_static PUBLIC $<TARGET_OBJECTS:hacl_vec256>)
+    target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
-target_include_directories(hacl_static PUBLIC)
 
 # Install
 ## This allows package maintainers to control the install destination by setting

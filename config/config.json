@@ -179,6 +179,20 @@
             "msvc": [
                 "curve25519-x86_64-msvc.asm"
             ]
+        },
+	"poly1305": {
+            "osx": [
+                "poly1305-x86_64-darwin.S"
+            ],
+            "linux": [
+                "poly1305-x86_64-linux.S"
+            ],
+            "mingw": [
+                "poly1305-x86_64-mingw.S"
+            ],
+            "msvc": [
+                "poly1305-x86_64-msvc.asm"
+            ]
         }
     },
     "evercrypt_sources": {
@@ -236,3 +250,4 @@
         ]
     }
 }
+
