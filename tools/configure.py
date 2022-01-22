@@ -140,7 +140,6 @@ class Config:
         # This is all or nothing.
         platforms = {}
         for algorithm in self.vale_files:
-            platform = []
             for p in self.vale_files[algorithm]:
                 if p in platforms:
                     platforms[p].extend(self.vale_files[algorithm][p])
