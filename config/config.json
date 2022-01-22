@@ -1,8 +1,10 @@
 {
-    "kremlin_sources": [],
     "kremlin_include_paths": [
-        "kremlin/include/",
+        "kremlin/include",
         "kremlin/kremlib/dist/minimal"
+    ],
+    "vale_include_paths": [
+        "vale/include"
     ],
     "hacl_sources": {
         "aesgcm": [],

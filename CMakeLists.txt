@@ -47,6 +47,13 @@ add_compile_options(
     $<$<CONFIG:RELEASE>:-O3>  
 )
 
+if(${HACL_TARGET_OS} MATCHES linux)
+    add_compile_options(
+        -fPIC
+    )
+endif(${HACL_TARGET_OS} MATCHES linux)
+
+
 # Set target platform
 # This is defined through the CMAKE_TOOLCHAIN_FILE. But CMAKE_OSX_ARCHITECTURES
 # is not picked up correctly. So we set it again here.
@@ -185,8 +192,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 target_include_directories(hacl PUBLIC)
-file(GLOB_RECURSE HDR_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
-set_target_properties(hacl PROPERTIES PUBLIC_HEADER "${HDR_FILES}")
+file(GLOB HACL_HDR_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
 
 ## Static library
 add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
@@ -197,27 +203,25 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PUBLIC $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 target_include_directories(hacl_static PUBLIC)
-set_target_properties(hacl_static PROPERTIES PUBLIC_HEADER "${HDR_FILES}")
 
 # Install
 ## This allows package maintainers to control the install destination by setting
 ## the appropriate cache variables.
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
-install(TARGETS hacl_static hacl
-        PUBLIC_HEADER
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl
-)
+install(TARGETS hacl_static hacl)
+## Copy hacl headers
+install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 ## Copy kremlin headers
-install(DIRECTORY kremlin/include/kremlin/ DESTINATION include/kremlin
+install(DIRECTORY kremlin/include/kremlin/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kremlin
         FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY kremlin/kremlib/dist/minimal/ DESTINATION include/kremlin
+install(DIRECTORY kremlin/kremlib/dist/minimal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kremlin
         FILES_MATCHING PATTERN "*.h")
 ## Install vale headers
-install(DIRECTORY vale/include/ DESTINATION include/vale
+install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
         FILES_MATCHING PATTERN "*.h")
 ## Install config.h
-install(FILES build/config.h DESTINATION include/hacl)
+install(FILES build/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.

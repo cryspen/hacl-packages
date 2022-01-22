@@ -27,6 +27,12 @@ def binary_path():
     return os.path.join("build", "Debug")
 
 
+def absolute_file_paths(directory):
+    for dirpath, _, filenames in os.walk(directory):
+        for f in filenames:
+            yield os.path.abspath(os.path.join(dirpath, f))
+
+
 def subcommand(args=[], parent=subparsers):
     """Decorator for sub commands."""
     dependency_check()
@@ -49,6 +55,7 @@ def mprint(*args, **kwargs):
     """Print with mach indicators"""
     print(" [mach] "+" ".join(map(str, args)), **kwargs)
 
+
 def check_cmd(cmd):
     return_code = subprocess.run(
         [cmd, '--version'], capture_output=True).returncode
@@ -59,6 +66,7 @@ def check_cmd(cmd):
         mprint(
             '⚠️  Please make sure that "%s" is installed and in your path.' % (cmd))
         exit(1)
+
 
 def dependency_check():
     """Check that all necessary commands and dependencies are available."""

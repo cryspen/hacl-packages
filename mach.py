@@ -78,28 +78,22 @@ def snapshot(args):
     # TODO: use config.header_files()
 
 
-# # XXX: Not needed?
-# @subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
-#              argument("-o", "--out", help="The config.cmake file to write.", type=str)])
-# def configure(args):
-#     """Configure command to configure the cmake build from config.json
+def _install(prefix=None, config=None):
+    configuration = "Debug"
+    if config:
+        configuration = config
+    cmake_cmd = ['cmake', '--install', 'build', '--config', configuration]
+    if prefix:
+        cmake_cmd.extend(['--prefix', prefix])
+    subprocess.run(cmake_cmd, check=True)
 
-#     ⚠️  This will override your config.cmake.
 
-#     This will parse the json config file, build the dependency graph, and write
-#     out the cmake config file for the build.
-#     It is also used to generate HACL distributions with a subset of
-#     algorithms.
-#     """
-#     config_file = "config/config.json"  # The default config.json file.
-#     if args.file:
-#         config_file = args.file
-#     out_file = "config/config.cmake"  # The default config.cmake file.
-#     if args.file:
-#         out_file = args.out
-
-#     config = Config(config_file)
-#     config.write_cmake_config(out_file)
+@subcommand([argument("-p", "--prefix",
+                      help="The path prefix to install into.", type=str),
+             argument("-c", "--config",
+                      help="The config to install, i.e. Debug or Release.", type=str)])
+def install(args):
+    _install(prefix=args.prefix, config=args.config)
 
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
@@ -242,10 +236,7 @@ def build(args):
     # build bindings if requested
     if bindings:
         check_cmd('cargo')
-        cmake_cmd = ['cmake', '--install', 'build', '--prefix',
-                     'build/installed', '--config', build_config]
-        vprint(str(cmake_cmd))
-        subprocess.run(cmake_cmd, check=True)
+        _install(prefix='build/installed', config=build_config)
         cargo_cmd = ['cargo', 'build', '--manifest-path',
                      'rust/evercrypt-rs/Cargo.toml']
         subprocess.run(cargo_cmd, check=True)

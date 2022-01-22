@@ -15,7 +15,7 @@ class Config:
         """
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
-        includes = "-I include -I build -I kremlin/include/ -I kremlin/kremlib/dist/minimal -I vale/include"
+        includes = '-I ' + ' -I '.join(self.include_paths)
         result = subprocess.run(
             'clang ' + includes + ' -MM '+join(source_dir, source_file),
             stdout=subprocess.PIPE,
@@ -50,19 +50,24 @@ class Config:
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
         deps = []
+        includes = []
         for include in files:
             # Get the file name from the path (could be done more efficiently before)
             include_match = re.match(
                 "^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", include)
-            include = include_match.group(2)
+            include_matched = include_match.group(2)
             # Only add the dependency if there's a corresponding source file.
-            if include in source_files:
-                deps.append(join(source_dir, include+".c"))
-        return deps
+            if include_matched in source_files:
+                deps.append(join(source_dir, include_matched+".c"))
+            # We take all includes though
+            includes.append(join(include))
+        return deps, includes
 
     def __init__(self, config_file, source_dir, include_dir, algorithms=[]):
         """Read the build config from the json file"""
         print(" [mach] Using %s to configure ..." % (config_file))
+        if len(algorithms) != 0:
+            print(" [mach]   enabling %s" % " ".join(algorithms))
 
         # read file
         with open(config_file, 'r') as f:
@@ -70,14 +75,17 @@ class Config:
 
         # parse file
         self.config = json.loads(data)
-        self.kremlin_files = self.config["kremlin_sources"]
-        self.kremlin_include_paths = self.config["kremlin_include_paths"]
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
         self.vale_files = self.config["vale_sources"]
         self.tests = self.config["tests"]
 
         self.include_paths = [include_dir]
+        # Set kremlin as include paths
+        self.include_paths.extend(self.config["kremlin_include_paths"])
+        # If vale is compiled add the include path
+        if len(self.vale_files) != 0:
+            self.include_paths.extend(self.config["vale_include_paths"])
 
         # Filter algorithms in hacl_files
         # In the default case (empty list of algorithms) we don't do anything.
@@ -97,14 +105,18 @@ class Config:
                 if not a in algorithms:
                     del self.tests[a]
             for a, _ in list(self.vale_files.items()):
-                if not a in algorithms and a is not "std":
+                if not a in algorithms and a != "std":
                     del self.vale_files[a]
 
         # Collect dependencies for the hacl files.
         self.hacl_compile_feature = {}
+        self.hacl_includes = []
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files = self.dependencies(source_dir, a, source_file["file"])
+                files, includes = self.dependencies(
+                    source_dir, a, source_file["file"])
+                self.hacl_includes.extend(includes if type(
+                    includes) == list else [includes])
                 feature = source_file["features"]
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(
@@ -119,13 +131,6 @@ class Config:
                 # Filter all feature files to remove std files.
                 self.hacl_compile_feature[feature] = [
                     file for file in self.hacl_compile_feature[feature] if file not in self.hacl_compile_feature["std"]]
-
-        # Set kremlin as include paths
-        self.include_paths.extend(self.kremlin_include_paths)
-
-        # If vale is compiled add the include path
-        if len(self.vale_files) != 0:
-            self.include_paths.append(join("vale", "include"))
 
         # Flatten test sources
         self.test_sources = [f for files in [self.tests[b]
@@ -147,8 +152,10 @@ class Config:
         self.evercrypt_compile_files = []
         for a in self.evercrypt_files:
             for source_file in self.evercrypt_files[a]:
-                files = self.dependencies(source_dir, a, source_file)
+                files, includes = self.dependencies(source_dir, a, source_file)
                 self.evercrypt_compile_files.extend(files)
+                self.hacl_includes.extend(includes if type(
+                    includes) == list else [includes])
 
         # Remove duplicates from all lists
         for k in self.hacl_compile_feature:
@@ -156,24 +163,27 @@ class Config:
                 dict.fromkeys(self.hacl_compile_feature[k]))
         self.evercrypt_compile_files = list(
             dict.fromkeys(self.evercrypt_compile_files))
+        self.hacl_includes = list(dict.fromkeys(self.hacl_includes))
         # Drop Hacl_ files from evercrypt
         self.evercrypt_compile_files = [
-            f for f in self.evercrypt_compile_files if "/Hacl_" not in f]
-        # print(self.evercrypt_compile_files)
+            f for f in self.evercrypt_compile_files if "Hacl_" not in f]
         self.hacl_compile_feature['std'].extend(self.evercrypt_compile_files)
+
+        # # Get header files corresponding to the source files
+        # header_files = []
+        # for feature in self.hacl_compile_feature:
+        #     for source_file in self.hacl_compile_feature[feature]:
+        #         header_files.
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
-        print(" [mach] THIS OVERRIDES %s. (But it's too late now ... )" %
-              cmake_config)
         with open(cmake_config, 'w') as out:
-            if len(self.kremlin_files) > 0:
-                out.write("set(KREMLIN_FILES %s)\n" %
-                          " ".join(f for f in self.kremlin_files))
-
             for a in self.hacl_compile_feature:
                 out.write("set(SOURCES_%s %s)\n" %
                           (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a])))
+
+            out.write("set(INCLUDES %s)\n" %
+                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes))
 
             out.write("set(ALGORITHMS %s)\n" %
                       " ".join(a for a in self.hacl_files))

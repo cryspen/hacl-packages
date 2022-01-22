@@ -1,5 +1,9 @@
 #include "libintvector.h"
 
+#if TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X64
+  #include <stdint.h>
+#endif
+
 int main () {
   uint8_t block[32] = { 0 };
   Lib_IntVector_Intrinsics_vec128 b1 = Lib_IntVector_Intrinsics_vec128_load32_le(block);
