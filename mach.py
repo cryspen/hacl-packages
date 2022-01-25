@@ -16,7 +16,7 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import subcommand, argument, json_config, cmake_config, cli, subparsers, mprint as print, check_cmd
+from tools.utils import subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
 from tools.vcs import *
 from tools.test import run_tests, test
 
@@ -196,6 +196,7 @@ def build(args):
     config = Config(json_config(), source_dir,
                     include_dir, algorithms=algorithms)
     config.write_cmake_config(cmake_config())
+    config.write_dep_config(dep_config())
 
     # Set target toolchain if cross compiling
     if args.target:

@@ -17,6 +17,10 @@ def cmake_config():
     return os.path.join("config", "config.cmake")
 
 
+def dep_config():
+    return os.path.join("config", "dep_config.json")
+
+
 def config_check_file():
     return join("config", ".dependency_check")
 

@@ -168,12 +168,6 @@ class Config:
             f for f in self.evercrypt_compile_files if "Hacl_" not in f]
         self.hacl_compile_feature['std'].extend(self.evercrypt_compile_files)
 
-        # # Get header files corresponding to the source files
-        # header_files = []
-        # for feature in self.hacl_compile_feature:
-        #     for source_file in self.hacl_compile_feature[feature]:
-        #         header_files.
-
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
         with open(cmake_config, 'w') as out:
@@ -202,6 +196,18 @@ class Config:
             for a in self.tests:
                 out.write("set(TEST_FILES_%s %s)\n" %
                           (a, " ".join(f for f in self.tests[a])))
+
+    def write_dep_config(self, dep_config):
+        print(" [mach] Writing config with all dependencies to %s ..." %
+              (dep_config))
+        config = {
+            "sources": self.hacl_compile_feature,
+            "includes": self.hacl_includes,
+            "vale_sources": self.vale_files,
+        }
+        json_data = json.dumps(config, indent=4)
+        with open(dep_config, "w") as outfile:
+            outfile.write(json_data)
 
     def source_files(self):
         """Get a list of all source files in the config."""
