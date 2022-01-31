@@ -9,8 +9,8 @@ cmake_minimum_required(VERSION 3.17)
 
 # Library version and name
 project(hacl
-        VERSION 1.0.0.0
-        DESCRIPTION "The HACL High Assurance Crypto Library"
+        VERSION 0.1.0
+        DESCRIPTION "The High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/hacl"
         LANGUAGES C CXX ASM
         )
