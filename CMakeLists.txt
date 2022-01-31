@@ -41,7 +41,7 @@ add_compile_options(
     # -Wextra
     # -Wconversion
     # -Wsign-conversion
-    # -Werror=gcc-compat
+    -Werror=gcc-compat
     $<$<CONFIG:DEBUG>:-g>
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  
@@ -207,7 +207,7 @@ include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
 install(TARGETS hacl_static hacl)
 ## Copy hacl headers
-install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
+install(FILES ${PUBLIC_INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 ## Copy kremlin headers
 install(DIRECTORY kremlin/include/kremlin/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kremlin
         FILES_MATCHING PATTERN "*.h")

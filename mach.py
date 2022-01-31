@@ -189,6 +189,19 @@ def build(args):
         source_dir = join(source_dir, "msvc")
         include_dir = join(include_dir, "msvc")
 
+    # There must be a config.cmake already that contains some useful information.
+    # We have to generate config.h before we can generate the configuration
+    # properly. 🥚🐓
+    # First run a dummy config for all algorithms.
+    config = Config(json_config(), source_dir, include_dir)
+    config.write_cmake_config(cmake_config())
+    config.write_dep_config(dep_config())
+    # '--debug-trycompile'
+    cmake_cmd = ['cmake', '-B', 'build']
+    cmake_cmd.extend(cmake_args)
+    vprint(str(cmake_cmd))
+    subprocess.run(cmake_cmd, check=True)
+
     # Generate config.cmake using the algorithms argument if any given
     algorithms = []
     if args.algorithms and not bindings:
@@ -224,11 +237,6 @@ def build(args):
         ninja_args.append('-v')
 
     # build C library
-    # '--debug-trycompile'
-    cmake_cmd = ['cmake', '-B', 'build']
-    cmake_cmd.extend(cmake_args)
-    vprint(str(cmake_cmd))
-    subprocess.run(cmake_cmd, check=True)
     ninja_cmd = ['ninja', '-f', 'build-%s.ninja' % build_config, '-C', 'build']
     ninja_cmd.extend(ninja_args)
     vprint(str(ninja_cmd))
