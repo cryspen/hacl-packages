@@ -146,15 +146,6 @@ def all_files(config_file, editions):
     return files, file_names, includes, include_names
 
 
-editions = [('std', '../hacl-star/dist/gcc-compatible', 'src', 'include'),
-            ('c89', '../hacl-star/dist/c89-compatible', 'src/c89', 'include/c89'),
-            ('msvc', '../hacl-star/dist/msvc-compatible', 'src/msvc', 'include/msvc')]
-config_file = 'config/config.json'
-files, file_names, includes, include_names = all_files(config_file, editions)
-# print(json.dumps(includes, indent=2))
-# exit()
-
-
 def rm(file):
     if os.path.isfile(file):
         os.remove(file)
@@ -169,7 +160,7 @@ def clean():
         rm(os.path.join('include', filename))
 
 
-def update_hacl(files, editions):
+def update_hacl(files, includes, editions):
     clean()
     for edition, new_dist_dir, dest, include_dest in editions:
         dest = abs_path(dest)
@@ -186,4 +177,12 @@ def update_hacl(files, editions):
         shutil.copytree(internal_includes, dest_internal)
 
 
-update_hacl(files, editions)
+"""
+editions = [(name, new-code, target-src-dir, target-include-dir)]
+"""
+editions = [('std', '../hacl-star/dist/gcc-compatible', 'src', 'include'),
+            ('c89', '../hacl-star/dist/c89-compatible', 'src/c89', 'include/c89'),
+            ('msvc', '../hacl-star/dist/msvc-compatible', 'src/msvc', 'include/msvc')]
+config_file = 'config/config.json'
+files, file_names, includes, include_names = all_files(config_file, editions)
+update_hacl(files, includes, editions)

@@ -74,9 +74,6 @@ def snapshot(args):
         f = os.path.abspath(source_file)
         shutil.copy(f, dst_src_dir)
 
-    # Now the header files
-    # TODO: use config.header_files()
-
 
 def _install(prefix=None, config=None):
     configuration = "Debug"
@@ -97,7 +94,8 @@ def install(args):
 
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
-             argument("-t", "--test", help="Run tests after building.",
+             argument("--tests", help="Build tests.", action='store_true'),
+             argument("--test", help="Build and run tests.",
                       action='store_true'),
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
@@ -189,6 +187,26 @@ def build(args):
         source_dir = join(source_dir, "msvc")
         include_dir = join(include_dir, "msvc")
 
+    # Set target toolchain if cross compiling
+    if args.target:
+        if args.target == "x64-macos":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+        else:
+            print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
+            print("   Available targets: x64-macos")
+            exit(1)
+    if args.disable:
+        features_to_disable = list(
+            map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
+        cmake_args.extend(features_to_disable)
+    if args.tests or args.test:
+        cmake_args.append("-DENABLE_TESTS=ON")
+    if args.sanitizer:
+        sanitizers = list(
+            map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
+        cmake_args.extend(sanitizers)
+
     # There must be a config.cmake already that contains some useful information.
     # We have to generate config.h before we can generate the configuration
     # properly. 🥚🐓
@@ -210,26 +228,6 @@ def build(args):
                     include_dir, algorithms=algorithms)
     config.write_cmake_config(cmake_config())
     config.write_dep_config(dep_config())
-
-    # Set target toolchain if cross compiling
-    if args.target:
-        if args.target == "x64-macos":
-            cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
-        else:
-            print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
-            print("   Available targets: x64-macos")
-            exit(1)
-    if args.disable:
-        features_to_disable = list(
-            map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
-        cmake_args.extend(features_to_disable)
-    if args.test:
-        cmake_args.append("-DENABLE_TESTS=ON")
-    if args.sanitizer:
-        sanitizers = list(
-            map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
-        cmake_args.extend(sanitizers)
 
     # Set ninja arguments
     ninja_args = []
@@ -254,7 +252,7 @@ def build(args):
 
     # test if requested
     if args.test:
-        run_tests(config)
+        run_tests(config.tests)
 
 
 @subcommand()
