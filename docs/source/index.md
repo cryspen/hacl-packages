@@ -65,6 +65,7 @@ See {ref}`AEAD_Usage` for how to use AEADs.
 ```{toctree}
 :maxdepth: 2
 :caption: Contents
+:hidden:
 
 bindings
 build
