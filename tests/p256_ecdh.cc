@@ -69,11 +69,11 @@ TEST_P(P256EcdhWycheproof, TryWycheproof)
   bool compressed_point = false;
   if (test_case.public_key.size() >= 65) {
     uncompressed_point =
-      Hacl_P256_decompression_not_compressed_form(public_key, plain_public_key);
+      Hacl_P256_uncompressed_to_raw(public_key, plain_public_key);
   }
   if (!uncompressed_point && test_case.public_key.size() >= 32) {
     compressed_point =
-      Hacl_P256_decompression_compressed_form(public_key, plain_public_key);
+      Hacl_P256_compressed_to_raw(public_key, plain_public_key);
   }
   EXPECT_TRUE(uncompressed_point || compressed_point || !test_case.valid);
 
@@ -89,7 +89,7 @@ TEST_P(P256EcdhWycheproof, TryWycheproof)
   }
 
   uint8_t computed_shared[64] = { 0 };
-  Hacl_P256_ecp256dh_r(computed_shared, plain_public_key, plain_private_key);
+  Hacl_P256_dh_responder(computed_shared, plain_public_key, plain_private_key);
   if (test_case.valid) {
     EXPECT_EQ(std::vector<uint8_t>(computed_shared, computed_shared + 32),
               test_case.shared);

@@ -18,6 +18,7 @@
             "src/Hacl_Chacha20.c",
             "src/Hacl_P256.c",
             "src/Hacl_SHA3.c",
+            "src/Hacl_Streaming_SHA1.c",
             "src/Hacl_Hash_MD5.c",
             "src/Hacl_HKDF.c",
             "src/Hacl_RSAPSS.c",
@@ -43,14 +44,16 @@
             "src/Hacl_Streaming_Blake2b_256.c",
             "src/Hacl_Chacha20Poly1305_256.c",
             "src/Hacl_Poly1305_256.c",
-            "src/Hacl_Chacha20_Vec256.c"
+            "src/Hacl_Chacha20_Vec256.c",
+            "src/Hacl_SHA2_Vec256.c"
         ],
         "vec128": [
             "src/Hacl_Hash_Blake2s_128.c",
             "src/Hacl_Streaming_Blake2s_128.c",
             "src/Hacl_Chacha20Poly1305_128.c",
             "src/Hacl_Poly1305_128.c",
-            "src/Hacl_Chacha20_Vec128.c"
+            "src/Hacl_Chacha20_Vec128.c",
+            "src/Hacl_SHA2_Vec128.c"
         ],
         "vale": [
             "src/Hacl_Curve25519_64.c"
@@ -114,8 +117,15 @@
         "include/internal/../Hacl_Spec.h",
         "include/internal/../Hacl_P256.h",
         "include/Hacl_SHA3.h",
+        "include/Hacl_SHA2_Vec128.h",
+        "include/Hacl_SHA2_Generic.h",
+        "include/internal/Hacl_SHA2_Vec128.h",
+        "include/internal/../Hacl_SHA2_Vec128.h",
+        "include/internal/Hacl_SHA2_Vec256.h",
+        "include/internal/../Hacl_SHA2_Vec256.h",
         "include/internal/Hacl_Hash_SHA1.h",
         "include/internal/../Hacl_Hash_SHA1.h",
+        "include/Hacl_Streaming_SHA1.h",
         "include/internal/Hacl_Hash_MD5.h",
         "include/internal/../Hacl_Hash_MD5.h",
         "include/internal/Hacl_HMAC.h",
