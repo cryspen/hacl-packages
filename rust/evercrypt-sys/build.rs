@@ -52,16 +52,10 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 fn create_bindings(_: &str) {}
 
 fn main() {
-    // Set re-run trigger
-    println!("cargo:rerun-if-changed=wrapper.h");
-
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let home_dir = Path::new(&home_dir);
     let target = env::var("TARGET").unwrap();
-
-    // Set library type
-    let mode = "static";
 
     // Set library name to look up
     let library_name = if target == "x86_64-pc-windows-msvc" {
@@ -79,17 +73,21 @@ fn main() {
     let hacl_lib_path = hacl_path.join("lib");
     let hacl_include_path = hacl_path.join("include");
 
+    // Set re-run trigger
+    println!("cargo:rerun-if-changed=wrapper.h");
+    // We should re-run if the library changed. But this triggers the build
+    // to re-run every time right now.
+    // println!(
+    //     "cargo:rerun-if-changed={}",
+    //     hacl_lib_path.join(library_name).display()
+    // );
+
     // Generate new bindings. This is a no-op on Windows.
     create_bindings(&hacl_include_path, home_dir);
 
     // Link evercrypt library.
+    let mode = "static";
     println!("cargo:rustc-link-lib={}={}", mode, library_name);
     println!("cargo:rustc-link-search=native={}", hacl_lib_path.display());
     println!("cargo:lib={}", hacl_lib_path.display());
-
-    // another re-run trigger
-    println!(
-        "cargo:rerun-if-changed={}",
-        hacl_lib_path.join(library_name).display()
-    );
 }
