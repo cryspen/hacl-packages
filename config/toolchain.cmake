@@ -39,6 +39,11 @@ message(STATUS "explicit_bzero support: ${EXPLICIT_BZERO_SUPPORT}")
 
 ## Check for vec128 support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
+    set(CPU_FLAGS "")
+    # TODO: read these flag from a common definition
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        set(CPU_FLAGS "${CPU_FLAGS} -msse2 -msse3 -msse4.1 -msse4.2")
+    endif()
     try_compile(TOOLCHAIN_CAN_COMPILE_VEC128
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/vec128.c
@@ -47,22 +52,29 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
                         COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC128 \
                                              -I${PROJECT_SOURCE_DIR}/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal \
+                                             ${CPU_FLAGS}"
                 )
 endif()
 message(STATUS "vec128 support: ${TOOLCHAIN_CAN_COMPILE_VEC128}")
 
 ## Check for vec256 support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
+    set(CPU_FLAGS "")
+    # TODO: read these flag from a common definition
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        set(CPU_FLAGS "${CPU_FLAGS} -mavx2 -mavx")
+    endif()
     try_compile(TOOLCHAIN_CAN_COMPILE_VEC256
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/vec256.c
                         # TODO: get the include paths from global variables
                         #       When do we need -march=armv8-a+simd or something else here?
-                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256 -mavx2 \
+                        COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256  \
                                              -I${PROJECT_SOURCE_DIR}/include \
                                              -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal"
+                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal \
+                                             ${CPU_FLAGS}"
                 )
 endif()
 message(STATUS "vec256 support: ${TOOLCHAIN_CAN_COMPILE_VEC256}")

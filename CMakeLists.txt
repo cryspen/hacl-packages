@@ -41,7 +41,7 @@ add_compile_options(
     # -Wextra
     # -Wconversion
     # -Wsign-conversion
-    -Werror=gcc-compat
+    # -Werror=gcc-compat
     $<$<CONFIG:DEBUG>:-g>
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  
@@ -96,7 +96,10 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
         target_include_directories(hacl_vec128 PRIVATE)
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
             target_compile_options(hacl_vec128 PRIVATE
-                -mavx
+                -msse2
+                -msse3
+                -msse4.1
+                -msse4.2
             )
         elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
             target_compile_options(hacl_vec128 PRIVATE
@@ -119,6 +122,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
         # We really should only get here on x86 architectures. But let's make sure.
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
             target_compile_options(hacl_vec256 PRIVATE
+                -mavx
                 -mavx2
             )
         endif()
