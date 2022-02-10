@@ -2,7 +2,7 @@
 
 ![][status]
 
-The High Assurance Crypto Library (HACL) is a C library with Rust, OCaml, and
+The Cryspen High Assurance Crypto Library (HACL) is a C library with Rust, OCaml, and
 JavaScript bindings based on [HACL*], [Vale], and [Evercrypt].
 
 [//]: # "links"
