@@ -1,4 +1,4 @@
 {
   "contributors": [],
-  "message": "We require contributors to sign our Contributor License Agreement (https://github.com/cryspen/hacl/blob/main/CLA.md) ensuring that the contribution can be licensed under Apache 2.0."
+  "message": "We require contributors to sign our Contributor License Agreement https://github.com/cryspen/hacl/blob/main/CLA.md ensuring that the contribution can be licensed under Apache 2.0. In order for us to review and merge your code, please contact @cryspen/core to get yourself added."
 }
