@@ -16,16 +16,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Setup
+    - if: matrix.os == 'macos-latest'
+      run: brew install ninja
+    - if: matrix.os == 'ubuntu-latest'
+      run: apt-get install ninja-build
     - name: Debug Build w/ tests
       run: ./mach build --tests
     - name: Release Build
       run: ./mach build --release
   
   # GCC builds on macOS
+  # TODO: use composite actions
   gcc-macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Setup
+      run: brew install ninja
     - name: Debug Build w/ tests
       run: CC=gcc-11 CXX=g++-11 ./mach build --tests
     - name: Release Build
