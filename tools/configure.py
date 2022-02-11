@@ -10,14 +10,14 @@ class Config:
     def dependencies(self, source_dir, algorithm, source_file):
         """Collect dependencies for a given c file
 
-        Use `clang -MM` to collect dependencies for a given c file assuming header
+        Use `$CC -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = '-I ' + ' -I '.join(self.include_paths)
         result = subprocess.run(
-            'clang ' + includes + ' -I' +
+            self.compiler + ' ' + includes + ' -I' +
             join(source_dir, 'internal') + ' -MM ' +
             join(source_dir, source_file),
             stdout=subprocess.PIPE,
@@ -65,7 +65,7 @@ class Config:
             includes.append(join(include))
         return deps, includes
 
-    def __init__(self, config_file, source_dir, include_dir, algorithms=[]):
+    def __init__(self, config_file, source_dir, include_dir, algorithms=[], compiler='clang'):
         """Read the build config from the json file"""
         print(" [mach] Using %s to configure ..." % (config_file))
         if len(algorithms) != 0:
@@ -74,6 +74,8 @@ class Config:
         # read file
         with open(config_file, 'r') as f:
             data = f.read()
+        
+        self.compiler = compiler
 
         # parse file
         self.config = json.loads(data)

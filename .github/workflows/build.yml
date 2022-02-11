@@ -1,0 +1,32 @@
+name: hacl_build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Debug Build w/ tests
+      run: ./mach build --tests
+    - name: Release Build
+      run: ./mach build --release
+  
+  # GCC builds on macOS
+  gcc-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Debug Build w/ tests
+      run: CC=gcc-11 CXX=g++-11 ./mach build --tests
+    - name: Release Build
+      run: CC=gcc-11 CXX=g++-11 ./mach build --release

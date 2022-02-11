@@ -15,6 +15,8 @@ project(hacl
         LANGUAGES C CXX ASM
         )
 
+set(hacl_VERSION_TWEAK "alpha.1")
+
 # Load global config from exteral file.
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not

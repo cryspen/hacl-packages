@@ -1,78 +1,19 @@
 #!/usr/bin/env python3
 #
-# Generate other snapshots of the source code
-#
-#     The code snapshots are configured and can be built.
-#     However, we don't provide any helpers to do so.
-#     Algorithms and features that should be supported
-#     must be provided as input.
+# The mach driver for HACL.
 
 
 import subprocess
 import re
 import sys
-import json
 import os
 import shutil
 from tools.configure import Config
 
 from tools.utils import subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
-from tools.vcs import *
-from tools.test import run_tests, test
+from tools.test import run_tests
 
 # === SUBCOMMANDS === #
-
-
-@subcommand([argument("-f", "--file", help="The config.json file to read.", type=str),
-             argument("-p", "--path",
-                      help="The path to write the snapshot to.", type=str),
-             argument("-n", "--name",
-                      help="Name of the named snapshot.", type=str),
-             argument("-a", "--algorithms",
-                      help="The algorithms to include in the snapshot.", type=str),
-             argument("-c", "--clean",
-                      help="Clean the path if it exists.", action='store_true')])
-def snapshot(args):
-    """Generate a snapshot with the requested distribution
-
-    By default config.json is used. This should not be changed unless you know
-    what you are doing!
-
-    There are two different types of snapshots: named snapshots and algorithm-based
-
-    Available named snapshots (TBD):
-        - Mozilla
-    """
-    config_file = json_config()
-    if args.file:
-        config_file = args.file
-    algorithms = []
-    if args.algorithms:
-        algorithms = re.split(r"\W+", args.algorithms)
-    if args.name:
-        print("⚠️  Named snapshots aren't implemented yet!")
-        exit(1)
-    if args.path is None:
-        print("⚠️  Please provide an output path with --path!")
-        exit(1)
-    out_dir = args.path
-    if os.path.exists(out_dir):
-        if args.clean:
-            shutil.rmtree(out_dir)
-        else:
-            print(
-                "⚠️  %s exists! Please remove it or choose a different path." % out_dir)
-            exit(1)
-    os.mkdir(out_dir)
-    config = Config(config_file, algorithms=algorithms)
-
-    # Write snapshot
-    # First the source files
-    dst_src_dir = join(out_dir, "src")
-    os.mkdir(dst_src_dir)
-    for source_file in config.source_files():
-        f = os.path.abspath(source_file)
-        shutil.copy(f, dst_src_dir)
 
 
 def _install(prefix=None, config=None):
@@ -173,13 +114,16 @@ def build(args):
     if args.language == "rust":
         bindings = True
         language = "Rust"
+    
+    # Our default compiler is clang.
+    compiler = os.getenv('CC', 'clang')
 
     # Select the source folder to use (regular, c89, msvc)
     source_dir = "src"
     include_dir = "include"
     if args.edition == "c89":
-        source_dir = join(source_dir, "c89")
-        include_dir = join(include_dir, "c89")
+        source_dir = os.path.join(source_dir, "c89")
+        include_dir = os.path.join(include_dir, "c89")
         cmake_args.append("-DCMAKE_C_STANDARD=90")
     # Set MSVC if detecting Windows.
     # TODO: make it possible to cross-compile for Windows
@@ -211,7 +155,7 @@ def build(args):
     # We have to generate config.h before we can generate the configuration
     # properly. 🥚🐓
     # First run a dummy config for all algorithms.
-    config = Config(json_config(), source_dir, include_dir)
+    config = Config(json_config(), source_dir, include_dir, compiler=compiler)
     config.write_cmake_config(cmake_config())
     config.write_dep_config(dep_config())
     # '--debug-trycompile'
