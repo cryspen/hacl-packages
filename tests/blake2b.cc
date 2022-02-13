@@ -9,6 +9,14 @@
 #include "Hacl_Hash_Blake2b_256.h"
 #endif
 
+#define VALE TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X64 ||                       \
+  TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X86
+
+#if VALE
+// Only include this for checking CPU flags.
+#include "Vale.h"
+#endif
+
 // Function pointer to multiplex between the different implementations.
 typedef void (
   *test_blake)(uint32_t, uint8_t*, uint32_t, uint8_t*, uint32_t, uint8_t*);
@@ -45,14 +53,24 @@ TEST_P(Blake2bTesting, TryTestVectors)
   EXPECT_TRUE(test);
 
 #ifdef HACL_CAN_COMPILE_VEC256
-  test = test_blake2b(&Hacl_Blake2b_256_blake2b,
-                      vectors2b.input_len,
-                      vectors2b.input,
-                      vectors2b.key_len,
-                      vectors2b.key,
-                      vectors2b.expected_len,
-                      vectors2b.expected);
-  EXPECT_TRUE(test);
+  // We might have compiled vec256 blake2b but don't have it available on the
+  // CPU when running now.
+  #if VALE
+  if (check_avx2()) {
+  #endif
+    test = test_blake2b(&Hacl_Blake2b_256_blake2b,
+                        vectors2b.input_len,
+                        vectors2b.input,
+                        vectors2b.key_len,
+                        vectors2b.key,
+                        vectors2b.expected_len,
+                        vectors2b.expected);
+    EXPECT_TRUE(test);
+  #if VALE
+  } else {
+    printf(" ⚠️  Vec256 was compiled but AVX2 is not available on this CPU.\n");
+  }
+  #endif
 #endif
 }
 

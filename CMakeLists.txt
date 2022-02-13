@@ -243,6 +243,10 @@ if(ENABLE_TESTS)
     )
     FetchContent_MakeAvailable(json)
 
+    # CPU feature detection for tests
+    add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
+    target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
+
     foreach(TEST_FILE IN LISTS TEST_SOURCES)
         get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
         # message(STATUS "Compiling test ${TEST_FILE} into ${TEST_NAME}")
@@ -252,11 +256,13 @@ if(ENABLE_TESTS)
         target_compile_definitions(${TEST_NAME} PRIVATE
             TEST_DIR="${PROJECT_SOURCE_DIR}/tests/"
         )
-        add_dependencies(${TEST_NAME} hacl)
+        add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
+        target_sources(${TEST_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
         target_link_libraries(${TEST_NAME} PRIVATE
             gtest_main
             hacl
             nlohmann_json::nlohmann_json
         )
+        target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
     endforeach()
 endif()
