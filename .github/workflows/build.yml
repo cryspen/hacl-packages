@@ -30,7 +30,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ matrix.os }}-${{ matrix.compiler.c }}
+        name: macos-x64-${{ matrix.compiler.c }}
         path: |
           pkg-debug
           pkg-release
@@ -40,15 +40,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        gcc-version: [7, 8, 9, 10, 11]
+        compiler: [7, 8, 9, 10, 11]
     env:
-      CC: gcc-${{ matrix.gcc-version }}
-      CXX: g++-${{ matrix.gcc-version }}
+      CC: gcc-${{ matrix.compiler }}
+      CXX: g++-${{ matrix.compiler }}
     steps:
     - name: Setup
       run: |
         sudo apt-get update
-        sudo apt-get install ninja-build gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
+        sudo apt-get install ninja-build gcc-${{ matrix.compiler }} g++-${{ matrix.compiler }}
     - uses: actions/checkout@v2
     - name: Debug Build w/ tests
       run: ./mach build --tests -v
@@ -63,7 +63,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: linux-gcc${{ matrix.gcc-version }}
+        name: linux-x64-gcc${{ matrix.compiler }}
         path: |
           pkg-debug
           pkg-release
@@ -73,15 +73,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        clang-version: [7, 8, 9, 10]
+        compiler: [7, 8, 9, 10]
     env:
-      CC: clang-${{ matrix.clang-version }}
-      CXX: clang++-${{ matrix.clang-version }}
+      CC: clang-${{ matrix.compiler }}
+      CXX: clang++-${{ matrix.compiler }}
     steps:
     - name: Setup
       run: |
         sudo apt-get update
-        sudo apt-get install ninja-build clang-${{ matrix.gcc-version }}
+        sudo apt-get install ninja-build clang-${{ matrix.compiler }}
     - uses: actions/checkout@v2
     - name: Debug Build w/ tests
       run: ./mach build --tests -v
@@ -96,7 +96,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: linux-clang${{ matrix.clang-version }}
+        name: linux-x64-clang${{ matrix.compiler }}
         path: |
           pkg-debug
           pkg-release
