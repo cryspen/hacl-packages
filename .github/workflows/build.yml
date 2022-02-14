@@ -144,7 +144,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-          name: linux-x64-${{ matrix.compiler[0] }}-${{ matrix.compiler[1] }}-${{ steps.vars.outputs.short_sha }}
+          name: linux-x64-${{ matrix.compiler[0] }}${{ matrix.compiler[1] }}-${{ steps.vars.outputs.short_sha }}
           path: ~/
       - name: Test
         run: ./mach test
