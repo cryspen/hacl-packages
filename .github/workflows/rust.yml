@@ -1,0 +1,28 @@
+name: hacl_rust
+
+on: [push, pull_request]
+
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - if: matrix.os == 'macos-latest'
+      run: brew install ninja
+    - if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install ninja-build
+    - name: Debug Build
+      run: ./mach build -l rust -v
+    - name: Release Build
+      run: ./mach build --release -l rust -v
+    - name: Test Debug
+      run: cargo test --manifest-path rust/evercrypt-rs/Cargo.toml
