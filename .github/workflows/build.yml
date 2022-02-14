@@ -15,8 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - if: matrix.os == 'macos-latest'
+      name: Setup
       run: brew install ninja
     - if: matrix.os == 'ubuntu-latest'
+      name: Setup
       run: sudo apt-get install ninja-build
     - name: Build w/ tests
       run: ./mach build --tests -v
@@ -44,8 +46,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - if: matrix.os == 'macos-latest'
+      name: Setup
       run: brew install ninja
     - if: matrix.os == 'ubuntu-latest'
+      name: Setup
       run: sudo apt-get install ninja-build
     - name: Build
       run: ./mach build --release -v
@@ -58,16 +62,32 @@ jobs:
       with:
         name: ${{ matrix.os }}-release
         path: pkg
-  
   # GCC builds on macOS
   # TODO: use composite actions
-  gcc-macos:
+  build-debug-gcc:
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [[gcc-11, g++-11], [gcc-10, g++-10], [gcc-9, g++-9]]
     steps:
     - uses: actions/checkout@v2
     - name: Setup
       run: brew install ninja
-    - name: Debug Build w/ tests
-      run: CC=gcc-11 CXX=g++-11 ./mach build --tests -v
+    - name: Debug Build
+      run: CC=${{ matrix.compiler[0] }} CXX=${{ matrix.compiler[1] }} ./mach build -v
     - name: Release Build
-      run: CC=gcc-11 CXX=g++-11 ./mach build --release -v
+      run: CC=${{ matrix.compiler[0] }} CXX=${{ matrix.compiler[1] }} ./mach build --release -v
+  # TODO: use composite actions
+  build-release-gcc:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [[gcc-11, g++-11], [gcc-10, g++-10], [gcc-9, g++-9]]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup
+      run: brew install ninja
+    - name: Debug Build
+      run: CC=${{ matrix.compiler[0] }} CXX=${{ matrix.compiler[1] }} ./mach build -v

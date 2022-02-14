@@ -10,3 +10,4 @@ config/.dependency_check
 docs/source/__pycache__
 docs/build
 cpu-features/detect
+/pkg
