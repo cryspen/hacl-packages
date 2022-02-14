@@ -15,6 +15,10 @@ jobs:
       CXX: ${{ matrix.compiler.cpp }}
     steps:
       - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
       - name: Setup
         run: brew install ninja
       - name: Debug Build w/ tests
@@ -30,7 +34,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: macos-x64-${{ matrix.compiler.c }}
+          name: macos-x64-${{ matrix.compiler.c }}-${{ steps.vars.outputs.short_sha }}
           path: |
             pkg-debug
             pkg-release
@@ -45,6 +49,10 @@ jobs:
       CC: gcc-${{ matrix.compiler }}
       CXX: g++-${{ matrix.compiler }}
     steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
       - name: Setup
         run: |
           sudo apt-get update
@@ -63,7 +71,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: linux-x64-gcc${{ matrix.compiler }}
+          name: linux-x64-gcc${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
           path: |
             pkg-debug
             pkg-release
@@ -109,6 +117,7 @@ jobs:
 
   test-linux:
     runs-on: ubuntu-latest
+    needs: [build-linux-clang, build-linux-gcc]
     strategy:
       matrix:
         compiler:
