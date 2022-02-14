@@ -3,7 +3,7 @@ name: hacl_build
 on: [push, pull_request]
 
 jobs:
-  build:
+  build-debug:
     strategy:
       fail-fast: false
       matrix:
@@ -11,19 +11,53 @@ jobs:
           - macos-latest
           - ubuntu-latest
           # - windows-latest
-
     runs-on: ${{ matrix.os }}
-
     steps:
     - uses: actions/checkout@v2
     - if: matrix.os == 'macos-latest'
       run: brew install ninja
     - if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install ninja-build
-    - name: Debug Build w/ tests
+    - name: Build w/ tests
       run: ./mach build --tests -v
-    - name: Release Build
+    - name: Install
+      run: |
+        mkdir pkg
+        ./mach install -p $PWD/pkg
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}-debug
+        path: |
+          build/Debug
+          pkg
+  # TODO: use composite actions
+  build-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - if: matrix.os == 'macos-latest'
+      run: brew install ninja
+    - if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install ninja-build
+    - name: Build
       run: ./mach build --release -v
+    - name: Install
+      run: |
+        mkdir pkg
+        ./mach install -p $PWD/pkg -c Release
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}-release
+        path: pkg
   
   # GCC builds on macOS
   # TODO: use composite actions
