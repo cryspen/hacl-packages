@@ -1,6 +1,6 @@
 /**
  * https://www.intel.com/content/dam/develop/external/us/en/documents/architecture-instruction-set-extensions-programming-reference-806695.pdf
- * 
+ *
  * @file cpu-features.c
  * @author your name (you@domain.com)
  * @brief
@@ -18,11 +18,17 @@
 #define CPU_FEATURES_X86
 #elif defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64)
 #define CPU_FEATURES_X64
+#elif defined(__arm64__) || defined(__arm64) || defined(__aarch64__)
+#define CPU_FEATURES_ARM64
 #else
 #error "Unsupported CPU"
 #endif
 
-#if defined(__GNUC__)
+#if defined(__APPLE__) || defined(__APPLE_CC__)
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#define CPU_FEATURES_MACOS
+#elif defined(__GNUC__)
 #define CPU_FEATURES_LINUX
 #elif defined(_MSC_VER)
 #define CPU_FEATURES_WINDOWS
@@ -32,7 +38,8 @@
 
 // === x86 | x64
 
-#if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_X64)
+#if defined(CPU_FEATURES_LINUX) ||                                             \
+  defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_X64)
 void
 cpuid(unsigned long leaf,
       unsigned long* eax,
@@ -75,7 +82,11 @@ cpuid(unsigned long leaf,
 #define EDX_SSE2 (1 << 26)
 #define EDX_CMOV (1 << 15)
 
-// === End x86
+// === End x86 | x64
+
+// === MacOS ARM
+
+// === End MacOS ARM
 
 // Static feature variables
 static unsigned int _adx = 0;
@@ -100,7 +111,13 @@ static unsigned int _cmov = 0;
 unsigned int
 hacl_vec128_support()
 {
+#if defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)
   return _sse && _sse2 && _sse3 && _sse41 && _sse41 && _cmov;
+#elif defined(CPU_FEATURES_ARM64)
+  return 1;
+#else
+  return 0;
+#endif
 }
 
 unsigned int
@@ -155,70 +172,97 @@ hacl_init_cpu_features()
   _sse41 = (ecx & ECX_SSE4_1) != 0;
   _sse42 = (ecx & ECX_SSE4_2) != 0;
 #endif
+
+#if defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_ARM64)
+  int64_t ret = 0;
+  size_t size = sizeof(ret);
+
+  sysctlbyname("hw.optional.neon", &ret, &size, NULL, 0);
+  if (ret == 1) {
+    _aes = 1;
+    _sha = 1;
+  }
+#endif
 }
 
 // CPU specific API
-unsigned int hacl_adx_support() 
+unsigned int
+hacl_adx_support()
 {
   return _adx;
 }
-unsigned int hacl_aes_support() 
+unsigned int
+hacl_aes_support()
 {
   return _aes;
 }
-unsigned int hacl_sha_support() 
+unsigned int
+hacl_sha_support()
 {
   return _sha;
 }
-unsigned int hacl_avx_support() 
+unsigned int
+hacl_avx_support()
 {
   return _avx;
 }
-unsigned int hacl_avx2_support() 
+unsigned int
+hacl_avx2_support()
 {
   return _avx2;
 }
-unsigned int hacl_sse_support() 
+unsigned int
+hacl_sse_support()
 {
   return _sse;
 }
-unsigned int hacl_sse2_support() 
+unsigned int
+hacl_sse2_support()
 {
   return _sse2;
 }
-unsigned int hacl_sse3_support() 
+unsigned int
+hacl_sse3_support()
 {
   return _sse3;
 }
-unsigned int hacl_ssse3_support() 
+unsigned int
+hacl_ssse3_support()
 {
   return _ssse3;
 }
-unsigned int hacl_sse41_support() 
+unsigned int
+hacl_sse41_support()
 {
   return _sse41;
 }
-unsigned int hacl_sse42_support() 
+unsigned int
+hacl_sse42_support()
 {
   return _sse42;
 }
-unsigned int hacl_bmi1_support() 
+unsigned int
+hacl_bmi1_support()
 {
   return _bmi1;
 }
-unsigned int hacl_bmi2_support() 
+unsigned int
+hacl_bmi2_support()
 {
   return _bmi2;
 }
-unsigned int hacl_pclmul_support() 
+unsigned int
+hacl_pclmul_support()
 {
   return _pclmul;
 }
-unsigned int hacl_movbe_support() 
+unsigned int
+hacl_movbe_support()
 {
   return _movbe;
 }
-unsigned int hacl_cmov_support() 
+unsigned int
+hacl_cmov_support()
 {
   return _cmov;
 }

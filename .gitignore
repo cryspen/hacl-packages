@@ -9,3 +9,4 @@ config/.dependency_check
 /rust/evercrypt-sys/target
 docs/source/__pycache__
 docs/build
+cpu-features/detect
