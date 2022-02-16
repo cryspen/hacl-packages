@@ -20,6 +20,8 @@
 #define CPU_FEATURES_X64
 #elif defined(__arm64__) || defined(__arm64) || defined(__aarch64__)
 #define CPU_FEATURES_ARM64
+#elif defined(__s390x__)
+#define CPU_FEATURES_POWERZ
 #else
 #error "Unsupported CPU"
 #endif
@@ -38,8 +40,8 @@
 
 // === x86 | x64
 
-#if defined(CPU_FEATURES_LINUX) ||                                             \
-  defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_X64)
+#if (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS)) &&            \
+  defined(CPU_FEATURES_X64) && !defined(CPU_FEATURES_POWERZ)
 void
 cpuid(unsigned long leaf,
       unsigned long* eax,
@@ -113,7 +115,7 @@ hacl_vec128_support()
 {
 #if defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)
   return _sse && _sse2 && _sse3 && _sse41 && _sse41 && _cmov;
-#elif defined(CPU_FEATURES_ARM64)
+#elif defined(CPU_FEATURES_ARM64) || defined(CPU_FEATURES_POWERZ)
   return 1;
 #else
   return 0;

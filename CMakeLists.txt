@@ -57,6 +57,10 @@ if(DEFINED CMAKE_C_COMPILER_TARGET)
         set(CMAKE_SYSTEM_PROCESSOR x86_64)
         set(CMAKE_OSX_ARCHITECTURES x86_64)
     endif()
+    if(${CMAKE_C_COMPILER_TARGET} STREQUAL s390x-linux-gnu)
+        set(CMAKE_SYSTEM_PROCESSOR s390x)
+        set(CMAKE_OSX_ARCHITECTURES s390x)
+    endif()
 endif()
 
 # Set include paths
@@ -106,6 +110,23 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
         elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
             target_compile_options(hacl_vec128 PRIVATE
                 -march=armv8-a+simd
+            )
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+            # In the case of IBMz, some of the vectorized functions are defined as
+            # inline static rather than as macros, meaning we need to compile all
+            # the files with the vector compilation options.
+            # https://gcc.gnu.org/onlinedocs/gcc/S_002f390-and-zSeries-Options.html#S_002f390-and-zSeries-Options
+            add_compile_options(
+                -mzarch
+                -mvx
+                -mzvector
+                -march=z14
+            )
+            target_compile_options(hacl_vec128 PRIVATE
+                -mzarch
+                -mvx
+                -mzvector
+                -march=z14
             )
         endif()
     endif()
@@ -166,6 +187,11 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armel|armhf|armv7|arm32v7")
     message(STATUS "Detected an arm32 architecture")
     set(ARCHITECTURE arm)
     set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_ARM32})
+# s390x
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+    message(STATUS "Detected an s390x (systemz) architecture")
+    set(ARCHITECTURE arm)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_SYSTEMZ})
 # unsupported architecture
 else()
     message(FATAL_ERROR "Unsupported architecture ${CMAKE_SYSTEM_PROCESSOR}")

@@ -44,6 +44,10 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
         set(CPU_FLAGS "${CPU_FLAGS} -msse2 -msse3 -msse4.1 -msse4.2")
     endif()
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+        set(CPU_FLAGS "${CPU_FLAGS} -mzarch -mvx -mzvector -march=z14")
+        # message(FATAL_ERROR "CPU FLAGS: ${CPU_FLAGS}")
+    endif()
     try_compile(TOOLCHAIN_CAN_COMPILE_VEC128
                         ${PROJECT_SOURCE_DIR}/config/build
                         ${PROJECT_SOURCE_DIR}/config/vec128.c

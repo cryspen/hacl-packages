@@ -60,6 +60,7 @@ def build(args):
 
     Supported cross compilation targets:
         - x64-macos
+        - s390x
 
     Features that can be disabled:
         - vec128 (avx/neon)
@@ -136,6 +137,9 @@ def build(args):
         if args.target == "x64-macos":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+        if args.target == "s390x":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
         else:
             print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
             print("   Available targets: x64-macos")
@@ -150,6 +154,9 @@ def build(args):
         sanitizers = list(
             map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
         cmake_args.extend(sanitizers)
+
+    if verbose:
+        cmake_args.extend(["--debug-output", "--trace"])
 
     # There must be a config.cmake already that contains some useful information.
     # We have to generate config.h before we can generate the configuration
