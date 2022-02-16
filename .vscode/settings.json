@@ -32,5 +32,6 @@
         "iosfwd": "cpp"
     },
     "python.pythonPath": "/opt/homebrew/bin/python3",
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "python.formatting.provider": "autopep8"
 }
