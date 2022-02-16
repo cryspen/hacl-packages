@@ -1,9 +1,9 @@
-name: hacl_rust
+name: rust
 
 on: [push, pull_request]
 
 jobs:
-  rust:
+  test:
     strategy:
       fail-fast: false
       matrix:

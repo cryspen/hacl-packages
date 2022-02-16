@@ -1,73 +1,115 @@
-name: hacl_build
+name: c
 
 on: [push, pull_request]
 
 jobs:
-  build-debug:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          # - windows-latest
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v2
-    - if: matrix.os == 'macos-latest'
-      run: brew install ninja
-    - if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install ninja-build
-    - name: Build w/ tests
-      run: ./mach build --tests -v
-    - name: Install
-      run: |
-        mkdir pkg
-        ./mach install -p $PWD/pkg
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ matrix.os }}-debug
-        path: |
-          build/Debug
-          pkg
-  # TODO: use composite actions
-  build-release:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          # - windows-latest
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v2
-    - if: matrix.os == 'macos-latest'
-      run: brew install ninja
-    - if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install ninja-build
-    - name: Build
-      run: ./mach build --release -v
-    - name: Install
-      run: |
-        mkdir pkg
-        ./mach install -p $PWD/pkg -c Release
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ matrix.os }}-release
-        path: pkg
-  
-  # GCC builds on macOS
-  # TODO: use composite actions
-  gcc-macos:
+  macos:
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [{ cpp: g++-11, c: gcc-11 }, { cpp: clang++, c: clang }]
+    env:
+      CC: ${{ matrix.compiler.c }}
+      CXX: ${{ matrix.compiler.cpp }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup
-      run: brew install ninja
-    - name: Debug Build w/ tests
-      run: CC=gcc-11 CXX=g++-11 ./mach build --tests -v
-    - name: Release Build
-      run: CC=gcc-11 CXX=g++-11 ./mach build --release -v
+      - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: brew install ninja
+      - name: Debug Build & Test
+        run: ./mach build --test -v
+      - name: Release Build & Test
+        run: ./mach build --release --test -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-x64-${{ matrix.compiler.c }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  linux-gcc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [7, 8, 9, 10, 11]
+    env:
+      CC: gcc-${{ matrix.compiler }}
+      CXX: g++-${{ matrix.compiler }}
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build gcc-${{ matrix.compiler }} g++-${{ matrix.compiler }}
+      - uses: actions/checkout@v2
+      - name: Debug Build & Test
+        run: ./mach build --test -v
+      - name: Release Build & Test
+        run: ./mach build --release --test -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-gcc${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  linux-clang:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [7, 8, 9, 10]
+    env:
+      CC: clang-${{ matrix.compiler }}
+      CXX: clang++-${{ matrix.compiler }}
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build clang-${{ matrix.compiler }}
+      - uses: actions/checkout@v2
+      - name: Debug Build & Test
+        run: ./mach build --test -v
+      - name: Release Build & Test
+        run: ./mach build --release --test -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-clang${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
