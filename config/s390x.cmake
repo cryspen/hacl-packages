@@ -7,4 +7,3 @@ set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 # This isn't working unfortunately. It's being set in CMakeLists.txt again
 set(CMAKE_SYSTEM_PROCESSOR s390x)
-# message(FATAL_ERROR "FOOO: ${CMAKE_SYSTEM_PROCESSOR}")
