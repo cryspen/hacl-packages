@@ -286,7 +286,7 @@ if(ENABLE_TESTS)
         target_sources(${TEST_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
         target_link_libraries(${TEST_NAME} PRIVATE
             gtest_main
-            hacl
+            hacl_static
             nlohmann_json::nlohmann_json
         )
         target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
