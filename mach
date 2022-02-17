@@ -155,8 +155,8 @@ def build(args):
             map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
         cmake_args.extend(sanitizers)
 
-    if verbose:
-        cmake_args.extend(["--debug-output", "--trace"])
+    # if verbose:
+    #     cmake_args.extend(["--debug-output", "--trace"])
 
     # There must be a config.cmake already that contains some useful information.
     # We have to generate config.h before we can generate the configuration
