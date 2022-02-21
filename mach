@@ -56,13 +56,13 @@ def install(args):
 def build(args):
     """Main entry point for building HACL
 
-    For convenience it is possible to run tests right after building using -t.
+    For convenience it is possible to run tests right after building using --test.
 
     Supported cross compilation targets:
         - x64-macos
         - s390x
 
-    Features that can be disabled:
+    Features that can be disabled (TBD):
         - vec128 (avx/neon)
         - vec256 (avx2)
         - vale (x64 assembly)
@@ -82,6 +82,12 @@ def build(args):
         - rust
         - ocaml (TBD)
         - wasm (TBD)
+
+    💡  Windows builds are limited. The following arguments are not supported:
+        - algorithms
+        - sanitizer
+        - edition
+        - disable
     """
     cmake_args = []
     # Verbosity
@@ -115,9 +121,10 @@ def build(args):
     if args.language == "rust":
         bindings = True
         language = "Rust"
-    
+
     # Our default compiler is clang.
     compiler = os.getenv('CC', 'clang')
+    windows = False
 
     # Select the source folder to use (regular, c89, msvc)
     source_dir = "src"
@@ -127,13 +134,19 @@ def build(args):
         include_dir = os.path.join(include_dir, "c89")
         cmake_args.append("-DCMAKE_C_STANDARD=90")
     # Set MSVC if detecting Windows.
-    # TODO: make it possible to cross-compile for Windows
     if sys.platform == "win32":
-        source_dir = join(source_dir, "msvc")
-        include_dir = join(include_dir, "msvc")
+        windows = True
+        source_dir = os.path.join(source_dir, "msvc")
+        include_dir = os.path.join(include_dir, "msvc")
+        # Here we default to cl as a compiler
+        if compiler == "clang":
+            compiler = "cl"
 
     # Set target toolchain if cross compiling
     if args.target:
+        if windows:
+            print("⚠️  Cross-compilation is not supporte on Windows.")
+            exit(1)
         if args.target == "x64-macos":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
@@ -142,15 +155,21 @@ def build(args):
                 ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
         else:
             print("⚠️  Unknown cross-compilation target \"%s\"" % args.target)
-            print("   Available targets: x64-macos")
+            print("   Available targets: x64-macos, s390x")
             exit(1)
     if args.disable:
+        if windows:
+            print("⚠️  Disabling features is not supporte on Windows.")
+            exit(1)
         features_to_disable = list(
             map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
         cmake_args.extend(features_to_disable)
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
     if args.sanitizer:
+        if windows:
+            print("⚠️  Sanitizers are not supporte on Windows.")
+            exit(1)
         sanitizers = list(
             map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
         cmake_args.extend(sanitizers)

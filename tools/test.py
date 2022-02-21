@@ -15,6 +15,8 @@ def run_tests(tests, test_args=[], algorithms=[]):
         print("⚠️  Nothing is built! Please build first. Aborting!")
         exit(1)
     os.chdir(binary_path())
+    my_env = dict(os.environ)
+    my_env["TEST_DIR"] = join(os.getcwd(), "..", "..", "tests")
     for algorithm in tests:
         for test in tests[algorithm]:
             test_name = os.path.splitext(test)[0]
@@ -29,7 +31,7 @@ def run_tests(tests, test_args=[], algorithms=[]):
                 test_cmd = [join(".", file_name)]
                 test_cmd.extend(test_args)
                 print(" ".join(test_cmd))
-                subprocess.run(test_cmd, check=True)
+                subprocess.run(test_cmd, check=True, shell=True, env=my_env)
 
 # TODO: add arguments (pass through gtest arguments and easy filters)
 

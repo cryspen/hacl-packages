@@ -13,7 +13,7 @@ using json = nlohmann::json;
 TEST(Ed25519Test, WycheproofTest)
 {
   // Read JSON test vector
-  std::string test_dir = TEST_DIR;
+  std::string test_dir = std::string(getenv("TEST_DIR"));
   test_dir += "/eddsa_test.json";
   std::ifstream json_test_file(test_dir);
   json test_vectors;

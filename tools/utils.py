@@ -3,6 +3,7 @@ import os
 from os.path import join
 import subprocess
 from pathlib import Path
+import sys
 
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
@@ -83,6 +84,9 @@ def dependency_check():
 
     check_cmd('cmake')
     check_cmd("ninja")
-    check_cmd("clang")
+    if sys.platform == "win32":
+        check_cmd("clang-cl")
+    else:
+        check_cmd("clang")
     print()
     Path(config_check_file()).touch()

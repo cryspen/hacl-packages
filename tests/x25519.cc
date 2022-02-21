@@ -55,7 +55,7 @@ read_json()
 {
 
   // Read JSON test vector
-  std::string test_dir = TEST_DIR;
+  std::string test_dir = std::string(getenv("TEST_DIR"));
   test_dir += "/x25519_test.json";
   std::ifstream json_test_file(test_dir);
   nlohmann::json test_vectors;
