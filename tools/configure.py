@@ -3,6 +3,8 @@ import json
 import re
 import subprocess
 from os.path import join
+from os import sep as separator
+from glob import glob
 
 
 class Config:
@@ -28,8 +30,9 @@ class Config:
         files = []
         for line in stdout.splitlines():
             # Remove object file and the c file itself
-            # FIXME: Does this work on Windows?
-            line = re.sub("(\w*).o: "+source_dir+"/(\w*).c", "", line)
+            first_line_search = "(\w*).o: " + \
+                re.escape(join(source_dir, "(\w*).c"))
+            line = re.sub(first_line_search, "", line)
             line = line.strip()
             line = line.split(' ')
             try:
@@ -40,11 +43,7 @@ class Config:
             files.extend(line)
 
         # Get all source files in source_dir
-        # FIXME: Does this work on Windows?
-        result = subprocess.run(
-            'ls -1a '+source_dir+'/*.c', stdout=subprocess.PIPE, shell=True)
-        source_files = result.stdout.decode('utf-8')
-        source_files = source_files.splitlines()
+        source_files = glob(join(source_dir, "*.c"))
         # remove source_dir and .c
         source_files = list(
             map(lambda s: s[len(source_dir)+1:-2], source_files))
@@ -62,7 +61,8 @@ class Config:
             if include_matched in source_files:
                 deps.append(join(source_dir, include_matched+".c"))
             # We take all includes though
-            includes.append(join(include))
+            if include.endswith(".h"):
+                includes.append(include)
         return deps, includes
 
     def __init__(self, config_file, source_dir, include_dir, algorithms=[], compiler='clang'):
@@ -74,7 +74,7 @@ class Config:
         # read file
         with open(config_file, 'r') as f:
             data = f.read()
-        
+
         self.compiler = compiler
 
         # parse file
@@ -182,35 +182,36 @@ class Config:
 
     def write_cmake_config(self, cmake_config):
         print(" [mach] Writing cmake config to %s ..." % (cmake_config))
+        # cmake wants the unix style for paths apparently
         with open(cmake_config, 'w') as out:
             for a in self.hacl_compile_feature:
                 out.write("set(SOURCES_%s %s)\n" %
-                          (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a])))
+                          (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a]).replace(separator, '/')))
 
             out.write("set(INCLUDES %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes))
+                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes).replace(separator, '/'))
 
             out.write("set(PUBLIC_INCLUDES %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes))
+                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes).replace(separator, '/'))
 
             out.write("set(ALGORITHMS %s)\n" %
-                      " ".join(a for a in self.hacl_files))
+                      " ".join(a for a in self.hacl_files).replace(separator, '/'))
 
             out.write("set(INCLUDE_PATHS %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths))
+                      " ".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths).replace(separator, '/'))
 
             out.write("set(TEST_SOURCES %s)\n" %
-                      (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources)))
+                      (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources).replace(separator, '/')))
 
             for os in self.vale_files:
                 out.write("set(VALE_SOURCES_%s %s)\n" %
-                          (os, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.vale_files[os])))
+                          (os, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.vale_files[os]).replace(separator, '/')))
 
             out.write("set(ALGORITHM_TEST_FILES %s)\n" %
-                      " ".join("TEST_FILES_"+a for a in self.tests))
+                      " ".join("TEST_FILES_"+a for a in self.tests).replace(separator, '/'))
             for a in self.tests:
                 out.write("set(TEST_FILES_%s %s)\n" %
-                          (a, " ".join(f for f in self.tests[a])))
+                          (a, " ".join(f for f in self.tests[a]).replace(separator, '/')))
 
     def dep_config(self):
         print(" [mach] Collecting files and dependencies ...")

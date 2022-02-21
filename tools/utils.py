@@ -84,9 +84,6 @@ def dependency_check():
 
     check_cmd('cmake')
     check_cmd("ninja")
-    if sys.platform == "win32":
-        check_cmd("clang-cl")
-    else:
-        check_cmd("clang")
+    check_cmd("clang")
     print()
     Path(config_check_file()).touch()
