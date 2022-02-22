@@ -12,8 +12,14 @@ project(hacl
         VERSION 0.1.0
         DESCRIPTION "The High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/hacl"
-        LANGUAGES C CXX ASM
+        LANGUAGES C CXX
         )
+
+if(MSVC)
+enable_language(ASM_MASM)
+else()
+enable_language(ASM)
+endif()
 
 set(hacl_VERSION_TWEAK "alpha.1")
 

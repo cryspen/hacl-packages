@@ -150,7 +150,7 @@ def build(args):
         if args.target == "x64-macos":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
-        if args.target == "s390x":
+        elif args.target == "s390x":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
         else:

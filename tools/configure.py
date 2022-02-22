@@ -53,13 +53,11 @@ class Config:
         deps = []
         includes = []
         for include in files:
-            # Get the file name from the path (could be done more efficiently before)
-            include_match = re.match(
-                "^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", include)
-            include_matched = include_match.group(2)
+            # Get the file name from the path
+            file_name = os.path.splitext(os.path.basename(include))[0]
             # Only add the dependency if there's a corresponding source file.
-            if include_matched in source_files:
-                deps.append(join(source_dir, include_matched+".c"))
+            if file_name in source_files:
+                deps.append(join(source_dir, file_name+".c"))
             # We take all includes though
             if include.endswith(".h"):
                 includes.append(include)
