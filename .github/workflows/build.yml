@@ -155,9 +155,9 @@ jobs:
       - name: Setup
         run: choco install ninja
       - name: Debug Build
-        run: ./mach build -v
+        run: python mach build -v
       - name: Release Build
-        run: ./mach build --release -v
+        run: python mach build --release -v
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
