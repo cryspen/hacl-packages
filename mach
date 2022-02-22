@@ -138,9 +138,6 @@ def build(args):
         windows = True
         source_dir = os.path.join(source_dir, "msvc")
         include_dir = os.path.join(include_dir, "msvc")
-        # Here we default to cl as a compiler
-        if compiler == "clang":
-            compiler = "cl"
 
     # Set target toolchain if cross compiling
     if args.target:
