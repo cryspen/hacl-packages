@@ -144,3 +144,24 @@ jobs:
             pkg-release
             build/Debug
             build/Release
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: choco install ninja
+      - name: Debug Build
+        run: ./mach build -v
+      - name: Release Build
+        run: ./mach build --release -v
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-x64-msvc-${{ steps.vars.outputs.short_sha }}
+          path: |
+            build/Debug
+            build/Release
