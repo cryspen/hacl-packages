@@ -138,6 +138,9 @@ def build(args):
         windows = True
         source_dir = os.path.join(source_dir, "msvc")
         include_dir = os.path.join(include_dir, "msvc")
+        # get msvc in the path (only x64 for now)
+        vswhere_cmd = ['tools\\vcbuild.cmd']
+        subprocess.run(vswhere_cmd, check=True)
 
     # Set target toolchain if cross compiling
     if args.target:
