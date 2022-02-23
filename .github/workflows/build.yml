@@ -161,7 +161,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows-x64-msvc-${{ steps.vars.outputs.short_sha }}
+          name: windows-x64-clang-${{ steps.vars.outputs.short_sha }}
           path: |
             build/Debug
             build/Release
