@@ -62,14 +62,15 @@ def mprint(*args, **kwargs):
 
 
 def check_cmd(cmd):
+    mprint("Found ", end="")
     return_code = subprocess.run(
         [cmd, '--version'], capture_output=True).returncode
     if return_code == 0:
-        mprint("%s ✅" % cmd, end="  ")
+        mprint("%s" % cmd, end="  ")
     else:
         print()
         mprint(
-            '⚠️  Please make sure that "%s" is installed and in your path.' % (cmd))
+            '! Please make sure that "%s" is installed and in your path.' % (cmd))
         exit(1)
 
 
@@ -80,7 +81,7 @@ def dependency_check():
         # Nothing to do here, we checked already.
         return
 
-    mprint("🧶  Dependency checks ...")
+    mprint("Dependency checks ...")
 
     check_cmd('cmake')
     check_cmd("ninja")
