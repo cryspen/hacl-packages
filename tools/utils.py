@@ -66,7 +66,7 @@ def check_cmd(cmd):
     return_code = subprocess.run(
         [cmd, '--version'], capture_output=True).returncode
     if return_code == 0:
-        mprint("%s" % cmd, end="  ")
+        print("%s" % cmd, end="  ")
     else:
         print()
         mprint(
