@@ -1,12 +1,17 @@
-/**
- * @file main.c
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
- * @date 2022-02-13
+/*
+ *    Copyright 2022 Cryspen Sarl
  *
- * @copyright Copyright (c) 2022
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 #include <stdio.h>
@@ -37,8 +42,10 @@ main()
   printf("\n\n ========= HACL Available Implementations =========\n");
   printf("\tVec128 \t\t%s supported\n", hacl_vec128_support() ? "   " : "not");
   printf("\tVec256 \t\t%s supported\n", hacl_vec256_support() ? "   " : "not");
-  printf("\tVale AES-GCM \t%s supported\n", vale_aesgcm_support() ? "   " : "not");
-  printf("\tVace x25519 \t%s supported\n", vale_x25519_support() ? "   " : "not");
+  printf("\tVale AES-GCM \t%s supported\n",
+         vale_aesgcm_support() ? "   " : "not");
+  printf("\tVace x25519 \t%s supported\n",
+         vale_x25519_support() ? "   " : "not");
   printf("\tVace SHA2 \t%s supported\n", vale_sha2_support() ? "   " : "not");
   printf(" ==================================================\n\n\n");
 }

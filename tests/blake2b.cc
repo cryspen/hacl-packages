@@ -1,3 +1,19 @@
+/*
+ *    Copyright 2022 Cryspen Sarl
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 #include <gtest/gtest.h>
 
 #include "Hacl_Hash_Blake2.h"
@@ -9,8 +25,9 @@
 #include "Hacl_Hash_Blake2b_256.h"
 #endif
 
-#define VALE TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X64 ||                       \
-  TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X86
+#define VALE                                                                   \
+  TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X64 ||                         \
+    TARGET_ARCHITECTURE == TARGET_ARCHITECTURE_ID_X86
 
 #if VALE
 // Only include this for checking CPU flags.
@@ -53,11 +70,11 @@ TEST_P(Blake2bTesting, TryTestVectors)
   EXPECT_TRUE(test);
 
 #ifdef HACL_CAN_COMPILE_VEC256
-  // We might have compiled vec256 blake2b but don't have it available on the
-  // CPU when running now.
-  #if VALE
+// We might have compiled vec256 blake2b but don't have it available on the
+// CPU when running now.
+#if VALE
   if (check_avx2()) {
-  #endif
+#endif
     test = test_blake2b(&Hacl_Blake2b_256_blake2b,
                         vectors2b.input_len,
                         vectors2b.input,
@@ -66,11 +83,12 @@ TEST_P(Blake2bTesting, TryTestVectors)
                         vectors2b.expected_len,
                         vectors2b.expected);
     EXPECT_TRUE(test);
-  #if VALE
+#if VALE
   } else {
-    printf(" ⚠️  Vec256 was compiled but AVX2 is not available on this CPU.\n");
+    printf(
+      " ⚠️  Vec256 was compiled but AVX2 is not available on this CPU.\n");
   }
-  #endif
+#endif
 #endif
 }
 
