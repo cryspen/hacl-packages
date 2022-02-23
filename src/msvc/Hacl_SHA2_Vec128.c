@@ -24,7 +24,7 @@
 
 #include "Hacl_SHA2_Vec128.h"
 
-#include "internal/Hacl_SHA2_Vec256.h"
+#include "internal/Hacl_SHA2_Vec128.h"
 
 static inline void
 sha224_update4(
