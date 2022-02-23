@@ -97,7 +97,7 @@ class Config:
             # Check if the algorithms are actually valid
             for alg in algorithms:
                 if not alg in self.hacl_files:
-                    print(" [mach] ⚠️  Unsupported algorithm requested: %s" % alg)
+                    print(" [mach] ! Unsupported algorithm requested: %s" % alg)
                     exit(1)
             for a, _ in list(self.hacl_files.items()):
                 if not a in algorithms:

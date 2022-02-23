@@ -6,20 +6,17 @@
 # The Ninja Multi-Config generator is only available since 3.17
 # https://cmake.org/cmake/help/latest/generator/Ninja%20Multi-Config.html
 cmake_minimum_required(VERSION 3.17)
+if(WIN32)
+    cmake_policy(SET CMP0091 NEW)
+endif()
 
 # Library version and name
 project(hacl
         VERSION 0.1.0
         DESCRIPTION "The High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/hacl"
-        LANGUAGES C CXX
-        )
-
-if(MSVC)
-enable_language(ASM_MASM)
-else()
-enable_language(ASM)
-endif()
+        LANGUAGES C CXX ASM
+)
 
 set(hacl_VERSION_TWEAK "alpha.1")
 
