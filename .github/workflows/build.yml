@@ -150,6 +150,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Output name
         id: vars
+        shell: bash
         run: |
           echo ::set-output name=short_sha::${GITHUB_SHA: -8}
       - name: Setup
