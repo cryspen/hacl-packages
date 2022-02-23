@@ -45,9 +45,6 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 include(config/config.cmake)
 
 # Configure different targets
-if(MSVC)
-# TODO: Set MSVC options.
-else()
 add_compile_options(
     # -Wall
     # -Wextra
@@ -58,7 +55,14 @@ add_compile_options(
     $<$<CONFIG:DEBUG>:-Og>
     $<$<CONFIG:RELEASE>:-O3>  
 )
-endif(MSVC)
+
+if(WIN32)
+    # Enable everywhere for windows as long as libintvector.h is not included correctly.
+    add_compile_options(
+        -mavx
+        -mavx2
+    )
+endif()
 
 # Set target platform
 # This is defined through the CMAKE_TOOLCHAIN_FILE. But CMAKE_OSX_ARCHITECTURES
