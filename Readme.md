@@ -2,11 +2,11 @@
 
 ![][status]
 
-[HACL*] is a high-assurance cryptographic library developed as part of [Project Everest].
-The HACL* repository includes source code written in [F*], generated code in C, verified assembly code
+The [HACL*] repository is a collection of high-assurance cryptographic algorithms developed as part of [Project Everest].
+It includes source code written in [F*], generated code in C, verified assembly code
 from the [Vale] project, and an agile multiplexed cryptographic provider called [EverCrypt].
 As such, the full [HACL*] repository contains many software artifacts and a complicated build system
-that can appear forbidding to a crypto developer who simply wishes to use verified crypto.
+that can be intimidating to a crypto developer who simply wishes to use verified crypto.
 
 This repository addresses this gap by presenting several usable crypto packages developed by Cryspen on top of HACL*.
 In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
