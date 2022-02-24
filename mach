@@ -236,7 +236,7 @@ def build(args):
 
     # test if requested
     if args.test:
-        run_tests(config.tests)
+        run_tests(config.tests, build_config)
 
 
 @subcommand()

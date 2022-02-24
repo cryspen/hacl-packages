@@ -42,8 +42,8 @@ def config_check_file():
 # FIXME: #10 add config.type (Debug/Release)
 
 
-def binary_path():
-    return os.path.join("build", "Debug")
+def binary_path(target):
+    return os.path.join("build", target)
 
 
 def absolute_file_paths(directory):
