@@ -10,6 +10,6 @@ steps:
   image: ubuntu:20.04
   commands:
   - apt-get update -qq --yes && apt-get install -qq --yes clang cmake ninja-build python3
-  - ./mach build --test -v
-  - ./mach build --release --test -v
+  - ./mach build --test -v -c
+  - ./mach build --release --test -v -c
  
