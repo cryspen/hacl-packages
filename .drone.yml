@@ -14,21 +14,23 @@ steps:
   - ./mach build --test -v -c
   - ./mach build --release --test -v -c
 
----
-
-kind: pipeline
-type: docker
-name: arm32
-
-platform:
-  arch: arm
-
-steps:
-- name: test
-  image: ubuntu:20.04
-  commands:
-  - ./.ci/kitware-archive.sh
-  - apt-get update -qq --yes && apt-get install -qq --yes clang cmake ninja-build python3
-  - ./mach build --test -v -c
-  - ./mach build --release --test -v -c
+# ---
+# Doesn't work right now "At least one invalid signature was encountered"
+#
+# kind: pipeline
+# type: docker
+# name: arm32
+#
+# platform:
+#   arch: arm
+#
+# steps:
+# - name: test
+#   image: ubuntu:20.04
+#   commands:
+#
+#   - ./.ci/kitware-archive.sh
+#   - apt-get update -qq --yes && apt-get install -qq --yes clang cmake ninja-build python3
+#   - ./mach build --test -v -c
+#   - ./mach build --release --test -v -c
  
