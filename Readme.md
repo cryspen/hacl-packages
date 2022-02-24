@@ -28,7 +28,7 @@ See `./mach --help` for details.
 
 ## Platform Support
 
-The HACL Packages is supported based on the following tiers.
+The HACL Packages are supported based on the following tiers.
 
 ### Tier 1
 
@@ -53,7 +53,7 @@ builds. However, not all of them are always tested.
 - [x] arm64 Linux (aarch64-unknown-linux-gnu)
 - [ ] arm64 Android (aarch64-linux-android)
 - [ ] arm64 iOS (aarch64-apple-ios)
-- [x] s390x Linux (s390x-unknown-linux-gnu)
+- [x] s390x z14 Linux (s390x-unknown-linux-gnu)
 
 ### Tier 3
 
