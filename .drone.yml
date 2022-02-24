@@ -1,0 +1,15 @@
+kind: pipeline
+type: docker
+name: arm64
+
+platform:
+  arch: arm64
+
+steps:
+- name: test
+  image: ubuntu:20.04
+  commands:
+  - apt-get update -qq --yes && apt-get install -qq --yes clang cmake ninja-build python3
+  - ./mach build --test -v
+  - ./mach build --release --test -v
+ 
