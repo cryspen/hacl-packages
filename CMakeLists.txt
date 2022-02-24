@@ -49,6 +49,12 @@ include(config/config.cmake)
 # Constants used throughout hacl and the build.
 include(config/constants.cmake)
 
+# Set system processor to 32-bit.
+# Note that this only works on intel for now.
+if(CMAKE_C_FLAGS MATCHES ".*-m32.*")
+    set(CMAKE_SYSTEM_PROCESSOR "i686")
+endif()
+
 # Configure C globally
 # This defaults to C11 but C90 might be set on the outside.
 # https://cmake.org/cmake/help/latest/prop_tgt/C_STANDARD.html#prop_tgt:C_STANDARD

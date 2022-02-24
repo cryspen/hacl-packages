@@ -81,6 +81,7 @@ jobs:
     strategy:
       matrix:
         compiler: [7, 8, 9, 10]
+        options: ["", "-m32"]
     env:
       CC: clang-${{ matrix.compiler }}
       CXX: clang++-${{ matrix.compiler }}
@@ -95,9 +96,9 @@ jobs:
           sudo apt-get install ninja-build clang-${{ matrix.compiler }}
       - uses: actions/checkout@v2
       - name: Debug Build & Test
-        run: ./mach build --test -v
+        run: ./mach build --test -v ${{ matrix.options }}
       - name: Release Build & Test
-        run: ./mach build --release --test -v
+        run: ./mach build --release --test -v ${{ matrix.options }}
       - name: Install
         run: |
           mkdir pkg-release
@@ -107,7 +108,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: linux-x64-clang${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          name: linux-x64-clang${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}${{ matrix.options }}
           path: |
             pkg-debug
             pkg-release
