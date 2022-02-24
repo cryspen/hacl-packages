@@ -93,7 +93,7 @@ jobs:
       - name: Setup
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build clang-${{ matrix.compiler }}
+          sudo apt-get install ninja-build clang-${{ matrix.compiler }} gcc-multilib g++-multilib
       - uses: actions/checkout@v2
       - name: Debug Build & Test
         run: ./mach build --test -v ${{ matrix.options }}
