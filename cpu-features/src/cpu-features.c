@@ -63,7 +63,21 @@ cpuid(unsigned long leaf,
 }
 
 #elif defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_X86)
-#error "TBD"
+/* XXX: Find a 32-bit CPU to actually test this */
+void
+cpuid(unsigned long leaf,
+      unsigned long* eax,
+      unsigned long* ebx,
+      unsigned long* ecx,
+      unsigned long* edx)
+{
+  __asm__("xor %%ecx, %%ecx\n\t"
+          "mov %%ebx,%%edi\n\t"
+          "cpuid\n\t"
+          "xchgl %%ebx,%%edi\n\t"
+          : "=a"(*eax), "=D"(*ebx), "=c"(*ecx), "=d"(*edx)
+          : "0"(leaf));
+}
 #endif
 
 // ECX

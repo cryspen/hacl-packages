@@ -112,7 +112,6 @@
         "include/internal/Hacl_P256.h",
         "include/lib_intrinsics.h",
         "include/Hacl_IntTypes_Intrinsics.h",
-        "include/Hacl_IntTypes_Intrinsics_128.h",
         "include/internal/Hacl_Spec.h",
         "include/internal/../Hacl_Spec.h",
         "include/internal/../Hacl_P256.h",
@@ -191,12 +190,12 @@
             "vale/src/poly1305-x86_64-mingw.S"
         ],
         "msvc": [
-            "vale/src/cpuid-x86_64-msvc.asm",
-            "vale/src/sha256-x86_64-msvc.asm",
-            "vale/src/aesgcm-x86_64-msvc.asm",
-            "vale/src/aes-x86_64-msvc.asm",
-            "vale/src/curve25519-x86_64-msvc.asm",
-            "vale/src/poly1305-x86_64-msvc.asm"
+            "vale/src/cpuid-x86_64-linux.S",
+            "vale/src/sha256-x86_64-linux.S",
+            "vale/src/aesgcm-x86_64-linux.S",
+            "vale/src/aes-x86_64-linux.S",
+            "vale/src/curve25519-x86_64-linux.S",
+            "vale/src/poly1305-x86_64-linux.S"
         ]
     },
     "vale_includes": []

@@ -50,10 +50,8 @@ def install(args):
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
              argument("--tests", help="Build tests.", action='store_true'),
-             argument("--test", help="Build and run tests.",
-                      action='store_true'),
-             argument("-r", "--release", help="Build in release mode.",
-                      action='store_true'),
+             argument("--test", help="Build and run tests.", action='store_true'),
+             argument("-r", "--release", help="Build in release mode.", action='store_true'),
              argument("-a", "--algorithms",
                       help="A list of algorithms to enable. Defaults to all.", type=str),
              argument(
@@ -66,7 +64,8 @@ def install(args):
                  "-e", "--edition", help="Choose a different HACL* edition.", type=str),
              argument(
                  "-l", "--language", help="Build language bindings for the given language.", type=str),
-             argument("-v", "--verbose", help="Make builds verbose.", action='store_true')])
+             argument("-v", "--verbose", help="Make builds verbose.", action='store_true'),
+             argument("-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),])
 def build(args):
     """Main entry point for building HACL
 
@@ -136,6 +135,13 @@ def build(args):
         bindings = True
         language = "Rust"
 
+    # We want to build for a 32-bit platform.
+    m32 = False
+    if args.m32:
+        cmake_args.append("-DCMAKE_C_FLAGS=-m32")
+        cmake_args.append("-DCMAKE_CXX_FLAGS=-m32")
+        m32 = True
+
     # Our default compiler is clang.
     compiler = os.getenv('CC', 'clang')
     windows = False
@@ -160,6 +166,9 @@ def build(args):
     if args.target:
         if windows:
             print("! Cross-compilation is not supporte on Windows.")
+            exit(1)
+        if m32:
+            print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
         if args.target == "x64-macos":
             cmake_args.extend(
