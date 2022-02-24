@@ -1,35 +1,47 @@
-# HACL
+ # The Cryspen HACL Packages
 
 ![][status]
 
-The High Assurance Crypto Library (HACL) is a C library with Rust, OCaml, and
-JavaScript bindings based on [HACL*], [Vale], and [Evercrypt].
+The [HACL*] repository is a collection of high-assurance cryptographic algorithms developed as part of [Project Everest].
+It includes source code written in [F*], generated code in C, verified assembly code
+from the [Vale] project, and an agile multiplexed cryptographic provider called [EverCrypt].
+As such, the full [HACL*] repository contains many software artifacts and a complicated build system
+that can be intimidating to a crypto developer who simply wishes to use verified crypto.
 
+This repository addresses this gap by presenting several usable crypto packages developed by Cryspen on top of HACL*.
+In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
+as well as Rust, OCaml, and JavaScript bindings for this library. Cryspen is in the process of adding more usable APIs for crypto
+primitives, as well as extensive documentation for these APIs. Cryspen is also working on more optimized versions of some
+algorithms.
 ## Build
 
-HACL uses [cmake] to configure the build and [ninja] to build.
+We uses [cmake] to configure the C build and [ninja] to build.
+
+- [ ] describe cargo
 
 Quick start: `./mach build --test`
 
 ## mach
 
-All actions on HACL are driven by [mach].
+All actions are driven by [mach].
 See `./mach --help` for details.
 
 ## Platform Support
 
-HACL is supported based on the following tiers.
+The HACL Packages is supported based on the following tiers.
 
 ### Tier 1
 
 Tier 1 targets are guaranteed to work. These targets have automated testing to
 ensure that changes do not break them.
 
-- x86_64 Linux (x86_64-unknown-linux-gnu)
-- x86 Linux (i686-unknown-linux-gnu)
-- x86_64 macOS (x86_64-apple-darwin)
-- x86_64 Windows (x86_64-pc-windows-msvc)
-- x86 Windows (i686-pc-windows-msvc)
+- [x] x86_64 Linux (x86_64-unknown-linux-gnu)
+- [ ] x86 Linux (i686-unknown-linux-gnu)
+- [x] x86_64 macOS (x86_64-apple-darwin)
+- [ ] x86_64 Windows
+    - [ ] x86_64-pc-windows-msvc
+    - [ ] x86_64-pc-windows-clang
+- [ ] x86 Windows (i686-pc-windows-msvc)
 
 ### Tier 2
 
@@ -37,11 +49,11 @@ Tier 2 targets are guaranteed to build.
 These targets have automated builds to ensure that changes do not break the
 builds. However, not all of them are always tested.
 
-- arm64 macOS (aarch64-apple-darwin)
-- arm64 Linux (aarch64-unknown-linux-gnu)
-- arm64 Android (aarch64-linux-android)
-- arm64 iOS (aarch64-apple-ios)
-- s390x Linux (s390x-unknown-linux-gnu)
+- [ ] arm64 macOS (aarch64-apple-darwin)
+- [x] arm64 Linux (aarch64-unknown-linux-gnu)
+- [ ] arm64 Android (aarch64-linux-android)
+- [ ] arm64 iOS (aarch64-apple-ios)
+- [x] s390x Linux (s390x-unknown-linux-gnu)
 
 ### Tier 3
 
@@ -58,7 +70,8 @@ there is no guarantee that they work.
 ## Compiler support
 When using the `c89` edition of HACL GCC starting from 4.8 is supported.
 
-TODO: define clang and MSVC version support
+- [ ] define clang and MSVC version support
+- [ ] test gcc 5.4
 
 ## Algorithms
 
@@ -105,7 +118,9 @@ Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 [mach]: ./mach
 [gtest]: https://google.github.io/googletest/
 [nlohmann_json]: https://github.com/nlohmann/json
-[status]: https://img.shields.io/badge/status-alpha-red.svg?style=for-the-badge
 [hacl*]: https://hacl-star.github.io
+[F*]: https://fstar-lang.org
 [vale]: https://hacl-star.github.io/HaclValeEverCrypt.html
 [evercrypt]: https://hacl-star.github.io/HaclValeEverCrypt.html
+[status]: https://img.shields.io/badge/status-alpha-red.svg?style=for-the-badge
+[Project Everest]: https://project-everest.github.io/
