@@ -24,12 +24,12 @@ from os.path import join
 from pathlib import Path
 
 
-def run_tests(tests, test_args=[], algorithms=[]):
-    print("Running tests 🏃")
-    if not os.path.exists(binary_path()):
-        print("⚠️  Nothing is built! Please build first. Aborting!")
+def run_tests(tests, bin_path, test_args=[], algorithms=[]):
+    print("Running tests ...")
+    if not os.path.exists(binary_path(bin_path)):
+        print("! Nothing is built! Please build first. Aborting!")
         exit(1)
-    os.chdir(binary_path())
+    os.chdir(binary_path(bin_path))
     my_env = dict(os.environ)
     my_env["TEST_DIR"] = join(os.getcwd(), "..", "..", "tests")
     for algorithm in tests:
@@ -38,7 +38,7 @@ def run_tests(tests, test_args=[], algorithms=[]):
             if len(algorithms) == 0 or test_name in algorithms or algorithm in algorithms:
                 file_name = Path(test).stem
                 if not os.path.exists(file_name):
-                    print("⚠️  Test '%s' doesn't exist. Aborting!" %
+                    print("! Test '%s' doesn't exist. Aborting!" %
                           (file_name))
                     print("   Running this test requires a build first.")
                     print("   See mach.py build --help")
@@ -67,4 +67,4 @@ def test(args):
     # parse file
     config = json.loads(data)
     # config = Config(json_config(), algorithms=algorithms)
-    run_tests(config['tests'], algorithms=algorithms)
+    run_tests(config['tests'], "Debug", algorithms=algorithms)
