@@ -140,7 +140,6 @@ def build(args):
     if args.m32:
         cmake_args.append("-DCMAKE_C_FLAGS=-m32")
         cmake_args.append("-DCMAKE_CXX_FLAGS=-m32")
-        # cmake_args.append("-DHACL_FORCE_32_BIT")
         m32 = True
 
     # Our default compiler is clang.
