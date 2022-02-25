@@ -153,9 +153,7 @@ jobs:
         # options: ["", "-m32"]
     steps:
       - uses: actions/checkout@v2
-      - uses: microsoft/setup-msbuild@v1.1
-        with:
-          msbuild-architecture: x64
+      - uses: ilammy/msvc-dev-cmd@v1
       - name: Output name
         id: vars
         shell: bash
