@@ -147,6 +147,10 @@ jobs:
             build/Release
   windows:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        compiler: ["", "--msvc"]
+        # options: ["", "-m32"]
     steps:
       - uses: actions/checkout@v2
       - name: Output name
@@ -157,13 +161,13 @@ jobs:
       - name: Setup
         run: choco install ninja
       - name: Debug Build
-        run: python mach build -v
+        run: python mach build -v ${{ matrix.compiler }}
       - name: Release Build
         run: python mach build --release -v
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows-x64-clang-${{ steps.vars.outputs.short_sha }}
+          name: windows-x64${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
           path: |
             build/Debug
             build/Release

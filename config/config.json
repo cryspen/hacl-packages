@@ -147,7 +147,7 @@
                 "cpuid-x86_64-mingw.S"
             ],
             "msvc": [
-                "cpuid-x86_64-linux.S"
+                "cpuid-x86_64-msvc.asm"
             ]
         },
         "sha2": {
@@ -161,7 +161,7 @@
                 "sha256-x86_64-mingw.S"
             ],
             "msvc": [
-                "sha256-x86_64-linux.S"
+                "sha256-x86_64-msvc.asm"
             ]
         },
         "aesgcm": {
@@ -178,8 +178,8 @@
                 "aes-x86_64-mingw.S"
             ],
             "msvc": [
-                "aesgcm-x86_64-linux.S",
-                "aes-x86_64-linux.S"
+                "aesgcm-x86_64-msvc.asm",
+                "aes-x86_64-msvc.asm"
             ]
         },
         "curve25519": {
@@ -193,7 +193,7 @@
                 "curve25519-x86_64-mingw.S"
             ],
             "msvc": [
-                "curve25519-x86_64-linux.S"
+                "curve25519-x86_64-msvc.asm"
             ]
         },
         "poly1305": {
@@ -207,7 +207,7 @@
                 "poly1305-x86_64-mingw.S"
             ],
             "msvc": [
-                "poly1305-x86_64-linux.S"
+                "poly1305-x86_64-msvc.asm"
             ]
         }
     },

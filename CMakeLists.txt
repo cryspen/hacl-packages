@@ -25,9 +25,11 @@ cmake_minimum_required(VERSION 3.17)
 if(WIN32)
     # Make sure we have visual studio enabled
     cmake_policy(SET CMP0091 NEW)
-    # Avoid picking something that's not clang.
-    SET(CMAKE_C_COMPILER clang)
-    SET(CMAKE_CXX_COMPILER clang++)
+    # Avoid picking something that's not clang, unless the caller wants MSVC.
+    if(NOT USE_MSVC)
+        SET(CMAKE_C_COMPILER clang)
+        SET(CMAKE_CXX_COMPILER clang++)
+    endif(NOT USE_MSVC)
 endif()
 
 # Library version and name
@@ -35,8 +37,15 @@ project(hacl
         VERSION 0.1.0
         DESCRIPTION "The High Assurance Crypto Library"
         HOMEPAGE_URL "https://cryspen.com/hacl"
-        LANGUAGES C CXX ASM
+        LANGUAGES C CXX
 )
+
+# The assembly is different for MSVC ...
+if(MSVC)
+    enable_language(ASM_MASM)
+else()
+    enable_language(ASM)
+endif()
 
 set(hacl_VERSION_TWEAK "alpha.1")
 
@@ -67,18 +76,21 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 include(config/config.cmake)
 
 # Configure different targets
-add_compile_options(
-    # -Wall
-    # -Wextra
-    # -Wconversion
-    # -Wsign-conversion
-    # -Werror=gcc-compat
-    $<$<CONFIG:DEBUG>:-g>
-    $<$<CONFIG:DEBUG>:-Og>
-    $<$<CONFIG:RELEASE>:-O3>  
-)
+# TODO: Set flags for MSVC
+if(NOT MSVC)
+    add_compile_options(
+        # -Wall
+        # -Wextra
+        # -Wconversion
+        # -Wsign-conversion
+        # -Werror=gcc-compat
+        $<$<CONFIG:DEBUG>:-g>
+        $<$<CONFIG:DEBUG>:-Og>
+        $<$<CONFIG:RELEASE>:-O3>  
+    )
+endif()
 
-if(WIN32)
+if(WIN32 AND NOT MSVC)
     # Enable everywhere for windows as long as libintvector.h is not included correctly.
     add_compile_options(
         -mavx
@@ -138,12 +150,16 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
         add_library(hacl_vec128 OBJECT ${SOURCES_vec128})
         target_include_directories(hacl_vec128 PRIVATE)
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-            target_compile_options(hacl_vec128 PRIVATE
-                -msse2
-                -msse3
-                -msse4.1
-                -msse4.2
-            )
+            if(MSVC)
+                # Nothing to do here. MSVC has it covered
+            else()
+                target_compile_options(hacl_vec128 PRIVATE
+                    -msse2
+                    -msse3
+                    -msse4.1
+                    -msse4.2
+                )
+            endif(MSVC)
         elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
             target_compile_options(hacl_vec128 PRIVATE
                 -march=armv8-a+simd
@@ -181,16 +197,28 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
         target_include_directories(hacl_vec256 PRIVATE)
         # We really should only get here on x86 architectures. But let's make sure.
         if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-            target_compile_options(hacl_vec256 PRIVATE
-                -mavx
-                -mavx2
-            )
+            if(MSVC)
+                target_compile_options(hacl_vec256 PRIVATE
+                    /arch:AVX
+                    /arch:AVX2
+                )
+            else()
+                target_compile_options(hacl_vec256 PRIVATE
+                    -mavx
+                    -mavx2
+                )
+            endif()
         endif()
     endif()
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Select the files for the target OS/Compiler
-    set(VALE_OBJECTS ${VALE_SOURCES_${HACL_TARGET_OS}})
+    if(WIN32 AND NOT MSVC)
+        # On Windows with clang-cl (our default) we take the Linux assembly
+        set(VALE_OBJECTS ${VALE_SOURCES_linux})
+    else()
+        set(VALE_OBJECTS ${VALE_SOURCES_${HACL_TARGET_OS}})
+    endif()
     # Add SOURCES_vale to SOURCES_std as we don't need any
     # special compiler flags for it.
     list(APPEND SOURCES_std ${SOURCES_vale})
