@@ -168,7 +168,10 @@ vale_sha2_support()
 void
 hacl_init_cpu_features()
 {
-#if defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)
+  // TODO: Make this work for Windows.
+#if defined(CPU_FEATURES_X64) ||                                               \
+  defined(CPU_FEATURES_X86) &&                                                 \
+    (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS))
   unsigned long eax, ebx, ecx, edx, eax_sub, ebx_sub, ecx_sub, edx_sub;
   cpuid(1, &eax, &ebx, &ecx, &edx);
   cpuid(7, &eax_sub, &ebx_sub, &ecx_sub, &edx_sub);

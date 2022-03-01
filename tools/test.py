@@ -17,6 +17,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from tools.configure import Config
 from tools.utils import subcommand, argument, cli, subparsers, mprint as print, binary_path, json_config
 
@@ -37,6 +38,8 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
             test_name = os.path.splitext(test)[0]
             if len(algorithms) == 0 or test_name in algorithms or algorithm in algorithms:
                 file_name = Path(test).stem
+                if sys.platform == "win32":
+                    file_name += ".exe"
                 if not os.path.exists(file_name):
                     print("! Test '%s' doesn't exist. Aborting!" %
                           (file_name))
