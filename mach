@@ -50,8 +50,10 @@ def install(args):
 
 @subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
              argument("--tests", help="Build tests.", action='store_true'),
-             argument("--test", help="Build and run tests.", action='store_true'),
-             argument("-r", "--release", help="Build in release mode.", action='store_true'),
+             argument("--test", help="Build and run tests.",
+                      action='store_true'),
+             argument("-r", "--release", help="Build in release mode.",
+                      action='store_true'),
              argument("-a", "--algorithms",
                       help="A list of algorithms to enable. Defaults to all.", type=str),
              argument(
@@ -60,12 +62,15 @@ def install(args):
                  "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
              argument(
                  "-s", "--sanitizer", help="Enable sanitizers.", type=str),
+            argument(
+                "--msvc", help="Use MSVC on Windows (default is clang-cl).",  action='store_true'),
              argument(
                  "-e", "--edition", help="Choose a different HACL* edition.", type=str),
              argument(
                  "-l", "--language", help="Build language bindings for the given language.", type=str),
-             argument("-v", "--verbose", help="Make builds verbose.", action='store_true'),
-             argument("-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),])
+             argument("-v", "--verbose", help="Make builds verbose.",
+                      action='store_true'),
+             argument("-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'), ])
 def build(args):
     """Main entry point for building HACL
 
@@ -161,6 +166,13 @@ def build(args):
         # get msvc in the path (only x64 for now)
         vswhere_cmd = ['tools\\vcbuild.cmd']
         subprocess.run(vswhere_cmd, check=True)
+
+    # We use the ninja multi config generator.
+    cmake_args.append("-GNinja Multi-Config")
+
+    # Use MSVC on Windows if requested.
+    if windows and args.msvc:
+        cmake_args.append("-DUSE_MSVC=1")
 
     # Set target toolchain if cross compiling
     if args.target:
