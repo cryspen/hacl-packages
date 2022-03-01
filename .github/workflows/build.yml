@@ -126,9 +126,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
       - uses: actions/checkout@v2
-      - name: Debug Build & Test
+      - name: Debug Build
         run: ./mach build --tests --target s390x -v
-      - name: Release Build & Test
+      - name: Release Build
         run: ./mach build --release --target s390x --tests -v
       - name: Install
         run: |
@@ -161,14 +161,10 @@ jobs:
           echo ::set-output name=short_sha::${GITHUB_SHA: -8}
       - name: Setup
         run: choco install ninja
-      - name: Debug Build
-        run: |
-          tools\vcbuild.cmd
-          python mach build --test -v ${{ matrix.compiler }}
-      - name: Release Build
-        run: |
-          tools\vcbuild.cmd
-          python mach build --release --test -v ${{ matrix.compiler }}
+      - name: Debug Build & Test
+        run: python mach build --test -v ${{ matrix.compiler }}
+      - name: Release Build & Test
+        run: python mach build --release --test -v ${{ matrix.compiler }}
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:

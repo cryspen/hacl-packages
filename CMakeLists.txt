@@ -356,6 +356,9 @@ if(ENABLE_TESTS)
         # tests
         if(NOT MSVC)
             target_compile_options(${TEST_NAME} PRIVATE -Werror=vla)
+        else()
+            # MSVC needs a modern C++ for designated initializers.
+            target_compile_options(${TEST_NAME} PRIVATE /std:c++20)
         endif(NOT MSVC)
         add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
         target_sources(${TEST_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
