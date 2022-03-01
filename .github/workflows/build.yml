@@ -164,11 +164,11 @@ jobs:
       - name: Debug Build
         run: |
           tools\vcbuild.cmd
-          python mach build -v ${{ matrix.compiler }}
+          python mach build --test -v ${{ matrix.compiler }}
       - name: Release Build
         run: |
           tools\vcbuild.cmd
-          python mach build --release -v ${{ matrix.compiler }}
+          python mach build --release --test -v ${{ matrix.compiler }}
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:

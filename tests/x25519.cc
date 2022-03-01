@@ -39,7 +39,7 @@ TEST(x25519Test, HaclTest)
   for (int i = 0; i < sizeof(vectors) / sizeof(curve25519_test_vector); ++i) {
     uint8_t comp[32] = { 0 };
     Hacl_Curve25519_51_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
-    EXPECT_TRUE(print_result(32, comp, vectors[i].secret));
+    EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
 
 #if VALE
     // We have vale compiled. But we have to check that we can actually use it
@@ -47,9 +47,9 @@ TEST(x25519Test, HaclTest)
     if (check_adx_bmi2()) {
       memset(comp, 0, 32);
       Hacl_Curve25519_64_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
-      EXPECT_TRUE(print_result(32, comp, vectors[i].secret));
+      EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
     } else {
-      printf(" ⚠️  Vale is available but ADX and/or BMI2 extensions are "
+      printf(" ! Vale is available but ADX and/or BMI2 extensions are "
              "missing.\n");
     }
 #endif

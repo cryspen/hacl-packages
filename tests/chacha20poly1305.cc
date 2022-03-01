@@ -19,8 +19,8 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
-#include "util.h"
 #include "hacl-cpu-features.h"
+#include "util.h"
 
 #include "Hacl_Chacha20Poly1305_32.h"
 #ifdef HACL_CAN_COMPILE_VEC128
@@ -72,20 +72,23 @@ print_test(test_encrypt aead_encrypt,
            uint8_t* exp_mac,
            uint8_t* exp_cipher)
 {
-  uint8_t plaintext[in_len];
+  uint8_t* plaintext = static_cast<uint8_t*>(malloc(in_len));
   memset(plaintext, 0, in_len * sizeof plaintext[0]);
-  uint8_t ciphertext[in_len];
+  uint8_t* ciphertext = static_cast<uint8_t*>(malloc(in_len));
   memset(ciphertext, 0, in_len * sizeof ciphertext[0]);
   uint8_t mac[16] = { 0 };
 
   (*aead_encrypt)(key, nonce, aad_len, aad, in_len, in, ciphertext, mac);
-  bool ok = print_result(in_len, ciphertext, exp_cipher);
-  ok = ok && print_result(16, mac, exp_mac);
+  bool ok = compare_and_print(in_len, ciphertext, exp_cipher);
+  ok = ok && compare_and_print(16, mac, exp_mac);
 
   int res = (*aead_decrypt)(
     key, nonce, aad_len, aad, in_len, plaintext, exp_cipher, exp_mac);
   ok = ok && (res == 0);
-  ok = ok && print_result(in_len, plaintext, in);
+  ok = ok && compare_and_print(in_len, plaintext, in);
+
+  free(plaintext);
+  free(ciphertext);
 
   return ok;
 }
@@ -127,9 +130,9 @@ TEST_P(Chacha20Poly1305Testing, TryTestVectors)
                       &vectors.tag[0],
                       vectors.cipher);
     EXPECT_TRUE(test);
-    } else {
-      printf(" ⚠️  Vec128 was compiled but it is not available on this CPU.\n");
-    }
+  } else {
+    printf(" ! Vec128 was compiled but it is not available on this CPU.\n");
+  }
 #endif // HACL_CAN_COMPILE_VEC128
 
 #ifdef HACL_CAN_COMPILE_VEC256
@@ -147,9 +150,9 @@ TEST_P(Chacha20Poly1305Testing, TryTestVectors)
                       &vectors.tag[0],
                       vectors.cipher);
     EXPECT_TRUE(test);
-    } else {
-      printf(" ⚠️  Vec256 was compiled but it is not available on this CPU.\n");
-    }
+  } else {
+    printf(" ! Vec256 was compiled but it is not available on this CPU.\n");
+  }
 #endif // HACL_CAN_COMPILE_VEC256
 }
 
@@ -224,10 +227,8 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
   const TestCase& test_case(GetParam());
 
   auto msg_size = test_case.msg.size();
-  uint8_t plaintext[msg_size];
-  memset(plaintext, 0, msg_size * sizeof plaintext[0]);
-  uint8_t ciphertext[msg_size];
-  memset(ciphertext, 0, msg_size * sizeof ciphertext[0]);
+  bytes plaintext(msg_size, 0);
+  bytes ciphertext(msg_size, 0);
   uint8_t mac[16] = { 0 };
 
   // Stupid const
@@ -240,15 +241,14 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
 
   // Check that encryption yields the expected cipher text.
   Hacl_Chacha20Poly1305_32_aead_encrypt(
-    key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+    key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext.data(), mac);
   if (test_case.valid) {
-    EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
-              test_case.ct);
+    EXPECT_EQ(ciphertext, test_case.ct);
     EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
   }
 
   int res = Hacl_Chacha20Poly1305_32_aead_decrypt(
-    key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+    key, iv, test_case.aad.size(), aad, msg_size, plaintext.data(), ct, tag);
   EXPECT_EQ(res, test_case.valid ? 0 : 1);
 
 // XXX: do less c&p
@@ -257,19 +257,24 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
   // CPU when running now.
   if (hacl_vec128_support()) {
     // Check that encryption yields the expected cipher text.
-    Hacl_Chacha20Poly1305_128_aead_encrypt(
-      key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+    Hacl_Chacha20Poly1305_128_aead_encrypt(key,
+                                           iv,
+                                           test_case.aad.size(),
+                                           aad,
+                                           msg_size,
+                                           msg,
+                                           ciphertext.data(),
+                                           mac);
     if (test_case.valid) {
-      EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
-                test_case.ct);
+      EXPECT_EQ(ciphertext, test_case.ct);
       EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
     }
 
     res = Hacl_Chacha20Poly1305_128_aead_decrypt(
-      key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+      key, iv, test_case.aad.size(), aad, msg_size, plaintext.data(), ct, tag);
     EXPECT_EQ(res, test_case.valid ? 0 : 1);
   } else {
-    printf(" ⚠️  Vec128 was compiled but it is not available on this CPU.\n");
+    printf(" ! Vec128 was compiled but it is not available on this CPU.\n");
   }
 #endif //  HACL_CAN_COMPILE_VEC128
 
@@ -279,19 +284,24 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
   // CPU when running now.
   if (hacl_vec256_support()) {
     // Check that encryption yields the expected cipher text.
-    Hacl_Chacha20Poly1305_256_aead_encrypt(
-      key, iv, test_case.aad.size(), aad, msg_size, msg, ciphertext, mac);
+    Hacl_Chacha20Poly1305_256_aead_encrypt(key,
+                                           iv,
+                                           test_case.aad.size(),
+                                           aad,
+                                           msg_size,
+                                           msg,
+                                           ciphertext.data(),
+                                           mac);
     if (test_case.valid) {
-      EXPECT_EQ(std::vector<uint8_t>(ciphertext, ciphertext + msg_size),
-                test_case.ct);
+      EXPECT_EQ(ciphertext, test_case.ct);
       EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
     }
 
     res = Hacl_Chacha20Poly1305_256_aead_decrypt(
-      key, iv, test_case.aad.size(), aad, msg_size, plaintext, ct, tag);
+      key, iv, test_case.aad.size(), aad, msg_size, plaintext.data(), ct, tag);
     EXPECT_EQ(res, test_case.valid ? 0 : 1);
   } else {
-    printf(" ⚠️  Vec256 was compiled but it is not available on this CPU.\n");
+    printf(" ! Vec256 was compiled but it is not available on this CPU.\n");
   }
 #endif //  HACL_CAN_COMPILE_VEC256
 }

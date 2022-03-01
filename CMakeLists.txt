@@ -346,10 +346,17 @@ if(ENABLE_TESTS)
         add_executable(${TEST_NAME}
             ${TEST_FILE}
         )
+
         # Set test directory. We don't do this right now to keep it portable.
         # target_compile_definitions(${TEST_NAME} PRIVATE
         #     TEST_DIR="${PROJECT_SOURCE_DIR}/tests/"
         # )
+
+        # Be nice to MSVC and make sure we don't have variable length arrays in
+        # tests
+        if(NOT MSVC)
+            target_compile_options(${TEST_NAME} PRIVATE -Werror=vla)
+        endif(NOT MSVC)
         add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
         target_sources(${TEST_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
         target_link_libraries(${TEST_NAME} PRIVATE

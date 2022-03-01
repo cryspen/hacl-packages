@@ -47,11 +47,9 @@ test_blake2b(test_blake blake,
              size_t expected_len,
              uint8_t* expected)
 {
-
-  uint8_t comp[expected_len];
-  memset(comp, 0, expected_len * sizeof comp[0]);
-  (*blake)(expected_len, comp, input_len, input, key_len, key);
-  return compare_and_print(expected_len, comp, expected);
+  bytes comp(expected_len, 0);
+  (*blake)(expected_len, comp.data(), input_len, input, key_len, key);
+  return compare_and_print(expected_len, comp.data(), expected);
 }
 
 class Blake2bTesting : public ::testing::TestWithParam<blake2_test_vector>
@@ -86,7 +84,7 @@ TEST_P(Blake2bTesting, TryTestVectors)
 #if VALE
   } else {
     printf(
-      " ⚠️  Vec256 was compiled but AVX2 is not available on this CPU.\n");
+      " ! Vec256 was compiled but AVX2 is not available on this CPU.\n");
   }
 #endif
 #endif
