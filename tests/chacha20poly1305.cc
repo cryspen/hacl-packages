@@ -180,8 +180,7 @@ read_json()
 {
 
   // Read JSON test vector
-  std::string test_dir = std::string(getenv("TEST_DIR"));
-  test_dir += "/chacha20_poly1305_test.json";
+  std::string test_dir = "chacha20_poly1305_test.json";
   std::ifstream json_test_file(test_dir);
   json test_vectors;
   json_test_file >> test_vectors;

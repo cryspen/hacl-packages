@@ -347,11 +347,6 @@ if(ENABLE_TESTS)
             ${TEST_FILE}
         )
 
-        # Set test directory. We don't do this right now to keep it portable.
-        # target_compile_definitions(${TEST_NAME} PRIVATE
-        #     TEST_DIR="${PROJECT_SOURCE_DIR}/tests/"
-        # )
-
         # Be nice to MSVC and make sure we don't have variable length arrays in
         # tests
         if(NOT MSVC)
@@ -368,5 +363,12 @@ if(ENABLE_TESTS)
             nlohmann_json::nlohmann_json
         )
         target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
+        if(EXISTS ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME})
+            # Copy test input files. They must be in a directory with the same
+            # name as the test and get copied to the build directory.
+            add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME} $<TARGET_FILE_DIR:${TEST_NAME}>)
+        endif()
     endforeach()
 endif()
