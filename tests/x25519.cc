@@ -16,6 +16,8 @@
 
 #include <fstream>
 
+#include "hacl-cpu-features.h"
+
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
@@ -39,17 +41,17 @@ TEST(x25519Test, HaclTest)
   for (int i = 0; i < sizeof(vectors) / sizeof(curve25519_test_vector); ++i) {
     uint8_t comp[32] = { 0 };
     Hacl_Curve25519_51_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
-    EXPECT_TRUE(print_result(32, comp, vectors[i].secret));
+    EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
 
 #if VALE
     // We have vale compiled. But we have to check that we can actually use it
     // when calling HACL functions.
-    if (check_adx_bmi2()) {
+    if (vale_x25519_support()) {
       memset(comp, 0, 32);
       Hacl_Curve25519_64_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
-      EXPECT_TRUE(print_result(32, comp, vectors[i].secret));
+      EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
     } else {
-      printf(" ⚠️  Vale is available but ADX and/or BMI2 extensions are "
+      printf(" ! Vale is available but ADX and/or BMI2 extensions are "
              "missing.\n");
     }
 #endif
@@ -71,8 +73,7 @@ read_json()
 {
 
   // Read JSON test vector
-  std::string test_dir = std::string(getenv("TEST_DIR"));
-  test_dir += "/x25519_test.json";
+  std::string test_dir = "x25519_test.json";
   std::ifstream json_test_file(test_dir);
   nlohmann::json test_vectors;
   json_test_file >> test_vectors;

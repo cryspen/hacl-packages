@@ -26,8 +26,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
 
 #include "Hacl_P256.h"
 #include "util.h"
@@ -131,8 +129,7 @@ read_json()
 {
 
   // Read JSON test vector
-  std::string test_dir = std::string(getenv("TEST_DIR"));
-  test_dir += "/ecdsa_secp256r1_sha256_test.json";
+  std::string test_dir = "ecdsa_secp256r1_sha256_test.json";
   std::ifstream json_test_file(test_dir);
   json test_vectors;
   json_test_file >> test_vectors;

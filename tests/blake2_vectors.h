@@ -70,8 +70,6 @@ static uint8_t expected2b13[64] = {
 
 static uint8_t input2s1[3] = { 0x61U, 0x62U, 0x63U };
 
-static uint8_t key2s1[0] = {};
-
 static uint8_t expected2s1[32] = {
   0x50U, 0x8CU, 0x5EU, 0x8CU, 0x32U, 0x7CU, 0x14U, 0xE2U, 0xE1U, 0xA7U, 0x2BU,
   0xA3U, 0x4EU, 0xEBU, 0x45U, 0x2FU, 0x37U, 0x45U, 0x8BU, 0x20U, 0x9EU, 0xD6U,
@@ -213,8 +211,8 @@ static blake2_test_vector vectors2s[] = {
   {
     .input = input2s1,
     .input_len = sizeof(input2s1) / sizeof(uint8_t),
-    .key = key2s1,
-    .key_len = sizeof(key2s1) / sizeof(uint8_t),
+    .key = 0,
+    .key_len = 0,
     .expected = expected2s1,
     .expected_len = sizeof(expected2s1) / sizeof(uint8_t),
   },

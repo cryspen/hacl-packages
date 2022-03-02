@@ -2,36 +2,7 @@
 #include <stdio.h>
 #include <vector>
 
-static inline bool
-compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
-{
-  bool ok = true;
-  for (size_t i = 0; i < len; i++) {
-    ok = ok & (exp[i] == comp[i]);
-  }
-  if (ok) {
-    // printf("Success!\n");
-  } else {
-    printf("**FAILED**\n");
-    printf("computed:");
-    for (size_t i = 0; i < len; i++) {
-      printf("%02x", comp[i]);
-    }
-    printf("\n");
-    printf("expected:");
-    for (size_t i = 0; i < len; i++) {
-      printf("%02x", exp[i]);
-    }
-    printf("\n");
-  }
-  return ok;
-}
-
-static inline bool
-print_result(int in_len, uint8_t* comp, uint8_t* exp)
-{
-  return compare_and_print(in_len, comp, exp);
-}
+typedef std::vector<uint8_t> bytes;
 
 std::vector<uint8_t>
 from_hex(const std::string& hex)
@@ -70,4 +41,16 @@ array_to_hex(const uint8_t* data, size_t len)
     hex << std::setw(2) << std::setfill('0') << int(data[i]);
   }
   return hex.str();
+}
+
+static inline bool
+compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
+{
+  bool ok = memcmp(exp, comp, len) == 0;
+  if (!ok) {
+    printf(" ERROR\n");
+    printf("   computed: %s\n", array_to_hex(comp, len).c_str());
+    printf("   expected: %s\n", array_to_hex(exp, len).c_str());
+  }
+  return ok;
 }

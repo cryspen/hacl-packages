@@ -16,6 +16,8 @@
 
 #include <gtest/gtest.h>
 
+#include "hacl-cpu-features.h"
+
 #include "Hacl_Hash_Blake2.h"
 #include "blake2_vectors.h"
 #include "config.h"
@@ -47,11 +49,9 @@ test_blake2b(test_blake blake,
              size_t expected_len,
              uint8_t* expected)
 {
-
-  uint8_t comp[expected_len];
-  memset(comp, 0, expected_len * sizeof comp[0]);
-  (*blake)(expected_len, comp, input_len, input, key_len, key);
-  return compare_and_print(expected_len, comp, expected);
+  bytes comp(expected_len, 0);
+  (*blake)(expected_len, comp.data(), input_len, input, key_len, key);
+  return compare_and_print(expected_len, comp.data(), expected);
 }
 
 class Blake2bTesting : public ::testing::TestWithParam<blake2_test_vector>
@@ -70,11 +70,9 @@ TEST_P(Blake2bTesting, TryTestVectors)
   EXPECT_TRUE(test);
 
 #ifdef HACL_CAN_COMPILE_VEC256
-// We might have compiled vec256 blake2b but don't have it available on the
-// CPU when running now.
-#if VALE
-  if (check_avx2()) {
-#endif
+  // We might have compiled vec256 blake2b but don't have it available on the
+  // CPU when running now.
+  if (hacl_vec256_support()) {
     test = test_blake2b(&Hacl_Blake2b_256_blake2b,
                         vectors2b.input_len,
                         vectors2b.input,
@@ -83,12 +81,9 @@ TEST_P(Blake2bTesting, TryTestVectors)
                         vectors2b.expected_len,
                         vectors2b.expected);
     EXPECT_TRUE(test);
-#if VALE
   } else {
-    printf(
-      " ⚠️  Vec256 was compiled but AVX2 is not available on this CPU.\n");
+    printf(" ! Vec256 was compiled but AVX2 is not available on this CPU.\n");
   }
-#endif
 #endif
 }
 
