@@ -16,6 +16,8 @@
 
 #include <fstream>
 
+#include "hacl-cpu-features.h"
+
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
@@ -44,7 +46,7 @@ TEST(x25519Test, HaclTest)
 #if VALE
     // We have vale compiled. But we have to check that we can actually use it
     // when calling HACL functions.
-    if (check_adx_bmi2()) {
+    if (vale_x25519_support()) {
       memset(comp, 0, 32);
       Hacl_Curve25519_64_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
       EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
