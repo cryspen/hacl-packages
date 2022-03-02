@@ -38,9 +38,9 @@ ensure that changes do not break them.
 - [x] x86_64 Linux (x86_64-unknown-linux-gnu)
 - [x] x86 Linux (i686-unknown-linux-gnu)
 - [x] x86_64 macOS (x86_64-apple-darwin)
-- [ ] x86_64 Windows
-    - [ ] x86_64-pc-windows-msvc
-    - [ ] x86_64-pc-windows-clang
+- [x] x86_64 Windows
+    - [x] x86_64-pc-windows-msvc
+    - [x] x86_64-pc-windows-clang
 - [ ] x86 Windows (i686-pc-windows-msvc)
 
 ### Tier 2
