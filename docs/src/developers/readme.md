@@ -1,5 +1,4 @@
-# Developer Guide
+# Introduction
 
 ## Contributing
 See CONTRIBUTING.md
-

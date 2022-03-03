@@ -13,6 +13,7 @@ In particular, it contains a portable C crypto library that selects optimized im
 as well as Rust, OCaml, and JavaScript bindings for this library. Cryspen is in the process of adding more usable APIs for crypto
 primitives, as well as extensive documentation for these APIs. Cryspen is also working on more optimized versions of some
 algorithms.
+
 ## Build
 
 We uses [cmake] to configure the C build and [ninja] to build.
@@ -75,7 +76,8 @@ When using the `c89` edition of HACL GCC starting from 4.8 is supported.
 
 ## Algorithms
 
-The following tables gives an overview over the algorithms supported by HACL\*.
+The following tables gives an overview over the algorithms supported by the HACL
+packages.
 
 | Family               | Algorithm         | Support                                 |
 | -------------------- | ----------------- | --------------------------------------- |
