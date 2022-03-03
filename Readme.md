@@ -101,7 +101,7 @@ The following tables gives an overview over the algorithms supported by HACL\*.
 
 ## Testing
 
-Testing is done with [gtest] and requires a C++11 compiler.
+Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 
 ### Dependencies
 
