@@ -121,6 +121,11 @@ include_directories(${INCLUDE_PATHS} ${PROJECT_BINARY_DIR})
 # Test the toolchain to get supported CPU features
 include(config/toolchain.cmake)
 
+if(NOT EXPLICIT_BZERO_SUPPORT)
+    set(LINUX_NO_EXPLICIT_BZERO 1)
+    message(STATUS "LINUX_NO_EXPLICIT_BZERO: ${LINUX_NO_EXPLICIT_BZERO}")
+endif()
+
 if(${HACL_TARGET_OS} MATCHES linux)
     add_compile_options(
         -fPIC
