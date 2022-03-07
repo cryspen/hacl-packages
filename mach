@@ -78,7 +78,7 @@ def build(args):
     For convenience it is possible to run tests right after building using --test.
 
     Supported cross compilation targets:
-        - x64-macos (macOS aarch64 only)
+        - x86_64-apple-darwin (macOS aarch64 only)
         - s390x
         - aarch64-apple-ios (macOS only)
         - aarch64-apple-darwin (macOS x64 only)
@@ -189,7 +189,7 @@ def build(args):
         if m32:
             print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
-        if args.target == "x64-macos":
+        if args.target == "x86_64-apple-darwin":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
         elif args.target == "s390x":
