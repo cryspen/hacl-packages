@@ -202,8 +202,8 @@ def build(args):
                 ["-DCMAKE_OSX_SYSROOT="+ios_sysroot()]
             )
         elif args.target == "aarch64-apple-darwin":
-            print("Not implemented yet. Sorry :(")
-            exit(1)
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
         elif args.target == "aarch64-linux-android":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
