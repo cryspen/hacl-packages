@@ -39,6 +39,37 @@ jobs:
             pkg-release
             build/Debug
             build/Release
+  macos-aarch64:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["aarch64-apple-ios", "aarch64-apple-darwin"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: brew install ninja
+      - name: Debug Build
+        run: ./mach build --tests -v --target ${{ matrix.target }}
+      - name: Release Build
+        run: ./mach build --release --tests -v --target ${{ matrix.target }}
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            build/Debug
+            build/Release
   linux-gcc:
     runs-on: ubuntu-latest
     strategy:
