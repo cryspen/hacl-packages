@@ -231,8 +231,10 @@ def build(args):
     # if verbose:
     #     cmake_args.extend(["--debug-output", "--trace"])
 
-    cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
-    cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
+    if len(cflags) != 0:
+        cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
+    if len(cxxflags) != 0:
+        cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
 
     # There must be a config.cmake already that contains some useful information.
     # We have to generate config.h before we can generate the configuration
