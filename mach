@@ -26,6 +26,7 @@ from tools.configure import Config
 
 from tools.utils import subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
 from tools.test import run_tests
+from tools.macos import ios_sysroot
 
 # === SUBCOMMANDS === #
 
@@ -62,6 +63,8 @@ def install(args):
                  "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
              argument(
                  "-s", "--sanitizer", help="Enable sanitizers.", type=str),
+             argument(
+                 "--ndk", help="Path to the Android NDK.", type=str),
             argument(
                 "--msvc", help="Use MSVC on Windows (default is clang-cl).",  action='store_true'),
              argument(
@@ -77,8 +80,11 @@ def build(args):
     For convenience it is possible to run tests right after building using --test.
 
     Supported cross compilation targets:
-        - x64-macos
+        - x86_64-apple-darwin (macOS aarch64 only)
         - s390x
+        - aarch64-apple-ios (macOS only)
+        - aarch64-apple-darwin (macOS x64 only)
+        - aarch64-linux-android
 
     Features that can be disabled (TBD):
         - vec128 (avx/neon)
@@ -140,11 +146,14 @@ def build(args):
         bindings = True
         language = "Rust"
 
+    cflags = []
+    cxxflags = []
+
     # We want to build for a 32-bit platform.
     m32 = False
     if args.m32:
-        cmake_args.append("-DCMAKE_C_FLAGS=-m32")
-        cmake_args.append("-DCMAKE_CXX_FLAGS=-m32")
+        cflags.append("-m32")
+        cxxflags.append("-m32")
         m32 = True
 
     # Our default compiler is clang.
@@ -182,15 +191,34 @@ def build(args):
         if m32:
             print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
-        if args.target == "x64-macos":
+        if args.target == "x86_64-apple-darwin":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
         elif args.target == "s390x":
             cmake_args.extend(
                 ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
+        elif args.target == "aarch64-apple-ios":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_OSX_SYSROOT="+ios_sysroot()]
+            )
+        elif args.target == "aarch64-apple-darwin":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
+        elif args.target == "aarch64-linux-android":
+            if args.ndk:
+                cmake_args.append("-DANDROID_NDK_PATH="+args.ndk)
+            else:
+                print(
+                    "! Compiling for \"%s\" requires an NDK. \n\t  Use --ndk to specify the path." % args.target)
+                print("  See help for more information.")
+                exit(1)
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
         else:
             print("! Unknown cross-compilation target \"%s\"" % args.target)
-            print("   Available targets: x64-macos, s390x")
+            print("  See help for available targets.")
             exit(1)
     if args.disable:
         if windows:
@@ -211,6 +239,11 @@ def build(args):
 
     # if verbose:
     #     cmake_args.extend(["--debug-output", "--trace"])
+
+    if len(cflags) != 0:
+        cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
+    if len(cxxflags) != 0:
+        cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
 
     # There must be a config.cmake already that contains some useful information.
     # We have to generate config.h before we can generate the configuration

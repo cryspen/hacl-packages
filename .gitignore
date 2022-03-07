@@ -4,6 +4,7 @@
 /tmp
 /tools/__pycache__
 /config/config.cmake
+/config/dep_config.json
 config/.dependency_check
 /rust/evercrypt-rs/target
 /rust/evercrypt-sys/target

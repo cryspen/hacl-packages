@@ -9,8 +9,11 @@ Main entry point for building HACL
     For convenience it is possible to run tests right after building using --test.
 
     Supported cross compilation targets:
-        - x64-macos
+        - x86_64-apple-darwin (macOS aarch64 only)
         - s390x
+        - aarch64-apple-ios (macOS only)
+        - aarch64-apple-darwin (macOS x64 only)
+        - aarch64-linux-android
 
     Features that can be disabled (TBD):
         - vec128 (avx/neon)
@@ -38,7 +41,7 @@ Main entry point for building HACL
         - sanitizer
         - edition
         - disable
-    
+
 
 optional arguments:
   -h, --help            show this help message and exit

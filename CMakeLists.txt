@@ -101,25 +101,16 @@ if(WIN32 AND NOT MSVC)
     )
 endif()
 
-# Set target platform
-# This is defined through the CMAKE_TOOLCHAIN_FILE. But CMAKE_OSX_ARCHITECTURES
-# is not picked up correctly. So we set it again here.
-if(DEFINED CMAKE_C_COMPILER_TARGET)
-    if(${CMAKE_C_COMPILER_TARGET} STREQUAL x86_64-apple-darwin)
-        set(CMAKE_SYSTEM_PROCESSOR x86_64)
-        set(CMAKE_OSX_ARCHITECTURES x86_64)
-    endif()
-    if(${CMAKE_C_COMPILER_TARGET} STREQUAL s390x-linux-gnu)
-        set(CMAKE_SYSTEM_PROCESSOR s390x)
-        set(CMAKE_OSX_ARCHITECTURES s390x)
-    endif()
-endif()
-
 # Set include paths
 include_directories(${INCLUDE_PATHS} ${PROJECT_BINARY_DIR})
 
 # Test the toolchain to get supported CPU features
 include(config/toolchain.cmake)
+
+if(NOT EXPLICIT_BZERO_SUPPORT)
+    set(LINUX_NO_EXPLICIT_BZERO 1)
+    message(STATUS "LINUX_NO_EXPLICIT_BZERO: ${LINUX_NO_EXPLICIT_BZERO}")
+endif()
 
 if(${HACL_TARGET_OS} MATCHES linux)
     add_compile_options(
