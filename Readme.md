@@ -50,10 +50,10 @@ Tier 2 targets are guaranteed to build.
 These targets have automated builds to ensure that changes do not break the
 builds. However, not all of them are always tested.
 
-- [ ] arm64 macOS (aarch64-apple-darwin)
+- [x] arm64 macOS (aarch64-apple-darwin)
 - [x] arm64 Linux (aarch64-unknown-linux-gnu)
-- [ ] arm64 Android (aarch64-linux-android)
-- [ ] arm64 iOS (aarch64-apple-ios)
+- [x] arm64 Android (aarch64-linux-android)
+- [x] arm64 iOS (aarch64-apple-ios)
 - [x] s390x z14 Linux (s390x-unknown-linux-gnu)
 
 ### Tier 3
