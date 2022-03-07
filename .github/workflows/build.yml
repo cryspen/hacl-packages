@@ -154,10 +154,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build
+      - uses: actions/checkout@v2
       - name: Debug Build
-        run: ./mach build --tests -v --target ${{ matrix.target }}
+        run: ./mach build --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
       - name: Release Build
-        run: ./mach build --release --tests -v --target ${{ matrix.target }}
+        run: ./mach build --release --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
