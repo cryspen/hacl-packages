@@ -1,0 +1,10 @@
+.*depend*
+*.so
+*.a
+*.o
+*.d
+*.d.*
+*.cm*
+*.exe
+lib/*_stubs.ml
+lib/*_c_stubs.c

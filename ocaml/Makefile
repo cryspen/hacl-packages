@@ -16,20 +16,38 @@
 
 .PRECIOUS: %.cmx
 
-BLOCKLIST=
+# Config
+# TODO: Read this from the main config.
+STATIC_C_LIB_NAME=hacl_static
+SO=so
+BLOCKLIST_NON_X64=EverCrypt_Vale.c
+BLOCKLIST=Hacl_Bignum256_32.c Hacl_Bignum256.c Hacl_Bignum32.c Hacl_Bignum4096_32.c Hacl_Bignum4096.c Hacl_Bignum.c Hacl_Bignum64.c Hacl_Bignum_Base.c Hacl_GenericField32.c Hacl_GenericField64.c
+BLOCKLIST+=$(BLOCKLIST_NON_X64)
+BLOCKLIST+=Hacl_Curve25519_64.c Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c Hacl_HPKE_Curve64_CP32_SHA256.c Hacl_HPKE_Curve64_CP32_SHA512.c
+BLOCKLIST+=evercrypt_vale_stubs.c
+BLOCKLIST+=Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c Hacl_HKDF_Blake2b_256.c Hacl_HMAC_Blake2b_256.c Hacl_HPKE_Curve51_CP256_SHA256.c Hacl_HPKE_Curve51_CP256_SHA512.c Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c Hacl_HPKE_P256_CP256_SHA256.c Hacl_Hash_Blake2b_256.c Hacl_Poly1305_256.c Hacl_SHA2_Vec256.c Hacl_Streaming_Blake2b_256.c Hacl_Streaming_Poly1305_256.c
+C_LIB_PATH?=../build/Debug/
+C_LIB?=$(C_LIB_PATH)lib$(STATIC_C_LIB_NAME).a
+C_INCLUDES?=-I../include/
+KARAMEL_INCLUDES?=-I../kremlin/include -I../kremlin/kremlib/dist/minimal/
+
+ifeq ("$(wildcard $(C_LIB))","")
+$(error I couldn't find the C library $(C_LIB). Please build it first or tell me where to find it.)
+endif
 
 OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
 OCAMLDEP=ocamlfind dep -I lib -slash
 
 OCAMLC=ocamlfind c -g -package ctypes,ctypes.stubs -linkpkg -I lib
 
-CFLAGS += -I "$(shell ocamlfind query ctypes)" -I "$(shell ocamlfind c -where)"
+CFLAGS += -I "$(shell ocamlfind query ctypes)" -I "$(shell ocamlfind c -where)" \
+		  $(C_INCLUDES) $(KARAMEL_INCLUDES)
 
 # Don't include bindings for files that cannot be compiled.
 BLOCKLIST_ML=$(patsubst %.c,%,$(BLOCKLIST))
 ALL_OCAML=$(filter-out $(BLOCKLIST_ML),$(patsubst lib_gen/%_gen.ml,%,$(wildcard lib_gen/*_gen.ml)))
 
-# Just names.
+# File names.
 ALL_BINDINGS=$(patsubst %,lib/%_bindings.cmx,$(ALL_OCAML))
 ALL_GENERATORS=$(patsubst %,lib_gen/%_gen.exe, $(ALL_OCAML))
 ALL_ML_STUBS=$(patsubst %,lib/%_stubs.cmx,$(ALL_OCAML))
@@ -44,28 +62,12 @@ lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cm
 .depend.ocaml:
 	$(OCAMLDEP) $(wildcard lib/*.ml) $(wildcard lib_gen/*.ml) > $@
 
-# Note: for some reason, this minimal Makefile doesn't apply the shortest stem
-# rule.
-#
-# %.exe:
-# 	echo long stem
-#
-# %_foo.exe: %.b
-# 	cat $<
-#
-# %.b:
-# 	echo $@ > $@
-#
-# Which really puzzles me (e.g. make foo_foo.exe always echoes "long stem"),
-# even though the shortest stem rule should apply. However, we can cancel a
-# previous pattern rule, thanks to
-# https://www.gnu.org/software/make/manual/html_node/Canceling-Rules.html
 %.exe:
 
 all: ocamlevercrypt.cmxa
 
 lib_gen/%_gen.exe:
-	$(OCAMLOPT) $(filter-out %.a,$^) libevercrypt.a -o $@
+	$(OCAMLOPT) $(filter-out %.a,$^) $(C_LIB) -o $@
 
 %.cmx: %.ml
 	$(OCAMLOPT) -c $^ -o $@
@@ -88,9 +90,9 @@ endif
 lib/%_stubs.ml lib/%_c_stubs.c: lib_gen/%_gen.exe
 	$<
 
-# Compiling these files raises the pointer sign warning because the Ctypes declaration for bytes expects a char*, not a uint8_t*
-# Can be remove once ctypes is upgraded to 0.17
-lib/%_c_stubs.o: CFLAGS += -Wno-pointer-sign
+# # Compiling these files raises the pointer sign warning because the Ctypes declaration for bytes expects a char*, not a uint8_t*
+# # Can be remove once ctypes is upgraded to 0.17
+# lib/%_c_stubs.o: CFLAGS += -Wno-pointer-sign
 
 BLOCKLIST_CMX =  $(patsubst %,lib/%_stubs.cmx,$(BLOCKLIST_ML))
 BLOCKLIST_CMX += $(patsubst %,lib/%_bindings.cmx,$(BLOCKLIST_ML))
@@ -101,16 +103,20 @@ CTYPES_CMI    =  $(patsubst %.cmx,%.cmi,$(CTYPES_CMX))
 CTYPES_CMO    = $(patsubst %.cmx,%.cmo,$(CTYPES_CMX))
 
 
-ocamlevercrypt.cma: $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX) libevercrypt.$(SO)
-	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -levercrypt
+ocamlevercrypt.cma: $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX)
+	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
 
-ocamlevercrypt.cmxa: $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS) libevercrypt.$(SO)
-	ocamlmklib -o ocamlevercrypt $(CTYPES_CMX) -L. -levercrypt
+ocamlevercrypt.cmxa: $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS)
+	ocamlmklib -o ocamlevercrypt $(CTYPES_CMX) -L. -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
 
 STUBLIBS_PATH=$(OPAM_SWITCH_PREFIX)/lib/stublibs
 
 dllocamlevercrypt.$(SO): ocamlevercrypt.cmxa ocamlevercrypt.cma
-	ocamlmklib -o ocamlevercrypt $(ALL_C_STUBS) -L. -L$(STUBLIBS_PATH) -levercrypt
+	ocamlmklib -o ocamlevercrypt $(ALL_C_STUBS) -L. -L$(STUBLIBS_PATH) -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
+
+clean:
+	rm -rf *.$(SO) *.a .depend.ocaml *.cmxa *.cma \
+	**/*.cma **/*.cmo **/*.cmx **/*.cmxa* **/*.o **/*.c **/*.cmi **/*.exe **/*.o **/*.d
 
 # install-hacl-star-raw: dllocamlevercrypt.$(SO)
 # 	ocamlfind remove hacl-star-raw || true
