@@ -79,20 +79,8 @@ lib_gen/%_gen.exe:
 .PRECIOUS: lib/%_stubs.ml
 lib/%_stubs.ml: lib/%_c_stubs.c
 
-ifeq ($(shell uname -s),Darwin)
-  DY=DYLD_LIBRARY_
-else ifeq ($(OS),Windows_NT)
-  DY=
-else
-  DY=LD_LIBRARY_
-endif
-
 lib/%_stubs.ml lib/%_c_stubs.c: lib_gen/%_gen.exe
 	$<
-
-# # Compiling these files raises the pointer sign warning because the Ctypes declaration for bytes expects a char*, not a uint8_t*
-# # Can be remove once ctypes is upgraded to 0.17
-# lib/%_c_stubs.o: CFLAGS += -Wno-pointer-sign
 
 BLOCKLIST_CMX =  $(patsubst %,lib/%_stubs.cmx,$(BLOCKLIST_ML))
 BLOCKLIST_CMX += $(patsubst %,lib/%_bindings.cmx,$(BLOCKLIST_ML))
