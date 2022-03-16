@@ -106,16 +106,21 @@ clean:
 	rm -rf *.$(SO) *.a .depend.ocaml *.cmxa *.cma \
 	**/*.cma **/*.cmo **/*.cmx **/*.cmxa* **/*.o **/*.c **/*.cmi **/*.exe **/*.o **/*.d
 
-# install-hacl-star-raw: dllocamlevercrypt.$(SO)
-# 	ocamlfind remove hacl-star-raw || true
-# 	ocamlfind install hacl-star-raw META
-# 	ocamlfind install -add hacl-star-raw $(CTYPES_ML)
-# 	ocamlfind install -add hacl-star-raw $(CTYPES_CMX)
-# 	ocamlfind install -add hacl-star-raw $(CTYPES_CMO)
-# 	ocamlfind install -add hacl-star-raw $(CTYPES_CMI)
-# 	ocamlfind install -add hacl-star-raw \
-#          libevercrypt.a libevercrypt.$(SO) ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
-#          libocamlevercrypt.a dllocamlevercrypt.$(SO) config.h
+# Install hacl-star-raw locally.
+# FIXME: There must be a better way.
+install-hacl-star-raw: dllocamlevercrypt.$(SO)
+	ocamlfind remove hacl-star-raw || true
+	ocamlfind install hacl-star-raw META
+	ocamlfind install -add hacl-star-raw $(CTYPES_ML)
+	ocamlfind install -add hacl-star-raw $(CTYPES_CMX)
+	ocamlfind install -add hacl-star-raw $(CTYPES_CMO)
+	ocamlfind install -add hacl-star-raw $(CTYPES_CMI)
+	ocamlfind install -add hacl-star-raw \
+         $(C_LIB) \
+		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
+         libocamlevercrypt.a dllocamlevercrypt.$(SO) config.h
+
+#  libevercrypt.a libevercrypt.$(SO) \
 
 # .PHONY: install-ocaml
 # install-ocaml: install-hacl-star-raw
