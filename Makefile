@@ -3,4 +3,4 @@
 
 all:
 	@echo " ⚠️ ⚠️ ⚠️  Please use 'mach.py'. I'm calling './mach.py build' for you now  ⚠️ ⚠️ ⚠️"
-	./mach.py build
+	./mach build
