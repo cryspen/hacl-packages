@@ -3,7 +3,6 @@ extern crate bindgen;
 
 use std::{env, path::Path};
 
-#[cfg(not(windows))]
 fn create_bindings(include_path: &Path, home_dir: &Path) {
     // Include paths
     let hacl_includes = vec![
@@ -47,9 +46,6 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .write_to_file(home_bindings)
         .expect("Couldn't write bindings!");
 }
-
-#[cfg(windows)]
-fn create_bindings(_: &str) {}
 
 fn main() {
     // Get ENV variables
