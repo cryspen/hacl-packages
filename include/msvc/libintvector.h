@@ -6,8 +6,10 @@
 /* We include config.h here to ensure that the various feature-flags are
  * properly brought into scope. Users can either run the configure script, or
  * write a config.h themselves and put it under version control. */
+#if defined(__has_include)
 #if __has_include("config.h")
 #include "config.h"
+#endif
 #endif
 
 /* # DEBUGGING:
@@ -21,7 +23,9 @@
 
 #if defined(HACL_CAN_COMPILE_VEC128)
 
-#include <intrin.h>
+#include <emmintrin.h>
+#include <tmmintrin.h>
+#include <smmintrin.h>
 
 typedef __m128i Lib_IntVector_Intrinsics_vec128;
 
@@ -221,7 +225,8 @@ typedef __m128i Lib_IntVector_Intrinsics_vec128;
 
 #if defined(HACL_CAN_COMPILE_VEC256)
 
-#include <intrin.h>
+#include <immintrin.h>
+#include <wmmintrin.h>
 
 typedef __m256i Lib_IntVector_Intrinsics_vec256;
 
@@ -923,8 +928,10 @@ typedef vector128_8 vector128;
 // If libintvector_debug.h exists, use it to debug the current implementations.
 // Note that some flags must be enabled for the debugging to be effective:
 // see libintvector_debug.h for more details.
+#if defined(__has_include)
 #if __has_include("libintvector_debug.h")
 #include "libintvector_debug.h"
+#endif
 #endif
 
 #endif // __Vec_Intrin_H

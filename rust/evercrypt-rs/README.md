@@ -32,7 +32,6 @@ Windows builds are on the To Do list and should be supported in future.
 | MacOS                |    ✅     |
 | MacOS Arm64          |    ✅     |
 | iOS                  |    ✅     |
-| iOS Simulator x86_64 |    ❌     |
 | Linux x64            |    ✅     |
 | Linux x86            |    ✅     |
 | Windows x64          |    ✅     |
