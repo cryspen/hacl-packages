@@ -2866,7 +2866,7 @@ blake2s_update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, u
   }
 }
 
-void Hacl_Blake2s_32_blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn)
+inline void Hacl_Blake2s_32_blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn)
 {
   uint32_t *r0 = hash + (uint32_t)0U * (uint32_t)4U;
   uint32_t *r1 = hash + (uint32_t)1U * (uint32_t)4U;
