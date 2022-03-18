@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::hmac::{hmac, Mode};
+use hacl_rust::hmac::{hmac, Algorithm};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
@@ -53,10 +53,10 @@ fn test_wycheproof() {
 
     for tests in test_vectors.iter() {
         let algorithm = match tests.algorithm.as_str() {
-            "HMACSHA1" => Mode::Sha1,
-            "HMACSHA256" => Mode::Sha256,
-            "HMACSHA384" => Mode::Sha384,
-            "HMACSHA512" => Mode::Sha512,
+            "HMACSHA1" => Algorithm::Sha1,
+            "HMACSHA256" => Algorithm::Sha256,
+            "HMACSHA384" => Algorithm::Sha384,
+            "HMACSHA512" => Algorithm::Sha512,
             _ => panic!("Unknown HMAC algorithm {}", tests.algorithm),
         };
         println!("Testing {:?}", algorithm);

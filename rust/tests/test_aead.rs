@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::aead::{hacl_aes_available, Aead, Error, Mode};
+use hacl_rust::aead::{hacl_aes_available, Aead, Algorithm, Error};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
@@ -63,8 +63,8 @@ fn test_wycheproof() {
             assert_eq!(testGroup.r#type, "AeadTest");
             let algorithm = match test_vec.algorithm.as_str() {
                 "AES-GCM" => match testGroup.keySize {
-                    128 => Mode::Aes128Gcm,
-                    256 => Mode::Aes256Gcm,
+                    128 => Algorithm::Aes128Gcm,
+                    256 => Algorithm::Aes256Gcm,
                     _ => {
                         // not implemented
                         println!("Only AES 128 and 256 are implemented.");
@@ -74,12 +74,12 @@ fn test_wycheproof() {
                 },
                 "CHACHA20-POLY1305" => {
                     assert_eq!(testGroup.keySize, 256);
-                    Mode::Chacha20Poly1305
+                    Algorithm::Chacha20Poly1305
                 }
                 _ => panic!("Unknown algorithm {:?}", test_vec.algorithm),
             };
             if !unsafe { hacl_aes_available() }
-                && (algorithm == Mode::Aes128Gcm || algorithm == Mode::Aes256Gcm)
+                && (algorithm == Algorithm::Aes128Gcm || algorithm == Algorithm::Aes256Gcm)
             {
                 println!("⚠️  AES NOT AVAILABLE ON THIS PLATFORM!");
                 *skipped_tests += testGroup.tests.len();
@@ -178,7 +178,7 @@ fn test_wycheproof() {
 #[cfg(feature = "random")]
 #[test]
 fn key_gen_self_test() {
-    fn run(algorithm: Mode) {
+    fn run(algorithm: Algorithm) {
         let msg = b"Evercrypt rulez";
         let aad = b"associated data";
         let cipher = match Aead::init(algorithm) {
@@ -204,10 +204,10 @@ fn key_gen_self_test() {
         assert_eq!(msg[..], msg_decrypted[..]);
     }
     if unsafe { hacl_aes_available() } {
-        run(Mode::Aes128Gcm);
-        run(Mode::Aes256Gcm);
+        run(Algorithm::Aes128Gcm);
+        run(Algorithm::Aes256Gcm);
     } else {
         println!("⚠️  AES NOT AVAILABLE ON THIS PLATFORM!")
     }
-    run(Mode::Chacha20Poly1305);
+    run(Algorithm::Chacha20Poly1305);
 }

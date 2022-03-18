@@ -31,6 +31,7 @@ jobs:
       run: sudo apt-get install ninja-build
     - if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
+    - if: matrix.os == 'windows-latest'
       run: choco install ninja
     - name: Debug Build
       run: ./mach build -l rust -v

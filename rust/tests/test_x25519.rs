@@ -39,8 +39,7 @@ impl ReadFromFile for X25519TestVector {}
 #[allow(non_snake_case)]
 #[test]
 fn test_wycheproof() {
-    let tests: X25519TestVector =
-        X25519TestVector::from_file("tests/wycheproof/x25519_test.json");
+    let tests: X25519TestVector = X25519TestVector::from_file("tests/wycheproof/x25519_test.json");
 
     assert_eq!(tests.algorithm, "XDH");
 

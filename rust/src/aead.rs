@@ -7,12 +7,12 @@
 //!
 //! ## Aead with key state
 //! ```rust
-//! use hacl_rust::aead::{Aead, Mode, Error};
+//! use hacl_rust::aead::{Aead, Algorithm, Error};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
 //!            0xdb, 0xa9, 0x31, 0xb0, 0xcc, 0xf3, 0x48, 0x43, 0xda, 0xb9];
-//! let cipher = match Aead::new(Mode::Chacha20Poly1305, &key) {
+//! let cipher = match Aead::new(Algorithm::Chacha20Poly1305, &key) {
 //!    Ok(c) => c,
 //!    Err(e) => panic!("Error instantiating AEAD.\n{:?}", e),
 //! };
@@ -36,7 +36,7 @@
 //!
 //! ## Single-shot API
 //! ```rust
-//! use hacl_rust::aead::{self, Mode};
+//! use hacl_rust::aead::{self, Algorithm};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
@@ -45,12 +45,12 @@
 //! let msg = [0x00, 0x1d, 0x0c, 0x23, 0x12, 0x87, 0xc1, 0x18, 0x27, 0x84, 0x55, 0x4c, 0xa3, 0xa2, 0x19, 0x08];
 //! let aad = [];
 //!
-//! let (ciphertext, tag) = match aead::encrypt(Mode::Chacha20Poly1305, &key, &msg, &iv, &aad) {
+//! let (ciphertext, tag) = match aead::encrypt(Algorithm::Chacha20Poly1305, &key, &msg, &iv, &aad) {
 //!    Ok(r) => r,
 //!    Err(e) => panic!("Error encrypting.\n{:?}", e),
 //! };
 //!
-//! let msg_ = match aead::decrypt(Mode::Chacha20Poly1305, &key, &ciphertext, &tag, &iv, &aad) {
+//! let msg_ = match aead::decrypt(Algorithm::Chacha20Poly1305, &key, &ciphertext, &tag, &iv, &aad) {
 //!     Ok(r) => r,
 //!     Err(e) => panic!("Error decrypting.\n{:?}", e),
 //! };
@@ -66,66 +66,75 @@ use serde::{Deserialize, Serialize};
 
 use hacl_rust_sys::*;
 
-/// The AEAD Mode.
+/// The AEAD Algorithm Identifier.
 #[derive(Clone, Copy, PartialEq, Debug)]
 #[cfg_attr(feature = "serialization", derive(Serialize, Deserialize))]
-pub enum Mode {
-    Aes128Gcm = Spec_Agile_AEAD_AES128_GCM as isize,
-    Aes256Gcm = Spec_Agile_AEAD_AES256_GCM as isize,
-    Chacha20Poly1305 = Spec_Agile_AEAD_CHACHA20_POLY1305 as isize,
+#[repr(u32)]
+pub enum Algorithm {
+    /// AES GCM 128
+    Aes128Gcm = Spec_Agile_AEAD_AES128_GCM,
+
+    /// AES GCM 256
+    Aes256Gcm = Spec_Agile_AEAD_AES256_GCM,
+
+    /// ChaCha20 Poly1305
+    Chacha20Poly1305 = Spec_Agile_AEAD_CHACHA20_POLY1305,
 }
 
-impl From<u8> for Mode {
-    fn from(v: u8) -> Mode {
+impl From<u8> for Algorithm {
+    fn from(v: u8) -> Algorithm {
         match v {
-            0 => Mode::Aes128Gcm,
-            1 => Mode::Aes256Gcm,
-            2 => Mode::Chacha20Poly1305,
+            0 => Algorithm::Aes128Gcm,
+            1 => Algorithm::Aes256Gcm,
+            2 => Algorithm::Chacha20Poly1305,
             _ => panic!("Unknown AEAD mode {}", v),
         }
     }
 }
 
-impl From<Mode> for Spec_Agile_AEAD_alg {
-    fn from(v: Mode) -> Spec_Agile_AEAD_alg {
+impl From<Algorithm> for Spec_Agile_AEAD_alg {
+    fn from(v: Algorithm) -> Spec_Agile_AEAD_alg {
         match v {
-            Mode::Aes128Gcm => Spec_Agile_AEAD_AES128_GCM as Spec_Agile_AEAD_alg,
-            Mode::Aes256Gcm => Spec_Agile_AEAD_AES256_GCM as Spec_Agile_AEAD_alg,
-            Mode::Chacha20Poly1305 => Spec_Agile_AEAD_CHACHA20_POLY1305 as Spec_Agile_AEAD_alg,
+            Algorithm::Aes128Gcm => Spec_Agile_AEAD_AES128_GCM as Spec_Agile_AEAD_alg,
+            Algorithm::Aes256Gcm => Spec_Agile_AEAD_AES256_GCM as Spec_Agile_AEAD_alg,
+            Algorithm::Chacha20Poly1305 => Spec_Agile_AEAD_CHACHA20_POLY1305 as Spec_Agile_AEAD_alg,
         }
     }
 }
 
-/// Get the key size of the `Mode` in bytes.
-#[inline]
-pub const fn key_size(mode: Mode) -> usize {
-    match mode {
-        Mode::Aes128Gcm => 16,
-        Mode::Aes256Gcm => 32,
-        Mode::Chacha20Poly1305 => 32,
+impl Algorithm {
+    /// Get the key size of the `Algorithm` in bytes.
+    #[inline]
+    pub const fn key_size(self) -> usize {
+        match self {
+            Algorithm::Aes128Gcm => 16,
+            Algorithm::Aes256Gcm => 32,
+            Algorithm::Chacha20Poly1305 => 32,
+        }
+    }
+
+    /// Get the tag size of the `Algorithm` in bytes.
+    #[inline]
+    pub const fn tag_size(self) -> usize {
+        match self {
+            Algorithm::Aes128Gcm => 16,
+            Algorithm::Aes256Gcm => 16,
+            Algorithm::Chacha20Poly1305 => 16,
+        }
+    }
+
+    /// Get the nonce size of the `Algorithm` in bytes.
+    #[inline]
+    pub const fn nonce_size(self) -> usize {
+        match self {
+            Algorithm::Aes128Gcm => 12,
+            Algorithm::Aes256Gcm => 12,
+            Algorithm::Chacha20Poly1305 => 12,
+        }
     }
 }
 
-/// Get the tag size of the `Mode` in bytes.
-#[inline]
-pub const fn tag_size(mode: Mode) -> usize {
-    match mode {
-        Mode::Aes128Gcm => 16,
-        Mode::Aes256Gcm => 16,
-        Mode::Chacha20Poly1305 => 16,
-    }
-}
-
-/// Get the nonce size of the `Mode` in bytes.
-#[inline]
-pub const fn nonce_size(mode: Mode) -> usize {
-    match mode {
-        Mode::Aes128Gcm => 12,
-        Mode::Aes256Gcm => 12,
-        Mode::Chacha20Poly1305 => 12,
-    }
-}
-
+/// AEAD Errors
 #[derive(Debug, PartialEq)]
 pub enum Error {
     InvalidInit = 0,
@@ -142,21 +151,17 @@ pub enum Error {
 /// The Aead struct allows to re-use a key without having to initialize it
 /// every time.
 pub struct Aead {
-    mode: Mode,
+    alg: Algorithm,
     c_state: Option<*mut EverCrypt_AEAD_state_s>,
 }
 
 /// Ciphertexts are byte vectors.
 pub type Ciphertext = Vec<u8>;
 
-/// Aead keys are byte vectors.
-pub type Key = Vec<u8>;
-
-/// Aead tags are byte vectors.
-pub type Tag = Vec<u8>;
-
-/// Nonces are byte vectors.
-pub type Nonce = Vec<u8>;
+pub type Aes128Key = [u8; Algorithm::key_size(Algorithm::Aes128Gcm)];
+pub type Aes256Key = [u8; Algorithm::key_size(Algorithm::Aes256Gcm)];
+pub type Chacha20Key = [u8; Algorithm::key_size(Algorithm::Chacha20Poly1305)];
+pub type Tag = [u8; 16];
 
 /// Associated data are byte arrays.
 pub type Aad = [u8];
@@ -171,10 +176,10 @@ pub unsafe fn hacl_aes_available() -> bool {
 }
 
 impl Aead {
-    fn set_key_(&mut self, mut k: Vec<u8>) -> Result<(), Error> {
+    fn set_key_(&mut self, k: &[u8]) -> Result<(), Error> {
         let state = unsafe {
             let mut state_ptr: *mut EverCrypt_AEAD_state_s = std::ptr::null_mut();
-            let e = EverCrypt_AEAD_create_in(self.mode.into(), &mut state_ptr, k.as_mut_ptr());
+            let e = EverCrypt_AEAD_create_in(self.alg.into(), &mut state_ptr, k.as_ptr() as _);
             if e != 0 {
                 return Err(Error::InvalidInit);
             }
@@ -184,14 +189,14 @@ impl Aead {
         Ok(())
     }
 
-    /// Create a new Aead cipher with the given Mode `alg` and key `k`.
+    /// Create a new Aead cipher with the given Algorithm `alg` and key `k`.
     /// If the algorithm is not supported or the state generation fails, this
     /// function returns an `Error`.
     ///
     /// To get an Aead instance without setting a key immediately see `init`.
-    pub fn new(mode: Mode, k: &[u8]) -> Result<Self, Error> {
+    pub fn new(alg: Algorithm, k: &[u8]) -> Result<Self, Error> {
         // Check key lengths. Evercrypt is not doing this.
-        if k.len() != key_size(mode) {
+        if k.len() != alg.key_size() {
             return Err(Error::InvalidKeySize);
         }
 
@@ -199,25 +204,25 @@ impl Aead {
             // Make sure this happened.
             EverCrypt_AutoConfig2_init();
         }
-        let mut out = Self::init(mode)?;
-        out.set_key_(k.to_vec())?;
+        let mut out = Self::init(alg)?;
+        out.set_key_(k)?;
         Ok(out)
     }
 
     /// Initialize a new Aead object without a key.
     /// Use `set_key` to do so later.
-    pub fn init(mode: Mode) -> Result<Self, Error> {
+    pub fn init(mode: Algorithm) -> Result<Self, Error> {
         if unsafe {
             // Make sure this happened.
             EverCrypt_AutoConfig2_init();
 
             // Make sure the algorithm is supported
-            (mode == Mode::Aes128Gcm || mode == Mode::Aes256Gcm) && !hacl_aes_available()
+            (mode == Algorithm::Aes128Gcm || mode == Algorithm::Aes256Gcm) && !hacl_aes_available()
         } {
             return Err(Error::UnsupportedConfig);
         }
         Ok(Self {
-            mode,
+            alg: mode,
             c_state: None,
         })
     }
@@ -225,48 +230,48 @@ impl Aead {
     /// Set the key for this instance.
     /// This consumes the Aead and returns a new instance with the key.
     pub fn set_key(self, k: &[u8]) -> Result<Self, Error> {
-        Self::new(self.mode, k)
+        Self::new(self.alg, k)
     }
 
     /// Generate a new random key for this instance.
     /// This consumes the Aead and returns a new instance with the key.
-    #[cfg(feature = "random")]
     pub fn set_random_key(&mut self) -> Result<(), Error> {
-        let k = self.key_gen();
-        self.set_key_(k)
+        self.set_key_(&self.key_gen())
     }
 
     /// Generate a random key.
-    #[cfg(feature = "random")]
-    pub fn key_gen(&self) -> Key {
-        key_gen(self.mode)
+    pub fn key_gen(&self) -> Vec<u8> {
+        key_gen(self.alg)
     }
 
     /// Generate a nonce.
-    #[cfg(feature = "random")]
-    pub fn nonce_gen(&self) -> Nonce {
-        // debug_assert!(LEN == nonce_size(self.mode));
-        nonce_gen(self.mode)
+    pub fn nonce_gen(&self) -> Vec<u8> {
+        nonce_gen(self.alg)
     }
 
     /// Get the nonce size of this Aead in bytes.
     pub const fn nonce_size(&self) -> usize {
-        nonce_size(self.mode)
+        self.alg.nonce_size()
     }
 
     /// Get the key size of this Aead in bytes.
     pub const fn key_size(&self) -> usize {
-        key_size(self.mode)
+        self.alg.key_size()
     }
 
     /// Get the tag size of this Aead in bytes.
     pub const fn tag_size(&self) -> usize {
-        tag_size(self.mode)
+        self.alg.tag_size()
     }
 
     /// Encrypt with the algorithm and key of this Aead.
     /// Returns `(ctxt, tag)` or an `Error`.
-    pub fn encrypt(&self, msg: &[u8], iv: &[u8], aad: &Aad) -> Result<(Ciphertext, Tag), Error> {
+    pub fn encrypt(
+        &self,
+        msg: &[u8],
+        iv: &[u8],
+        aad: &Aad,
+    ) -> Result<(Ciphertext, Vec<u8>), Error> {
         if iv.len() != self.nonce_size() {
             return Err(Error::InvalidNonce);
         }
@@ -317,7 +322,12 @@ impl Aead {
 
     /// Encrypt with the algorithm and key of this Aead.
     /// Returns the cipher text in the `payload` and a `tag` or an `Error`.
-    pub fn encrypt_in_place(&self, payload: &mut [u8], iv: &[u8], aad: &Aad) -> Result<Tag, Error> {
+    pub fn encrypt_in_place(
+        &self,
+        payload: &mut [u8],
+        iv: &[u8],
+        aad: &Aad,
+    ) -> Result<Vec<u8>, Error> {
         if iv.len() != self.nonce_size() {
             return Err(Error::InvalidNonce);
         }
@@ -442,19 +452,19 @@ impl Drop for Aead {
 
 /// Single-shot API for AEAD encryption.
 pub fn encrypt(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     msg: &[u8],
     iv: &[u8],
     aad: &Aad,
-) -> Result<(Ciphertext, Tag), Error> {
+) -> Result<(Ciphertext, Vec<u8>), Error> {
     let cipher = Aead::new(alg, k)?;
     cipher.encrypt(msg, iv, aad)
 }
 
 /// Single-shot API for combined AEAD encryption.
 pub fn encrypt_combined(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     msg: &[u8],
     iv: &[u8],
@@ -466,19 +476,19 @@ pub fn encrypt_combined(
 
 /// Single-shot API for in place AEAD encryption.
 pub fn encrypt_in_place(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     payload: &mut [u8],
     iv: &[u8],
     aad: &Aad,
-) -> Result<Tag, Error> {
+) -> Result<Vec<u8>, Error> {
     let cipher = Aead::new(alg, k)?;
     cipher.encrypt_in_place(payload, iv, aad)
 }
 
 /// Single-shot API for AEAD decryption.
 pub fn decrypt(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     ctxt: &[u8],
     tag: &[u8],
@@ -491,7 +501,7 @@ pub fn decrypt(
 
 /// Single-shot API for combined AEAD decryption.
 pub fn decrypt_combined(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     ctxt: &[u8],
     iv: &[u8],
@@ -503,7 +513,7 @@ pub fn decrypt_combined(
 
 /// Single-shot API for AEAD decryption in place.
 pub fn decrypt_in_place(
-    alg: Mode,
+    alg: Algorithm,
     k: &[u8],
     payload: &mut [u8],
     tag: &[u8],
@@ -515,13 +525,21 @@ pub fn decrypt_in_place(
 }
 
 /// Generate a random key.
-#[cfg(feature = "random")]
-pub fn key_gen(mode: Mode) -> Key {
-    crate::rand_util::random_vec(key_size(mode))
+pub fn key_gen(alg: Algorithm) -> Vec<u8> {
+    crate::rand_util::random_vec(alg.key_size())
 }
 
 /// Generate a nonce.
-#[cfg(feature = "random")]
-pub fn nonce_gen(mode: Mode) -> Nonce {
-    crate::rand_util::random_vec(nonce_size(mode))
+pub fn nonce_gen(alg: Algorithm) -> Vec<u8> {
+    crate::rand_util::random_vec(alg.nonce_size())
 }
+
+// /// Generate a random key.
+// pub fn key_gen<const L: usize>() -> [u8; L] {
+//     crate::rand_util::random_array()
+// }
+
+// /// Generate a nonce.
+// pub fn nonce_gen<const L: usize>() -> [u8; L] {
+//     crate::rand_util::random_array()
+// }

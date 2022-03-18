@@ -1,6 +1,6 @@
 use hacl_rust_sys::*;
 
-use crate::digest::Mode;
+use crate::digest::Algorithm;
 
 #[derive(Debug, PartialEq)]
 /// P256 errors
@@ -164,13 +164,18 @@ impl Signature {
 }
 
 /// Sign `msg` with `sk` and `nonce` using `hash` with EcDSA on P256.
-pub fn ecdsa_sign(hash: Mode, msg: &[u8], sk: &Scalar, nonce: &Nonce) -> Result<Signature, Error> {
+pub fn ecdsa_sign(
+    hash: Algorithm,
+    msg: &[u8],
+    sk: &Scalar,
+    nonce: &Nonce,
+) -> Result<Signature, Error> {
     let private = validate_sk(sk)?;
     let nonce = validate_sk(nonce)?;
 
     let mut signature = [0u8; 64];
     let success = match hash {
-        Mode::Sha256 => unsafe {
+        Algorithm::Sha256 => unsafe {
             Hacl_P256_ecdsa_sign_p256_sha2(
                 signature.as_mut_ptr(),
                 msg.len() as u32,
@@ -179,7 +184,7 @@ pub fn ecdsa_sign(hash: Mode, msg: &[u8], sk: &Scalar, nonce: &Nonce) -> Result<
                 nonce.as_ptr() as _,
             )
         },
-        Mode::Sha384 => unsafe {
+        Algorithm::Sha384 => unsafe {
             Hacl_P256_ecdsa_sign_p256_sha384(
                 signature.as_mut_ptr(),
                 msg.len() as u32,
@@ -188,7 +193,7 @@ pub fn ecdsa_sign(hash: Mode, msg: &[u8], sk: &Scalar, nonce: &Nonce) -> Result<
                 nonce.as_ptr() as _,
             )
         },
-        Mode::Sha512 => unsafe {
+        Algorithm::Sha512 => unsafe {
             Hacl_P256_ecdsa_sign_p256_sha512(
                 signature.as_mut_ptr(),
                 msg.len() as u32,
@@ -214,14 +219,14 @@ pub fn ecdsa_sign(hash: Mode, msg: &[u8], sk: &Scalar, nonce: &Nonce) -> Result<
 /// Verify EcDSA `signature` over P256 on `msg` with `pk` using `hash`.
 /// Note that the public key `pk` must be a compressed or uncompressed point.
 pub fn ecdsa_verify(
-    hash: Mode,
+    hash: Algorithm,
     msg: &[u8],
     pk: &[u8],
     signature: &Signature,
 ) -> Result<bool, Error> {
     let public = validate_pk(pk)?;
     match hash {
-        Mode::Sha256 => unsafe {
+        Algorithm::Sha256 => unsafe {
             Ok(Hacl_P256_ecdsa_verif_p256_sha2(
                 msg.len() as u32,
                 msg.as_ptr() as _,
@@ -230,7 +235,7 @@ pub fn ecdsa_verify(
                 signature.s.as_ptr() as _,
             ))
         },
-        Mode::Sha384 => unsafe {
+        Algorithm::Sha384 => unsafe {
             Ok(Hacl_P256_ecdsa_verif_p256_sha384(
                 msg.len() as u32,
                 msg.as_ptr() as _,
@@ -239,7 +244,7 @@ pub fn ecdsa_verify(
                 signature.s.as_ptr() as _,
             ))
         },
-        Mode::Sha512 => unsafe {
+        Algorithm::Sha512 => unsafe {
             Ok(Hacl_P256_ecdsa_verif_p256_sha512(
                 msg.len() as u32,
                 msg.as_ptr() as _,

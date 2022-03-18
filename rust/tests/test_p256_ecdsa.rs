@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::digest::Mode;
+use hacl_rust::digest::Algorithm;
 use hacl_rust::p256::{self, Error};
 use hacl_rust::signature::{self, Mode as SignatureMode};
 
@@ -112,7 +112,7 @@ fn test_wycheproof() {
             println!("Test {:?}: {:?}", test.tcId, test.comment);
 
             let valid = test.result.eq("valid") || test.result.eq("acceptable");
-            let hash = Mode::Sha256;
+            let hash = Algorithm::Sha256;
 
             // Skip invalid for now
             if !valid {
@@ -168,19 +168,19 @@ fn test_self() {
     let nonce = p256::random_nonce().unwrap();
     let msg = b"sample";
 
-    let sig = p256::ecdsa_sign(Mode::Sha256, &msg[..], &sk, &nonce).unwrap();
+    let sig = p256::ecdsa_sign(Algorithm::Sha256, &msg[..], &sk, &nonce).unwrap();
     let sig_ = signature::sign(
         SignatureMode::P256,
-        Some(Mode::Sha256),
+        Some(Algorithm::Sha256),
         &sk,
         &msg[..],
         &nonce,
     );
     assert_eq!(&sig.raw()[..], &sig_.unwrap()[..]);
-    let verified = p256::ecdsa_verify(Mode::Sha256, &msg[..], &pk, &sig).unwrap();
+    let verified = p256::ecdsa_verify(Algorithm::Sha256, &msg[..], &pk, &sig).unwrap();
     let verified_ = signature::verify(
         SignatureMode::P256,
-        Some(Mode::Sha256),
+        Some(Algorithm::Sha256),
         &pk,
         &sig.raw(),
         &msg[..],
@@ -188,11 +188,11 @@ fn test_self() {
     assert_eq!(verified, verified_.unwrap());
     assert!(verified);
 
-    let sig = p256::ecdsa_sign(Mode::Sha384, &msg[..], &sk, &nonce).unwrap();
-    let verified = p256::ecdsa_verify(Mode::Sha384, &msg[..], &pk, &sig).unwrap();
+    let sig = p256::ecdsa_sign(Algorithm::Sha384, &msg[..], &sk, &nonce).unwrap();
+    let verified = p256::ecdsa_verify(Algorithm::Sha384, &msg[..], &pk, &sig).unwrap();
     assert!(verified);
 
-    let sig = p256::ecdsa_sign(Mode::Sha512, &msg[..], &sk, &nonce).unwrap();
-    let verified = p256::ecdsa_verify(Mode::Sha512, &msg[..], &pk, &sig).unwrap();
+    let sig = p256::ecdsa_sign(Algorithm::Sha512, &msg[..], &sk, &nonce).unwrap();
+    let verified = p256::ecdsa_verify(Algorithm::Sha512, &msg[..], &pk, &sig).unwrap();
     assert!(verified);
 }

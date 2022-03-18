@@ -14,20 +14,20 @@ fn duration(d: Duration) -> f64 {
 }
 
 fn aead_keys() {
-    use hacl_rust_sys::aead::{self, Aead, Mode};
+    use hacl_rust::aead::{self, Aead, Algorithm};
     const ONE_MB: usize = 0x100000;
 
     fn run(chunks: usize, payload_size: usize) {
         let payload_mb: f64 = (payload_size as f64) / 1024. / 1024.;
         let total_mb: f64 = payload_mb * chunks as f64;
-        let aead = match Aead::init(Mode::Aes128Gcm) {
+        let aead = match Aead::init(Algorithm::Aes128Gcm) {
             Ok(aead) => aead,
             Err(_) => {
-                println!("{:?} is not available.", Mode::Aes128Gcm);
+                println!("{:?} is not available.", Algorithm::Aes128Gcm);
                 return;
             }
         };
-        let key = aead::key_gen(Mode::Aes128Gcm);
+        let key = aead::key_gen(Algorithm::Aes128Gcm);
         let mut nonce = Vec::new();
         let mut data = Vec::new();
         for _ in 0..chunks {
@@ -38,7 +38,7 @@ fn aead_keys() {
 
         println!("Warmup ...");
         for (chunk, chunk_nonce) in data.iter().zip(nonce.iter()) {
-            aead::encrypt_combined(Mode::Aes128Gcm, &key, chunk, chunk_nonce, &aad).unwrap();
+            aead::encrypt_combined(Algorithm::Aes128Gcm, &key, chunk, chunk_nonce, &aad).unwrap();
         }
 
         // Stateful
@@ -66,7 +66,8 @@ fn aead_keys() {
         let mut ct2 = vec![];
         let start = Instant::now();
         for (chunk, chunk_nonce) in data.iter().zip(nonce.iter()) {
-            ct2 = aead::encrypt_combined(Mode::Aes128Gcm, &key, chunk, chunk_nonce, &aad).unwrap();
+            ct2 = aead::encrypt_combined(Algorithm::Aes128Gcm, &key, chunk, chunk_nonce, &aad)
+                .unwrap();
         }
         let end = Instant::now();
         assert_eq!(&ct1, &ct2);
@@ -83,7 +84,7 @@ fn aead_keys() {
         let start = Instant::now();
         for (chunk, chunk_nonce) in data.iter_mut().zip(nonce.iter()) {
             in_place_tag = aead::encrypt_in_place(
-                Mode::Aes128Gcm,
+                Algorithm::Aes128Gcm,
                 &key,
                 chunk.as_mut_slice(),
                 chunk_nonce,

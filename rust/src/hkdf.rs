@@ -18,11 +18,11 @@
 
 use hacl_rust_sys::*;
 
-use crate::hmac::{tag_size, Mode};
+use crate::hmac::{tag_size, Algorithm};
 
 /// HKDF extract using hash function `mode`, `salt`, and the input key material `ikm`.
 /// Returns the pre-key material in a vector of tag length.
-pub fn extract(mode: Mode, salt: &[u8], ikm: &[u8]) -> Vec<u8> {
+pub fn extract(mode: Algorithm, salt: &[u8], ikm: &[u8]) -> Vec<u8> {
     let mut prk = vec![0u8; tag_size(mode)];
     unsafe {
         EverCrypt_HKDF_extract(
@@ -39,7 +39,7 @@ pub fn extract(mode: Mode, salt: &[u8], ikm: &[u8]) -> Vec<u8> {
 
 /// HKDF expand using hash function `mode`, pre-key material `prk`, `info`, and output length `okm_len`.
 /// Returns the key material in a vector of length `okm_len`.
-pub fn expand(mode: Mode, prk: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
+pub fn expand(mode: Algorithm, prk: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
     if okm_len > 255 * tag_size(mode) {
         // Output size is too large. HACL doesn't catch this.
         return Vec::new();
@@ -62,7 +62,7 @@ pub fn expand(mode: Mode, prk: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
 /// HKDF using hash function `mode`, `salt`, input key material `ikm`, `info`, and output length `okm_len`.
 /// Calls `extract` and `expand` with the given input.
 /// Returns the key material in a vector of length `okm_len`.
-pub fn hkdf(mode: Mode, salt: &[u8], ikm: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
+pub fn hkdf(mode: Algorithm, salt: &[u8], ikm: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
     let prk = extract(mode, salt, ikm);
     expand(mode, &prk, info, okm_len)
 }

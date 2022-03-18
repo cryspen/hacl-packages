@@ -24,7 +24,7 @@ use hacl_rust_sys::*;
 /// The HMAC mode defining the used hash function.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serialization", derive(Serialize, Deserialize))]
-pub enum Mode {
+pub enum Algorithm {
     Sha1 = Spec_Hash_Definitions_SHA1 as isize,
     // Not implemented
     // Sha224 = Spec_Hash_Definitions_SHA2_224 as isize,
@@ -37,24 +37,24 @@ pub enum Mode {
     since = "0.0.10",
     note = "Please use tag_size instead. This alias will be removed with the first stable 0.1 release."
 )]
-pub fn get_tag_size(mode: Mode) -> usize {
+pub fn get_tag_size(mode: Algorithm) -> usize {
     tag_size(mode)
 }
 
 /// Get the tag size for a given mode.
-pub const fn tag_size(mode: Mode) -> usize {
+pub const fn tag_size(mode: Algorithm) -> usize {
     match mode {
-        Mode::Sha1 => 20,
-        Mode::Sha256 => 32,
-        Mode::Sha384 => 48,
-        Mode::Sha512 => 64,
+        Algorithm::Sha1 => 20,
+        Algorithm::Sha256 => 32,
+        Algorithm::Sha384 => 48,
+        Algorithm::Sha512 => 64,
     }
 }
 
 /// Compute the HMAC value with the given `mode` and `key` on `data` with an
 /// output tag length of `tag_length`.
 /// Returns a vector of length `tag_length`.
-pub fn hmac(mode: Mode, key: &[u8], data: &[u8], tag_length: Option<usize>) -> Vec<u8> {
+pub fn hmac(mode: Algorithm, key: &[u8], data: &[u8], tag_length: Option<usize>) -> Vec<u8> {
     let native_tag_length = tag_size(mode);
     let tag_length = match tag_length {
         Some(v) => v,
