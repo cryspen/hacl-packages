@@ -78,8 +78,10 @@ fn main() {
     //     hacl_lib_path.join(library_name).display()
     // );
 
-    // Generate new bindings. This is a no-op on Windows.
-    create_bindings(&hacl_include_path, home_dir);
+    // Generate new bindings. Not on windows.
+    if !cfg!(windows) {
+        create_bindings(&hacl_include_path, home_dir);
+    }
 
     // Link hacl library.
     let mode = "static";
