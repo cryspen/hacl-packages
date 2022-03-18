@@ -3,6 +3,7 @@ extern crate bindgen;
 
 use std::{env, path::Path};
 
+#[cfg(not(windows))]
 fn create_bindings(include_path: &Path, home_dir: &Path) {
     // Include paths
     let hacl_includes = vec![
@@ -47,6 +48,9 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .expect("Couldn't write bindings!");
 }
 
+#[cfg(windows)]
+fn create_bindings(_: &Path, _: &Path) {}
+
 fn main() {
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
@@ -78,10 +82,8 @@ fn main() {
     //     hacl_lib_path.join(library_name).display()
     // );
 
-    // Generate new bindings. Not on windows.
-    if !cfg!(windows) {
-        create_bindings(&hacl_include_path, home_dir);
-    }
+    // Generate new bindings. This is a no-op on Windows.
+    create_bindings(&hacl_include_path, home_dir);
 
     // Link hacl library.
     let mode = "static";
