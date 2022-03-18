@@ -11,7 +11,6 @@ This workspace holds the [evercrypt-sys](evercrypt-sys/) and high-level [evercry
 | MacOS                |    ✅     |
 | MacOS Arm64          |    ✅     |
 | iOS                  |    ✅     |
-| iOS Simulator x86_64 |    ❌     |
 | Linux x64            |    ✅     |
 | Linux x86            |    ✅     |
 | Windows x64          |    ✅     |
