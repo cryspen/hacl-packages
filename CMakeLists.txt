@@ -84,6 +84,7 @@ if(NOT MSVC)
     add_compile_options(
         # -Wall
         # -Wextra
+        # -pedantic
         # -Wconversion
         # -Wsign-conversion
         # -Werror=gcc-compat
