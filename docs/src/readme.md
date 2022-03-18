@@ -46,11 +46,11 @@ As such, the full [HACL*] repository contains many software artifacts.
 [evercrypt]: https://hacl-star.github.io/HaclValeEverCrypt.html
 [status]: https://img.shields.io/badge/status-alpha-red.svg?style=for-the-badge
 [project everest]: https://project-everest.github.io/
-[c crypto library]: ../hacl-c/
-[rust]: ../hacl-rust/
-[ocaml]: ../hacl-ocaml/
-[javascript]: ../hacl-js/
-[developer section]: ../developers/
+[c crypto library]: ./hacl-c/
+[rust]: ./hacl-rust/
+[ocaml]: ./hacl-ocaml/
+[javascript]: ./hacl-js/
+[developer section]: ./developers/
 [github]: https://github.com/cryspen/hacl-packages
 [github issue tracker]: https://github.com/cryspen/hacl-packages/issues
 [pull request]: https://github.com/cryspen/hacl-packages/pulls
