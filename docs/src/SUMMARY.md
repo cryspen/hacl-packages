@@ -19,6 +19,7 @@
 # HACL Rust
 
 - [Introduction](./hacl-rust/readme.md)
+  - [AEADs](./hacl-rust/aead.md)
 
 # HACL OCaml
 

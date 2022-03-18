@@ -70,6 +70,7 @@ use hacl_rust_sys::*;
 #[derive(Clone, Copy, PartialEq, Debug)]
 #[cfg_attr(feature = "serialization", derive(Serialize, Deserialize))]
 #[repr(u32)]
+// ANCHOR: aead_algorithm
 pub enum Algorithm {
     /// AES GCM 128
     Aes128Gcm = Spec_Agile_AEAD_AES128_GCM,
@@ -80,6 +81,7 @@ pub enum Algorithm {
     /// ChaCha20 Poly1305
     Chacha20Poly1305 = Spec_Agile_AEAD_CHACHA20_POLY1305,
 }
+// ANCHOR_END: aead_algorithm
 
 impl From<u8> for Algorithm {
     fn from(v: u8) -> Algorithm {
@@ -297,7 +299,9 @@ impl Aead {
     /// Encrypt with the algorithm and key of this Aead.
     /// Returns `(ctxt || tag)` or an `Error`.
     /// This is more efficient if the tag needs to be appended to the cipher text.
+    // ANCHOR: aead_encrypt_combined
     pub fn encrypt_combined(&self, msg: &[u8], iv: &[u8], aad: &Aad) -> Result<Ciphertext, Error> {
+        // ANCHOR_END: aead_encrypt_combined
         if iv.len() != self.nonce_size() {
             return Err(Error::InvalidNonce);
         }
@@ -322,12 +326,14 @@ impl Aead {
 
     /// Encrypt with the algorithm and key of this Aead.
     /// Returns the cipher text in the `payload` and a `tag` or an `Error`.
+    // ANCHOR: aead_encrypt_in_place
     pub fn encrypt_in_place(
         &self,
         payload: &mut [u8],
         iv: &[u8],
         aad: &Aad,
     ) -> Result<Vec<u8>, Error> {
+        // ANCHOR_END: aead_encrypt_in_place
         if iv.len() != self.nonce_size() {
             return Err(Error::InvalidNonce);
         }
@@ -396,7 +402,9 @@ impl Aead {
     /// Returns `msg` or an `Error`.
     /// This takes the combined ctxt || tag as input and might be more efficient
     /// than `decrypt`.
+    // ANCHOR: aead_decrypt_combined
     pub fn decrypt_combined(&self, ctxt: &[u8], iv: &[u8], aad: &Aad) -> Result<Vec<u8>, Error> {
+        // ANCHOR_END: aead_decrypt_combined
         if ctxt.len() < self.tag_size() {
             return Err(Error::InvalidTagSize);
         }
@@ -410,6 +418,7 @@ impl Aead {
     ///
     /// Returns an `Error` if decryption failed. The decrypted `payload` is written
     /// into `payload`.
+    // ANCHOR: aead_decrypt_in_place
     pub fn decrypt_in_place(
         &self,
         payload: &mut [u8],
@@ -417,6 +426,7 @@ impl Aead {
         iv: &[u8],
         aad: &Aad,
     ) -> Result<(), Error> {
+        // ANCHOR_END: aead_decrypt_in_place
         self._decrypt_checks(tag, iv)?;
 
         let r = unsafe {
