@@ -57,7 +57,7 @@ pub fn key_gen(mode: Mode) -> Result<(Vec<u8>, Vec<u8>), Error> {
 /// For ECDSA the `hash` algorithm and a `nonce` have to be passed in as well.
 pub fn sign<'a>(
     mode: Mode,
-    hash: impl Into<Option<digest::Mode>>,
+    hash: impl Into<Option<digest::Algorithm>>,
     sk: &[u8],
     msg: &[u8],
     nonce: impl Into<Option<&'a p256::Nonce>>,
@@ -94,7 +94,7 @@ pub fn sign<'a>(
 /// slices.
 pub fn verify(
     mode: Mode,
-    hash: impl Into<Option<digest::Mode>>,
+    hash: impl Into<Option<digest::Algorithm>>,
     pk: &[u8],
     signature: &[u8],
     msg: &[u8],

@@ -5,12 +5,11 @@
 
 pub use crate::aead::{
     self, decrypt as aead_decrypt, decrypt_combined as aead_decrypt_combined,
-    encrypt as aead_encrypt, encrypt_combined as aead_encrypt_combined, key_size as aead_key_size,
-    nonce_size as aead_nonce_size, tag_size as aead_tag_size, Aead, Error as AeadError,
-    Mode as AeadMode, Nonce as AeadNonce, Tag as AeadTag,
+    encrypt as aead_encrypt, encrypt_combined as aead_encrypt_combined, Aead,
+    Algorithm as AeadMode, Error as AeadError,
 };
 pub use crate::digest::{
-    self, digest_size, hash, Digest, Error as DigestError, Mode as DigestMode,
+    self, digest_size, hash, Algorithm as DigestAlgorithm, Digest, Error as DigestError,
 };
 pub use crate::ecdh::{
     self, derive as ecdh_derive, derive_base as ecdh_derive_base, Error as EcdhError,
@@ -22,7 +21,7 @@ pub use crate::ed25519::{
     Signature as Ed25519Signature,
 };
 pub use crate::hkdf::{self, expand as hkdf_expand, extract as hkdf_extract, hkdf};
-pub use crate::hmac::{self, hmac, tag_size, Mode as HmacMode};
+pub use crate::hmac::{self, hmac, tag_size, Algorithm as HmacAlgorithm};
 pub use crate::p256::{
     self, dh as p256, dh_base as p256_base, ecdsa_sign as p256_sign, ecdsa_verify as p256_verify,
     validate_pk as p256_validate_pk, validate_sk as p256_validate_sk, Error as P256Error,

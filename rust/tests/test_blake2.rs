@@ -1,4 +1,4 @@
-use hacl_rust::digest::{self, Mode};
+use hacl_rust::digest::{self, Algorithm};
 
 // Tests from https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2-kat.json
 
@@ -16,7 +16,7 @@ fn test_blake2s() {
         0x17, 0xde,
     ];
 
-    assert_eq!(digest::hash(Mode::Blake2s, &data), expected_digest);
+    assert_eq!(digest::hash(Algorithm::Blake2s, &data), expected_digest);
 }
 
 #[test]
@@ -39,5 +39,8 @@ fn test_blake2b() {
         0x18, 0x38, 0x56, 0x9e,
     ];
 
-    assert_eq!(digest::hash(Mode::Blake2b, &data)[..], expected_digest[..]);
+    assert_eq!(
+        digest::hash(Algorithm::Blake2b, &data)[..],
+        expected_digest[..]
+    );
 }

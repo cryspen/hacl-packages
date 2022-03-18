@@ -54,10 +54,10 @@ fn test_wycheproof() {
 
     for tests in test_vectors.iter() {
         let algorithm = match tests.algorithm.as_str() {
-            "HKDF-SHA-1" => HmacMode::Sha1,
-            "HKDF-SHA-256" => HmacMode::Sha256,
-            "HKDF-SHA-384" => HmacMode::Sha384,
-            "HKDF-SHA-512" => HmacMode::Sha512,
+            "HKDF-SHA-1" => HmacAlgorithm::Sha1,
+            "HKDF-SHA-256" => HmacAlgorithm::Sha256,
+            "HKDF-SHA-384" => HmacAlgorithm::Sha384,
+            "HKDF-SHA-512" => HmacAlgorithm::Sha512,
             _ => panic!("Unknown HKDF algorithm {}", tests.algorithm),
         };
         println!("Testing {:?}", algorithm);
@@ -98,7 +98,7 @@ fn test_wycheproof() {
 
 #[test]
 fn test_empty_salt() {
-    let algorithm = HmacMode::Sha1;
+    let algorithm = HmacAlgorithm::Sha1;
     let ikm = hex_str_to_bytes("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
     let okm = hex_str_to_bytes(
         "0ac1af7002b3d761d1e55298da9d0506b9ae52057220a306e07b6b87e8df21d0ea00033de03984d34918",

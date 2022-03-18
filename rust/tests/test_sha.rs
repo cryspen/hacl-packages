@@ -1,9 +1,9 @@
-use hacl_rust::digest::{self, Digest, Mode};
+use hacl_rust::digest::{self, Algorithm, Digest};
 
 #[test]
 fn test_sha2() {
     let data = b"evercrypt-rust bindings";
-    let d = digest::hash(Mode::Sha256, data);
+    let d = digest::hash(Algorithm::Sha256, data);
     let expected_digest_256 = [
         0xa5, 0x35, 0xf2, 0x6a, 0xff, 0xbc, 0x1f, 0x08, 0x73, 0xdb, 0x15, 0x15, 0x9d, 0xce, 0xbf,
         0x25, 0x99, 0x64, 0xbe, 0x42, 0xde, 0xa8, 0x4d, 0x29, 0x00, 0x38, 0x4b, 0xee, 0x15, 0x09,
@@ -18,11 +18,11 @@ fn test_sha2() {
     ];
     assert_eq!(d, expected_digest_256);
     assert_eq!(
-        digest::hash(Mode::Sha512, data)[..],
+        digest::hash(Algorithm::Sha512, data)[..],
         expected_digest_512[..]
     );
 
-    let mut digest = Digest::new(Mode::Sha256).unwrap();
+    let mut digest = Digest::new(Algorithm::Sha256).unwrap();
     assert!(digest.update(data).is_ok());
     match digest.finish() {
         Ok(d) => assert_eq!(d, expected_digest_256),
@@ -31,7 +31,7 @@ fn test_sha2() {
     assert!(digest.finish().is_err());
     assert!(digest.update(&[]).is_err());
 
-    let mut digest = Digest::new(Mode::Sha512).unwrap();
+    let mut digest = Digest::new(Algorithm::Sha512).unwrap();
     assert!(digest.update(data).is_ok());
     match digest.finish() {
         Ok(d) => assert_eq!(d[..], expected_digest_512[..]),
@@ -44,10 +44,10 @@ fn test_sha2() {
 #[test]
 #[should_panic]
 fn invalid_sha3() {
-    Digest::new(Mode::Sha3_224).unwrap();
-    Digest::new(Mode::Sha3_256).unwrap();
-    Digest::new(Mode::Sha3_384).unwrap();
-    Digest::new(Mode::Sha3_512).unwrap();
+    Digest::new(Algorithm::Sha3_224).unwrap();
+    Digest::new(Algorithm::Sha3_256).unwrap();
+    Digest::new(Algorithm::Sha3_384).unwrap();
+    Digest::new(Algorithm::Sha3_512).unwrap();
 }
 
 #[test]
@@ -66,9 +66,9 @@ fn test_sha3() {
         0xb4, 0x9d, 0x6b, 0xd7,
     ];
 
-    assert_eq!(digest::hash(Mode::Sha3_256, data), expected_digest_256);
+    assert_eq!(digest::hash(Algorithm::Sha3_256, data), expected_digest_256);
     assert_eq!(
-        digest::hash(Mode::Sha3_512, data)[..],
+        digest::hash(Algorithm::Sha3_512, data)[..],
         expected_digest_512[..]
     );
 }

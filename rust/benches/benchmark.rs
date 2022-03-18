@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate criterion;
-extern crate evercrypt;
+extern crate hacl_rust;
 extern crate rand;
 
 use criterion::{BatchSize, Criterion};
@@ -37,12 +37,12 @@ fn hex_to_bytes(hex: &str) -> Vec<u8> {
 }
 
 fn criterion_digest(c: &mut Criterion) {
-    use hacl_rust_sys::digest::{self, Mode};
+    use hacl_rust::digest::{self, Algorithm};
     c.bench_function("SHA1", |b| {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha1, &data);
+                let _d = digest::hash(Algorithm::Sha1, &data);
             },
             BatchSize::SmallInput,
         )
@@ -51,7 +51,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha224, &data);
+                let _d = digest::hash(Algorithm::Sha224, &data);
             },
             BatchSize::SmallInput,
         )
@@ -60,7 +60,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha256, &data);
+                let _d = digest::hash(Algorithm::Sha256, &data);
             },
             BatchSize::SmallInput,
         )
@@ -69,7 +69,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha384, &data);
+                let _d = digest::hash(Algorithm::Sha384, &data);
             },
             BatchSize::SmallInput,
         )
@@ -78,7 +78,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha512, &data);
+                let _d = digest::hash(Algorithm::Sha512, &data);
             },
             BatchSize::SmallInput,
         )
@@ -87,7 +87,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha3_224, &data);
+                let _d = digest::hash(Algorithm::Sha3_224, &data);
             },
             BatchSize::SmallInput,
         )
@@ -96,7 +96,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha3_256, &data);
+                let _d = digest::hash(Algorithm::Sha3_256, &data);
             },
             BatchSize::SmallInput,
         )
@@ -105,7 +105,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha3_384, &data);
+                let _d = digest::hash(Algorithm::Sha3_384, &data);
             },
             BatchSize::SmallInput,
         )
@@ -114,7 +114,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Sha3_512, &data);
+                let _d = digest::hash(Algorithm::Sha3_512, &data);
             },
             BatchSize::SmallInput,
         )
@@ -141,7 +141,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Blake2s, &data);
+                let _d = digest::hash(Algorithm::Blake2s, &data);
             },
             BatchSize::SmallInput,
         )
@@ -150,7 +150,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::hash(Mode::Blake2b, &data);
+                let _d = digest::hash(Algorithm::Blake2b, &data);
             },
             BatchSize::SmallInput,
         )
@@ -158,9 +158,9 @@ fn criterion_digest(c: &mut Criterion) {
 }
 
 fn criterion_aead(c: &mut Criterion) {
-    use hacl_rust_sys::aead::{Aead, Mode};
+    use hacl_rust::aead::{Aead, Algorithm};
 
-    fn bench_encrypt<F>(c: &mut Criterion, id: &str, mode: Mode, mut fun: F)
+    fn bench_encrypt<F>(c: &mut Criterion, id: &str, mode: Algorithm, mut fun: F)
     where
         F: FnMut(&[u8], &[u8], &[u8], Aead),
     {
@@ -186,7 +186,7 @@ fn criterion_aead(c: &mut Criterion) {
         });
     }
 
-    fn bench_decrypt<F>(c: &mut Criterion, id: &str, mode: Mode, mut fun: F)
+    fn bench_decrypt<F>(c: &mut Criterion, id: &str, mode: Algorithm, mut fun: F)
     where
         F: FnMut(Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>),
     {
@@ -220,7 +220,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES128 GCM encrypt {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |data, nonce, aad, aead| {
             let (_ct, _tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
         },
@@ -228,7 +228,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES128 GCM encrypt (combine ctxt || tag) {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |data, nonce, aad, aead| {
             let (mut ct, mut tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
             ct.append(&mut tag);
@@ -237,7 +237,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES128 GCM encrypt (combined ctxt || tag) {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |data, nonce, aad, aead| {
             let _ct = aead.encrypt_combined(&data, &nonce, &aad).unwrap();
         },
@@ -246,18 +246,18 @@ fn criterion_aead(c: &mut Criterion) {
     bench_decrypt(
         c,
         &format!("AES128 GCM decrypt {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |key, nonce, ct, tag, _ct_tag, aad| {
-            let aead = Aead::new(Mode::Aes128Gcm, &key).unwrap();
+            let aead = Aead::new(Algorithm::Aes128Gcm, &key).unwrap();
             let _decrypted = aead.decrypt(&ct, &tag, &nonce, &aad).unwrap();
         },
     );
     bench_decrypt(
         c,
         &format!("AES128 GCM decrypt (combined ctxt || tag) {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |key, nonce, _ct, _tag, ct_tag, aad| {
-            let aead = Aead::new(Mode::Aes128Gcm, &key).unwrap();
+            let aead = Aead::new(Algorithm::Aes128Gcm, &key).unwrap();
             let _decrypted = aead.decrypt_combined(&ct_tag, &nonce, &aad).unwrap();
         },
     );
@@ -265,7 +265,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES256 GCM encrypt {}MB", payload_mb),
-        Mode::Aes256Gcm,
+        Algorithm::Aes256Gcm,
         |data, nonce, aad, aead| {
             let (_ct, _tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
         },
@@ -273,7 +273,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES256 GCM encrypt (combine ctxt || tag) {}MB", payload_mb),
-        Mode::Aes256Gcm,
+        Algorithm::Aes256Gcm,
         |data, nonce, aad, aead| {
             let (mut ct, mut tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
             ct.append(&mut tag);
@@ -282,7 +282,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("AES256 GCM encrypt (combined ctxt || tag) {}MB", payload_mb),
-        Mode::Aes256Gcm,
+        Algorithm::Aes256Gcm,
         |data, nonce, aad, aead| {
             let _ct = aead.encrypt_combined(&data, &nonce, &aad).unwrap();
         },
@@ -291,18 +291,18 @@ fn criterion_aead(c: &mut Criterion) {
     bench_decrypt(
         c,
         &format!("AES256 GCM decrypt {}MB", payload_mb),
-        Mode::Aes128Gcm,
+        Algorithm::Aes128Gcm,
         |key, nonce, ct, tag, _ct_tag, aad| {
-            let aead = Aead::new(Mode::Aes128Gcm, &key).unwrap();
+            let aead = Aead::new(Algorithm::Aes128Gcm, &key).unwrap();
             let _decrypted = aead.decrypt(&ct, &tag, &nonce, &aad).unwrap();
         },
     );
     bench_decrypt(
         c,
         &format!("AES256 GCM decrypt (combined ctxt || tag) {}MB", payload_mb),
-        Mode::Aes256Gcm,
+        Algorithm::Aes256Gcm,
         |key, nonce, _ct, _tag, ct_tag, aad| {
-            let aead = Aead::new(Mode::Aes256Gcm, &key).unwrap();
+            let aead = Aead::new(Algorithm::Aes256Gcm, &key).unwrap();
             let _decrypted = aead.decrypt_combined(&ct_tag, &nonce, &aad).unwrap();
         },
     );
@@ -310,7 +310,7 @@ fn criterion_aead(c: &mut Criterion) {
     bench_encrypt(
         c,
         &format!("ChaCha20Poly1305 encrypt {}MB", payload_mb),
-        Mode::Chacha20Poly1305,
+        Algorithm::Chacha20Poly1305,
         |data, nonce, aad, aead| {
             let (_ct, _tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
         },
@@ -321,7 +321,7 @@ fn criterion_aead(c: &mut Criterion) {
             "ChaCha20Poly1305 encrypt (combine ctxt || tag) {}MB",
             payload_mb
         ),
-        Mode::Chacha20Poly1305,
+        Algorithm::Chacha20Poly1305,
         |data, nonce, aad, aead| {
             let (mut ct, mut tag) = aead.encrypt(&data, &nonce, &aad).unwrap();
             ct.append(&mut tag);
@@ -333,7 +333,7 @@ fn criterion_aead(c: &mut Criterion) {
             "ChaCha20Poly1305 encrypt (combined ctxt || tag) {}MB",
             payload_mb
         ),
-        Mode::Chacha20Poly1305,
+        Algorithm::Chacha20Poly1305,
         |data, nonce, aad, aead| {
             let _ct = aead.encrypt_combined(&data, &nonce, &aad).unwrap();
         },
@@ -342,9 +342,9 @@ fn criterion_aead(c: &mut Criterion) {
     bench_decrypt(
         c,
         &format!("ChaCha20Poly1305 decrypt {}MB", payload_mb),
-        Mode::Chacha20Poly1305,
+        Algorithm::Chacha20Poly1305,
         |key, nonce, ct, tag, _ct_tag, aad| {
-            let aead = Aead::new(Mode::Chacha20Poly1305, &key).unwrap();
+            let aead = Aead::new(Algorithm::Chacha20Poly1305, &key).unwrap();
             let _decrypted = aead.decrypt(&ct, &tag, &nonce, &aad).unwrap();
         },
     );
@@ -354,22 +354,22 @@ fn criterion_aead(c: &mut Criterion) {
             "ChaCha20Poly1305 decrypt (combined ctxt || tag) {}MB",
             payload_mb
         ),
-        Mode::Chacha20Poly1305,
+        Algorithm::Chacha20Poly1305,
         |key, nonce, _ct, _tag, ct_tag, aad| {
-            let aead = Aead::new(Mode::Chacha20Poly1305, &key).unwrap();
+            let aead = Aead::new(Algorithm::Chacha20Poly1305, &key).unwrap();
             let _decrypted = aead.decrypt_combined(&ct_tag, &nonce, &aad).unwrap();
         },
     );
 }
 
 fn criterion_aead_keys(c: &mut Criterion) {
-    use hacl_rust_sys::aead::{self, Aead, Mode};
+    use hacl_rust::aead::{self, Aead, Algorithm};
 
     const PAYLOAD_MB: usize = PAYLOAD_SIZE / 1024 / 1024;
     const CHUNKS: usize = 100;
 
-    if Aead::init(Mode::Aes128Gcm).is_err() {
-        println!("{:?} is not available.", Mode::Aes128Gcm);
+    if Aead::init(Algorithm::Aes128Gcm).is_err() {
+        println!("{:?} is not available.", Algorithm::Aes128Gcm);
         return;
     }
 
@@ -378,7 +378,7 @@ fn criterion_aead_keys(c: &mut Criterion) {
         |b| {
             b.iter_batched(
                 || {
-                    let mut aead = Aead::init(Mode::Aes128Gcm).unwrap();
+                    let mut aead = Aead::init(Algorithm::Aes128Gcm).unwrap();
                     aead.set_random_key().unwrap();
                     let mut nonce = Vec::new();
                     let mut data = Vec::new();
@@ -404,12 +404,12 @@ fn criterion_aead_keys(c: &mut Criterion) {
         |b| {
             b.iter_batched(
                 || {
-                    let key = aead::key_gen(Mode::Aes128Gcm);
+                    let key = aead::key_gen(Algorithm::Aes128Gcm);
                     let mut nonce = Vec::new();
                     let mut data = Vec::new();
                     for _ in 0..CHUNKS {
                         data.push(randombytes(PAYLOAD_SIZE));
-                        nonce.push(aead::nonce_gen(Mode::Aes128Gcm));
+                        nonce.push(aead::nonce_gen(Algorithm::Aes128Gcm));
                     }
                     let aad = randombytes(1_000);
                     (data, nonce, aad, key)
@@ -418,8 +418,14 @@ fn criterion_aead_keys(c: &mut Criterion) {
                     let mut ct = Vec::with_capacity(CHUNKS * PAYLOAD_SIZE);
                     for (chunk, chunk_nonce) in data.iter().zip(nonce.iter()) {
                         ct.push(
-                            aead::encrypt_combined(Mode::Aes128Gcm, &key, chunk, chunk_nonce, &aad)
-                                .unwrap(),
+                            aead::encrypt_combined(
+                                Algorithm::Aes128Gcm,
+                                &key,
+                                chunk,
+                                chunk_nonce,
+                                &aad,
+                            )
+                            .unwrap(),
                         );
                     }
                 },
@@ -430,7 +436,7 @@ fn criterion_aead_keys(c: &mut Criterion) {
 }
 
 fn criterion_x25519(c: &mut Criterion) {
-    use hacl_rust_sys::prelude::*;
+    use hacl_rust::prelude::*;
     c.bench_function("X25519 base", |b| {
         b.iter_batched(
             || clone_into_array(&randombytes(32)),
@@ -517,7 +523,7 @@ macro_rules! p256_signature_bench {
 }
 
 fn criterion_p256(c: &mut Criterion) {
-    use hacl_rust_sys::prelude::*;
+    use hacl_rust::prelude::*;
 
     const PK1_HEX: &str = "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf";
     const SK1_HEX: &str = "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346";
@@ -559,7 +565,7 @@ fn criterion_p256(c: &mut Criterion) {
         "P256 ECDSA Sign Agile SHA-256",
         "P256 ECDSA Verify Agile SHA-256",
         SignatureMode::P256,
-        DigestMode::Sha256
+        DigestAlgorithm::Sha256
     );
 
     p256_signature_bench!(
@@ -569,7 +575,7 @@ fn criterion_p256(c: &mut Criterion) {
         "P256 ECDSA Sign Agile SHA-384",
         "P256 ECDSA Verify Agile SHA-384",
         SignatureMode::P256,
-        DigestMode::Sha384
+        DigestAlgorithm::Sha384
     );
 
     p256_signature_bench!(
@@ -579,12 +585,12 @@ fn criterion_p256(c: &mut Criterion) {
         "P256 ECDSA Sign Agile SHA-512",
         "P256 ECDSA Verify Agile SHA-512",
         SignatureMode::P256,
-        DigestMode::Sha512
+        DigestAlgorithm::Sha512
     );
 }
 
 fn criterion_ed25519(c: &mut Criterion) {
-    use hacl_rust_sys::ed25519;
+    use hacl_rust::ed25519;
     c.bench_function("ed25519 key gen", |b| {
         b.iter_batched(
             || clone_into_array(&randombytes(32)),
@@ -625,13 +631,13 @@ fn criterion_ed25519(c: &mut Criterion) {
 }
 
 fn criterion_hmac(c: &mut Criterion) {
-    use hacl_rust_sys::hmac::{hmac, Mode};
+    use hacl_rust::hmac::{hmac, Algorithm};
     const KEY: [u8; 10] = [0u8, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     c.bench_function("HMAC SHA1", |b| {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _hmac = hmac(Mode::Sha1, &KEY, &data, None);
+                let _hmac = hmac(Algorithm::Sha1, &KEY, &data, None);
             },
             BatchSize::SmallInput,
         )
@@ -640,7 +646,7 @@ fn criterion_hmac(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _hmac = hmac(Mode::Sha256, &KEY, &data, None);
+                let _hmac = hmac(Algorithm::Sha256, &KEY, &data, None);
             },
             BatchSize::SmallInput,
         )
@@ -649,7 +655,7 @@ fn criterion_hmac(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _hmac = hmac(Mode::Sha384, &KEY, &data, None);
+                let _hmac = hmac(Algorithm::Sha384, &KEY, &data, None);
             },
             BatchSize::SmallInput,
         )
@@ -658,7 +664,7 @@ fn criterion_hmac(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _hmac = hmac(Mode::Sha512, &KEY, &data, None);
+                let _hmac = hmac(Algorithm::Sha512, &KEY, &data, None);
             },
             BatchSize::SmallInput,
         )
@@ -666,7 +672,7 @@ fn criterion_hmac(c: &mut Criterion) {
 }
 
 fn criterion_hkdf(c: &mut Criterion) {
-    use hacl_rust_sys::prelude::*;
+    use hacl_rust::prelude::*;
 
     macro_rules! hkdf_expand_bench {
         ($c:expr, $name_expand:literal, $name_extract:literal, $m:expr) => {
@@ -676,7 +682,7 @@ fn criterion_hkdf(c: &mut Criterion) {
                         let ikm = hex_to_bytes("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
                         let salt = hex_to_bytes("000102030405060708090a0b0c");
                         let len = 32;
-                        let prk = hkdf_extract(HmacMode::Sha1, &salt, &ikm);
+                        let prk = hkdf_extract(HmacAlgorithm::Sha1, &salt, &ikm);
                         let data = randombytes(0x10000);
                         (len, prk, data)
                     },
@@ -695,24 +701,29 @@ fn criterion_hkdf(c: &mut Criterion) {
             });
         };
     }
-    hkdf_expand_bench!(c, "HKDF Expand SHA1", "HKDF Extract SHA1", HmacMode::Sha1);
+    hkdf_expand_bench!(
+        c,
+        "HKDF Expand SHA1",
+        "HKDF Extract SHA1",
+        HmacAlgorithm::Sha1
+    );
     hkdf_expand_bench!(
         c,
         "HKDF Expand SHA256",
         "HKDF Extract SHA256",
-        HmacMode::Sha256
+        HmacAlgorithm::Sha256
     );
     hkdf_expand_bench!(
         c,
         "HKDF Expand SHA384",
         "HKDF Extract SHA384",
-        HmacMode::Sha384
+        HmacAlgorithm::Sha384
     );
     hkdf_expand_bench!(
         c,
         "HKDF Expand SHA512",
         "HKDF Extract SHA512",
-        HmacMode::Sha512
+        HmacAlgorithm::Sha512
     );
 
     macro_rules! hkdf_bench {
@@ -734,10 +745,10 @@ fn criterion_hkdf(c: &mut Criterion) {
             });
         };
     }
-    hkdf_bench!(c, "HKDF SHA1", HmacMode::Sha1);
-    hkdf_bench!(c, "HKDF SHA256", HmacMode::Sha256);
-    hkdf_bench!(c, "HKDF SHA384", HmacMode::Sha384);
-    hkdf_bench!(c, "HKDF SHA512", HmacMode::Sha512);
+    hkdf_bench!(c, "HKDF SHA1", HmacAlgorithm::Sha1);
+    hkdf_bench!(c, "HKDF SHA256", HmacAlgorithm::Sha256);
+    hkdf_bench!(c, "HKDF SHA384", HmacAlgorithm::Sha384);
+    hkdf_bench!(c, "HKDF SHA512", HmacAlgorithm::Sha512);
 }
 
 fn criterion_benchmark(c: &mut Criterion) {

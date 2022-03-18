@@ -7,7 +7,7 @@
 //!
 //! ## Stateful Hashing
 //! ```rust
-//! use hacl_rust::digest::{Digest, Mode};
+//! use hacl_rust::digest::{Digest, Algorithm};
 //!
 //! let expected_digest_256 = [
 //!     0xa5, 0x35, 0xf2, 0x6a, 0xff, 0xbc, 0x1f, 0x08, 0x73, 0xdb, 0x15, 0x15, 0x9d, 0xce, 0xbf,
@@ -24,7 +24,7 @@
 //!
 //! let data = b"evercrypt-rust bindings";
 //!
-//! let mut digest_256 = Digest::new(Mode::Sha256).unwrap();
+//! let mut digest_256 = Digest::new(Algorithm::Sha256).unwrap();
 //! if digest_256.update(data).is_err() {
 //!     panic!("Error hashing.");
 //! }
@@ -33,7 +33,7 @@
 //!     Err(e) => panic!("Finish digest failed.\n{:?}", e),
 //! };
 //!
-//! let mut digest_512 = Digest::new(Mode::Sha512).unwrap();
+//! let mut digest_512 = Digest::new(Algorithm::Sha512).unwrap();
 //! if digest_512.update(data).is_err() {
 //!     panic!("Error hashing.");
 //! }
@@ -48,7 +48,7 @@
 //!
 //! ## Single-shot API
 //! ```rust
-//! use hacl_rust::digest::{self, Mode};
+//! use hacl_rust::digest::{self, Algorithm};
 //!
 //! let expected_digest_256 = [
 //!     0xa5, 0x35, 0xf2, 0x6a, 0xff, 0xbc, 0x1f, 0x08, 0x73, 0xdb, 0x15, 0x15, 0x9d, 0xce, 0xbf,
@@ -65,8 +65,8 @@
 //!
 //! let data = b"evercrypt-rust bindings";
 //!
-//! let digest_256 = digest::hash(Mode::Sha256, data);
-//! let digest_512 = digest::hash(Mode::Sha512, data);
+//! let digest_256 = digest::hash(Algorithm::Sha256, data);
+//! let digest_512 = digest::hash(Algorithm::Sha512, data);
 //!
 //! assert_eq!(&digest_256[..], &expected_digest_256[..]);
 //! assert_eq!(&digest_512[..], &expected_digest_512[..]);
@@ -80,7 +80,7 @@
 //!
 //! ## SHA 3
 //! ```rust
-//! use hacl_rust::digest::{self, Mode};
+//! use hacl_rust::digest::{self, Algorithm};
 //!
 //! let data = b"evercrypt-rust bindings";
 //! let expected_digest_3_256 = [
@@ -96,16 +96,16 @@
 //!     0xb4, 0x9d, 0x6b, 0xd7,
 //! ];
 //!
-//! assert_eq!(digest::hash(Mode::Sha3_256, data), expected_digest_3_256);
+//! assert_eq!(digest::hash(Algorithm::Sha3_256, data), expected_digest_3_256);
 //! assert_eq!(
-//!     digest::hash(Mode::Sha3_512, data)[..],
+//!     digest::hash(Algorithm::Sha3_512, data)[..],
 //!     expected_digest_3_512[..]
 //! );
 //! ```
 //!
 //! ## SHAKE
 //! ```rust
-//! use hacl_rust::digest::{self, Mode};
+//! use hacl_rust::digest::{self, Algorithm};
 //!
 //! let data = b"evercrypt-rust bindings";
 //! let expected_digest_128 = [
@@ -129,7 +129,7 @@
 //!
 //! ## Blake2b
 //! ```rust
-//! use hacl_rust::digest::{self, Mode};
+//! use hacl_rust::digest::{self, Algorithm};
 //!
 //! let data = [
 //!     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
@@ -149,12 +149,12 @@
 //!     0x18, 0x38, 0x56, 0x9e,
 //! ];
 //!
-//! assert_eq!(digest::hash(Mode::Blake2b, &data)[..], expected_digest[..]);
+//! assert_eq!(digest::hash(Algorithm::Blake2b, &data)[..], expected_digest[..]);
 //! ```
 //!
 //! ## Blake2s
 //! ```rust
-//! use hacl_rust::digest::{self, Mode};
+//! use hacl_rust::digest::{self, Algorithm};
 //!
 //! let data = [
 //!     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
@@ -168,7 +168,7 @@
 //!     0x17, 0xde,
 //! ];
 //!
-//! assert_eq!(digest::hash(Mode::Blake2s, &data), expected_digest);
+//! assert_eq!(digest::hash(Algorithm::Blake2s, &data), expected_digest);
 //! ```
 
 #[cfg(feature = "serialization")]
@@ -182,10 +182,10 @@ pub enum Error {
     ModeUnsupportedForStreaming,
 }
 
-/// The Digest Mode.
+/// The Digest Algorithm.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serialization", derive(Serialize, Deserialize))]
-pub enum Mode {
+pub enum Algorithm {
     Sha1 = Spec_Hash_Definitions_SHA1 as isize,
     Sha224 = Spec_Hash_Definitions_SHA2_224 as isize,
     Sha256 = Spec_Hash_Definitions_SHA2_256 as isize,
@@ -201,39 +201,39 @@ pub enum Mode {
 }
 
 #[allow(non_upper_case_globals)]
-impl From<u32> for Mode {
-    fn from(v: u32) -> Mode {
+impl From<u32> for Algorithm {
+    fn from(v: u32) -> Algorithm {
         match v {
-            Spec_Hash_Definitions_SHA1 => Mode::Sha1,
-            Spec_Hash_Definitions_SHA2_224 => Mode::Sha224,
-            Spec_Hash_Definitions_SHA2_256 => Mode::Sha256,
-            Spec_Hash_Definitions_SHA2_384 => Mode::Sha384,
-            Spec_Hash_Definitions_SHA2_512 => Mode::Sha512,
-            Spec_Hash_Definitions_Blake2S => Mode::Blake2s,
-            Spec_Hash_Definitions_Blake2B => Mode::Blake2b,
-            8 => Mode::Sha3_224,
-            9 => Mode::Sha3_256,
-            10 => Mode::Sha3_384,
-            11 => Mode::Sha3_512,
+            Spec_Hash_Definitions_SHA1 => Algorithm::Sha1,
+            Spec_Hash_Definitions_SHA2_224 => Algorithm::Sha224,
+            Spec_Hash_Definitions_SHA2_256 => Algorithm::Sha256,
+            Spec_Hash_Definitions_SHA2_384 => Algorithm::Sha384,
+            Spec_Hash_Definitions_SHA2_512 => Algorithm::Sha512,
+            Spec_Hash_Definitions_Blake2S => Algorithm::Blake2s,
+            Spec_Hash_Definitions_Blake2B => Algorithm::Blake2b,
+            8 => Algorithm::Sha3_224,
+            9 => Algorithm::Sha3_256,
+            10 => Algorithm::Sha3_384,
+            11 => Algorithm::Sha3_512,
             _ => panic!("Unknown Digest mode {}", v),
         }
     }
 }
 
-impl From<Mode> for Spec_Hash_Definitions_hash_alg {
-    fn from(v: Mode) -> Spec_Hash_Definitions_hash_alg {
+impl From<Algorithm> for Spec_Hash_Definitions_hash_alg {
+    fn from(v: Algorithm) -> Spec_Hash_Definitions_hash_alg {
         match v {
-            Mode::Sha1 => Spec_Hash_Definitions_SHA1 as Spec_Hash_Definitions_hash_alg,
-            Mode::Sha224 => Spec_Hash_Definitions_SHA2_224 as Spec_Hash_Definitions_hash_alg,
-            Mode::Sha256 => Spec_Hash_Definitions_SHA2_256 as Spec_Hash_Definitions_hash_alg,
-            Mode::Sha384 => Spec_Hash_Definitions_SHA2_384 as Spec_Hash_Definitions_hash_alg,
-            Mode::Sha512 => Spec_Hash_Definitions_SHA2_512 as Spec_Hash_Definitions_hash_alg,
-            Mode::Blake2s => Spec_Hash_Definitions_Blake2S as Spec_Hash_Definitions_hash_alg,
-            Mode::Blake2b => Spec_Hash_Definitions_Blake2B as Spec_Hash_Definitions_hash_alg,
-            Mode::Sha3_224 => 8,
-            Mode::Sha3_256 => 9,
-            Mode::Sha3_384 => 10,
-            Mode::Sha3_512 => 11,
+            Algorithm::Sha1 => Spec_Hash_Definitions_SHA1 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha224 => Spec_Hash_Definitions_SHA2_224 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha256 => Spec_Hash_Definitions_SHA2_256 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha384 => Spec_Hash_Definitions_SHA2_384 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha512 => Spec_Hash_Definitions_SHA2_512 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Blake2s => Spec_Hash_Definitions_Blake2S as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Blake2b => Spec_Hash_Definitions_Blake2B as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha3_224 => 8,
+            Algorithm::Sha3_256 => 9,
+            Algorithm::Sha3_384 => 10,
+            Algorithm::Sha3_512 => 11,
         }
     }
 }
@@ -242,46 +242,46 @@ impl From<Mode> for Spec_Hash_Definitions_hash_alg {
     since = "0.0.10",
     note = "Please use digest_size instead. This alias will be removed with the first stable 0.1 release."
 )]
-pub fn get_digest_size(mode: Mode) -> usize {
+pub fn get_digest_size(mode: Algorithm) -> usize {
     digest_size(mode)
 }
 
 /// Returns the output size of a digest.
-pub const fn digest_size(mode: Mode) -> usize {
+pub const fn digest_size(mode: Algorithm) -> usize {
     match mode {
-        Mode::Sha1 => 20,
-        Mode::Sha224 => 28,
-        Mode::Sha256 => 32,
-        Mode::Sha384 => 48,
-        Mode::Sha512 => 64,
-        Mode::Blake2s => 32,
-        Mode::Blake2b => 64,
-        Mode::Sha3_224 => 28,
-        Mode::Sha3_256 => 32,
-        Mode::Sha3_384 => 48,
-        Mode::Sha3_512 => 64,
+        Algorithm::Sha1 => 20,
+        Algorithm::Sha224 => 28,
+        Algorithm::Sha256 => 32,
+        Algorithm::Sha384 => 48,
+        Algorithm::Sha512 => 64,
+        Algorithm::Blake2s => 32,
+        Algorithm::Blake2b => 64,
+        Algorithm::Sha3_224 => 28,
+        Algorithm::Sha3_256 => 32,
+        Algorithm::Sha3_384 => 48,
+        Algorithm::Sha3_512 => 64,
     }
 }
 
 /// Check if we do SHA3, which is not in the agile API and hence has to be
 /// handled differently.
-const fn is_sha3(alg: Mode) -> bool {
+const fn is_sha3(alg: Algorithm) -> bool {
     matches!(
         alg,
-        Mode::Sha3_224 | Mode::Sha3_256 | Mode::Sha3_384 | Mode::Sha3_512
+        Algorithm::Sha3_224 | Algorithm::Sha3_256 | Algorithm::Sha3_384 | Algorithm::Sha3_512
     )
 }
 
 /// The digest struct for stateful hashing.
 pub struct Digest {
-    mode: Mode,
+    mode: Algorithm,
     finished: bool,
     c_state: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
 }
 
 impl Digest {
     /// Create a new digest for the given mode `alg`.
-    pub fn new(alg: Mode) -> Result<Self, Error> {
+    pub fn new(alg: Algorithm) -> Result<Self, Error> {
         if is_sha3(alg) {
             return Err(Error::ModeUnsupportedForStreaming);
         }
@@ -335,16 +335,16 @@ macro_rules! define_plain_digest {
             let mut out = [0u8; $l];
 
             match $version {
-                Mode::Sha3_224 => unsafe {
+                Algorithm::Sha3_224 => unsafe {
                     Hacl_SHA3_sha3_224(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
                 },
-                Mode::Sha3_256 => unsafe {
+                Algorithm::Sha3_256 => unsafe {
                     Hacl_SHA3_sha3_256(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
                 },
-                Mode::Sha3_384 => unsafe {
+                Algorithm::Sha3_384 => unsafe {
                     Hacl_SHA3_sha3_384(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
                 },
-                Mode::Sha3_512 => unsafe {
+                Algorithm::Sha3_512 => unsafe {
                     Hacl_SHA3_sha3_512(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
                 },
                 _ => unsafe {
@@ -362,35 +362,35 @@ macro_rules! define_plain_digest {
     };
 }
 
-define_plain_digest!(sha1, Mode::Sha1, 20);
-define_plain_digest!(sha224, Mode::Sha224, 28);
-define_plain_digest!(sha256, Mode::Sha256, 32);
-define_plain_digest!(sha384, Mode::Sha384, 48);
-define_plain_digest!(sha512, Mode::Sha512, 64);
-define_plain_digest!(sha3_224, Mode::Sha3_224, 28);
-define_plain_digest!(sha3_256, Mode::Sha3_256, 32);
-define_plain_digest!(sha3_384, Mode::Sha3_384, 48);
-define_plain_digest!(sha3_512, Mode::Sha3_512, 64);
-define_plain_digest!(blake2s, Mode::Blake2s, 32);
-define_plain_digest!(blake2b, Mode::Blake2b, 64);
+define_plain_digest!(sha1, Algorithm::Sha1, 20);
+define_plain_digest!(sha224, Algorithm::Sha224, 28);
+define_plain_digest!(sha256, Algorithm::Sha256, 32);
+define_plain_digest!(sha384, Algorithm::Sha384, 48);
+define_plain_digest!(sha512, Algorithm::Sha512, 64);
+define_plain_digest!(sha3_224, Algorithm::Sha3_224, 28);
+define_plain_digest!(sha3_256, Algorithm::Sha3_256, 32);
+define_plain_digest!(sha3_384, Algorithm::Sha3_384, 48);
+define_plain_digest!(sha3_512, Algorithm::Sha3_512, 64);
+define_plain_digest!(blake2s, Algorithm::Blake2s, 32);
+define_plain_digest!(blake2b, Algorithm::Blake2b, 64);
 
 // Single-shot API
 
 /// Create the digest for the given `data` and mode `alg`.
 /// The output has length `get_digest_size(alg)`.
-pub fn hash(alg: Mode, data: &[u8]) -> Vec<u8> {
+pub fn hash(alg: Algorithm, data: &[u8]) -> Vec<u8> {
     match alg {
-        Mode::Sha1 => sha1(data).to_vec(),
-        Mode::Sha224 => sha224(data).to_vec(),
-        Mode::Sha256 => sha256(data).to_vec(),
-        Mode::Sha384 => sha384(data).to_vec(),
-        Mode::Sha512 => sha512(data).to_vec(),
-        Mode::Sha3_224 => sha3_224(data).to_vec(),
-        Mode::Sha3_256 => sha3_256(data).to_vec(),
-        Mode::Sha3_384 => sha3_384(data).to_vec(),
-        Mode::Sha3_512 => sha3_512(data).to_vec(),
-        Mode::Blake2s => blake2s(data).to_vec(),
-        Mode::Blake2b => blake2b(data).to_vec(),
+        Algorithm::Sha1 => sha1(data).to_vec(),
+        Algorithm::Sha224 => sha224(data).to_vec(),
+        Algorithm::Sha256 => sha256(data).to_vec(),
+        Algorithm::Sha384 => sha384(data).to_vec(),
+        Algorithm::Sha512 => sha512(data).to_vec(),
+        Algorithm::Sha3_224 => sha3_224(data).to_vec(),
+        Algorithm::Sha3_256 => sha3_256(data).to_vec(),
+        Algorithm::Sha3_384 => sha3_384(data).to_vec(),
+        Algorithm::Sha3_512 => sha3_512(data).to_vec(),
+        Algorithm::Blake2s => blake2s(data).to_vec(),
+        Algorithm::Blake2b => blake2b(data).to_vec(),
     }
 }
 

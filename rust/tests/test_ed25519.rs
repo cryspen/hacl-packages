@@ -52,8 +52,7 @@ impl ReadFromFile for Ed25519TestVector {}
 #[allow(non_snake_case)]
 #[test]
 fn test_wycheproof() {
-    let tests: Ed25519TestVector =
-        Ed25519TestVector::from_file("tests/wycheproof/eddsa_test.json");
+    let tests: Ed25519TestVector = Ed25519TestVector::from_file("tests/wycheproof/eddsa_test.json");
 
     assert_eq!(tests.algorithm, "EDDSA");
 
