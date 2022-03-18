@@ -32,4 +32,4 @@
 # Developer Guide
 
 - [Introduction](./developers/readme.md)
-- [Continuous Integration](./developers/ci.md)
+  - [Continuous Integration](./developers/ci.md)
