@@ -10,7 +10,7 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          # - windows-latest
+          - windows-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -29,9 +29,12 @@ jobs:
       run: brew install ninja
     - if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install ninja-build
+    - if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
+      run: choco install ninja
     - name: Debug Build
       run: ./mach build -l rust -v
     - name: Release Build
       run: ./mach build --release -l rust -v
     - name: Test Debug
-      run: cargo test --manifest-path rust/evercrypt-rs/Cargo.toml
+      run: cargo test --manifest-path rust/Cargo.toml

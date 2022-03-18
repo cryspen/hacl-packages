@@ -286,7 +286,7 @@ def build(args):
             check_cmd('cargo')
             _install(prefix='build/installed', config=build_config)
             cargo_cmd = ['cargo', 'build', '--manifest-path',
-                        'rust/evercrypt-rs/Cargo.toml']
+                        'rust/Cargo.toml']
             subprocess.run(cargo_cmd, check=True)
         elif args.language == 'ocaml':
             check_cmd('make')
