@@ -8,3 +8,4 @@
 *.exe
 lib/*_stubs.ml
 lib/*_c_stubs.c
+c/

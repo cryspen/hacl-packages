@@ -16,9 +16,12 @@
 
 .PRECIOUS: %.cmx
 
+all: setup ocamlevercrypt.cmxa build
+
 # Config
 # TODO: Read this from the main config.
 STATIC_C_LIB_NAME=hacl_static
+DYNAMIC_C_LIB_NAME=hacl
 SO=so
 BLOCKLIST_NON_X64=EverCrypt_Vale.c
 BLOCKLIST=Hacl_Bignum256_32.c Hacl_Bignum256.c Hacl_Bignum32.c Hacl_Bignum4096_32.c Hacl_Bignum4096.c Hacl_Bignum.c Hacl_Bignum64.c Hacl_Bignum_Base.c Hacl_GenericField32.c Hacl_GenericField64.c
@@ -26,14 +29,16 @@ BLOCKLIST+=$(BLOCKLIST_NON_X64)
 BLOCKLIST+=Hacl_Curve25519_64.c Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c Hacl_HPKE_Curve64_CP32_SHA256.c Hacl_HPKE_Curve64_CP32_SHA512.c
 BLOCKLIST+=evercrypt_vale_stubs.c
 BLOCKLIST+=Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c Hacl_HKDF_Blake2b_256.c Hacl_HMAC_Blake2b_256.c Hacl_HPKE_Curve51_CP256_SHA256.c Hacl_HPKE_Curve51_CP256_SHA512.c Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c Hacl_HPKE_P256_CP256_SHA256.c Hacl_Hash_Blake2b_256.c Hacl_Poly1305_256.c Hacl_SHA2_Vec256.c Hacl_Streaming_Blake2b_256.c Hacl_Streaming_Poly1305_256.c
-C_LIB_PATH?=../build/Debug/
+C_PATH?=c
+C_LIB_PATH?=$(C_PATH)/lib/
 C_LIB?=$(C_LIB_PATH)lib$(STATIC_C_LIB_NAME).a
-C_INCLUDES?=-I../include/
-KARAMEL_INCLUDES?=-I../kremlin/include -I../kremlin/kremlib/dist/minimal/
-
-ifeq ("$(wildcard $(C_LIB))","")
-$(error I couldn't find the C library $(C_LIB). Please build it first or tell me where to find it.)
-endif
+C_DYN_LIB?=$(C_LIB_PATH)lib$(DYNAMIC_C_LIB_NAME).dylib # FIXME
+C_INCLUDES?=-Ic/include/hacl/ \
+			-Ic/include/vale/ \
+			-Ic/include/ \
+			-I../include/ # XXX: internal is used in lib/
+KARAMEL_INCLUDES?=-Ic/include/kremlin/include \
+				  -Ic/include/kremlin/kremlib/dist/minimal/
 
 OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
 OCAMLDEP=ocamlfind dep -I lib -slash
@@ -56,6 +61,18 @@ ALL_C_STUBS=$(patsubst %,lib/%_c_stubs.o,$(ALL_OCAML))
 include .depend.ocaml
 include ctypes.depend
 
+# - copy and clean config.h
+setup:
+ifeq ($(wildcard $(C_PATH)),)
+		mkdir $(C_PATH)
+		cp -r ../build/installed/* $(C_PATH)/
+		sed -ri '/(\/\/.*)|(\/\*.*\*\/)/d' ./c/include/hacl/config.h
+endif
+
+# ifeq ("$(wildcard $(C_LIB))","")
+# $(error I couldn't find the C library $(C_LIB). Please build it first or tell me where to find it.)
+# endif
+
 lib_gen/Lib_RandomBuffer_System_gen.cmx: lib/Lib_RandomBuffer_System_bindings.cmx
 lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cmx lib_gen/Lib_RandomBuffer_System_gen.cmx
 
@@ -63,8 +80,6 @@ lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cm
 	$(OCAMLDEP) $(wildcard lib/*.ml) $(wildcard lib_gen/*.ml) > $@
 
 %.exe:
-
-all: ocamlevercrypt.cmxa
 
 lib_gen/%_gen.exe:
 	$(OCAMLOPT) $(filter-out %.a,$^) $(C_LIB) -o $@
@@ -92,22 +107,23 @@ CTYPES_CMO    = $(patsubst %.cmx,%.cmo,$(CTYPES_CMX))
 
 
 ocamlevercrypt.cma: $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX)
-	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
+	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -l$(STATIC_C_LIB_NAME)
 
 ocamlevercrypt.cmxa: $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS)
-	ocamlmklib -o ocamlevercrypt $(CTYPES_CMX) -L. -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
+	ocamlmklib -o ocamlevercrypt $(CTYPES_CMX) -L. -l$(STATIC_C_LIB_NAME)
 
 STUBLIBS_PATH=$(OPAM_SWITCH_PREFIX)/lib/stublibs
 
 dllocamlevercrypt.$(SO): ocamlevercrypt.cmxa ocamlevercrypt.cma
-	ocamlmklib -o ocamlevercrypt $(ALL_C_STUBS) -L. -L$(STUBLIBS_PATH) -L$(C_LIB_PATH) -l$(STATIC_C_LIB_NAME)
+	ocamlmklib -o ocamlevercrypt $(ALL_C_STUBS) -L. -L$(STUBLIBS_PATH) -l$(STATIC_C_LIB_NAME)
 
 clean:
 	rm -rf *.$(SO) *.a .depend.ocaml *.cmxa *.cma \
-	**/*.cma **/*.cmo **/*.cmx **/*.cmxa* **/*.o **/*.c **/*.cmi **/*.exe **/*.o **/*.d
+	**/*.cma **/*.cmo **/*.cmx **/*.cmxa* **/*.o **/*.c **/*.cmi **/*.exe **/*.o **/*.d \
+	rm -rf c rm -rf hacl-star/_build
 
 # Install hacl-star-raw locally.
-# FIXME: There must be a better way.
+# XXX: There must be a better way.
 install-hacl-star-raw: dllocamlevercrypt.$(SO)
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
@@ -116,12 +132,13 @@ install-hacl-star-raw: dllocamlevercrypt.$(SO)
 	ocamlfind install -add hacl-star-raw $(CTYPES_CMO)
 	ocamlfind install -add hacl-star-raw $(CTYPES_CMI)
 	ocamlfind install -add hacl-star-raw \
-         $(C_LIB) \
+         $(C_LIB) $(C_DYN_LIB) \
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
-         libocamlevercrypt.a dllocamlevercrypt.$(SO) config.h
+         libocamlevercrypt.a dllocamlevercrypt.$(SO) c/include/hacl/config.h
 
-#  libevercrypt.a libevercrypt.$(SO) \
+.PHONY: install-ocaml
+build: install-hacl-star-raw
+	cd hacl-star && dune build
 
-# .PHONY: install-ocaml
-# install-ocaml: install-hacl-star-raw
-# 	cd ../../bindings/ocaml && dune build && dune install
+test: build
+	cd hacl-star && dune test
