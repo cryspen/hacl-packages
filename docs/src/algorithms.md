@@ -24,3 +24,5 @@ packages.
 | Symmetric Encryption | AES 256           | AES-NI & CLMUL (x86 only)               |
 | MAC                  | HMAC              | Portable (depends on hash)              |
 | MAC                  | Poly1305          | Portable \| vec128 \| vec256 \| x64 ASM |
+
+TODO: Salsa, Nacl API

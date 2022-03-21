@@ -7,6 +7,18 @@
         "vale/include"
     ],
     "hacl_sources": {
+        "nacl": [
+            {
+                "file": "Hacl_NaCl.c",
+                "features": "std"
+            }
+        ],
+        "salsa20": [
+            {
+                "file": "Hacl_Salsa20.c",
+                "features": "std"
+            }
+        ],
         "aesgcm": [],
         "drbg": [
             {
@@ -21,6 +33,10 @@
             }
         ],
         "blake2": [
+            {
+                "file": "Hacl_Hash_Base.c",
+                "features": "std"
+            },
             {
                 "file": "Hacl_Hash_Blake2.c",
                 "features": "std"
@@ -84,6 +100,10 @@
         ],
         "sha2": [
             {
+                "file": "Hacl_Hash_Base.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Hash_SHA2.c",
                 "features": "std"
             },
@@ -102,6 +122,10 @@
         ],
         "sha1": [
             {
+                "file": "Hacl_Hash_Base.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Hash_SHA1.c",
                 "features": "std"
             },
@@ -111,6 +135,10 @@
             }
         ],
         "md5": [
+            {
+                "file": "Hacl_Hash_Base.c",
+                "features": "std"
+            },
             {
                 "file": "Hacl_Hash_MD5.c",
                 "features": "std"

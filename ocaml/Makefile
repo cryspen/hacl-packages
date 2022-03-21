@@ -66,6 +66,7 @@ setup:
 ifeq ($(wildcard $(C_PATH)),)
 		mkdir $(C_PATH)
 		cp -r ../build/installed/* $(C_PATH)/
+		cp $(C_LIB) .
 		sed -ri '/(\/\/.*)|(\/\*.*\*\/)/d' ./c/include/hacl/config.h
 endif
 
