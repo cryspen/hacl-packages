@@ -27,6 +27,7 @@ from tools.configure import Config
 from tools.utils import subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
 from tools.test import run_tests
 from tools.macos import ios_sysroot
+from tools.ocaml import build_ocaml, clean_ocaml
 
 # === SUBCOMMANDS === #
 
@@ -104,7 +105,7 @@ def build(args):
     Note that bindings will always require the full C library such that the
     algorithm flag will be ignored.
         - rust
-        - ocaml (TBD)
+        - ocaml
         - wasm (TBD)
 
     💡  Windows builds are limited. The following arguments are not supported:
@@ -134,6 +135,7 @@ def build(args):
         try:
             shutil.rmtree("build")
             os.remove(cmake_config())
+            clean_ocaml()
         except:
             pass  # We don't really care
     try:
@@ -141,10 +143,7 @@ def build(args):
     except:
         pass  # We ignore the error if the directory exists already
 
-    bindings = False
-    if args.language == "rust":
-        bindings = True
-        language = "Rust"
+    bindings = args.language is not None
 
     cflags = []
     cxxflags = []
@@ -280,11 +279,19 @@ def build(args):
 
     # build bindings if requested
     if bindings:
-        check_cmd('cargo')
-        _install(prefix='build/installed', config=build_config)
-        cargo_cmd = ['cargo', 'build', '--manifest-path',
-                     'rust/evercrypt-rs/Cargo.toml']
-        subprocess.run(cargo_cmd, check=True)
+        if args.language == 'rust':
+            check_cmd('cargo')
+            _install(prefix='build/installed', config=build_config)
+            cargo_cmd = ['cargo', 'build', '--manifest-path',
+                        'rust/evercrypt-rs/Cargo.toml']
+            subprocess.run(cargo_cmd, check=True)
+        elif args.language == 'ocaml':
+            check_cmd('make')
+            check_cmd('ocaml')
+            _install(prefix='build/installed', config=build_config)
+            build_ocaml()
+        else:
+            print("Unknown language binding %s. Please see --help for supported bindings" % (args.language))
 
     print("Build finished.")
 
