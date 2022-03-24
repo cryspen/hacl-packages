@@ -17,6 +17,10 @@ import subprocess
 def build_ocaml():
     '''Build the OCaml bindings.
     '''
+    make_cmd = ['make', '-C', 'ocaml', 'setup', '-j']
+    subprocess.run(make_cmd, check=True)
+    make_cmd = ['make', '-C', 'ocaml', 'ocamlevercrypt.cmxa', '-j']
+    subprocess.run(make_cmd, check=True)
     make_cmd = ['make', '-C', 'ocaml', '-j']
     subprocess.run(make_cmd, check=True)
 
