@@ -9,20 +9,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup
-        run: |
-          sudo apt-get install ninja-build opam libgmp-dev
-          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
-          opam switch create 4.12.0 --yes
-          eval $(opam env)
-          opam --yes install ocamlfind ctypes zarith cppo
-
       - name: Cache Setup
         id: cache-ocaml-setup
         uses: actions/cache@v3
         with:
           path: ~/.opam
           key: ${{ runner.os }}-ocaml-setup
+
+      - name: Setup
+        run: |
+          sudo apt-get install ninja-build opam libgmp-dev
+          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
+          opam switch create 4.12.0 --yes
+          eval $(opam env)
+          opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Debug Build
         run: ./mach build -l ocaml -v
