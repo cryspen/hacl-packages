@@ -32,7 +32,7 @@ BLOCKLIST+=Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c Hacl_HKDF_Blake2b_
 C_PATH?=c
 C_LIB_PATH?=$(C_PATH)/lib/
 C_LIB?=$(C_LIB_PATH)lib$(STATIC_C_LIB_NAME).a
-C_DYN_LIB?=$(C_LIB_PATH)lib$(DYNAMIC_C_LIB_NAME).dylib # FIXME
+C_DYN_LIB?=$(C_LIB_PATH)lib$(DYNAMIC_C_LIB_NAME).so # FIXME
 C_INCLUDES?=-Ic/include/hacl/ \
 			-Ic/include/vale/ \
 			-Ic/include/ \

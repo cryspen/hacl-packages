@@ -1,28 +1,34 @@
-name: rust
+name: ocaml
 
 on: [push, pull_request]
 
 jobs:
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          # - windows-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - if: matrix.os == 'macos-latest'
-      run: brew install ninja opam
-    - if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install ninja-build opam
-    - name: Debug Build
-      run: ./mach build -l ocaml -v
-    - name: Release Build
-      run: ./mach build --release -l ocaml -v
-    - name: Test Debug
-      run: make -C ocaml test
+      - uses: actions/checkout@v2
+
+      - name: Setup
+        run: |
+          sudo apt-get install ninja-build opam libgmp-dev
+          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
+          opam switch create 4.12.0 --yes
+          eval $(opam env)
+          opam --yes install ocamlfind ctypes zarith cppo
+
+      - name: Cache Setup
+        id: cache-ocaml-setup
+        uses: actions/cache@v3
+        with:
+          path: ~/.opam
+          key: ${{ runner.os }}-ocaml-setup
+
+      - name: Debug Build
+        run: ./mach build -l ocaml -v
+
+      - name: Release Build
+        run: ./mach build --release -l ocaml -v
+
+      - name: Test Debug
+        run: make -C ocaml test
