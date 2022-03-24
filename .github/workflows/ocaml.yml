@@ -25,10 +25,16 @@ jobs:
           opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Debug Build
-        run: ./mach build -l ocaml -v
+        run: |
+          eval $(opam env)
+          ./mach build -l ocaml -v
 
       - name: Release Build
-        run: ./mach build --release -l ocaml -v
+        run: |
+          eval $(opam env)
+          ./mach build --release -l ocaml -v
 
       - name: Test Debug
-        run: make -C ocaml test
+        run: |
+          eval $(opam env)
+          make -C ocaml test
