@@ -16,10 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - if: matrix.os == 'macos-latest'
-      run: brew install ninja
-    - if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install ninja-build
     - uses: actions/cache@v3
       with:
         path: |
@@ -29,6 +25,10 @@ jobs:
           ~/.cargo/git/db/
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - if: matrix.os == 'macos-latest'
+      run: brew install ninja
+    - if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install ninja-build
     - name: Debug Build
       run: ./mach build -l rust -v
     - name: Release Build
