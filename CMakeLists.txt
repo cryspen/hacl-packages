@@ -113,7 +113,7 @@ if(NOT EXPLICIT_BZERO_SUPPORT)
     message(STATUS "LINUX_NO_EXPLICIT_BZERO: ${LINUX_NO_EXPLICIT_BZERO}")
 endif()
 
-if(${HACL_TARGET_OS} MATCHES linux)
+if(${CMAKE_SYSTEM_NAME} MATCHES Linux)
     add_compile_options(
         -fPIC
     )
