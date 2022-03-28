@@ -19,6 +19,7 @@ import re
 import subprocess
 import sys
 from tools.configure import Config
+from tools.ocaml import test_ocaml
 from tools.utils import subcommand, argument, cli, subparsers, mprint as print, binary_path, json_config
 
 from os.path import join
@@ -55,10 +56,24 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
 
 
 @subcommand([argument("-a", "--algorithms",
-                      help="The algorithms to test.", type=str)])
+                      help="The algorithms to test.", type=str),
+             argument("-l", "--language",
+                      help="Language bindings to test.", type=str)])
 def test(args):
     """Test HACL*
     """
+    if args.language:
+        # We ignore algorithms here. Just run the language bindings' tests.
+        if args.language == "ocaml":
+            test_ocaml()
+            exit(0)
+        elif args.language == "rust":
+            subprocess.run(['cargo', 'test', '--manifest-path=rust/Cargo.toml'], check=True)
+            exit(0)
+        else:
+            print("Unknown language binding %s. Please see --help for supported bindings" % (args.l))
+            exit(1)
+
     algorithms = []
     if args.algorithms:
         algorithms = re.split(r"\W+", args.algorithms)
