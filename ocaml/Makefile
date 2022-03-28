@@ -25,11 +25,13 @@ ifeq ($(UNAME),Darwin)
 else ifeq ($(UNAME),Linux)
   SO 		= so
   OCAML_SO	= so
+  CFLAGS	+= -fPIC
 else ifeq ($(OS),Windows_NT)
   $(error "Windows is not supported at the moment.")
 else ifeq ($(UNAME),FreeBSD)
   SO 		= so
   OCAML_SO	= so
+  CFLAGS	+= -fPIC
 endif
 
 # Config
@@ -83,10 +85,6 @@ ifeq ($(wildcard $(C_PATH)),)
 		sed -ri '/(\/\/.*)|(\/\*.*\*\/)/d' ./c/include/hacl/config.h
 endif
 
-# ifeq ("$(wildcard $(C_LIB))","")
-# $(error I couldn't find the C library $(C_LIB). Please build it first or tell me where to find it.)
-# endif
-
 lib_gen/Lib_RandomBuffer_System_gen.cmx: lib/Lib_RandomBuffer_System_bindings.cmx
 lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cmx lib_gen/Lib_RandomBuffer_System_gen.cmx
 
@@ -137,7 +135,6 @@ clean:
 	rm -rf c rm -rf hacl-star/_build
 
 # Install hacl-star-raw locally.
-# XXX: There must be a better way.
 install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
