@@ -58,7 +58,9 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
 @subcommand([argument("-a", "--algorithms",
                       help="The algorithms to test.", type=str),
              argument("-l", "--language",
-                      help="Language bindings to test.", type=str)])
+                      help="Language bindings to test.", type=str),
+             argument("-v", "--verbose", help="Make tests verbose.",
+                      action='store_true')])
 def test(args):
     """Test HACL*
     """
