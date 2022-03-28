@@ -1,6 +1,7 @@
 /build
 /Testing
 /config/build
+/config/cached-config.txt
 /tmp
 /tools/__pycache__
 /config/config.cmake

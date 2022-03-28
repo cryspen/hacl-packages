@@ -32,6 +32,10 @@ def cmake_config():
     return os.path.join("config", "config.cmake")
 
 
+def cmake_generated_config():
+    return os.path.join("config", "cached-config.txt")
+
+
 def dep_config():
     return os.path.join("config", "dep_config.json")
 

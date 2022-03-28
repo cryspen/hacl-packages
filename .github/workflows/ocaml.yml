@@ -37,4 +37,4 @@ jobs:
       - name: Test Debug
         run: |
           eval $(opam env)
-          make -C ocaml test
+          ./mach test -l ocaml -v

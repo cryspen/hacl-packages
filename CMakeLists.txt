@@ -117,7 +117,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES Linux)
     add_compile_options(
         -fPIC
     )
-endif(${HACL_TARGET_OS} MATCHES linux)
+endif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
 
 # XXX: Investigate whether we can use CHECK_C_COMPILER_FLAG here at all
 
@@ -125,6 +125,13 @@ endif(${HACL_TARGET_OS} MATCHES linux)
 # This has to happen after the toolchain detection because it might disable
 # toolchain features.
 include(config/options.cmake)
+
+# Write out config to file
+write_file(${PROJECT_SOURCE_DIR}/config/cached-config.txt
+    "TOOLCHAIN_CAN_COMPILE_VEC128 ${TOOLCHAIN_CAN_COMPILE_VEC128}\n\
+TOOLCHAIN_CAN_COMPILE_VEC256 ${TOOLCHAIN_CAN_COMPILE_VEC256}\n\
+TOOLCHAIN_CAN_COMPILE_VALE ${TOOLCHAIN_CAN_COMPILE_VALE}\
+    ")
 
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files

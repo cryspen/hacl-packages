@@ -12,18 +12,42 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import os
 import subprocess
+
+from tools.utils import cmake_generated_config
+from tools.utils import mprint as print
+
+def read_config():
+    '''The make build requires environment variables from CMake.
+    Read them here.
+    '''
+    with open(cmake_generated_config(), 'r') as f:
+        cmake_config = f.readlines()
+    environment = {**os.environ}
+    for line in cmake_config:
+        variable, value = line.split()
+        if value == "TRUE":
+            environment[variable] = "1"
+    return environment
 
 def build_ocaml():
     '''Build the OCaml bindings.
     '''
-    make_cmd = ['make', '-C', 'ocaml', 'setup', '-j']
-    subprocess.run(make_cmd, check=True)
-    make_cmd = ['make', '-C', 'ocaml', 'ocamlevercrypt.cmxa', '-j']
-    subprocess.run(make_cmd, check=True)
-    make_cmd = ['make', '-C', 'ocaml', '-j']
-    subprocess.run(make_cmd, check=True)
+    environment = read_config()
+    make_cmd = 'make -C ocaml setup -j'
+    subprocess.run(make_cmd, check=True, shell=True, env=environment)
+    make_cmd = 'make -C ocaml ocamlevercrypt.cmxa -j'
+    subprocess.run(make_cmd, check=True, shell=True, env=environment)
+    make_cmd = 'make -C ocaml -j'
+    subprocess.run(make_cmd, check=True, shell=True, env=environment)
 
+
+def test_ocaml():
+    '''Test the OCaml bindings'''
+    environment = read_config()
+    make_cmd = 'make -C ocaml test -j'
+    subprocess.run(make_cmd, check=True, shell=True, env=environment)
 
 def clean_ocaml():
     '''Clean the OCaml build.

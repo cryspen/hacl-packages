@@ -288,10 +288,12 @@ def build(args):
         elif args.language == 'ocaml':
             check_cmd('make')
             check_cmd('ocaml')
+            print()
             _install(prefix='build/installed', config=build_config)
             build_ocaml()
         else:
             print("Unknown language binding %s. Please see --help for supported bindings" % (args.language))
+            exit(1)
 
     print("Build finished.")
 
