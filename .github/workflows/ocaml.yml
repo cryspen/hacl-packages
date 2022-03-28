@@ -3,7 +3,7 @@ name: ocaml
 on: [push, pull_request]
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
 
     steps:
