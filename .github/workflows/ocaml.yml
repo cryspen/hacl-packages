@@ -16,9 +16,11 @@ jobs:
           path: ~/.opam
           key: ${{ runner.os }}-ocaml-setup
 
-      - name: Setup
+      - name: System Setup
+        run: sudo apt-get install ninja-build opam libgmp-dev
+      - name: OCaml Setup
+        if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get install ninja-build opam libgmp-dev
           OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
           opam switch create 4.12.0 --yes
           eval $(opam env)
