@@ -13,7 +13,10 @@ readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages/rust"
 
 [dependencies]
+
+[build-dependencies]
 libc = { version = "0.2", default-features = false }
+fs_extra = "1.2"
 
 [target.'cfg(not(windows))'.build-dependencies]
 bindgen = "0.59"
