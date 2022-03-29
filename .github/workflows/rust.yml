@@ -39,3 +39,43 @@ jobs:
       run: ./mach build --release -l rust -v
     - name: Test Debug
       run: cargo test --manifest-path rust/Cargo.toml
+  
+  standalone:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - if: matrix.os == 'macos-latest'
+      run: brew install ninja
+    - if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install ninja-build
+    - if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
+    - if: matrix.os == 'windows-latest'
+      run: choco install ninja
+    - name: Debug Build
+      working-directory: rust
+      run: cargo build -v
+    - name: Release Build
+      working-directory: rust
+      run: cargo build --release -v
+    - name: Test Debug
+      working-directory: rust
+      run: cargo test -v
