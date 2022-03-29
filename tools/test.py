@@ -86,5 +86,4 @@ def test(args):
 
     # parse file
     config = json.loads(data)
-    # config = Config(json_config(), algorithms=algorithms)
     run_tests(config['tests'], "Debug", algorithms=algorithms)

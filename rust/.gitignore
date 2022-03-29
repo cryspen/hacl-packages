@@ -1,2 +1,4 @@
 /target
 Cargo.lock
+/hacl-rust-sys/Cargo.lock
+/hacl-rust-sys/target
