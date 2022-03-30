@@ -15,6 +15,7 @@
 # This file is adapted from the project-everest/hacl-star/ Makefile.
 
 .PRECIOUS: %.cmx
+.PHONY: build test clean install-hacl-star-raw setup
 
 all: setup ocamlevercrypt.cmxa build
 
@@ -64,7 +65,7 @@ C_PATH?=c
 C_LIB_PATH?=$(C_PATH)/lib/
 C_LIB?=$(C_LIB_PATH)lib$(STATIC_C_LIB_NAME).a
 C_DYN_LIB?=$(C_LIB_PATH)lib$(DYNAMIC_C_LIB_NAME).$(SO)
-C_INCLUDES?=-Ic/include/hacl/ \
+C_INCLUDES?=-I$(C_PATH)/include/hacl/ \
 			-Ic/include/vale/ \
 			-Ic/include/ \
 			-I../include/ # XXX: internal is used in lib/
@@ -163,7 +164,6 @@ install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
          libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) c/include/hacl/config.h
 
-.PHONY: install-ocaml
 build: install-hacl-star-raw
 	cd hacl-star && dune build
 
