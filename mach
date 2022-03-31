@@ -285,9 +285,12 @@ def build(args):
         if args.language == 'rust':
             check_cmd('cargo')
             _install(prefix='build/installed', config=build_config)
-            cargo_cmd = ['cargo', 'build', '--manifest-path',
-                        'rust/Cargo.toml']
-            subprocess.run(cargo_cmd, check=True)
+            cargo_cmd = 'cargo build --manifest-path rust/Cargo.toml'
+            env = {
+                **os.environ,
+                "MACH_BUILD": "1"
+            }
+            subprocess.run(cargo_cmd, check=True, shell=True, env=env)
         elif args.language == 'ocaml':
             check_cmd('make')
             check_cmd('ocaml')

@@ -72,6 +72,7 @@ fn get_hacl_c(out_path: &Path) {
     if !mach_status.success() {
         panic!("Failed to run git clone.")
     }
+    println!(" >>> Cloned hacl-packages into {}", out_path.display())
 }
 
 fn build_hacl_c(path: &Path) {
@@ -110,7 +111,6 @@ fn main() {
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let home_dir = Path::new(&home_dir);
-    let target = env::var("TARGET").unwrap();
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_path = Path::new(&out_dir);
     let mach_build = env::var("MACH_BUILD").ok().is_some();
