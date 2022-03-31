@@ -13,10 +13,13 @@
 #    limitations under the License.
 
 import os
+from os.path import join as path_join
 import subprocess
 
 from tools.utils import cmake_generated_config
 from tools.utils import mprint as print
+from ocaml.setup import copy_lib
+
 
 def read_config():
     '''The make build requires environment variables from CMake.
@@ -26,17 +29,25 @@ def read_config():
         cmake_config = f.readlines()
     environment = {**os.environ}
     for line in cmake_config:
-        variable, value = line.split()
+        variable, value = line.split('=')
         if value == "TRUE":
             environment[variable] = "1"
     return environment
 
+
 def build_ocaml():
     '''Build the OCaml bindings.
     '''
-    environment = read_config()
-    make_cmd = 'make -C ocaml setup -j'
-    subprocess.run(make_cmd, check=True, shell=True, env=environment)
+    cwd = path_join(os.path.dirname(os.path.realpath(__file__)), '..')
+    environment = {**os.environ,
+                   "HACL_MAKE_CONFIG": path_join(cwd, "config", "cached-config.txt")}
+    copy_lib(path_join(cwd, 'include'),
+             path_join(cwd, 'vale', 'include'),
+             path_join(cwd, 'build', 'Release'),
+             path_join(cwd, 'kremlin'),
+             path_join(cwd, 'build'),
+             "libhacl_static.a", "libhacl.dylib", "config.h",
+             path_join(cwd, 'ocaml', 'c'))
     make_cmd = 'make -C ocaml ocamlevercrypt.cmxa -j'
     subprocess.run(make_cmd, check=True, shell=True, env=environment)
     make_cmd = 'make -C ocaml -j'
@@ -45,9 +56,12 @@ def build_ocaml():
 
 def test_ocaml():
     '''Test the OCaml bindings'''
-    environment = read_config()
+    cwd = path_join(os.path.dirname(os.path.realpath(__file__)), '..')
+    environment = {**os.environ,
+                   "HACL_MAKE_CONFIG": path_join(cwd, "config", "cached-config.txt")}
     make_cmd = 'make -C ocaml test -j'
     subprocess.run(make_cmd, check=True, shell=True, env=environment)
+
 
 def clean_ocaml():
     '''Clean the OCaml build.

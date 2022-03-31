@@ -144,6 +144,9 @@ def build(args):
         pass  # We ignore the error if the directory exists already
 
     bindings = args.language is not None
+    if bindings and args.language == 'ocaml':
+        # OCaml always gets release builds for now
+        build_config = "Release"
 
     cflags = []
     cxxflags = []
@@ -289,7 +292,6 @@ def build(args):
             check_cmd('make')
             check_cmd('ocaml')
             print()
-            _install(prefix='build/installed', config=build_config)
             build_ocaml()
         else:
             print("Unknown language binding %s. Please see --help for supported bindings" % (args.language))
