@@ -12,3 +12,4 @@ c/
 hacl-packages/
 __pycache__/
 config.h
+*.dylib
