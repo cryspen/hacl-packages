@@ -69,6 +69,7 @@ jobs:
         run: |
           eval $(opam env)
           ./setup.py
+          HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make ocamlevercrypt.cmxa
           HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make -j
 
       - name: Test
