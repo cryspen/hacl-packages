@@ -15,6 +15,7 @@
 import os
 from os.path import join as path_join
 import subprocess
+import sys
 
 from tools.utils import cmake_generated_config
 from tools.utils import mprint as print
@@ -38,6 +39,11 @@ def read_config():
 def build_ocaml():
     '''Build the OCaml bindings.
     '''
+    # XXX: Windows is not supported
+    if sys.platform == 'darwin':
+        so = 'dylib'
+    else:
+        so = 'so'
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), '..')
     environment = {**os.environ,
                    "HACL_MAKE_CONFIG": path_join(cwd, "config", "cached-config.txt")}
@@ -46,7 +52,7 @@ def build_ocaml():
              path_join(cwd, 'build', 'Release'),
              path_join(cwd, 'kremlin'),
              path_join(cwd, 'build'),
-             "libhacl_static.a", "libhacl.dylib", "config.h",
+             "libhacl_static.a", "libhacl."+so, "config.h",
              path_join(cwd, 'ocaml', 'c'))
     make_cmd = 'make -C ocaml ocamlevercrypt.cmxa -j'
     subprocess.run(make_cmd, check=True, shell=True, env=environment)

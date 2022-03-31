@@ -149,7 +149,7 @@ install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
 	ocamlfind install -add hacl-star-raw \
          $(C_LIB) $(C_DYN_LIB) \
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
-         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) config.h
+         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) $(C_PATH)/include/config.h
 
 build: install-hacl-star-raw
 	cd hacl-star && dune build

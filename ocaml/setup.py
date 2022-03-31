@@ -23,6 +23,7 @@ from os.path import join as path_join
 import re
 import shutil
 import subprocess
+import sys
 
 
 def change_config(src_config, dst_config):
@@ -96,7 +97,12 @@ def setup_pkg(static_lib, dynamic_lib, config_name, dest_path):
 
 
 def main():
-    setup_pkg("libhacl_static.a", "libhacl.dylib", "config.h", "./c/")
+    # XXX: Windows is not supported
+    if sys.platform == 'darwin':
+        so = 'dylib'
+    else:
+        so = 'so'
+    setup_pkg("libhacl_static.a", "libhacl."+so, "config.h", "./c/")
 
 
 if __name__ == '__main__':
