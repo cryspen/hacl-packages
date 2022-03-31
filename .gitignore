@@ -13,3 +13,4 @@ docs/source/__pycache__
 docs/build
 cpu-features/detect
 /pkg
+__pycache__/

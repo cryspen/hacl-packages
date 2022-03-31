@@ -9,3 +9,6 @@
 lib/*_stubs.ml
 lib/*_c_stubs.c
 c/
+hacl-packages/
+__pycache__/
+config.h

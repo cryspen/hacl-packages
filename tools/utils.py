@@ -46,6 +46,10 @@ def config_check_file():
 # FIXME: #10 add config.type (Debug/Release)
 
 
+def cwd():
+    return os.path.dirname(os.path.realpath(__file__))
+
+
 def binary_path(target):
     return os.path.join("build", target)
 

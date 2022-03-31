@@ -17,7 +17,7 @@
 .PRECIOUS: %.cmx
 .PHONY: build test clean install-hacl-star-raw setup
 
-all: setup ocamlevercrypt.cmxa build
+all: ocamlevercrypt.cmxa build
 
 UNAME		?= $(shell uname)
 ifeq ($(UNAME),Darwin)
@@ -36,7 +36,7 @@ else ifeq ($(UNAME),FreeBSD)
 endif
 
 # Config
-# TODO: Read this from the main config.
+include $(HACL_MAKE_CONFIG)
 STATIC_C_LIB_NAME=hacl_static
 DYNAMIC_C_LIB_NAME=hacl
 BLOCKLIST=Hacl_Bignum256_32.c  Hacl_Bignum32.c Hacl_Bignum4096_32.c \
@@ -62,15 +62,11 @@ ifeq (,$(TOOLCHAIN_CAN_COMPILE_VALE))
 BLOCKLIST+=Hacl_Curve25519_64.c evercrypt_vale_stubs.c EverCrypt_Vale.c
 endif
 C_PATH?=c
-C_LIB_PATH?=$(C_PATH)/lib/
-C_LIB?=$(C_LIB_PATH)lib$(STATIC_C_LIB_NAME).a
-C_DYN_LIB?=$(C_LIB_PATH)lib$(DYNAMIC_C_LIB_NAME).$(SO)
-C_INCLUDES?=-I$(C_PATH)/include/hacl/ \
-			-Ic/include/vale/ \
-			-Ic/include/ \
-			-I../include/ # XXX: internal is used in lib/
-KARAMEL_INCLUDES?=-Ic/include/kremlin/include \
-				  -Ic/include/kremlin/kremlib/dist/minimal/
+C_LIB?=lib$(STATIC_C_LIB_NAME).a
+C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
+C_INCLUDES?=-I$(C_PATH)/include/
+KARAMEL_INCLUDES?=-I$(C_PATH)/kremlin/include \
+				  -I$(C_PATH)/kremlin/kremlib/dist/minimal/
 
 OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
 OCAMLDEP=ocamlfind dep -I lib -slash
@@ -92,15 +88,6 @@ ALL_C_STUBS=$(patsubst %,lib/%_c_stubs.o,$(ALL_OCAML))
 
 include .depend.ocaml
 include ctypes.depend
-
-# - copy and clean config.h
-setup:
-ifeq ($(wildcard $(C_PATH)),)
-		mkdir $(C_PATH)
-		cp -r ../build/installed/* $(C_PATH)/
-		cp $(C_LIB) .
-		sed -ri '/(\/\/.*)|(\/\*.*\*\/)/d' ./c/include/hacl/config.h
-endif
 
 lib_gen/Lib_RandomBuffer_System_gen.cmx: lib/Lib_RandomBuffer_System_bindings.cmx
 lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cmx lib_gen/Lib_RandomBuffer_System_gen.cmx
@@ -162,7 +149,7 @@ install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
 	ocamlfind install -add hacl-star-raw \
          $(C_LIB) $(C_DYN_LIB) \
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
-         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) c/include/hacl/config.h
+         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) config.h
 
 build: install-hacl-star-raw
 	cd hacl-star && dune build
