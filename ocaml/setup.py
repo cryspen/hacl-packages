@@ -89,7 +89,7 @@ def setup_pkg(static_lib, dynamic_lib, config_name, dest_path):
         check=True, cwd='./hacl-packages')
     copy_lib(path_join('hacl-packages', 'include'),
              path_join('hacl-packages', 'vale', 'include'),
-             path_join('hacl-packages', 'build', 'release'),
+             path_join('hacl-packages', 'build', 'Release'),
              path_join('hacl-packages', 'kremlin'),
              path_join('hacl-packages', 'build'),
              static_lib, dynamic_lib,
