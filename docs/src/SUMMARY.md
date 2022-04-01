@@ -32,4 +32,8 @@
 # Developer Guide
 
 - [Introduction](./developers/readme.md)
+  - [Repository Overview](./developers/repo-overview.md)
+  - [Build Process](./developers/build-process.md)
+    - [Rust](./developers/rust-build.md)
+    - [OCaml](./developers/ocaml-build.md)
   - [Continuous Integration](./developers/ci.md)
