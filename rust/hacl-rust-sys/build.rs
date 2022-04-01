@@ -76,13 +76,9 @@ fn get_hacl_c(out_path: &Path) {
 }
 
 fn build_hacl_c(path: &Path) {
-    let cmd = if cfg!(windows) {
-        "python3 mach"
-    } else {
-        "./mach"
-    };
-    println!(" >>> Building HACL C in {} with {}", path.display(), cmd);
-    let mut mach_cmd = Command::new(cmd);
+    println!(" >>> Building HACL C in {}", path.display());
+    let canon_mach = std::fs::canonicalize(path.join("mach")).expect("Failed to find mach script!");
+    let mut mach_cmd = Command::new(canon_mach);
     let mach_status = mach_cmd
         .current_dir(path)
         // We always build the release version here.
@@ -95,7 +91,7 @@ fn build_hacl_c(path: &Path) {
     }
     let install_path = path.join("build").join("installed");
     println!(" >>> Installing HACL C into {}", install_path.display());
-    let mut mach_cmd = Command::new("./mach");
+    let mut mach_cmd = Command::new(canon_mach);
     let mach_status = mach_cmd
         .current_dir(path)
         .args(&[
