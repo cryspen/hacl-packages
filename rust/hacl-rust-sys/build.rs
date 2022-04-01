@@ -78,7 +78,7 @@ fn get_hacl_c(out_path: &Path) {
 fn build_hacl_c(path: &Path) {
     println!(" >>> Building HACL C in {}", path.display());
     let canon_mach = std::fs::canonicalize(path.join("mach")).expect("Failed to find mach script!");
-    let mut mach_cmd = Command::new(canon_mach);
+    let mut mach_cmd = Command::new(canon_mach.clone());
     let mach_status = mach_cmd
         .current_dir(path)
         // We always build the release version here.
