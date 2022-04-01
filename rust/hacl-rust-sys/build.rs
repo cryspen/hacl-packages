@@ -76,8 +76,13 @@ fn get_hacl_c(out_path: &Path) {
 }
 
 fn build_hacl_c(path: &Path) {
-    println!(" >>> Building HACL C in {}", path.display());
-    let mut mach_cmd = Command::new("./mach");
+    let cmd = if cfg!(windows) {
+        "python3 mach"
+    } else {
+        "./mach"
+    };
+    println!(" >>> Building HACL C in {} with {}", path.display(), cmd);
+    let mut mach_cmd = Command::new(cmd);
     let mach_status = mach_cmd
         .current_dir(path)
         // We always build the release version here.
@@ -114,6 +119,7 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_path = Path::new(&out_dir);
     let mach_build = env::var("MACH_BUILD").ok().is_some();
+    println!("mach_build: {}", mach_build);
 
     // Get the C library and build it first.
     // This is the default behaviour. It can be disabled when working on this
