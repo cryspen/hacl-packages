@@ -39,6 +39,8 @@ jobs:
         run: ./mach build --release -l rust -v
       - name: Test Debug
         run: cargo test --manifest-path rust/Cargo.toml
+        env:
+          MACH_BUILD: 1
 
   standalone:
     strategy:
