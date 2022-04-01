@@ -3,7 +3,7 @@ name: rust
 on: [pull_request]
 
 jobs:
-  test:
+  mach:
     strategy:
       fail-fast: false
       matrix:

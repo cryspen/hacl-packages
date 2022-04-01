@@ -290,6 +290,8 @@ def build(args):
                 **os.environ,
                 "MACH_BUILD": "1"
             }
+            if windows:
+                subprocess.Popen('setx MACH_BUILD 1', shell=True).wait()
             subprocess.run(cargo_cmd, check=True, shell=True, env=env)
         elif args.language == 'ocaml':
             check_cmd('make')
