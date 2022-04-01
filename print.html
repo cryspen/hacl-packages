@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="algorithms.html"><strong aria-hidden="true">1.</strong> Algorithms</a></li><li class="chapter-item expanded "><a href="platforms.html"><strong aria-hidden="true">2.</strong> Platforms</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Building</li><li class="chapter-item expanded "><a href="mach/index.html"><strong aria-hidden="true">4.</strong> mach</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="mach/build.html"><strong aria-hidden="true">4.1.</strong> build</a></li><li class="chapter-item expanded "><a href="mach/test.html"><strong aria-hidden="true">4.2.</strong> test</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL C</li><li class="chapter-item expanded "><a href="hacl-c/index.html"><strong aria-hidden="true">5.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL Rust</li><li class="chapter-item expanded "><a href="hacl-rust/index.html"><strong aria-hidden="true">6.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="hacl-rust/aead.html"><strong aria-hidden="true">6.1.</strong> AEADs</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL OCaml</li><li class="chapter-item expanded "><a href="hacl-ocaml/index.html"><strong aria-hidden="true">7.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL JavaScript</li><li class="chapter-item expanded "><a href="hacl-js/index.html"><strong aria-hidden="true">8.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Developer Guide</li><li class="chapter-item expanded "><a href="developers/index.html"><strong aria-hidden="true">9.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="developers/ci.html"><strong aria-hidden="true">9.1.</strong> Continuous Integration</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="algorithms.html"><strong aria-hidden="true">1.</strong> Algorithms</a></li><li class="chapter-item expanded "><a href="platforms.html"><strong aria-hidden="true">2.</strong> Platforms</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Building</li><li class="chapter-item expanded "><a href="mach/index.html"><strong aria-hidden="true">4.</strong> mach</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="mach/build.html"><strong aria-hidden="true">4.1.</strong> build</a></li><li class="chapter-item expanded "><a href="mach/test.html"><strong aria-hidden="true">4.2.</strong> test</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL C</li><li class="chapter-item expanded "><a href="hacl-c/index.html"><strong aria-hidden="true">5.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL Rust</li><li class="chapter-item expanded "><a href="hacl-rust/index.html"><strong aria-hidden="true">6.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="hacl-rust/aead.html"><strong aria-hidden="true">6.1.</strong> AEADs</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL OCaml</li><li class="chapter-item expanded "><a href="hacl-ocaml/index.html"><strong aria-hidden="true">7.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL JavaScript</li><li class="chapter-item expanded "><a href="hacl-js/index.html"><strong aria-hidden="true">8.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Developer Guide</li><li class="chapter-item expanded "><a href="developers/index.html"><strong aria-hidden="true">9.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="developers/repo-overview.html"><strong aria-hidden="true">9.1.</strong> Repository Overview</a></li><li class="chapter-item expanded "><a href="developers/build-process.html"><strong aria-hidden="true">9.2.</strong> Build Process</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="developers/rust-build.html"><strong aria-hidden="true">9.2.1.</strong> Rust</a></li><li class="chapter-item expanded "><a href="developers/ocaml-build.html"><strong aria-hidden="true">9.2.2.</strong> OCaml</a></li></ol></li><li class="chapter-item expanded "><a href="developers/ci.html"><strong aria-hidden="true">9.3.</strong> Continuous Integration</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -408,6 +408,106 @@ To avoid unnecessary copy operations there's an API doing this for you.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="introduction-4"><a class="header" href="#introduction-4">Introduction</a></h1>
 <h2 id="contributing-1"><a class="header" href="#contributing-1">Contributing</a></h2>
 <p>See CONTRIBUTING.md</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="repository-overview"><a class="header" href="#repository-overview">Repository Overview</a></h1>
+<p>The <a href="https://github.com/cryspen/hacl-packages">hacl-packages repository</a> is a mono repository for all HACL packages and
+bindings.
+The top level holds the HACL C library that is based on the output of <a href="https://github.com/project-everest/hacl-star">HACL*</a>.</p>
+<h2 id="source-code"><a class="header" href="#source-code">Source Code</a></h2>
+<p>The C source code lives in the <code>src</code> directory for most platforms and the
+standard editions.
+The c89 edition can be found in <code>src/c89</code> and the source code for MSVC is found
+int <code>src/msvc</code>.</p>
+<p>The includes are found in the corresponding <code>include</code> directories (<code>include</code>,
+<code>include/c89</code>, and <code>include/msvc</code>).</p>
+<p>Vale is considered an external dependency and therefore lives in its own
+directory <code>vale</code> --- sources in <code>vale/src</code> and headers in <code>vale/include</code>.</p>
+<h3 id="tests"><a class="header" href="#tests">Tests</a></h3>
+<p>Tests are found in the <code>tests</code> folder and are written in modern C++ rather than
+C.</p>
+<h3 id="karamel"><a class="header" href="#karamel">Karamel</a></h3>
+<p>The <a href="https://github.com/FStarLang/karamel">KaRaMeL</a> dependency is found in <code>kremlin</code> and holds only headers that are
+used by the HACL C source code.</p>
+<h3 id="cpu-features"><a class="header" href="#cpu-features">CPU Features</a></h3>
+<p>A tool for basic CPU feature detection can be found in <code>cpu-features</code>.
+This is only used for tests and will probably be removed from this repository
+in future.</p>
+<h2 id="tools"><a class="header" href="#tools">Tools</a></h2>
+<p>The build is driven by the <code>mach</code> script and the <code>CMakeLists.txt</code>.
+They rely on the contents of the <code>tools</code> folder (general tools for managing the
+repository and building in Python), as well as the <code>config</code> folder (platform
+detection and build configuration helper).</p>
+<h3 id="docker"><a class="header" href="#docker">Docker</a></h3>
+<p>Docker tools for extracting the source code from <a href="https://github.com/project-everest/hacl-star">HACL*</a> are found in <code>docker</code>.</p>
+<h3 id="docs"><a class="header" href="#docs">Docs</a></h3>
+<p>The <code>docs</code> folder contains this book you're reading right now.</p>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<p>The language bindings are in sub folders.</p>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<p>The Rust bindings can be found in the <code>rust</code> folder.
+See the <a href="developers/./ocaml-build.html">Rust chapter</a> for more details on the build and structure.</p>
+<h3 id="ocaml"><a class="header" href="#ocaml">OCaml</a></h3>
+<p>The OCaml bindings can be found in the <code>ocaml</code> folder.
+See the <a href="developers/./rust-build.html">OCaml chapter</a> for more details on the build and structure.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="build-process"><a class="header" href="#build-process">Build Process</a></h1>
+<p>The HACL C library is built with <a href="https://cmake.org/">CMake</a> and <a href="https://ninja-build.org/">ninja</a> and uses a Python driver
+script called <code>mach</code>.
+Due to the modular nature of the library the build is more complex than for
+many other libraries.</p>
+<h2 id="selecting-algorithms"><a class="header" href="#selecting-algorithms">Selecting Algorithms</a></h2>
+<p>The algorithms compiled into the library can be selected using the <code>-a|--algorithm</code>
+argument on <code>mach</code>.
+By default all algorithms are selected.
+The files used in the build are selected by running a dependency analysis on the
+requested algorithm files (see <code>configure.py</code>).
+The resulting configuration is written into <code>config/config.cmake</code>, which is used
+as input into the main build process.
+This process is part of the <code>mach</code> script.</p>
+<h2 id="platform-detection"><a class="header" href="#platform-detection">Platform Detection</a></h2>
+<p>Depending on the used toolchain a different set of algorithms can be used.
+In order to define the feature set available in the toolchain CMake runs a set
+of tests.
+The resulting configuration is written into <code>config/cached-config.txt</code> for
+bindings to use.
+Note that the toolchain feature must not be the same as the platform feature
+set the build is running on (due to cross compilation or extended features in the
+toolchain compared to the actual hardware).
+The library has runtime feature detection to ensure that hardware features are
+only used when they are actually available.</p>
+<h2 id="release-builds"><a class="header" href="#release-builds">Release Builds</a></h2>
+<p>By default the builds use the debug mode.
+For release builds</p>
+<pre><code>./mach build --release
+</code></pre>
+<p>is used.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rust-1"><a class="header" href="#rust-1">Rust</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ocaml-1"><a class="header" href="#ocaml-1">OCaml</a></h1>
+<p>There are two different ways of building the OCaml bindings.</p>
+<h2 id="mach-dev-mode"><a class="header" href="#mach-dev-mode">Mach (Dev Mode)</a></h2>
+<p>When working on the library <code>mach</code> offers a convenient way of building the C
+library and the ocaml bindings through <code>mach</code> using the <code>-l|--language</code> argument.</p>
+<pre><code>./mach build -l ocaml
+</code></pre>
+<p>This build the C library, copies the result into the <code>ocaml</code> directory, and then
+builds the OCaml bindings on top.
+Tests can be called through mach as well <code>./mach test -l ocaml</code>.</p>
+<h2 id="standalone-packaging"><a class="header" href="#standalone-packaging">Standalone (Packaging)</a></h2>
+<p>For packaging the hacl-star opam package the bindings can be built standalone.
+In this case the local copy of the HACL C library is ignored.
+Instead a fresh copy is pulled from the git repository and built locally within
+the <code>ocaml</code> directory.
+The following command run in the <code>ocaml</code> directory will build a standalone
+version of the package.</p>
+<pre><code>./setup.py
+export HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt
+make ocamlevercrypt.cmxa
+make -j
+</code></pre>
+<p>First we need to get the HACL C code, build it, and put it where the Makefile
+expects the result.
+This is what the <code>setup.py</code> script does.
+Because the OCaml build requires information about the platform features we
+export <code>HACL_MAKE_CONFIG</code> to point to the CMake generated information.
+Then we can build the bindings with make.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h1>
 
                     </main>

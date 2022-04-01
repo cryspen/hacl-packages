@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Cryspen HACL Packages</title>
+        <title>Build Process - Cryspen HACL Packages</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="../algorithms.html"><strong aria-hidden="true">1.</strong> Algorithms</a></li><li class="chapter-item expanded "><a href="../platforms.html"><strong aria-hidden="true">2.</strong> Platforms</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Building</li><li class="chapter-item expanded "><a href="../mach/index.html"><strong aria-hidden="true">4.</strong> mach</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../mach/build.html"><strong aria-hidden="true">4.1.</strong> build</a></li><li class="chapter-item expanded "><a href="../mach/test.html"><strong aria-hidden="true">4.2.</strong> test</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL C</li><li class="chapter-item expanded "><a href="../hacl-c/index.html"><strong aria-hidden="true">5.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL Rust</li><li class="chapter-item expanded "><a href="../hacl-rust/index.html"><strong aria-hidden="true">6.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../hacl-rust/aead.html"><strong aria-hidden="true">6.1.</strong> AEADs</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL OCaml</li><li class="chapter-item expanded "><a href="../hacl-ocaml/index.html"><strong aria-hidden="true">7.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL JavaScript</li><li class="chapter-item expanded "><a href="../hacl-js/index.html" class="active"><strong aria-hidden="true">8.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Developer Guide</li><li class="chapter-item expanded "><a href="../developers/index.html"><strong aria-hidden="true">9.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../developers/repo-overview.html"><strong aria-hidden="true">9.1.</strong> Repository Overview</a></li><li class="chapter-item expanded "><a href="../developers/build-process.html"><strong aria-hidden="true">9.2.</strong> Build Process</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../developers/rust-build.html"><strong aria-hidden="true">9.2.1.</strong> Rust</a></li><li class="chapter-item expanded "><a href="../developers/ocaml-build.html"><strong aria-hidden="true">9.2.2.</strong> OCaml</a></li></ol></li><li class="chapter-item expanded "><a href="../developers/ci.html"><strong aria-hidden="true">9.3.</strong> Continuous Integration</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="../algorithms.html"><strong aria-hidden="true">1.</strong> Algorithms</a></li><li class="chapter-item expanded "><a href="../platforms.html"><strong aria-hidden="true">2.</strong> Platforms</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Building</li><li class="chapter-item expanded "><a href="../mach/index.html"><strong aria-hidden="true">4.</strong> mach</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../mach/build.html"><strong aria-hidden="true">4.1.</strong> build</a></li><li class="chapter-item expanded "><a href="../mach/test.html"><strong aria-hidden="true">4.2.</strong> test</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL C</li><li class="chapter-item expanded "><a href="../hacl-c/index.html"><strong aria-hidden="true">5.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL Rust</li><li class="chapter-item expanded "><a href="../hacl-rust/index.html"><strong aria-hidden="true">6.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../hacl-rust/aead.html"><strong aria-hidden="true">6.1.</strong> AEADs</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">HACL OCaml</li><li class="chapter-item expanded "><a href="../hacl-ocaml/index.html"><strong aria-hidden="true">7.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">HACL JavaScript</li><li class="chapter-item expanded "><a href="../hacl-js/index.html"><strong aria-hidden="true">8.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Developer Guide</li><li class="chapter-item expanded "><a href="../developers/index.html"><strong aria-hidden="true">9.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../developers/repo-overview.html"><strong aria-hidden="true">9.1.</strong> Repository Overview</a></li><li class="chapter-item expanded "><a href="../developers/build-process.html" class="active"><strong aria-hidden="true">9.2.</strong> Build Process</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../developers/rust-build.html"><strong aria-hidden="true">9.2.1.</strong> Rust</a></li><li class="chapter-item expanded "><a href="../developers/ocaml-build.html"><strong aria-hidden="true">9.2.2.</strong> OCaml</a></li></ol></li><li class="chapter-item expanded "><a href="../developers/ci.html"><strong aria-hidden="true">9.3.</strong> Continuous Integration</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,16 +134,46 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+                        <h1 id="build-process"><a class="header" href="#build-process">Build Process</a></h1>
+<p>The HACL C library is built with <a href="https://cmake.org/">CMake</a> and <a href="https://ninja-build.org/">ninja</a> and uses a Python driver
+script called <code>mach</code>.
+Due to the modular nature of the library the build is more complex than for
+many other libraries.</p>
+<h2 id="selecting-algorithms"><a class="header" href="#selecting-algorithms">Selecting Algorithms</a></h2>
+<p>The algorithms compiled into the library can be selected using the <code>-a|--algorithm</code>
+argument on <code>mach</code>.
+By default all algorithms are selected.
+The files used in the build are selected by running a dependency analysis on the
+requested algorithm files (see <code>configure.py</code>).
+The resulting configuration is written into <code>config/config.cmake</code>, which is used
+as input into the main build process.
+This process is part of the <code>mach</code> script.</p>
+<h2 id="platform-detection"><a class="header" href="#platform-detection">Platform Detection</a></h2>
+<p>Depending on the used toolchain a different set of algorithms can be used.
+In order to define the feature set available in the toolchain CMake runs a set
+of tests.
+The resulting configuration is written into <code>config/cached-config.txt</code> for
+bindings to use.
+Note that the toolchain feature must not be the same as the platform feature
+set the build is running on (due to cross compilation or extended features in the
+toolchain compared to the actual hardware).
+The library has runtime feature detection to ensure that hardware features are
+only used when they are actually available.</p>
+<h2 id="release-builds"><a class="header" href="#release-builds">Release Builds</a></h2>
+<p>By default the builds use the debug mode.
+For release builds</p>
+<pre><code>./mach build --release
+</code></pre>
+<p>is used.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../hacl-ocaml/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../developers/repo-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../developers/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../developers/rust-build.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -152,10 +182,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../hacl-ocaml/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../developers/repo-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../developers/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../developers/rust-build.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
