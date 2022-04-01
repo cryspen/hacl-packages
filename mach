@@ -286,6 +286,8 @@ def build(args):
             check_cmd('cargo')
             _install(prefix='build/installed', config=build_config)
             cargo_cmd = 'cargo build --manifest-path rust/Cargo.toml'
+            if verbose:
+                cargo_cmd += ' -v'
             env = {
                 **os.environ,
                 "MACH_BUILD": "1"
