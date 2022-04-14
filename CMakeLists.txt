@@ -302,7 +302,7 @@ endif()
 # Install
 ## This allows package maintainers to control the install destination by setting
 ## the appropriate cache variables.
-CMAKE_INSTALL_LIBDIR = lib
+set(CMAKE_INSTALL_LIBDIR lib)
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
 install(TARGETS hacl_static hacl)
