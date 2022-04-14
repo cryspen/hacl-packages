@@ -247,27 +247,21 @@ def build(args):
     if len(cxxflags) != 0:
         cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
 
-    # There must be a config.cmake already that contains some useful information.
-    # We have to generate config.h before we can generate the configuration
-    # properly. 🥚🐓
-    # First run a dummy config for all algorithms.
-    config = Config(json_config(), source_dir, include_dir, compiler=compiler)
+    # There is a config/config.cmake already but it contains everything.
+    # Generate a new config.cmake using the algorithms argument if any given
+    algorithms = []
+    if args.algorithms and not bindings:
+        algorithms = re.split(r"\W+", args.algorithms)
+    config = Config(json_config(), source_dir,
+                    include_dir, algorithms=algorithms, compiler=compiler)
     config.write_cmake_config(cmake_config())
     config.write_dep_config(dep_config())
+
     # '--debug-trycompile'
     cmake_cmd = ['cmake', '-B', 'build']
     cmake_cmd.extend(cmake_args)
     vprint(str(cmake_cmd))
     subprocess.run(cmake_cmd, check=True)
-
-    # Generate config.cmake using the algorithms argument if any given
-    algorithms = []
-    if args.algorithms and not bindings:
-        algorithms = re.split(r"\W+", args.algorithms)
-    config = Config(json_config(), source_dir,
-                    include_dir, algorithms=algorithms)
-    config.write_cmake_config(cmake_config())
-    config.write_dep_config(dep_config())
 
     # Set ninja arguments
     ninja_args = []
@@ -301,7 +295,8 @@ def build(args):
             print()
             build_ocaml()
         else:
-            print("Unknown language binding %s. Please see --help for supported bindings" % (args.language))
+            print("Unknown language binding %s. Please see --help for supported bindings" %
+                  (args.language))
             exit(1)
 
     print("Build finished.")
