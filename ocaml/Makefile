@@ -39,10 +39,7 @@ endif
 include $(HACL_MAKE_CONFIG)
 STATIC_C_LIB_NAME=hacl_static
 DYNAMIC_C_LIB_NAME=hacl
-BLOCKLIST=Hacl_Bignum256_32.c  Hacl_Bignum32.c Hacl_Bignum4096_32.c \
-			Hacl_Bignum4096.c Hacl_Bignum.c Hacl_Bignum64.c Hacl_Bignum_Base.c \
-			Hacl_GenericField32.c Hacl_GenericField64.c \
-			Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
+BLOCKLIST= Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
 			Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c \
 			Hacl_HPKE_Curve64_CP32_SHA256.c Hacl_HPKE_Curve64_CP32_SHA512.c \
 			Hacl_HPKE_Curve51_CP256_SHA256.c Hacl_HPKE_Curve51_CP256_SHA512.c \
@@ -50,7 +47,8 @@ BLOCKLIST=Hacl_Bignum256_32.c  Hacl_Bignum32.c Hacl_Bignum4096_32.c \
 			Hacl_HPKE_P256_CP256_SHA256.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
 BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
-			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c
+			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c \
+			Hacl_Bignum4096.c Hacl_Bignum64.c Hacl_GenericField64.c
 endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC256))
 BLOCKLIST+=Hacl_Bignum256.c Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c \
