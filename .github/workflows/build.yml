@@ -200,6 +200,7 @@ jobs:
   windows:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         compiler: ["", "--msvc"]
         # options: ["", "-m32"]

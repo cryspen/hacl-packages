@@ -10,7 +10,7 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          # - windows-latest
+          - windows-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -24,19 +24,29 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo
+
       - if: matrix.os == 'macos-latest'
         run: brew install ninja
+
       - if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build
+
       - if: matrix.os == 'windows-latest'
         uses: ilammy/msvc-dev-cmd@v1
+
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
+
+      - name: Cargo update
+        run: cargo update
+
       - name: Debug Build
         run: ./mach build -l rust -v
+
       - name: Release Build
         run: ./mach build --release -l rust -v
+
       - name: Test Debug
         run: cargo test --manifest-path rust/Cargo.toml
         env:
@@ -56,26 +66,29 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ~/.cargo/bin/
-      #       ~/.cargo/registry/index/
-      #       ~/.cargo/registry/cache/
-      #       ~/.cargo/git/db/
-      #       target/
-      #     key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo
 
       - if: matrix.os == 'macos-latest'
         run: brew install ninja
       - if: matrix.os == 'ubuntu-latest'
-
         run: sudo apt-get install ninja-build
+
       - if: matrix.os == 'windows-latest'
         uses: ilammy/msvc-dev-cmd@v1
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
+
+      - name: Cargo update
+        run: cargo update
 
       - name: Debug Build
         working-directory: rust
