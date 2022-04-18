@@ -134,7 +134,7 @@ def build(args):
         print("Cleaning ...")
         try:
             shutil.rmtree("build")
-            os.remove(cmake_config())
+            # os.remove(cmake_config())
             clean_ocaml()
         except:
             pass  # We don't really care
@@ -249,6 +249,12 @@ def build(args):
 
     # There is a config/config.cmake already but it contains everything.
     # Generate a new config.cmake using the algorithms argument if any given
+    # '--debug-trycompile'
+    cmake_cmd = ['cmake', '-B', 'build']
+    cmake_cmd.extend(cmake_args)
+    vprint(str(cmake_cmd))
+    subprocess.run(cmake_cmd, check=True)
+
     algorithms = []
     if args.algorithms and not bindings:
         algorithms = re.split(r"\W+", args.algorithms)
@@ -257,11 +263,6 @@ def build(args):
     config.write_cmake_config(cmake_config())
     config.write_dep_config(dep_config())
 
-    # '--debug-trycompile'
-    cmake_cmd = ['cmake', '-B', 'build']
-    cmake_cmd.extend(cmake_args)
-    vprint(str(cmake_cmd))
-    subprocess.run(cmake_cmd, check=True)
 
     # Set ninja arguments
     ninja_args = []
@@ -310,7 +311,7 @@ def build(args):
 def clean(args):
     """Remove all build and config artifacts"""
     shutil.rmtree("build")
-    os.remove(cmake_config())
+    # os.remove(cmake_config())
 
 # === Boiler plate === #
 
