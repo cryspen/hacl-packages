@@ -1,0 +1,246 @@
+name: c
+
+on: [pull_request]
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [{ cpp: g++-11, c: gcc-11 }, { cpp: clang++, c: clang }]
+    env:
+      CC: ${{ matrix.compiler.c }}
+      CXX: ${{ matrix.compiler.cpp }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: brew install ninja
+      - name: Debug Build & Test
+        run: ./mach build --test -v
+      - name: Release Build & Test
+        run: ./mach build --release --test -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-x64-${{ matrix.compiler.c }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  macos-aarch64:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["aarch64-apple-ios", "aarch64-apple-darwin"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: brew install ninja
+      - name: Debug Build
+        run: ./mach build --tests -v --target ${{ matrix.target }}
+      - name: Release Build
+        run: ./mach build --release --tests -v --target ${{ matrix.target }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            build/Debug
+            build/Release
+  linux-gcc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [7, 8, 9, 10, 11]
+    env:
+      CC: gcc-${{ matrix.compiler }}
+      CXX: g++-${{ matrix.compiler }}
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build gcc-${{ matrix.compiler }} g++-${{ matrix.compiler }}
+      - uses: actions/checkout@v2
+      - name: Debug Build & Test
+        run: ./mach build --test -v
+      - name: Release Build & Test
+        run: ./mach build --release --test -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-gcc${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  linux-clang:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [7, 8, 9, 10]
+        options: ["", "-m32"]
+    env:
+      CC: clang-${{ matrix.compiler }}
+      CXX: clang++-${{ matrix.compiler }}
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build clang-${{ matrix.compiler }} gcc-multilib g++-multilib
+      - uses: actions/checkout@v2
+      - name: Debug Build & Test
+        run: ./mach build --test -v ${{ matrix.options }}
+      - name: Release Build & Test
+        run: ./mach build --release --test -v ${{ matrix.options }}
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-clang${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}${{ matrix.options }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  android:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["aarch64-linux-android"]
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+      - uses: actions/checkout@v2
+      - name: Debug Build
+        run: ./mach build --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
+      - name: Release Build
+        run: ./mach build --release --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            build/Debug
+            build/Release
+  s390x-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
+      - uses: actions/checkout@v2
+      - name: Debug Build
+        run: ./mach build --tests --target s390x -v
+      - name: Release Build
+        run: ./mach build --release --target s390x --tests -v
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-s390x-gcc10-${{ steps.vars.outputs.short_sha }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
+  windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: ["", "--msvc"]
+        # options: ["", "-m32"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Output name
+        id: vars
+        shell: bash
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: choco install ninja
+      - name: Debug Build & Test
+        run: python mach build --test -v ${{ matrix.compiler }}
+      - name: Release Build & Test
+        run: python mach build --release --test -v ${{ matrix.compiler }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-x64${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          path: |
+            build/Debug
+            build/Release
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+      - uses: actions/checkout@v2
+      - name: Build
+        run: ./_build.sh
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-default-${{ steps.vars.outputs.short_sha }}
+          path: build/Release

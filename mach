@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+#
+#    Copyright 2022 Cryspen Sarl
+#
+#    Licensed under the Apache License, Version 2.0 or MIT.
+#    * http://www.apache.org/licenses/LICENSE-2.0
+#    * http://opensource.org/licenses/MIT
+#
+# The mach driver for HACL.
+
+
+import pathlib
+import subprocess
+import re
+import sys
+import os
+import shutil
+from tools.configure import Config
+
+from tools.utils import config_cache, subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
+from tools.test import run_tests
+from tools.macos import ios_sysroot
+from tools.ocaml import build_ocaml, clean_ocaml
+
+# === SUBCOMMANDS === #
+
+
+def _install(prefix=None, config=None):
+    configuration = "Debug"
+    if config:
+        configuration = config
+    cmake_cmd = ['cmake', '--install', 'build', '--config', configuration]
+    if prefix:
+        cmake_cmd.extend(['--prefix', prefix])
+    subprocess.run(cmake_cmd, check=True)
+
+
+@subcommand([argument("-p", "--prefix",
+                      help="The path prefix to install into.", type=str),
+             argument("-c", "--config",
+                      help="The config to install, i.e. Debug or Release.", type=str)])
+def install(args):
+    _install(prefix=args.prefix, config=args.config)
+
+
+@subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
+             argument("--tests", help="Build tests.", action='store_true'),
+             argument("--test", help="Build and run tests.",
+                      action='store_true'),
+             argument("-r", "--release", help="Build in release mode.",
+                      action='store_true'),
+             argument("-a", "--algorithms",
+                      help="A list of algorithms to enable. Defaults to all.", type=str),
+             argument(
+                 "-p", "--target", help="Define compile target for cross compilation.", type=str),
+             argument(
+                 "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
+             argument(
+                 "-s", "--sanitizer", help="Enable sanitizers.", type=str),
+             argument(
+                 "--ndk", help="Path to the Android NDK.", type=str),
+            argument(
+                "--msvc", help="Use MSVC on Windows (default is clang-cl).",  action='store_true'),
+             argument(
+                 "-e", "--edition", help="Choose a different HACL* edition.", type=str),
+             argument(
+                 "-l", "--language", help="Build language bindings for the given language.", type=str),
+             argument("-v", "--verbose", help="Make builds verbose.",
+                      action='store_true'),
+             argument("-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'), ])
+def build(args):
+    """Main entry point for building HACL
+
+    For convenience it is possible to run tests right after building using --test.
+
+    Supported cross compilation targets:
+        - x86_64-apple-darwin (macOS aarch64 only)
+        - s390x
+        - aarch64-apple-ios (macOS only)
+        - aarch64-apple-darwin (macOS x64 only)
+        - aarch64-linux-android
+
+    Features that can be disabled (TBD):
+        - vec128 (avx/neon)
+        - vec256 (avx2)
+        - vale (x64 assembly)
+
+    Supported sanitizers:
+        - asan
+        - ubsan
+
+    Use an edition if you want a different build. Note that this build will
+    use the MSVC version by default on Windows.
+    Supported editions:
+        - c89
+
+    HACL can be built for another language than C.
+    Note that bindings will always require the full C library such that the
+    algorithm flag will be ignored.
+        - rust
+        - ocaml
+        - wasm (TBD)
+
+    💡  Windows builds are limited. The following arguments are not supported:
+        - algorithms
+        - sanitizer
+        - edition
+        - disable
+    """
+    cmake_args = []
+    # Verbosity
+    verbose = False
+    if args.verbose:
+        verbose = True
+
+        def vprint(*args, **kwargs):
+            print(args, kwargs)
+    else:
+        vprint = lambda *a, **k: None
+    # Set config
+    build_config = "Debug"
+    if args.release:
+        build_config = "Release"
+
+    # Clean if requested
+    if args.clean:
+        print("Cleaning ...")
+        try:
+            shutil.rmtree("build")
+            os.remove(cmake_config())
+            os.remove(config_cache())
+            clean_ocaml()
+        except:
+            pass  # We don't really care
+    try:
+        os.mkdir("build")
+    except:
+        pass  # We ignore the error if the directory exists already
+
+    # Check if the config has been run before.
+    # In future we might want to put content in there.
+    cache = False
+    if os.path.exists(config_cache()):
+        cache = True
+
+    bindings = args.language is not None
+    if bindings and args.language == 'ocaml':
+        # OCaml always gets release builds for now
+        build_config = "Release"
+
+    cflags = []
+    cxxflags = []
+
+    # We want to build for a 32-bit platform.
+    m32 = False
+    if args.m32:
+        cflags.append("-m32")
+        cxxflags.append("-m32")
+        m32 = True
+
+    # Our default compiler is clang.
+    compiler = os.getenv('CC', 'clang')
+    windows = False
+
+    # Select the source folder to use (regular, c89, msvc)
+    source_dir = "src"
+    include_dir = "include"
+    if args.edition == "c89":
+        source_dir = os.path.join(source_dir, "c89")
+        include_dir = os.path.join(include_dir, "c89")
+        cmake_args.append("-DCMAKE_C_STANDARD=90")
+    # Set MSVC if detecting Windows.
+    if sys.platform == "win32":
+        windows = True
+        source_dir = os.path.join(source_dir, "msvc")
+        include_dir = os.path.join(include_dir, "msvc")
+        # get msvc in the path (only x64 for now)
+        vswhere_cmd = ['tools\\vcbuild.cmd']
+        subprocess.run(vswhere_cmd, check=True)
+
+    # We use the ninja multi config generator.
+    cmake_args.append("-GNinja Multi-Config")
+
+    # Use MSVC on Windows if requested.
+    if windows and args.msvc:
+        cmake_args.append("-DUSE_MSVC=1")
+
+    # Set target toolchain if cross compiling
+    if args.target:
+        if windows:
+            print("! Cross-compilation is not supporte on Windows.")
+            exit(1)
+        if m32:
+            print("! Cross-compilation is not supported when --m32 is set.")
+            exit(1)
+        if args.target == "x86_64-apple-darwin":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+        elif args.target == "s390x":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
+        elif args.target == "aarch64-apple-ios":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_OSX_SYSROOT="+ios_sysroot()]
+            )
+        elif args.target == "aarch64-apple-darwin":
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
+        elif args.target == "aarch64-linux-android":
+            if args.ndk:
+                cmake_args.append("-DANDROID_NDK_PATH="+args.ndk)
+            else:
+                print(
+                    "! Compiling for \"%s\" requires an NDK. \n\t  Use --ndk to specify the path." % args.target)
+                print("  See help for more information.")
+                exit(1)
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
+        else:
+            print("! Unknown cross-compilation target \"%s\"" % args.target)
+            print("  See help for available targets.")
+            exit(1)
+    if args.disable:
+        if windows:
+            print("! Disabling features is not supporte on Windows.")
+            exit(1)
+        features_to_disable = list(
+            map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
+        cmake_args.extend(features_to_disable)
+    if args.tests or args.test:
+        cmake_args.append("-DENABLE_TESTS=ON")
+    if args.sanitizer:
+        if windows:
+            print("! Sanitizers are not supporte on Windows.")
+            exit(1)
+        sanitizers = list(
+            map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
+        cmake_args.extend(sanitizers)
+
+    # if verbose:
+    #     cmake_args.extend(["--debug-output", "--trace"])
+
+    if len(cflags) != 0:
+        cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
+    if len(cxxflags) != 0:
+        cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
+
+    # In order to perform correct dependency analysis we have to first get a
+    # correct config.h. The config.h is generated by cmake, which requires the
+    # config.cmake generated by this script.
+    # We therefore have to
+    # - run the mach configuration to generate a (incorrect) config.cmake
+    # - run cmake to generate config.h
+    # - run the mach configuration again to generate the correct config.cmake
+    # - run cmake to generate the ninja build files
+    #
+    # If this has been run on this system before, only the last cmake invocation
+    # is performed.
+    # '--debug-trycompile'
+    if not cache:
+        print("Running config to write config.cmake and config.h ...")
+        config = Config(json_config(), source_dir,
+                        include_dir, compiler=compiler)
+        config.write_cmake_config(cmake_config())
+        config.write_dep_config(dep_config())
+
+        cmake_cmd = ['cmake', '-B', 'build']
+        cmake_cmd.extend(cmake_args)
+        vprint(str(cmake_cmd))
+        subprocess.run(cmake_cmd, check=True)
+
+        pathlib.Path(config_cache()).touch()
+
+    if not cache or (args.algorithms and not bindings) or args.test:
+        algorithms = []
+        if args.algorithms and not bindings:
+            algorithms = re.split(r"\W+", args.algorithms)
+        config = Config(json_config(), source_dir,
+                        include_dir, algorithms=algorithms, compiler=compiler)
+        config.write_cmake_config(cmake_config())
+        config.write_dep_config(dep_config())
+
+    cmake_cmd = ['cmake', '-B', 'build']
+    cmake_cmd.extend(cmake_args)
+    vprint(str(cmake_cmd))
+    subprocess.run(cmake_cmd, check=True)
+
+    # Set ninja arguments
+    ninja_args = []
+    if verbose:
+        ninja_args.append('-v')
+
+    # build C library
+    ninja_cmd = ['ninja', '-f', 'build-%s.ninja' % build_config, '-C', 'build']
+    ninja_cmd.extend(ninja_args)
+    vprint(str(ninja_cmd))
+    subprocess.run(ninja_cmd, check=True)
+
+    # build bindings if requested
+    if bindings:
+        if args.language == 'rust':
+            check_cmd('cargo')
+            _install(prefix='build/installed', config=build_config)
+            cargo_cmd = 'cargo build --manifest-path rust/Cargo.toml'
+            if verbose:
+                cargo_cmd += ' -v'
+            env = {
+                **os.environ,
+                "MACH_BUILD": "1"
+            }
+            if windows:
+                subprocess.Popen('setx MACH_BUILD 1', shell=True).wait()
+            subprocess.run(cargo_cmd, check=True, shell=True, env=env)
+        elif args.language == 'ocaml':
+            check_cmd('make')
+            check_cmd('ocaml')
+            print()
+            build_ocaml()
+        else:
+            print("Unknown language binding %s. Please see --help for supported bindings" %
+                  (args.language))
+            exit(1)
+
+    print("Build finished.")
+
+    # test if requested
+    if args.test:
+        run_tests(config.tests, build_config)
+
+
+@subcommand()
+def clean(args):
+    """Remove all build and config artifacts"""
+    shutil.rmtree("build")
+    os.remove(cmake_config())
+    os.remove(config_cache())
+
+# === Boiler plate === #
+
+
+def main():
+    args = cli.parse_args()
+    if args.subcommand is None:
+        cli.print_help()
+    else:
+        args.func(args)
+
+
+if __name__ == '__main__':
+    main()

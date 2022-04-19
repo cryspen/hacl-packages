@@ -1,0 +1,6 @@
+[book]
+authors = ["Franziskus Kiefer"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Cryspen HACL Packages"
