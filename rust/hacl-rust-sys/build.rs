@@ -62,8 +62,6 @@ fn get_hacl_c(out_path: &Path) {
         .current_dir(out_path)
         .args(&[
             "clone",
-            "-b",
-            "franziskus/dev-cleanup",
             "https://github.com/cryspen/hacl-packages",
             "--depth=1",
         ])
