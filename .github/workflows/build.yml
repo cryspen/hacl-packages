@@ -225,3 +225,22 @@ jobs:
           path: |
             build/Debug
             build/Release
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+      - uses: actions/checkout@v2
+      - name: Build
+        run: ./_build.sh
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-default-${{ steps.vars.outputs.short_sha }}
+          path: build/Release

@@ -8,7 +8,7 @@ from the [Vale] project, and an agile multiplexed cryptographic provider called 
 As such, the full [HACL*] repository contains many software artifacts and a complicated build system
 that can be intimidating to a crypto developer who simply wishes to use verified crypto.
 
-This repository addresses this gap by presenting several usable crypto packages developed by Cryspen on top of HACL*.
+This repository addresses this gap by presenting several usable crypto packages developed by Cryspen on top of HACL\*.
 In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
 as well as Rust, OCaml, and JavaScript bindings for this library. Cryspen is in the process of adding more usable APIs for crypto
 primitives, as well as extensive documentation for these APIs. Cryspen is also working on more optimized versions of some
@@ -18,9 +18,13 @@ algorithms.
 
 We uses [cmake] to configure the C build and [ninja] to build.
 
-- [ ] describe cargo
-
 Quick start: `./mach build --test`
+
+Build dependencies
+
+- [cmake]
+- [ninja]
+- [python]
 
 ## mach
 
@@ -40,8 +44,8 @@ ensure that changes do not break them.
 - [x] x86 Linux (i686-unknown-linux-gnu)
 - [x] x86_64 macOS (x86_64-apple-darwin)
 - [x] x86_64 Windows
-    - [x] x86_64-pc-windows-msvc
-    - [x] x86_64-pc-windows-clang
+  - [x] x86_64-pc-windows-msvc
+  - [x] x86_64-pc-windows-clang
 - [ ] x86 Windows (i686-pc-windows-msvc)
 
 ### Tier 2
@@ -69,10 +73,9 @@ there is no guarantee that they work.
 - FreeBSD / x64
 
 ## Compiler support
-When using the `c89` edition of HACL GCC starting from 4.8 is supported.
 
-- [ ] define clang and MSVC version support
-- [ ] test gcc 5.4
+When using the `c89` edition of HACL GCC 4.8 and up are supported.
+In any other case a modern C compiler is expected.
 
 ## Algorithms
 
@@ -118,8 +121,8 @@ Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 
 HACL packages are licensed under either of
 
- * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
- * [MIT license](http://opensource.org/licenses/MIT)
+- [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+- [MIT license](http://opensource.org/licenses/MIT)
 
 at your option.
 
@@ -130,8 +133,9 @@ at your option.
 [gtest]: https://google.github.io/googletest/
 [nlohmann_json]: https://github.com/nlohmann/json
 [hacl*]: https://hacl-star.github.io
-[F*]: https://fstar-lang.org
+[f*]: https://fstar-lang.org
 [vale]: https://hacl-star.github.io/HaclValeEverCrypt.html
 [evercrypt]: https://hacl-star.github.io/HaclValeEverCrypt.html
-[status]: https://img.shields.io/badge/status-alpha-red.svg?style=for-the-badge
-[Project Everest]: https://project-everest.github.io/
+[status]: https://img.shields.io/badge/status-beta-orange.svg?style=for-the-badge
+[project everest]: https://project-everest.github.io/
+[python]: https://www.python.org/
