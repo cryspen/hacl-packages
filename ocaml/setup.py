@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 #
 #    Copyright 2022 Cryspen Sarl
-#    Licensed under the Apache License, Version 2.0 or MIT
+#
+#    Licensed under the Apache License, Version 2.0 or MIT.
+#    * http://www.apache.org/licenses/LICENSE-2.0
+#    * http://opensource.org/licenses/MIT
 #
 # Setting up the HACL C library for the OCaml bindings.
 # There are two different ways to do this

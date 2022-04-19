@@ -114,6 +114,15 @@ CMake takes care of pulling and building the package.
 
 Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 
+## License
+
+HACL packages are licensed under either of
+
+ * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+ * [MIT license](http://opensource.org/licenses/MIT)
+
+at your option.
+
 [//]: # "links"
 [cmake]: https://cmake.org/
 [ninja]: https://ninja-build.org/
