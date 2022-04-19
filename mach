@@ -273,7 +273,7 @@ def build(args):
 
         pathlib.Path(config_cache()).touch()
 
-    if not cache or (args.algorithms and not bindings):
+    if not cache or (args.algorithms and not bindings) or args.test:
         algorithms = []
         if args.algorithms and not bindings:
             algorithms = re.split(r"\W+", args.algorithms)

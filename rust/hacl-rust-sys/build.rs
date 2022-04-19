@@ -63,7 +63,7 @@ fn get_hacl_c(out_path: &Path) {
         .args(&[
             "clone",
             "-b",
-            "franziskus/rust-rework",
+            "franziskus/dev-cleanup",
             "https://github.com/cryspen/hacl-packages",
             "--depth=1",
         ])
