@@ -35,6 +35,10 @@ def dep_config():
 def config_check_file():
     return join("config", ".dependency_check")
 
+
+def config_cache():
+    return os.path.join("config", ".cache")
+
 # FIXME: #10 add config.type (Debug/Release)
 
 

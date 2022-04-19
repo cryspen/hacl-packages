@@ -14,3 +14,4 @@ docs/build
 cpu-features/detect
 /pkg
 __pycache__/
+config/.cache

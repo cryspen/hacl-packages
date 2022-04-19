@@ -31,7 +31,7 @@ endif()
 project(hacl
         VERSION 0.1.0
         DESCRIPTION "The High Assurance Crypto Library"
-        HOMEPAGE_URL "https://cryspen.com/hacl"
+        HOMEPAGE_URL "https://www.cryspen.com/hacl"
         LANGUAGES C CXX
 )
 

@@ -133,7 +133,6 @@ if(NOT HACL_TARGET_OS)
         if(${MINGW})
             set(HACL_TARGET_OS mingw)
         else()
-            # FIXME: What about clang on Windows? I think that's what we really want.
             set(HACL_TARGET_OS msvc)
         endif()
     endif()
