@@ -135,6 +135,35 @@ read_json()
   return tests_out;
 }
 
+std::vector<TestCase>
+read_official_json()
+{
+
+  // Read JSON test vector
+  std::string test_dir = "official.json";
+  std::ifstream json_test_file(test_dir);
+  json test_vectors;
+  json_test_file >> test_vectors;
+
+  std::vector<TestCase> tests_out;
+
+  // Read test group
+  for (auto& test : test_vectors.items()) {
+    auto test_case = test.value();
+    if (test_case["hash"] == "blake2b") {
+      std::string digest_str = test_case["out"];
+      auto digest = from_hex(digest_str);
+      auto out_len = digest_str.length() / 2;
+      auto input = from_hex(test_case["in"]);
+      auto key = from_hex(test_case["key"]);
+
+      tests_out.push_back({ out_len, digest, input, key });
+    }
+  }
+
+  return tests_out;
+}
+
 class Blake2bKAT : public ::testing::TestWithParam<TestCase>
 {};
 
@@ -170,3 +199,6 @@ TEST_P(Blake2bKAT, TryKAT)
 }
 
 INSTANTIATE_TEST_SUITE_P(Kat, Blake2bKAT, ::testing::ValuesIn(read_json()));
+INSTANTIATE_TEST_SUITE_P(OfficialKat,
+                         Blake2bKAT,
+                         ::testing::ValuesIn(read_official_json()));
