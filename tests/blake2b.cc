@@ -13,8 +13,10 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#include <fstream>
 
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 
 #include "hacl-cpu-features.h"
 
@@ -35,6 +37,8 @@
 // Only include this for checking CPU flags.
 #include "Vale.h"
 #endif
+
+using json = nlohmann::json;
 
 // Function pointer to multiplex between the different implementations.
 typedef void (
@@ -90,3 +94,67 @@ TEST_P(Blake2bTesting, TryTestVectors)
 INSTANTIATE_TEST_SUITE_P(TestVectors,
                          Blake2bTesting,
                          ::testing::ValuesIn(vectors2b));
+
+// === Test vectors === //
+
+#define bytes std::vector<uint8_t>
+
+typedef struct
+{
+  size_t out_len;
+  bytes digest;
+  bytes input;
+  bytes key;
+} TestCase;
+
+std::vector<TestCase>
+read_json()
+{
+
+  // Read JSON test vector
+  std::string test_dir = "blake2b.json";
+  std::ifstream json_test_file(test_dir);
+  json test_vectors;
+  json_test_file >> test_vectors;
+
+  std::vector<TestCase> tests_out;
+
+  // Read test group
+  for (auto& test : test_vectors.items()) {
+    auto test_case = test.value();
+    auto out_len = test_case["outlen"];
+    auto digest = from_hex(test_case["out"]);
+    auto input = from_hex(test_case["input"]);
+    auto key = from_hex(test_case["key"]);
+
+    tests_out.push_back({ out_len, digest, input, key });
+  }
+
+  return tests_out;
+}
+
+class Blake2bKAT : public ::testing::TestWithParam<TestCase>
+{};
+
+TEST_P(Blake2bKAT, TryKAT)
+{
+  // Initialize CPU feature detection
+  hacl_init_cpu_features();
+  const TestCase& test_case(GetParam());
+
+  // Stupid const
+  uint8_t* input = const_cast<uint8_t*>(test_case.input.data());
+  uint8_t* key = const_cast<uint8_t*>(test_case.key.data());
+  uint8_t* digest = const_cast<uint8_t*>(test_case.digest.data());
+
+  bool test = test_blake2b(&Hacl_Blake2b_32_blake2b,
+                           test_case.input.size(),
+                           input,
+                           test_case.key.size(),
+                           key,
+                           test_case.out_len,
+                           digest);
+  EXPECT_TRUE(test);
+}
+
+INSTANTIATE_TEST_SUITE_P(Kat, Blake2bKAT, ::testing::ValuesIn(read_json()));
