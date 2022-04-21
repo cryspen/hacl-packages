@@ -21,6 +21,7 @@
 
 #include "util.h"
 
+#include "EverCrypt_Ed25519.h"
 #include "Hacl_Ed25519.h"
 
 using json = nlohmann::json;
@@ -65,10 +66,15 @@ TEST(Ed25519Test, WycheproofTest)
       // First sign and check that the signature is correct.
       auto signature_bytes = from_hex(sig);
       uint8_t my_signature[64] = { 0 };
+      uint8_t evercrypt_signature[64] = { 0 };
       Hacl_Ed25519_sign(&my_signature[0],
                         from_hex(sk).data(),
                         msg_bytes.size(),
                         msg_bytes.data());
+      EverCrypt_Ed25519_sign(&evercrypt_signature[0],
+                             from_hex(sk).data(),
+                             msg_bytes.size(),
+                             msg_bytes.data());
       std::vector<uint8_t> my_signature_vector(my_signature, my_signature + 64);
       if (result == "valid") {
         EXPECT_EQ(my_signature_vector, signature_bytes)
@@ -76,6 +82,12 @@ TEST(Ed25519Test, WycheproofTest)
           << "Expected: " << sig << std::endl;
 
         bool self_test = Hacl_Ed25519_verify(from_hex(pk).data(),
+                                             msg_bytes.size(),
+                                             msg_bytes.data(),
+                                             &my_signature[0]);
+        EXPECT_TRUE(self_test);
+
+        self_test = EverCrypt_Ed25519_verify(from_hex(pk).data(),
                                              msg_bytes.size(),
                                              msg_bytes.data(),
                                              &my_signature[0]);
@@ -91,10 +103,15 @@ TEST(Ed25519Test, WycheproofTest)
                                        msg_bytes.size(),
                                        msg_bytes.data(),
                                        signature_bytes.data());
+      bool valid_evercrypt = EverCrypt_Ed25519_verify(from_hex(pk).data(),
+                                                      msg_bytes.size(),
+                                                      msg_bytes.data(),
+                                                      signature_bytes.data());
       if (result == "valid") {
         EXPECT_TRUE(valid);
+        EXPECT_TRUE(valid_evercrypt);
       } else {
-        EXPECT_FALSE(valid)
+        EXPECT_FALSE(valid | valid_evercrypt)
           << "HACL result: "
           << "sign(" << msg << ") := " << sig << " is " << result << std::endl;
       }

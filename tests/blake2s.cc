@@ -129,6 +129,7 @@ TEST_P(Blake2sKAT, TryKAT)
 {
   // Initialize CPU feature detection
   hacl_init_cpu_features();
+  EverCrypt_AutoConfig2_init();
   const TestCase& test_case(GetParam());
 
   // Stupid const
