@@ -25,6 +25,8 @@
 #include "config.h"
 #include "util.h"
 
+#include "EverCrypt_Hash.h"
+
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_Blake2b_256.h"
 #endif
@@ -155,6 +157,16 @@ TEST_P(Blake2bKAT, TryKAT)
                            test_case.out_len,
                            digest);
   EXPECT_TRUE(test);
+
+  if (test_case.key.size() == 0) {
+    bytes digest_evercrypt(test_case.out_len, 0);
+    uint8_t* input = const_cast<uint8_t*>(test_case.input.data());
+    EverCrypt_Hash_hash(EverCrypt_Hash_Blake2B_s,
+                        digest_evercrypt.data(),
+                        input,
+                        test_case.input.size());
+    EXPECT_EQ(digest_evercrypt, test_case.digest);
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(Kat, Blake2bKAT, ::testing::ValuesIn(read_json()));

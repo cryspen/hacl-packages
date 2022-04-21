@@ -286,6 +286,11 @@ impl Digest {
             return Err(Error::ModeUnsupportedForStreaming);
         }
 
+        unsafe {
+            // Make sure this happened.
+            EverCrypt_AutoConfig2_init();
+        }
+
         let c_state: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____ =
             unsafe { EverCrypt_Hash_Incremental_create_in(alg.into()) };
         Ok(Self {
@@ -333,6 +338,10 @@ macro_rules! define_plain_digest {
         /// Single-shot API with a fixed length output.
         pub fn $name(data: &[u8]) -> [u8; $l] {
             let mut out = [0u8; $l];
+            unsafe {
+                // Make sure this happened.
+                EverCrypt_AutoConfig2_init();
+            }
 
             match $version {
                 Algorithm::Sha3_224 => unsafe {
