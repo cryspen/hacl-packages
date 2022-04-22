@@ -84,8 +84,7 @@ def setup_pkg(static_lib, dynamic_lib, config_name, dest_path):
     '''Get the HACL C lib from the git repo for packaing'''
     shutil.rmtree('hacl-packages', ignore_errors=True)
     subprocess.run(
-        ['git', 'clone', '-b', 'franziskus/dev-cleanup',
-            'https://github.com/cryspen/hacl-packages', '--depth=1'],
+        ['git', 'clone', 'https://github.com/cryspen/hacl-packages', '--depth=1'],
         check=True)
     subprocess.run(
         ['./mach', 'build', '--release'],
