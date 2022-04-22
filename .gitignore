@@ -15,3 +15,4 @@ cpu-features/detect
 /pkg
 __pycache__/
 config/.cache
+.DS_Store
