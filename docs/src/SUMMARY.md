@@ -4,6 +4,7 @@
 
 - [Algorithms](./algorithms.md)
 - [Platforms](./platforms.md)
+  - [Architectures](./architectures.md)
 - [Installation](./installation.md)
 
 # Building
