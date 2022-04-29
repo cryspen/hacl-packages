@@ -2,6 +2,8 @@
 
 The HACL Packages are supported based on the following tiers.
 
+For a detailed description of the different supported architecture see the [next section](./architectures.md).
+
 ### Tier 1
 
 Tier 1 targets are guaranteed to work. These targets have automated testing to
