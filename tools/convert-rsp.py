@@ -4,11 +4,11 @@
 #    Licensed under the Apache License, Version 2.0 or MIT.
 #    * http://www.apache.org/licenses/LICENSE-2.0
 #    * http://opensource.org/licenses/MIT
+#
+# This simple script converts some .rsp files to JSON.
 
 import json
 import sys
-
-# === Boiler plate === #
 
 
 def main():
@@ -23,7 +23,10 @@ def main():
         test = {}
         for line in lines:
             if line.startswith("Msg"):
-                test["msg"] = line[6:-1]
+                msg = line[6:-1]
+                if msg == "00":
+                    msg = ""
+                test["msg"] = msg
             if line.startswith("MD"):
                 test["md"] = line[5:-1]
                 tests.append(test)
