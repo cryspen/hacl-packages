@@ -24,7 +24,7 @@ C.
 
 ### Karamel
 
-The [KaRaMeL] dependency is found in `kremlin` and holds only headers that are
+The [KaRaMeL] dependency is found in `karamel` and holds only headers that are
 used by the HACL C source code.
 
 ### CPU Features

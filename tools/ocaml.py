@@ -42,7 +42,7 @@ def build_ocaml():
     copy_lib(path_join(cwd, 'include'),
              path_join(cwd, 'vale', 'include'),
              path_join(cwd, 'build', 'Release'),
-             path_join(cwd, 'kremlin'),
+             path_join(cwd, 'karamel'),
              path_join(cwd, 'build'),
              "libhacl_static.a", "libhacl."+so, "config.h",
              path_join(cwd, 'ocaml', 'c'))

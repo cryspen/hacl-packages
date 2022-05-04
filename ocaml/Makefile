@@ -44,7 +44,11 @@ BLOCKLIST= Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
 			Hacl_HPKE_Curve64_CP32_SHA256.c Hacl_HPKE_Curve64_CP32_SHA512.c \
 			Hacl_HPKE_Curve51_CP256_SHA256.c Hacl_HPKE_Curve51_CP256_SHA512.c \
 			Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c \
-			Hacl_HPKE_P256_CP256_SHA256.c
+			Hacl_HPKE_P256_CP256_SHA256.c Hacl_HPKE_Curve51_CP128_SHA256.c \
+			Hacl_HPKE_Curve51_CP128_SHA512.c Hacl_HPKE_Curve51_CP32_SHA256.c \
+			Hacl_HPKE_Curve51_CP32_SHA512.c Hacl_HPKE_P256_CP128_SHA256.c \
+			Hacl_HPKE_P256_CP32_SHA256.c Hacl_Frodo1344.c Hacl_Frodo640.c \
+			Hacl_Frodo976.c Hacl_Frodo64.c Hacl_Frodo_KEM.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
 BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
 			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c \
@@ -63,8 +67,8 @@ C_PATH?=c
 C_LIB?=lib$(STATIC_C_LIB_NAME).a
 C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 C_INCLUDES?=-I$(C_PATH)/include/
-KARAMEL_INCLUDES?=-I$(C_PATH)/kremlin/include \
-				  -I$(C_PATH)/kremlin/kremlib/dist/minimal/
+KARAMEL_INCLUDES?=-I$(C_PATH)/krml/include \
+				  -I$(C_PATH)/krml/krmllib/dist/minimal/
 
 OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
 OCAMLDEP=ocamlfind dep -I lib -slash
@@ -77,6 +81,7 @@ CFLAGS += -I "$(shell ocamlfind query ctypes)" -I "$(shell ocamlfind c -where)" 
 # Don't include bindings for files that cannot be compiled.
 BLOCKLIST_ML=$(patsubst %.c,%,$(BLOCKLIST))
 ALL_OCAML=$(filter-out $(BLOCKLIST_ML),$(patsubst lib_gen/%_gen.ml,%,$(wildcard lib_gen/*_gen.ml)))
+$(info $$ALL_OCAML is [${ALL_OCAML}])
 
 # File names.
 ALL_BINDINGS=$(patsubst %,lib/%_bindings.cmx,$(ALL_OCAML))

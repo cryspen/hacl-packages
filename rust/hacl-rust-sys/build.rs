@@ -9,7 +9,7 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
     let hacl_includes = vec![
         format!("-I{}", include_path.display()),
         format!("-I{}", include_path.join("hacl").display()),
-        format!("-I{}", include_path.join("kremlin").display()),
+        format!("-I{}", include_path.join("krml").display()),
         format!("-I{}", include_path.join("vale").display()),
     ];
 

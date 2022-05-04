@@ -124,6 +124,16 @@
                 "features": "std"
             }
         ],
+        "k256": [
+            {
+                "file": "Hacl_K256_ECDSA.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_EC_K256.c",
+                "features": "std"
+            }
+        ],
         "sha3": [
             {
                 "file": "Hacl_SHA3.c",
