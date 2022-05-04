@@ -46,39 +46,39 @@ jobs:
           eval $(opam env)
           ./mach test -l ocaml -v
 
-  standalone:
-    runs-on: ubuntu-latest
+  # standalone:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Cache Setup
-        id: cache-ocaml-setup
-        uses: actions/cache@v3
-        with:
-          path: ~/.opam
-          key: ${{ runner.os }}-ocaml-setup
+  #     - name: Cache Setup
+  #       id: cache-ocaml-setup
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.opam
+  #         key: ${{ runner.os }}-ocaml-setup
 
-      - name: System Setup
-        run: sudo apt-get install ninja-build opam libgmp-dev
-      - name: OCaml Setup
-        if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
-        run: |
-          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
-          opam switch create 4.12.0 --yes
-          eval $(opam env)
-          opam install --yes ocamlfind ctypes zarith cppo
+  #     - name: System Setup
+  #       run: sudo apt-get install ninja-build opam libgmp-dev
+  #     - name: OCaml Setup
+  #       if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
+  #       run: |
+  #         OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
+  #         opam switch create 4.12.0 --yes
+  #         eval $(opam env)
+  #         opam install --yes ocamlfind ctypes zarith cppo
 
-      - name: Build
-        working-directory: ocaml
-        run: |
-          eval $(opam env)
-          ./setup.py
-          HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make ocamlevercrypt.cmxa
-          HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make -j
+  #     - name: Build
+  #       working-directory: ocaml
+  #       run: |
+  #         eval $(opam env)
+  #         ./setup.py
+  #         HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make ocamlevercrypt.cmxa
+  #         HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make -j
 
-      - name: Test
-        working-directory: ocaml
-        run: |
-          eval $(opam env)
-          HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make -j test
+  #     - name: Test
+  #       working-directory: ocaml
+  #       run: |
+  #         eval $(opam env)
+  #         HACL_MAKE_CONFIG=hacl-packages/config/cached-config.txt make -j test
