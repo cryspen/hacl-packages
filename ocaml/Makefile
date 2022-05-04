@@ -81,7 +81,6 @@ CFLAGS += -I "$(shell ocamlfind query ctypes)" -I "$(shell ocamlfind c -where)" 
 # Don't include bindings for files that cannot be compiled.
 BLOCKLIST_ML=$(patsubst %.c,%,$(BLOCKLIST))
 ALL_OCAML=$(filter-out $(BLOCKLIST_ML),$(patsubst lib_gen/%_gen.ml,%,$(wildcard lib_gen/*_gen.ml)))
-$(info $$ALL_OCAML is [${ALL_OCAML}])
 
 # File names.
 ALL_BINDINGS=$(patsubst %,lib/%_bindings.cmx,$(ALL_OCAML))

@@ -12,6 +12,19 @@ from os.path import join
 from os import sep as separator
 from glob import glob
 
+from tools.utils import argument, cmake_config, dep_config, json_config
+from tools.utils import subcommand
+
+
+@subcommand()
+def configure(args):
+    """Only run configure to generate the config.cmake and dep_config.json"""
+    source_dir = "src"
+    include_dir = "include"
+    config = Config(json_config(), source_dir, include_dir)
+    config.write_cmake_config(cmake_config())
+    config.write_dep_config(dep_config())
+
 
 class Config:
 
