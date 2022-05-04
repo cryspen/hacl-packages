@@ -16,8 +16,8 @@ import subprocess
 
 def raw_dependencies(src_dir, c_file):
     compiler = os.getenv('CC', 'clang')
-    include_paths = ['kremlin/kremlib/dist/minimal',
-                     'kremlin/include', src_dir]
+    include_paths = ['karamel/krmllib/dist/minimal',
+                     'karamel/include', src_dir]
     includes = '-I ' + ' -I '.join(include_paths)
     result = subprocess.run(
         compiler + ' ' + includes + ' -MM ' + os.path.join(src_dir, c_file),
@@ -59,8 +59,8 @@ def dependencies(src_dir, c_file):
             # This is fine
             pass
 
-        # Drop kremlin files.
-        line = [file for file in line if not file.startswith('kremlin')]
+        # Drop karamel files.
+        line = [file for file in line if not file.startswith('krml')]
 
         # Sources
         # For source files we only care about the file name. Drop the path.
