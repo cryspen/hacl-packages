@@ -665,7 +665,7 @@ blake2b_update_block(
   s1[0U] = Lib_IntVector_Intrinsics_vec256_xor(s1[0U], r3[0U]);
 }
 
-inline void
+void
 Hacl_Blake2b_256_blake2b_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk, uint32_t nn)
 {
   Lib_IntVector_Intrinsics_vec256 *r0 = hash + (uint32_t)0U * (uint32_t)1U;
@@ -688,7 +688,7 @@ Hacl_Blake2b_256_blake2b_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk
   r1[0U] = Lib_IntVector_Intrinsics_vec256_load64s(iv4, iv5, iv6, iv7);
 }
 
-inline void
+void
 Hacl_Blake2b_256_blake2b_update_key(
   Lib_IntVector_Intrinsics_vec256 *wv,
   Lib_IntVector_Intrinsics_vec256 *hash,
@@ -711,7 +711,7 @@ Hacl_Blake2b_256_blake2b_update_key(
   Lib_Memzero0_memzero(b, (uint32_t)128U * sizeof (b[0U]));
 }
 
-inline void
+void
 Hacl_Blake2b_256_blake2b_update_multi(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec256 *wv,
@@ -732,7 +732,7 @@ Hacl_Blake2b_256_blake2b_update_multi(
   }
 }
 
-inline void
+void
 Hacl_Blake2b_256_blake2b_update_last(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec256 *wv,
@@ -807,7 +807,7 @@ blake2b_update(
     d);
 }
 
-inline void
+void
 Hacl_Blake2b_256_blake2b_finish(
   uint32_t nn,
   uint8_t *output,

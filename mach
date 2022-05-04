@@ -333,9 +333,13 @@ def build(args):
 @subcommand()
 def clean(args):
     """Remove all build and config artifacts"""
-    shutil.rmtree("build")
-    os.remove(cmake_config())
-    os.remove(config_cache())
+    # These might fail if not present. That's ok.
+    shutil.rmtree("build", ignore_errors=True)
+    try:
+        os.remove(cmake_config())
+        os.remove(config_cache())
+    except:
+        pass
 
 # === Boiler plate === #
 
