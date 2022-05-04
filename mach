@@ -67,7 +67,9 @@ def install(args):
                  "-l", "--language", help="Build language bindings for the given language.", type=str),
              argument("-v", "--verbose", help="Make builds verbose.",
                       action='store_true'),
-             argument("-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'), ])
+             argument(
+                 "-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),
+             argument("--no-build", help="Don't actually build (don't run ninja).", action='store_true')])
 def build(args):
     """Main entry point for building HACL
 
@@ -286,6 +288,10 @@ def build(args):
     cmake_cmd.extend(cmake_args)
     vprint(str(cmake_cmd))
     subprocess.run(cmake_cmd, check=True)
+
+    if args.no_build:
+        print("Finished configuration, exiting because you didn't want me to build.")
+        exit(0)
 
     # Set ninja arguments
     ninja_args = []
