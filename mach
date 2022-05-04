@@ -82,7 +82,7 @@ def build(args):
         - aarch64-apple-darwin (macOS x64 only)
         - aarch64-linux-android
 
-    Features that can be disabled (TBD):
+    Features that can be disabled:
         - vec128 (avx/neon)
         - vec256 (avx2)
         - vale (x64 assembly)
