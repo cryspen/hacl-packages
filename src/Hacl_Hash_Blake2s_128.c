@@ -24,7 +24,7 @@
 
 #include "internal/Hacl_Hash_Blake2s_128.h"
 
-#include "internal/Hacl_Kremlib.h"
+#include "internal/Hacl_Krmllib.h"
 #include "internal/Hacl_Hash_Blake2.h"
 
 static uint64_t
@@ -645,7 +645,7 @@ blake2s_update_block(
   s1[0U] = Lib_IntVector_Intrinsics_vec128_xor(s1[0U], r3[0U]);
 }
 
-void
+inline void
 Hacl_Blake2s_128_blake2s_init(Lib_IntVector_Intrinsics_vec128 *hash, uint32_t kk, uint32_t nn)
 {
   Lib_IntVector_Intrinsics_vec128 *r0 = hash + (uint32_t)0U * (uint32_t)1U;
@@ -668,7 +668,7 @@ Hacl_Blake2s_128_blake2s_init(Lib_IntVector_Intrinsics_vec128 *hash, uint32_t kk
   r1[0U] = Lib_IntVector_Intrinsics_vec128_load32s(iv4, iv5, iv6, iv7);
 }
 
-void
+inline void
 Hacl_Blake2s_128_blake2s_update_key(
   Lib_IntVector_Intrinsics_vec128 *wv,
   Lib_IntVector_Intrinsics_vec128 *hash,
@@ -691,7 +691,7 @@ Hacl_Blake2s_128_blake2s_update_key(
   Lib_Memzero0_memzero(b, (uint32_t)64U * sizeof (b[0U]));
 }
 
-void
+inline void
 Hacl_Blake2s_128_blake2s_update_multi(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec128 *wv,
@@ -709,7 +709,7 @@ Hacl_Blake2s_128_blake2s_update_multi(
   }
 }
 
-void
+inline void
 Hacl_Blake2s_128_blake2s_update_last(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec128 *wv,
@@ -779,7 +779,7 @@ blake2s_update(
   blake2s_update_blocks(ll, wv, hash, (uint64_t)(uint32_t)0U, d);
 }
 
-void
+inline void
 Hacl_Blake2s_128_blake2s_finish(
   uint32_t nn,
   uint8_t *output,

@@ -22,28 +22,24 @@
  */
 
 
-#ifndef __internal_Hacl_Frodo_KEM_H
-#define __internal_Hacl_Frodo_KEM_H
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-#include <string.h>
-#include "kremlin/internal/types.h"
-#include "kremlin/lowstar_endianness.h"
-#include "kremlin/internal/target.h"
+#include "internal/Hacl_Krmllib.h"
 
 
-#include "internal/Hacl_Kremlib.h"
-#include "../Hacl_Frodo_KEM.h"
-#include "evercrypt_targetconfig.h"
-#include "libintvector.h"
-void randombytes_(uint32_t len, uint8_t *res);
 
-#if defined(__cplusplus)
+static uint32_t max_uint32 = (uint32_t)4294967295U;
+
+static uint32_t resize_ratio = (uint32_t)2U;
+
+uint32_t LowStar_Vector_new_capacity(uint32_t cap)
+{
+  if (cap >= max_uint32 / resize_ratio)
+  {
+    return max_uint32;
+  }
+  if (cap == (uint32_t)0U)
+  {
+    return (uint32_t)1U;
+  }
+  return cap * resize_ratio;
 }
-#endif
 
-#define __internal_Hacl_Frodo_KEM_H_DEFINED
-#endif

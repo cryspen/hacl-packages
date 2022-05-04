@@ -70,7 +70,7 @@ def copy_lib(include_path, vale_include_path, lib_path, karamel_path, config_pat
         file = path_join(internal_include_path, file)
         if os.path.isfile(file):
             shutil.copy(file, internal_include_dst)
-    shutil.copytree(karamel_path, path_join(dest_path, "kremlin"))
+    shutil.copytree(karamel_path, path_join(dest_path, "krml"))
     cwd = os.path.dirname(os.path.realpath(__file__))
     shutil.copy(path_join(lib_path, static_lib), cwd)
     shutil.copy(path_join(lib_path, dynamic_lib), cwd)
@@ -92,7 +92,7 @@ def setup_pkg(static_lib, dynamic_lib, config_name, dest_path):
     copy_lib(path_join('hacl-packages', 'include'),
              path_join('hacl-packages', 'vale', 'include'),
              path_join('hacl-packages', 'build', 'Release'),
-             path_join('hacl-packages', 'kremlin'),
+             path_join('hacl-packages', 'karamel'),
              path_join('hacl-packages', 'build'),
              static_lib, dynamic_lib,
              config_name, dest_path)

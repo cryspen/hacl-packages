@@ -22,27 +22,27 @@
  */
 
 
-#ifndef __internal_Hacl_Frodo_KEM_H
-#define __internal_Hacl_Frodo_KEM_H
+#ifndef __internal_Hacl_Krmllib_H
+#define __internal_Hacl_Krmllib_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 #include <string.h>
-#include "kremlin/internal/types.h"
-#include "kremlin/lowstar_endianness.h"
-#include "kremlin/internal/target.h"
+#include "krml/internal/types.h"
+#include "krml/lowstar_endianness.h"
+#include "krml/internal/target.h"
 
 
-#include "../Hacl_Frodo_KEM.h"
+#include "../Hacl_Krmllib.h"
 #include "evercrypt_targetconfig.h"
 #include "libintvector.h"
-void randombytes_(uint32_t len, uint8_t *res);
+uint32_t LowStar_Vector_new_capacity(uint32_t cap);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Frodo_KEM_H_DEFINED
+#define __internal_Hacl_Krmllib_H_DEFINED
 #endif

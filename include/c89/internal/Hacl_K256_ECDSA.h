@@ -22,42 +22,41 @@
  */
 
 
-#ifndef __Hacl_Frodo1344_H
-#define __Hacl_Frodo1344_H
+#ifndef __internal_Hacl_K256_ECDSA_H
+#define __internal_Hacl_K256_ECDSA_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 #include <string.h>
-#include "kremlin/internal/types.h"
-#include "kremlin/lowstar_endianness.h"
-#include "kremlin/internal/target.h"
+#include "krml/internal/types.h"
+#include "krml/lowstar_endianness.h"
+#include "krml/internal/target.h"
 
 
-#include "Lib_Memzero0.h"
-#include "Hacl_Spec.h"
-#include "Hacl_SHA3.h"
-#include "Hacl_Frodo_KEM.h"
+#include "internal/Hacl_Bignum.h"
+#include "../Hacl_K256_ECDSA.h"
 #include "evercrypt_targetconfig.h"
+#include "lib_intrinsics.h"
 #include "libintvector.h"
-extern uint32_t Hacl_Frodo1344_crypto_bytes;
+bool Hacl_Impl_K256_Point_aff_point_decompress_vartime(uint64_t *x, uint64_t *y, uint8_t *s);
 
-extern uint32_t Hacl_Frodo1344_crypto_publickeybytes;
+void Hacl_Impl_K256_Point_aff_point_compress_vartime(uint8_t *s, uint64_t *x, uint64_t *y);
 
-extern uint32_t Hacl_Frodo1344_crypto_secretkeybytes;
+void Hacl_Impl_K256_Point_point_negate(uint64_t *out, uint64_t *p);
 
-extern uint32_t Hacl_Frodo1344_crypto_ciphertextbytes;
+bool Hacl_Impl_K256_Point_point_eq(uint64_t *p, uint64_t *q);
 
-uint32_t Hacl_Frodo1344_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
+void Hacl_Impl_K256_PointDouble_point_double(uint64_t *out, uint64_t *p);
 
-uint32_t Hacl_Frodo1344_crypto_kem_enc(uint8_t *ct, uint8_t *ss, uint8_t *pk);
+void Hacl_Impl_K256_PointAdd_point_add(uint64_t *out, uint64_t *p, uint64_t *q);
 
-uint32_t Hacl_Frodo1344_crypto_kem_dec(uint8_t *ss, uint8_t *ct, uint8_t *sk);
+void Hacl_Impl_K256_PointMul_point_mul(uint64_t *out, uint64_t *scalar, uint64_t *q);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Frodo1344_H_DEFINED
+#define __internal_Hacl_K256_ECDSA_H_DEFINED
 #endif

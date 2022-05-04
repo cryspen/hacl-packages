@@ -22,17 +22,17 @@
  */
 
 
-#ifndef __Hacl_Kremlib_H
-#define __Hacl_Kremlib_H
+#ifndef __Hacl_Krmllib_H
+#define __Hacl_Krmllib_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 #include <string.h>
-#include "kremlin/internal/types.h"
-#include "kremlin/lowstar_endianness.h"
-#include "kremlin/internal/target.h"
+#include "krml/internal/types.h"
+#include "krml/lowstar_endianness.h"
+#include "krml/internal/target.h"
 
 
 
@@ -84,5 +84,5 @@ static inline FStar_UInt128_uint128 load128_be(uint8_t *x0);
 }
 #endif
 
-#define __Hacl_Kremlib_H_DEFINED
+#define __Hacl_Krmllib_H_DEFINED
 #endif

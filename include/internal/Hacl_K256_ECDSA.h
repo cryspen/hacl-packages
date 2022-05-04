@@ -22,55 +22,42 @@
  */
 
 
-#ifndef __internal_Hacl_SHA2_Vec128_H
-#define __internal_Hacl_SHA2_Vec128_H
+#ifndef __internal_Hacl_K256_ECDSA_H
+#define __internal_Hacl_K256_ECDSA_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#include "evercrypt_targetconfig.h"
-#include "libintvector.h"
-#include "kremlin/internal/types.h"
-#include "kremlin/lowstar_endianness.h"
 #include <string.h>
-#include "kremlin/internal/target.h"
+#include "krml/internal/types.h"
+#include "krml/lowstar_endianness.h"
+#include "krml/internal/target.h"
 
 
-#include "../Hacl_SHA2_Vec128.h"
+#include "internal/Hacl_Krmllib.h"
+#include "internal/Hacl_Bignum.h"
+#include "../Hacl_K256_ECDSA.h"
+#include "evercrypt_targetconfig.h"
+#include "lib_intrinsics.h"
+#include "libintvector.h"
+bool Hacl_Impl_K256_Point_aff_point_decompress_vartime(uint64_t *x, uint64_t *y, uint8_t *s);
 
-typedef struct K____uint8_t___uint8_t__s
-{
-  uint8_t *fst;
-  uint8_t *snd;
-}
-K____uint8_t___uint8_t_;
+void Hacl_Impl_K256_Point_aff_point_compress_vartime(uint8_t *s, uint64_t *x, uint64_t *y);
 
-typedef struct K____uint8_t__K____uint8_t___uint8_t__s
-{
-  uint8_t *fst;
-  K____uint8_t___uint8_t_ snd;
-}
-K____uint8_t__K____uint8_t___uint8_t_;
+void Hacl_Impl_K256_Point_point_negate(uint64_t *out, uint64_t *p);
 
-typedef struct K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__s
-{
-  uint8_t *fst;
-  K____uint8_t__K____uint8_t___uint8_t_ snd;
-}
-K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_;
+bool Hacl_Impl_K256_Point_point_eq(uint64_t *p, uint64_t *q);
 
-typedef struct
-K___K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__s
-{
-  K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_ fst;
-  K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_ snd;
-}
-K___K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_;
+void Hacl_Impl_K256_PointDouble_point_double(uint64_t *out, uint64_t *p);
+
+void Hacl_Impl_K256_PointAdd_point_add(uint64_t *out, uint64_t *p, uint64_t *q);
+
+void Hacl_Impl_K256_PointMul_point_mul(uint64_t *out, uint64_t *scalar, uint64_t *q);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_SHA2_Vec128_H_DEFINED
+#define __internal_Hacl_K256_ECDSA_H_DEFINED
 #endif

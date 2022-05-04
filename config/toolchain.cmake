@@ -54,8 +54,8 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC128)
                         #       When do we need -march=armv8-a+simd or something else here?
                         COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC128 \
                                              -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal \
+                                             -I${PROJECT_SOURCE_DIR}/karamel/include \
+                                             -I${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal \
                                              ${CPU_FLAGS}"
                 )
 endif()
@@ -75,8 +75,8 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VEC256)
                         #       When do we need -march=armv8-a+simd or something else here?
                         COMPILE_DEFINITIONS "-DHACL_CAN_COMPILE_VEC256  \
                                              -I${PROJECT_SOURCE_DIR}/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/include \
-                                             -I${PROJECT_SOURCE_DIR}/kremlin/kremlib/dist/minimal \
+                                             -I${PROJECT_SOURCE_DIR}/karamel/include \
+                                             -I${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal \
                                              ${CPU_FLAGS}"
                 )
 endif()
