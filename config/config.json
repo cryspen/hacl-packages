@@ -1,7 +1,7 @@
 {
-    "kremlin_include_paths": [
-        "kremlin/include",
-        "kremlin/kremlib/dist/minimal"
+    "karamel_include_paths": [
+        "karamel/include",
+        "karamel/krmllib/dist/minimal"
     ],
     "vale_include_paths": [
         "vale/include"

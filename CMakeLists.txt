@@ -300,10 +300,10 @@ set(CMAKE_INSTALL_MESSAGE LAZY)
 install(TARGETS hacl_static hacl)
 ## Copy hacl headers
 install(FILES ${PUBLIC_INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
-## Copy kremlin headers
-install(DIRECTORY kremlin/include/kremlin/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kremlin
+## Copy karamel headers
+install(DIRECTORY karamel/include/krml/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/krml
         FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY kremlin/kremlib/dist/minimal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kremlin
+install(DIRECTORY karamel/krmllib/dist/minimal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/krml
         FILES_MATCHING PATTERN "*.h")
 ## Install vale headers
 install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
