@@ -176,8 +176,11 @@ def build(args):
         windows = True
         source_dir = os.path.join(source_dir, "msvc")
         include_dir = os.path.join(include_dir, "msvc")
-        # get msvc in the path (only x64 for now)
-        vswhere_cmd = ['tools\\vcbuild.cmd']
+        # get msvc in the path
+        vs_arch = '64'
+        if m32:
+            vs_arch = '32'
+        vswhere_cmd = ['tools\\vcbuild.cmd', vs_arch]
         subprocess.run(vswhere_cmd, check=True)
 
     # We use the ninja multi config generator.
