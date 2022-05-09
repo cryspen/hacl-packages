@@ -4,4 +4,4 @@ for /f "usebackq tokens=*" %%i in (`vswhere -latest -products * -requires Micros
   set InstallDir=%%i
 )
 
-"%InstallDir%\VC\Auxiliary\Build\vcvars64.bat"
+"%InstallDir%\VC\Auxiliary\Build\vcvars%1.bat"
