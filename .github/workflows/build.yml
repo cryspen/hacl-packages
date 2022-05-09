@@ -207,8 +207,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["", "--msvc"]
-        # options: ["", "-m32"]
+        options: ["", "--msvc", "-m32"]
     steps:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
@@ -220,13 +219,13 @@ jobs:
       - name: Setup
         run: choco install ninja
       - name: Debug Build & Test
-        run: python mach build --test -v ${{ matrix.compiler }}
+        run: python mach build --test -v ${{ matrix.options }}
       - name: Release Build & Test
-        run: python mach build --release --test -v ${{ matrix.compiler }}
+        run: python mach build --release --test -v ${{ matrix.options }}
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows-x64${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
+          name: windows-${{ matrix.options }}-${{ steps.vars.outputs.short_sha }}
           path: |
             build/Debug
             build/Release
