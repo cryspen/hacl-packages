@@ -207,10 +207,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        options: ["", "--msvc", "-m32"]
+        options: [{args: "", arch: x64}, {args: "--msvc", arch: x64}, {args: "-m32", arch: x86}]
     steps:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
+        with:
+            arch: ${{ matrix.options.arch }}
       - name: Output name
         id: vars
         shell: bash
@@ -219,13 +221,13 @@ jobs:
       - name: Setup
         run: choco install ninja
       - name: Debug Build & Test
-        run: python mach build --test -v ${{ matrix.options }}
+        run: python mach build --test -v ${{ matrix.options.args }}
       - name: Release Build & Test
-        run: python mach build --release --test -v ${{ matrix.options }}
+        run: python mach build --release --test -v ${{ matrix.options.args }}
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows-${{ matrix.options }}-${{ steps.vars.outputs.short_sha }}
+          name: windows-${{ matrix.options.args }}-${{ steps.vars.outputs.short_sha }}
           path: |
             build/Debug
             build/Release
