@@ -207,7 +207,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        options: [{args: "", arch: x64}, {args: "--msvc", arch: x64}, {args: "-m32", arch: x86}]
+        options:
+          [
+            { args: "", arch: x64 },
+            { args: "--msvc", arch: x64 },
+            { args: "-m32", arch: x86 },
+          ]
     steps:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
@@ -227,7 +232,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows-${{ matrix.options.args }}-${{ steps.vars.outputs.short_sha }}
+          name: windows${{ matrix.options.args }}-${{ steps.vars.outputs.short_sha }}
           path: |
             build/Debug
             build/Release
