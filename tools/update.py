@@ -8,10 +8,14 @@
 
 import json
 import os
+from os.path import join as join_path
 import pathlib
 import re
 import shutil
 import subprocess
+
+from tools.utils import argument, subcommand
+from tools.utils import mprint as print
 
 
 def raw_dependencies(src_dir, c_file):
@@ -28,7 +32,7 @@ def raw_dependencies(src_dir, c_file):
 
 
 def abs_path(relative):
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), relative))
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', relative))
 
 
 def source_files(directory):
@@ -135,6 +139,10 @@ def all_files(config_file, editions):
                     file_names[edition] = t_file_names
 
     includes, include_names = headers(editions)
+    # TODO: remove includes we don't care about. The includes list should get
+    #       mapped against the `file_names`. However there are includes that we
+    #       need but that doesn't match the naming conventions. We have to get
+    #       the includes from the `dependencies` analysis as well.
 
     # remove duplicates
     for edition in files:
@@ -170,6 +178,7 @@ def update_hacl(files, includes, editions):
     clean()
     for edition, new_dist_dir, dest, include_dest in editions:
         dest = abs_path(dest)
+        print("Reading %s into %s ..." % (new_dist_dir, dest))
         for file in files[edition]:
             pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
             shutil.copyfile(file, os.path.join(dest, os.path.basename(file)))
@@ -183,12 +192,29 @@ def update_hacl(files, includes, editions):
         shutil.copytree(internal_includes, dest_internal)
 
 
-"""
-editions = [(name, new-code, target-src-dir, target-include-dir)]
-"""
-editions = [('std', '../hacl-star/dist/gcc-compatible', 'src', 'include'),
-            ('c89', '../hacl-star/dist/c89-compatible', 'src/c89', 'include/c89'),
-            ('msvc', '../hacl-star/dist/msvc-compatible', 'src/msvc', 'include/msvc')]
-config_file = 'config/config.json'
-files, file_names, includes, include_names = all_files(config_file, editions)
-update_hacl(files, includes, editions)
+@subcommand([argument("-s", "--hacl-home",
+                      help="The base directory of the HACL* repository.", type=str),
+             argument("-v", "--verbose", help="Make it verbose.",
+                      action='store_true')])
+def update(args):
+    """Update the source code in this project with the upstream HACL* code."""
+    hacl_home = '../../hacl-star'  # this the default hacl home we use.
+    if args.hacl_home:
+        hacl_home = args.hacl_home
+    if not os.path.isdir(hacl_home):
+        print("Unable to find %s.\nPlease provide the path to the root directory of your local copy of hacl-star." % hacl_home)
+        exit(1)
+    hacl_dist = join_path(hacl_home, 'dist')
+    src_path = 'src'
+    include_path = 'include'
+    """
+    editions = [(name, new-code, target-src-dir, target-include-dir)]
+    """
+    editions = [('std', join_path(hacl_dist, 'gcc-compatible'), src_path, include_path),
+                ('c89', join_path(hacl_dist, 'c89-compatible'),
+                 join_path(src_path, 'c89'), join_path(include_path, 'c89')),
+                ('msvc', join_path(hacl_dist, 'msvc-compatible'), join_path(src_path, 'msvc'), join_path(include_path, 'msvc'))]
+    config_file = join_path('config', 'config.json')
+    files, file_names, includes, include_names = all_files(
+        config_file, editions)
+    update_hacl(files, includes, editions)

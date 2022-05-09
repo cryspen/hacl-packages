@@ -361,24 +361,34 @@ extern "C" {
         -> bool;
 }
 extern "C" {
-    pub fn EverCrypt_Ed25519_sign(signature: *mut u8, secret: *mut u8, len: u32, msg: *mut u8);
+    pub fn EverCrypt_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
+}
+extern "C" {
+    pub fn EverCrypt_Ed25519_expand_keys(expanded_keys: *mut u8, private_key: *mut u8);
+}
+extern "C" {
+    pub fn EverCrypt_Ed25519_sign_expanded(
+        signature: *mut u8,
+        expanded_keys: *mut u8,
+        msg_len: u32,
+        msg: *mut u8,
+    );
+}
+extern "C" {
+    pub fn EverCrypt_Ed25519_sign(
+        signature: *mut u8,
+        private_key: *mut u8,
+        msg_len: u32,
+        msg: *mut u8,
+    );
 }
 extern "C" {
     pub fn EverCrypt_Ed25519_verify(
-        pubkey: *mut u8,
-        len: u32,
+        public_key: *mut u8,
+        msg_len: u32,
         msg: *mut u8,
         signature: *mut u8,
     ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Ed25519_secret_to_public(output: *mut u8, secret: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Ed25519_expand_keys(ks: *mut u8, secret: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Ed25519_sign_expanded(signature: *mut u8, ks: *mut u8, len: u32, msg: *mut u8);
 }
 extern "C" {
     pub fn EverCrypt_Hash_string_of_alg(uu___: Spec_Hash_Definitions_hash_alg) -> C_String_t;

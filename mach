@@ -21,6 +21,7 @@ from tools.utils import config_cache, subcommand, argument, json_config, dep_con
 from tools.test import run_tests
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
+from tools.update import update
 
 # === SUBCOMMANDS === #
 
