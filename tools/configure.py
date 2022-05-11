@@ -4,6 +4,7 @@
 #    * http://www.apache.org/licenses/LICENSE-2.0
 #    * http://opensource.org/licenses/MIT
 
+from distutils import file_util
 import os
 import json
 import re
@@ -109,6 +110,12 @@ class Config:
         # If vale is compiled add the include path
         if len(self.vale_files) != 0:
             self.include_paths.extend(self.config["vale_include_paths"])
+
+        # If the build directory is empty, copy the `default_config.h` there to
+        # make the dependency analysis work.
+        if not os.path.isfile(join("build", "config.h")):
+            file_util.copy_file(
+                join("config", "default_config.h"), join("build", "config.h"))
 
         # Filter algorithms in hacl_files
         # In the default case (empty list of algorithms) we don't do anything.
