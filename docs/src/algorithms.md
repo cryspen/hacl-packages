@@ -13,8 +13,8 @@ For a detailed description fo the Support column, please see the [Architectures 
 | ECDH                 | Curve25519        | Portable \| BMI2 & ADX                  |
 | ECDH                 | P-256             | Portable                                |
 | Signature            | Ed25519           | Portable                                |
-| Signature            | P-256r1           | Portable                                |
-| Signature            | P-256k1           | Portable                                |
+| Signature            | ECDSA P-256r1     | Portable                                |
+| Signature            | ECDSA P-256k1     | Portable                                |
 | Hash                 | SHA2-224          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-256          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-384          | Portable                                |
