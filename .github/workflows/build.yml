@@ -111,7 +111,7 @@ jobs:
     strategy:
       matrix:
         compiler: [7, 8, 9, 10]
-        options: ["", "-m32"]
+        options: ["", "-m32", "-ec89"]
     env:
       CC: clang-${{ matrix.compiler }}
       CXX: clang++-${{ matrix.compiler }}
