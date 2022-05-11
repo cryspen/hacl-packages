@@ -46,7 +46,7 @@ ensure that changes do not break them.
 - [x] x86_64 Windows
   - [x] x86_64-pc-windows-msvc
   - [x] x86_64-pc-windows-clang
-- [ ] x86 Windows (i686-pc-windows-msvc)
+- [x] x86 Windows (i686-pc-windows-msvc)
 
 ### Tier 2
 
@@ -69,7 +69,6 @@ there is no guarantee that they work.
 - arm64 iOS Simulator (aarch64-apple-ios-sim)
 - x86_64 iOS (x86_64-apple-ios)
 - PowerPC
-- IBM Z15
 - FreeBSD / x64
 
 ## Compiler support
@@ -90,7 +89,8 @@ packages.
 | ECDH                 | Curve25519        | Portable \| BMI2 & ADX                  |
 | ECDH                 | P-256             | Portable                                |
 | Signature            | Ed25519           | Portable                                |
-| Signature            | P-256             | Portable                                |
+| Signature            | ECDSA P-256r1     | Portable                                |
+| Signature            | ECDSA P-256k1     | Portable                                |
 | Hash                 | SHA2-224          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-256          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-384          | Portable                                |
