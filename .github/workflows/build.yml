@@ -144,6 +144,40 @@ jobs:
             pkg-release
             build/Debug
             build/Release
+  c89:
+    runs-on: ubuntu-18.04
+    env:
+      CC: gcc-4.8
+      CXX: g++-4.8
+    steps:
+      - name: Output name
+        id: vars
+        run: |
+          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build gcc-4.8 g++-4.8
+      - uses: actions/checkout@v2
+      - name: Debug Build & Test
+        run: ./mach build --test -v ${{ matrix.options }} -e c89
+      - name: Release Build & Test
+        run: ./mach build --release --test -v ${{ matrix.options }} -e c89
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-x64-gcc48-c89-${{ steps.vars.outputs.short_sha }}${{ matrix.options }}
+          path: |
+            pkg-debug
+            pkg-release
+            build/Debug
+            build/Release
   android:
     runs-on: ubuntu-latest
     strategy:
@@ -217,7 +251,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-            arch: ${{ matrix.options.arch }}
+          arch: ${{ matrix.options.arch }}
       - name: Output name
         id: vars
         shell: bash
