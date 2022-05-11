@@ -4,10 +4,10 @@
 #    * http://www.apache.org/licenses/LICENSE-2.0
 #    * http://opensource.org/licenses/MIT
 
-from distutils import file_util
 import os
 import json
 import re
+import shutil
 import subprocess
 from os.path import join
 from os import sep as separator
@@ -114,7 +114,7 @@ class Config:
         # If the build directory is empty, copy the `default_config.h` there to
         # make the dependency analysis work.
         if not os.path.isfile(join("build", "config.h")):
-            file_util.copy_file(
+            shutil.copyfile(
                 join("config", "default_config.h"), join("build", "config.h"))
 
         # Filter algorithms in hacl_files
