@@ -81,8 +81,8 @@ def mprint(*args, **kwargs):
 
 def check_cmd(cmd):
     mprint("Found ", end="")
-    return_code = subprocess.run(
-        [cmd, '--version'], capture_output=True).returncode
+    # XXX: capture_output=True would be nice but is only available in >Python3.6
+    return_code = subprocess.run([cmd, '--version']).returncode
     if return_code == 0:
         print("%s" % cmd, end="  ")
     else:
@@ -103,6 +103,7 @@ def dependency_check():
 
     check_cmd('cmake')
     check_cmd("ninja")
-    check_cmd("clang")
+    # XXX: check for a compiler
+    # check_cmd("clang")
     print()
     Path(config_check_file()).touch()
