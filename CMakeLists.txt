@@ -129,6 +129,9 @@ TOOLCHAIN_CAN_COMPILE_VALE=${TOOLCHAIN_CAN_COMPILE_VALE}\
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
 # - SOURCES_vec256: Files that require vec256 hardware
+# - SOURCES_evercrypt: Evercrypt files
+#                      On old compilers (looking at you GCC 4.8) these files
+#                      have to be compiled with march=native on intel machines.
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
@@ -269,6 +272,23 @@ if(ENABLE_UBSAN)
     add_link_options(-fsanitize=undefined)
 endif()
 
+## Compilation units (objects) for evercrypt.
+## We need to add hardware features for old compilers such as GCCC 4.8 here.
+list(LENGTH SOURCES_evercrypt SOURCES_EVERCRYPT_LEN)
+if(NOT SOURCES_EVERCRYPT_LEN EQUAL 0)
+    set(EVERCRYPT_O ON)
+    add_library(evercrypt OBJECT ${SOURCES_evercrypt})
+    target_include_directories(evercrypt PRIVATE)
+    # Add options for intel here.
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        if(NOT MSVC)
+            target_compile_options(evercrypt PRIVATE
+                -march=native
+            )
+        endif()
+    endif()
+endif()
+
 # Set library config and files
 # Now combine everything into the hacl library
 ## Dynamic library
@@ -281,6 +301,10 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     add_dependencies(hacl hacl_vec256)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
+if(EVERCRYPT_O)
+    add_dependencies(hacl evercrypt)
+    target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:evercrypt>)
+endif()
 
 ## Static library
 add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
@@ -289,6 +313,9 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
 endif()
 if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
+endif()
+if(EVERCRYPT_O)
+    target_link_libraries(hacl_static PRIVATE $<TARGET_OBJECTS:evercrypt>)
 endif()
 
 # Install
