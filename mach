@@ -104,7 +104,7 @@ def build(args):
         - ocaml
         - wasm (TBD)
 
-    💡  Windows builds are limited. The following arguments are not supported:
+    ! Windows builds are limited. The following arguments are not supported:
         - algorithms
         - sanitizer
         - edition

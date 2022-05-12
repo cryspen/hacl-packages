@@ -9,6 +9,7 @@ import json
 import re
 import shutil
 import subprocess
+import platform
 from os.path import join
 from os import sep as separator
 from glob import glob
@@ -35,11 +36,24 @@ class Config:
         Use `$CC -MM` to collect dependencies for a given c file assuming header
         and source files are named the same.
         """
+        # With old compilers like GCC 4.8 we have to set -march=native for this
+        # to work.
+        copmiler_version = subprocess.run(
+            self.compiler + ' --version',
+            stdout=subprocess.PIPE,
+            shell=True,
+            check=True)
+        stdout = copmiler_version.stdout.decode('utf-8')
+        args = ""
+        if "4.8" in stdout and "gcc" in stdout:
+            processor = platform.processor()
+            if "x86" in processor:
+                args = " -march=native "
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = '-I ' + ' -I '.join(self.include_paths)
         result = subprocess.run(
-            self.compiler + ' ' + includes + ' -I' +
+            self.compiler + args + ' ' + includes + ' -I' +
             join(source_dir, 'internal') + ' -MM ' +
             join(source_dir, source_file),
             stdout=subprocess.PIPE,
