@@ -127,14 +127,7 @@ def build(args):
 
     # Clean if requested
     if args.clean:
-        print("Cleaning ...")
-        try:
-            shutil.rmtree("build")
-            os.remove(cmake_config())
-            os.remove(config_cache())
-            clean_ocaml()
-        except:
-            pass  # We don't really care
+        _clean()
     try:
         os.mkdir("build")
     except:
@@ -340,16 +333,28 @@ def build(args):
         run_tests(config.tests, build_config)
 
 
-@subcommand()
-def clean(args):
-    """Remove all build and config artifacts"""
+def _clean():
+    print("Cleaning ...")
     # These might fail if not present. That's ok.
     shutil.rmtree("build", ignore_errors=True)
     try:
-        os.remove(cmake_config())
+        clean_ocaml()
+    except:
+        pass  # We don't really care
+    try:
         os.remove(config_cache())
     except:
-        pass
+        pass  # We don't really care
+    try:
+        os.remove(cmake_config())
+    except:
+        pass  # We don't really care
+
+
+@subcommand()
+def clean():
+    """Remove all build and config artifacts"""
+    _clean()
 
 # === Boiler plate === #
 
