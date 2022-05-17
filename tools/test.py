@@ -62,8 +62,14 @@ def test(args):
             test_ocaml()
             exit(0)
         elif args.language == "rust":
-            subprocess.run(
-                ['cargo', 'test', '--manifest-path=rust/Cargo.toml'], check=True)
+            env = {
+                **os.environ,
+                "MACH_BUILD": "1"
+            }
+            if sys.platform == "win32":
+                subprocess.Popen('setx MACH_BUILD 1', shell=True).wait()
+            cargo_cmd = 'cargo test --manifest-path rust/Cargo.toml'
+            subprocess.run(cargo_cmd, check=True, shell=True, env=env)
             exit(0)
         else:
             print(

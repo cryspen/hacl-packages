@@ -228,6 +228,23 @@ if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     # TODO: include intrinsics source code
 endif()
 
+## Compilation units (objects) for evercrypt.
+## We need to add hardware features for old compilers such as GCC 4.8 here.
+list(LENGTH SOURCES_evercrypt SOURCES_EVERCRYPT_LEN)
+if(NOT SOURCES_EVERCRYPT_LEN EQUAL 0)
+    set(EVERCRYPT_O ON)
+    add_library(evercrypt_objects OBJECT ${SOURCES_evercrypt})
+    target_include_directories(evercrypt_objects PRIVATE)
+    # Add options for intel here.
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        if(NOT MSVC)
+            target_compile_options(evercrypt_objects PRIVATE
+                -march=native
+            )
+        endif()
+    endif()
+endif()
+
 # x64
 # Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
@@ -272,22 +289,6 @@ if(ENABLE_UBSAN)
     add_link_options(-fsanitize=undefined)
 endif()
 
-## Compilation units (objects) for evercrypt.
-## We need to add hardware features for old compilers such as GCCC 4.8 here.
-list(LENGTH SOURCES_evercrypt SOURCES_EVERCRYPT_LEN)
-if(NOT SOURCES_EVERCRYPT_LEN EQUAL 0)
-    set(EVERCRYPT_O ON)
-    add_library(evercrypt OBJECT ${SOURCES_evercrypt})
-    target_include_directories(evercrypt PRIVATE)
-    # Add options for intel here.
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-        if(NOT MSVC)
-            target_compile_options(evercrypt PRIVATE
-                -march=native
-            )
-        endif()
-    endif()
-endif()
 
 # Set library config and files
 # Now combine everything into the hacl library
@@ -302,8 +303,8 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 if(EVERCRYPT_O)
-    add_dependencies(hacl evercrypt)
-    target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:evercrypt>)
+    add_dependencies(hacl evercrypt_objects)
+    target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:evercrypt_objects>)
 endif()
 
 ## Static library
@@ -315,7 +316,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 if(EVERCRYPT_O)
-    target_link_libraries(hacl_static PRIVATE $<TARGET_OBJECTS:evercrypt>)
+    target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:evercrypt_objects>)
 endif()
 
 # Install
