@@ -8,9 +8,6 @@
 #
 # CMake configuration for HACL.
 #
-# We only support Ninja as target, which is set in PreLoad.cmake, and require a
-# modern CMake environment.
-# WARNING: Preload.cmake is undocumented und apparently unfinished.
 # The Ninja Multi-Config generator is only available since 3.17
 # https://cmake.org/cmake/help/latest/generator/Ninja%20Multi-Config.html
 cmake_minimum_required(VERSION 3.17)
