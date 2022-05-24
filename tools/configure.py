@@ -211,8 +211,8 @@ class Config:
         self.hacl_includes = list(dict.fromkeys(self.hacl_includes))
         # Drop Hacl_ files from evercrypt
         self.evercrypt_compile_files = [
-            f for f in self.evercrypt_compile_files if "Hacl_" not in f and "Lib_Memzero0" not in f]
-        # self.hacl_compile_feature['std'].extend(self.evercrypt_compile_files)
+            f for f in self.evercrypt_compile_files if "Hacl_" not in f]
+        self.hacl_compile_feature['std'].extend(self.evercrypt_compile_files)
 
         # We don't want internal excludes to be installed.
         self.public_includes = [file for file in self.hacl_includes if join(
@@ -225,9 +225,6 @@ class Config:
             for a in self.hacl_compile_feature:
                 out.write("set(SOURCES_%s %s)\n" %
                           (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a]).replace(separator, '/')))
-
-            out.write("set(SOURCES_evercrypt %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.evercrypt_compile_files).replace(separator, '/'))
 
             out.write("set(INCLUDES %s)\n" %
                       " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes).replace(separator, '/'))
