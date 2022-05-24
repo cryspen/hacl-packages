@@ -352,7 +352,7 @@ def _clean():
 
 
 @subcommand()
-def clean():
+def clean(args):
     """Remove all build and config artifacts"""
     _clean()
 
