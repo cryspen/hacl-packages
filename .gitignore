@@ -18,6 +18,7 @@ config/.cache
 .DS_Store
 .vscode
 rust/.c
+/opam
 
 cmake-build-debug
 
