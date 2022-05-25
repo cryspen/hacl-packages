@@ -64,12 +64,13 @@ endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VALE))
 BLOCKLIST+=Hacl_Curve25519_64.c evercrypt_vale_stubs.c EverCrypt_Vale.c
 endif
-C_PATH?=c
+C_PATH?=.
 C_LIB?=lib$(STATIC_C_LIB_NAME).a
 C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
+
 C_INCLUDES?=-I$(C_PATH)/include/
-KARAMEL_INCLUDES?=-I$(C_PATH)/krml/include \
-				  -I$(C_PATH)/krml/krmllib/dist/minimal/
+KARAMEL_INCLUDES?=-I$(C_PATH)/karamel/include \
+				  -I$(C_PATH)/karamel/krmllib/dist/minimal/
 
 OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
 OCAMLDEP=ocamlfind dep -I lib -slash
@@ -124,11 +125,16 @@ CTYPES_ML     =  $(patsubst %.cmx,%.ml,$(CTYPES_CMX))
 CTYPES_CMI    =  $(patsubst %.cmx,%.cmi,$(CTYPES_CMX))
 CTYPES_CMO    = $(patsubst %.cmx,%.cmo,$(CTYPES_CMX))
 
+$(C_LIB) $(C_DYN_LIB):
+	cmake -B build -G"Ninja Multi-Config"
+	ninja -f build-Release.ninja -C build
+	cp build/Release/$(C_LIB) .
+	cp build/Release/$(C_DYN_LIB) .
 
-ocamlevercrypt.cma: $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX)
+ocamlevercrypt.cma: $(C_LIB) $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX)
 	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -l$(STATIC_C_LIB_NAME)
 
-ocamlevercrypt.cmxa: $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS)
+ocamlevercrypt.cmxa: $(C_LIB) $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS)
 	ocamlmklib -o ocamlevercrypt $(CTYPES_CMX) -L. -l$(STATIC_C_LIB_NAME)
 
 STUBLIBS_PATH=$(OPAM_SWITCH_PREFIX)/lib/stublibs
