@@ -25,7 +25,7 @@ def cmake_config():
 
 
 def cmake_generated_config():
-    return os.path.join("config", "cached-config.txt")
+    return os.path.join("build", "cached-config.txt")
 
 
 def dep_config():

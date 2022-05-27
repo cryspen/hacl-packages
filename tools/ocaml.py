@@ -38,7 +38,7 @@ def build_ocaml():
         so = 'so'
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), '..')
     environment = {**os.environ,
-                   "HACL_MAKE_CONFIG": path_join(cwd, "config", "cached-config.txt")}
+                   "HACL_MAKE_CONFIG": path_join(cwd, "build", "cached-config.txt")}
     copy_lib(path_join(cwd, 'include'),
              path_join(cwd, 'vale', 'include'),
              path_join(cwd, 'build', 'Release'),
@@ -56,7 +56,7 @@ def test_ocaml():
     '''Test the OCaml bindings'''
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), '..')
     environment = {**os.environ,
-                   "HACL_MAKE_CONFIG": path_join(cwd, "config", "cached-config.txt")}
+                   "HACL_MAKE_CONFIG": path_join(cwd, "build", "cached-config.txt")}
     make_cmd = 'make -C ocaml test -j'
     subprocess.run(make_cmd, check=True, shell=True, env=environment)
 
