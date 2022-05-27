@@ -68,11 +68,11 @@ C_PATH?=.
 C_LIB?=lib$(STATIC_C_LIB_NAME).a
 C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 
-C_INCLUDES?=-I$(C_PATH)/include/
+C_INCLUDES?=-I$(C_PATH)/include/ -Ibuild/
 KARAMEL_INCLUDES?=-I$(C_PATH)/karamel/include \
 				  -I$(C_PATH)/karamel/krmllib/dist/minimal/
 
-OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib
+OCAMLOPT=ocamlfind opt -package ctypes,ctypes.stubs -linkpkg -I lib -I build
 OCAMLDEP=ocamlfind dep -I lib -slash
 
 OCAMLC=ocamlfind c -g -package ctypes,ctypes.stubs -linkpkg -I lib
@@ -149,6 +149,8 @@ clean:
 
 # Install hacl-star-raw locally.
 install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
+# We need to remove all comments from config.h because ccpo can't handle them
+	sed -i 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
 	ocamlfind install -add hacl-star-raw $(CTYPES_ML)
@@ -158,10 +160,10 @@ install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
 	ocamlfind install -add hacl-star-raw \
          $(C_LIB) $(C_DYN_LIB) \
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
-         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) $(C_PATH)/include/config.h
+         libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) build/config.h
 
 build: install-hacl-star-raw
-	cd hacl-star && dune build
+	cd ../hacl-star && dune build
 
 test: build
-	cd hacl-star && dune test
+	cd ../hacl-star && dune test

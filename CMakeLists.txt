@@ -122,11 +122,21 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
 include(config/options.cmake)
 
 # Write out config to file
-write_file(${PROJECT_SOURCE_DIR}/config/cached-config.txt
-    "TOOLCHAIN_CAN_COMPILE_VEC128=${TOOLCHAIN_CAN_COMPILE_VEC128}\n\
-TOOLCHAIN_CAN_COMPILE_VEC256=${TOOLCHAIN_CAN_COMPILE_VEC256}\n\
-TOOLCHAIN_CAN_COMPILE_VALE=${TOOLCHAIN_CAN_COMPILE_VALE}\
-    ")
+if(${TOOLCHAIN_CAN_COMPILE_VEC128})
+    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
+        "export TOOLCHAIN_CAN_COMPILE_VEC128=${TOOLCHAIN_CAN_COMPILE_VEC128}\n"
+        APPEND)
+endif(${TOOLCHAIN_CAN_COMPILE_VEC128})
+if(${TOOLCHAIN_CAN_COMPILE_VEC256})
+    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
+        "export TOOLCHAIN_CAN_COMPILE_VEC256=${TOOLCHAIN_CAN_COMPILE_VEC256}\n"
+        APPEND)
+endif(${TOOLCHAIN_CAN_COMPILE_VEC256})
+if(${TOOLCHAIN_CAN_COMPILE_VALE})
+    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
+        "export TOOLCHAIN_CAN_COMPILE_VALE=${TOOLCHAIN_CAN_COMPILE_VALE}\n"
+        APPEND)
+endif(${TOOLCHAIN_CAN_COMPILE_VALE})
 
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files
