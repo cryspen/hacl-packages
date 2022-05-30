@@ -85,7 +85,7 @@ if(NOT MSVC)
         # -Werror=gcc-compat
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
-        $<$<CONFIG:RELEASE>:-O3>  
+        $<$<CONFIG:RELEASE>:-O3>
     )
 endif()
 
@@ -123,18 +123,18 @@ include(config/options.cmake)
 
 # Write out config to file
 if(${TOOLCHAIN_CAN_COMPILE_VEC128})
-    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
-        "export TOOLCHAIN_CAN_COMPILE_VEC128=${TOOLCHAIN_CAN_COMPILE_VEC128}\n"
+    write_file(${PROJECT_SOURCE_DIR}/build/Makefile.include
+        "TOOLCHAIN_CAN_COMPILE_VEC128=${TOOLCHAIN_CAN_COMPILE_VEC128}\n"
         APPEND)
 endif(${TOOLCHAIN_CAN_COMPILE_VEC128})
 if(${TOOLCHAIN_CAN_COMPILE_VEC256})
-    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
-        "export TOOLCHAIN_CAN_COMPILE_VEC256=${TOOLCHAIN_CAN_COMPILE_VEC256}\n"
+    write_file(${PROJECT_SOURCE_DIR}/build/Makefile.include
+        "TOOLCHAIN_CAN_COMPILE_VEC256=${TOOLCHAIN_CAN_COMPILE_VEC256}\n"
         APPEND)
 endif(${TOOLCHAIN_CAN_COMPILE_VEC256})
 if(${TOOLCHAIN_CAN_COMPILE_VALE})
-    write_file(${PROJECT_SOURCE_DIR}/build/cached-config.txt
-        "export TOOLCHAIN_CAN_COMPILE_VALE=${TOOLCHAIN_CAN_COMPILE_VALE}\n"
+    write_file(${PROJECT_SOURCE_DIR}/build/Makefile.include
+        "TOOLCHAIN_CAN_COMPILE_VALE=${TOOLCHAIN_CAN_COMPILE_VALE}\n"
         APPEND)
 endif(${TOOLCHAIN_CAN_COMPILE_VALE})
 

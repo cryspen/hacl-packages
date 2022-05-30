@@ -22,10 +22,4 @@ cp ocaml/ctypes.depend opam/hacl-star-raw
 cp ocaml/META opam/hacl-star-raw
 cp ocaml/hacl-star-raw.opam opam
 
-cp -r ocaml/hacl-star opam/
-
-make -C opam/hacl-star-raw libhacl.dylib libhacl_static.a
-# We need to pick up the environment variables from the cmake build for opam
-source opam/hacl-star-raw/build/cached-config.txt
-make -C opam/hacl-star-raw -j
-make -C opam/hacl-star-raw -j test
+cp -r ocaml/hacl-star/* opam/
