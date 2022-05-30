@@ -15,9 +15,9 @@
 # This file is adapted from the project-everest/hacl-star/ Makefile.
 
 .PRECIOUS: %.cmx
-.PHONY: build test clean install-hacl-star-raw setup
+.PHONY: clean install-hacl-star-raw setup
 
-all: ocamlevercrypt.cmxa build
+all: build-bindings
 
 UNAME		?= $(shell uname)
 ifeq ($(UNAME),Darwin)
@@ -35,10 +35,25 @@ else ifeq ($(UNAME),FreeBSD)
   CFLAGS	+= -fPIC
 endif
 
-# Config
-include $(HACL_MAKE_CONFIG)
 STATIC_C_LIB_NAME=hacl_static
 DYNAMIC_C_LIB_NAME=hacl
+
+C_LIB?=lib$(STATIC_C_LIB_NAME).a
+C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
+
+# Compiling the C library. This needs to be executed before and independently
+# of build-bindings because it will also write Makefile.config, which is needed
+# by build-bindings.
+build-c:
+	cmake -B build -G"Ninja Multi-Config"
+	ninja -f build-Release.ninja -C build
+	cp build/Release/$(C_LIB) .
+	cp build/Release/$(C_DYN_LIB) .
+
+-include build/Makefile.include
+
+
+# Config
 BLOCKLIST= Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
 			Hacl_HPKE_Curve64_CP256_SHA256.c Hacl_HPKE_Curve64_CP256_SHA512.c \
 			Hacl_HPKE_Curve64_CP32_SHA256.c Hacl_HPKE_Curve64_CP32_SHA512.c \
@@ -65,10 +80,8 @@ ifeq (,$(TOOLCHAIN_CAN_COMPILE_VALE))
 BLOCKLIST+=Hacl_Curve25519_64.c evercrypt_vale_stubs.c EverCrypt_Vale.c
 endif
 C_PATH?=.
-C_LIB?=lib$(STATIC_C_LIB_NAME).a
-C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 
-C_INCLUDES?=-I$(C_PATH)/include/ -Ibuild/
+C_INCLUDES?=-I$(C_PATH)/include/ -Ivale/include -Ibuild/
 KARAMEL_INCLUDES?=-I$(C_PATH)/karamel/include \
 				  -I$(C_PATH)/karamel/krmllib/dist/minimal/
 
@@ -125,12 +138,6 @@ CTYPES_ML     =  $(patsubst %.cmx,%.ml,$(CTYPES_CMX))
 CTYPES_CMI    =  $(patsubst %.cmx,%.cmi,$(CTYPES_CMX))
 CTYPES_CMO    = $(patsubst %.cmx,%.cmo,$(CTYPES_CMX))
 
-$(C_LIB) $(C_DYN_LIB):
-	cmake -B build -G"Ninja Multi-Config"
-	ninja -f build-Release.ninja -C build
-	cp build/Release/$(C_LIB) .
-	cp build/Release/$(C_DYN_LIB) .
-
 ocamlevercrypt.cma: $(C_LIB) $(ALL_BINDINGS) $(CTYPES_CMO) $(ALL_C_STUBS) $(CTYPES_CMX)
 	ocamlmklib -o ocamlevercrypt $(CTYPES_CMO) -L. -l$(STATIC_C_LIB_NAME)
 
@@ -139,7 +146,7 @@ ocamlevercrypt.cmxa: $(C_LIB) $(ALL_BINDINGS) $(ALL_ML_STUBS) $(ALL_C_STUBS)
 
 STUBLIBS_PATH=$(OPAM_SWITCH_PREFIX)/lib/stublibs
 
-dllocamlevercrypt.$(OCAML_SO): ocamlevercrypt.cmxa ocamlevercrypt.cma
+build-bindings: ocamlevercrypt.cmxa ocamlevercrypt.cma
 	ocamlmklib -o ocamlevercrypt $(ALL_C_STUBS) -L. -L$(STUBLIBS_PATH) -l$(STATIC_C_LIB_NAME)
 
 clean:
@@ -148,7 +155,7 @@ clean:
 	rm -rf c rm -rf hacl-star/_build
 
 # Install hacl-star-raw locally.
-install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
+install: dllocamlevercrypt.$(OCAML_SO)
 # We need to remove all comments from config.h because ccpo can't handle them
 	sed -i 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h
 	ocamlfind remove hacl-star-raw || true
@@ -161,9 +168,3 @@ install-hacl-star-raw: dllocamlevercrypt.$(OCAML_SO)
          $(C_LIB) $(C_DYN_LIB) \
 		 ocamlevercrypt.cma ocamlevercrypt.cmxa ocamlevercrypt.a \
          libocamlevercrypt.a dllocamlevercrypt.$(OCAML_SO) build/config.h
-
-build: install-hacl-star-raw
-	cd ../hacl-star && dune build
-
-test: build
-	cd ../hacl-star && dune test

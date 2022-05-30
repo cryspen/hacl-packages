@@ -28,10 +28,10 @@ x-ci-accept-failures: [
   "oraclelinux-7" # Default C compiler is too old
 ]
 build: [
-  ["./configure"]
-  [make]
+  [make "-C" "hacl-star-raw" "build-c"]
+  [make "-C" "hacl-star-raw" "build-bindings"]
 ]
 install: [
-  make "install-hacl-star-raw"
+  [make "-C" "hacl-star-raw" "install"]
 ]
 dev-repo: "git+https://github.com/project-everest/hacl-star.git"
