@@ -64,17 +64,20 @@ BLOCKLIST= Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
 			Hacl_HPKE_Curve51_CP32_SHA512.c Hacl_HPKE_P256_CP128_SHA256.c \
 			Hacl_HPKE_P256_CP32_SHA256.c Hacl_Frodo1344.c Hacl_Frodo640.c \
 			Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.c \
-			Hacl_Frodo976.c Hacl_Frodo64.c Hacl_Frodo_KEM.c
+			Hacl_Frodo976.c Hacl_Frodo64.c Hacl_Frodo_KEM.c \
+			EverCrypt_StaticConfig.c Hacl_Curve25519_64_Slow.c \
+			Hacl_EC_Ed25519.c Hacl_FFDHE.c Hacl_SHA2_Scalar32.c \
+			Hacl_Streaming_MD5.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
 BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
-			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c \
-			Hacl_Bignum4096.c Hacl_Bignum64.c Hacl_GenericField64.c
+			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c
 endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC256))
 BLOCKLIST+=Hacl_Bignum256.c Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c \
 			Hacl_HKDF_Blake2b_256.c Hacl_HMAC_Blake2b_256.c \
 			Hacl_Hash_Blake2b_256.c Hacl_Poly1305_256.c Hacl_SHA2_Vec256.c \
-			Hacl_Streaming_Blake2b_256.c Hacl_Streaming_Poly1305_256.c
+			Hacl_Streaming_Blake2b_256.c Hacl_Streaming_Poly1305_256.c \
+			Hacl_GenericField64.c Hacl_Bignum4096.c Hacl_Bignum64.c # These all link against 256-bit bignum
 endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VALE))
 BLOCKLIST+=Hacl_Curve25519_64.c evercrypt_vale_stubs.c EverCrypt_Vale.c
