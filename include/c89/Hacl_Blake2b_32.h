@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Hash_Base_H
-#define __Hacl_Hash_Base_H
+#ifndef __Hacl_Blake2b_32_H
+#define __Hacl_Blake2b_32_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -36,25 +36,62 @@ extern "C" {
 
 
 #include "Lib_Memzero0.h"
-#include "Hacl_Spec.h"
 #include "Hacl_Krmllib.h"
 #include "Hacl_Impl_Blake2_Constants.h"
-#include "Hacl_Blake2s_32.h"
-#include "Hacl_Blake2s_128.h"
-#include "Hacl_Blake2b_32.h"
-#include "Hacl_Blake2b_256.h"
 #include "evercrypt_targetconfig.h"
-uint32_t Hacl_Hash_Definitions_word_len(Spec_Hash_Definitions_hash_alg a);
+#include "libintvector.h"
+#define Hacl_Impl_Blake2_Core_M32 0
+#define Hacl_Impl_Blake2_Core_M128 1
+#define Hacl_Impl_Blake2_Core_M256 2
 
-uint32_t Hacl_Hash_Definitions_block_len(Spec_Hash_Definitions_hash_alg a);
+typedef uint8_t Hacl_Impl_Blake2_Core_m_spec;
 
-uint32_t Hacl_Hash_Definitions_hash_word_len(Spec_Hash_Definitions_hash_alg a);
+void Hacl_Blake2b_32_blake2b_init(uint64_t *hash, uint32_t kk, uint32_t nn);
 
-uint32_t Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_hash_alg a);
+void
+Hacl_Blake2b_32_blake2b_update_key(
+  uint64_t *wv,
+  uint64_t *hash,
+  uint32_t kk,
+  uint8_t *k,
+  uint32_t ll
+);
+
+void
+Hacl_Blake2b_32_blake2b_update_multi(
+  uint32_t len,
+  uint64_t *wv,
+  uint64_t *hash,
+  FStar_UInt128_uint128 prev,
+  uint8_t *blocks,
+  uint32_t nb
+);
+
+void
+Hacl_Blake2b_32_blake2b_update_last(
+  uint32_t len,
+  uint64_t *wv,
+  uint64_t *hash,
+  FStar_UInt128_uint128 prev,
+  uint32_t rem,
+  uint8_t *d
+);
+
+void Hacl_Blake2b_32_blake2b_finish(uint32_t nn, uint8_t *output, uint64_t *hash);
+
+void
+Hacl_Blake2b_32_blake2b(
+  uint32_t nn,
+  uint8_t *output,
+  uint32_t ll,
+  uint8_t *d,
+  uint32_t kk,
+  uint8_t *k
+);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Hash_Base_H_DEFINED
+#define __Hacl_Blake2b_32_H_DEFINED
 #endif

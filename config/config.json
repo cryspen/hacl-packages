@@ -104,6 +104,10 @@
                 "features": "std"
             },
             {
+                "file": "Hacl_Chacha20_Vec32.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Chacha20Poly1305_128.c",
                 "features": "vec128"
             },
@@ -112,11 +116,19 @@
                 "features": "vec128"
             },
             {
+                "file": "Hacl_Chacha20_Vec128.c",
+                "features": "vec128"
+            },
+            {
                 "file": "Hacl_Chacha20Poly1305_256.c",
                 "features": "vec256"
             },
             {
                 "file": "Hacl_Streaming_Poly1305_256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_Chacha20_Vec256.c",
                 "features": "vec256"
             }
         ],
@@ -208,6 +220,14 @@
             {
                 "file": "Hacl_HKDF.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_HKDF_Blake2s_128.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HKDF_Blake2b_256.c",
+                "features": "vec256"
             }
         ],
         "rsapss": [
