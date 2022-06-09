@@ -16,3 +16,4 @@ cpu-features/detect
 __pycache__/
 config/.cache
 .DS_Store
+.vscode

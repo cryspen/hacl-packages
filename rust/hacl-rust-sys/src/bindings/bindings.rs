@@ -980,3 +980,78 @@ extern "C" {
 extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
 }
+extern "C" {
+    pub fn Hacl_RSAPSS_rsapss_sign(
+        a: Spec_Hash_Definitions_hash_alg,
+        modBits: u32,
+        eBits: u32,
+        dBits: u32,
+        skey: *mut u64,
+        saltLen: u32,
+        salt: *mut u8,
+        msgLen: u32,
+        msg: *mut u8,
+        sgnt: *mut u8,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_RSAPSS_rsapss_verify(
+        a: Spec_Hash_Definitions_hash_alg,
+        modBits: u32,
+        eBits: u32,
+        pkey: *mut u64,
+        saltLen: u32,
+        sgntLen: u32,
+        sgnt: *mut u8,
+        msgLen: u32,
+        msg: *mut u8,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_RSAPSS_new_rsapss_load_pkey(
+        modBits: u32,
+        eBits: u32,
+        nb: *mut u8,
+        eb: *mut u8,
+    ) -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_RSAPSS_new_rsapss_load_skey(
+        modBits: u32,
+        eBits: u32,
+        dBits: u32,
+        nb: *mut u8,
+        eb: *mut u8,
+        db: *mut u8,
+    ) -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_RSAPSS_rsapss_skey_sign(
+        a: Spec_Hash_Definitions_hash_alg,
+        modBits: u32,
+        eBits: u32,
+        dBits: u32,
+        nb: *mut u8,
+        eb: *mut u8,
+        db: *mut u8,
+        saltLen: u32,
+        salt: *mut u8,
+        msgLen: u32,
+        msg: *mut u8,
+        sgnt: *mut u8,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_RSAPSS_rsapss_pkey_verify(
+        a: Spec_Hash_Definitions_hash_alg,
+        modBits: u32,
+        eBits: u32,
+        nb: *mut u8,
+        eb: *mut u8,
+        saltLen: u32,
+        sgntLen: u32,
+        sgnt: *mut u8,
+        msgLen: u32,
+        msg: *mut u8,
+    ) -> bool;
+}
