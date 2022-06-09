@@ -27,6 +27,10 @@ pub use crate::p256::{
     validate_pk as p256_validate_pk, validate_sk as p256_validate_sk, Error as P256Error,
     Nonce as P256Nonce, Scalar as P256Scalar, Signature as EcdsaSignature,
 };
+pub use crate::rsa_pss::{
+    self, sign as rsa_pss_sign, verify as rsa_pss_verify, KeySize as RsaPssKeySize,
+    PrivateKey as RsaPssPrivateKey, PublicKey as RsaPssPublicKey,
+};
 pub use crate::signature::{self, sign, verify, Error as SignatureError, Mode as SignatureMode};
 pub use crate::x25519::{
     self, dh as x25519, dh_base as x25519_base, Error as X25519Error, Point as X25519Point,
