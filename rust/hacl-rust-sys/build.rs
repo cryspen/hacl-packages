@@ -52,58 +52,54 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 #[cfg(windows)]
 fn create_bindings(_: &Path, _: &Path) {}
 
-fn get_hacl_c(out_path: &Path) {
-    // git clone the repo
-    if out_path.join("hacl-packages").exists() {
-        // Only clone if we didn't do so already.
-        return;
-    }
-    let mut mach_cmd = Command::new("git");
-    let mach_status = mach_cmd
-        .current_dir(out_path)
-        .args(&[
-            "clone",
-            "https://github.com/cryspen/hacl-packages",
-            "--depth=1",
-        ])
-        .status()
-        .expect("Failed to run git clone.");
-    if !mach_status.success() {
-        panic!("Failed to run git clone.")
-    }
-    println!(" >>> Cloned hacl-packages into {}", out_path.display())
-}
-
 fn build_hacl_c(path: &Path) {
     println!(" >>> Building HACL C in {}", path.display());
-    let canon_mach = std::fs::canonicalize(path.join("mach")).expect("Failed to find mach script!");
-    let mut mach_cmd = Command::new(canon_mach.clone());
-    let mach_status = mach_cmd
-        .current_dir(path)
-        // We always build the release version here.
-        // For debugging don't use this.
-        .args(&["build", "--release"])
-        .status()
-        .expect("Failed to run mach build.");
-    if !mach_status.success() {
-        panic!("Failed to run mach build.")
-    }
-    let install_path = path.join("build").join("installed");
-    println!(" >>> Installing HACL C into {}", install_path.display());
-    let mut mach_cmd = Command::new(canon_mach);
-    let mach_status = mach_cmd
+    // cmake
+    let mut cmake_cmd = Command::new("cmake");
+    // We always build the release version here.
+    // TODO: For debugging don't use this.
+    let cmake_status = cmake_cmd
         .current_dir(path)
         .args(&[
-            "install",
-            "--prefix",
-            install_path.to_str().unwrap(),
-            "-c",
-            "release",
+            "-B",
+            "build",
+            "-G",
+            "Ninja",
+            "-D",
+            "CMAKE_BUILD_TYPE=Release",
         ])
         .status()
-        .expect("Failed to run mach install.");
-    if !mach_status.success() {
-        panic!("Failed to run mach install.")
+        .expect("Failed to run cmake.");
+    if !cmake_status.success() {
+        panic!("Failed to run cmake.")
+    }
+    // build
+    let mut ninja_cmd = Command::new("ninja");
+    let ninja_status = ninja_cmd
+        .current_dir(path)
+        .args(&["-f", "build.ninja", "-C", "build"])
+        .status()
+        .expect("Failed to run ninja.");
+    if !ninja_status.success() {
+        panic!("Failed to run ninja.")
+    }
+
+    // install
+    let install_path = path.join("build").join("installed");
+    println!(" >>> Installing HACL C into {}", install_path.display());
+    let mut cmake_cmd = Command::new("cmake");
+    let cmake_status = cmake_cmd
+        .current_dir(path)
+        .args(&[
+            "--install",
+            "build",
+            "--prefix",
+            install_path.to_str().unwrap(),
+        ])
+        .status()
+        .expect("Failed to install C library.");
+    if !cmake_status.success() {
+        panic!("Failed to install C library.")
     }
 }
 
@@ -111,8 +107,8 @@ fn main() {
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let home_dir = Path::new(&home_dir);
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let out_path = Path::new(&out_dir);
+    // let out_dir = env::var("OUT_DIR").unwrap();
+    // let out_path = Path::new(&out_dir);
     let mach_build = env::var("MACH_BUILD").ok().is_some();
     println!("mach_build: {}", mach_build);
 
@@ -120,10 +116,9 @@ fn main() {
     // This is the default behaviour. It can be disabled when working on this
     // to pick up the local version. This is what the global mach script does.
     let hacl_path = if !mach_build {
-        get_hacl_c(&out_path);
-        let hacl_packages_path = out_path.join("hacl-packages");
-        build_hacl_c(&hacl_packages_path);
-        hacl_packages_path.join("build").join("installed")
+        let c_path = home_dir.join("..").join(".c");
+        build_hacl_c(&c_path);
+        c_path.join("build").join("installed")
     } else {
         // Use the higher level install directory.
         home_dir

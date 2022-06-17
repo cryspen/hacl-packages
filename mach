@@ -22,6 +22,7 @@ from tools.test import run_tests
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
 from tools.update import update
+from tools.rust import rust
 
 # === SUBCOMMANDS === #
 
@@ -33,6 +34,7 @@ def _install(prefix=None, config=None):
     cmake_cmd = ['cmake', '--install', 'build', '--config', configuration]
     if prefix:
         cmake_cmd.extend(['--prefix', prefix])
+    print(cmake_cmd)
     subprocess.run(cmake_cmd, check=True)
 
 
