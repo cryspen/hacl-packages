@@ -17,3 +17,4 @@ __pycache__/
 config/.cache
 .DS_Store
 .vscode
+rust/.c
