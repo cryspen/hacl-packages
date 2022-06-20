@@ -22,9 +22,9 @@ Quick start: `./mach build --test`
 
 Build dependencies
 
-- [cmake]
-- [ninja]
-- [python]
+- [cmake] (3.17 or newer)
+- [ninja] (1.10 or newer)
+- [python] (3.6 or newer)
 
 ## mach
 
