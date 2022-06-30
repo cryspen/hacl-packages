@@ -155,10 +155,6 @@ Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 Tests require the [nlohmann_json] package to read json test files.
 CMake takes care of pulling and building the package.
 
-## Code style
-
-Handwritten C and CPP code is formatted with the Mozilla clang-format style.
-
 ## License
 
 HACL packages are licensed under either of

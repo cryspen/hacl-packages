@@ -54,4 +54,4 @@ As such, the full [HACL*] repository contains many software artifacts.
 [github]: https://github.com/cryspen/hacl-packages
 [github issue tracker]: https://github.com/cryspen/hacl-packages/issues
 [pull request]: https://github.com/cryspen/hacl-packages/pulls
-[contributing]: https://github.com/cryspen/hacl-packages/blob/main/CONTRIBUTIN.md
+[contributing]: https://github.com/cryspen/hacl-packages/blob/main/CONTRIBUTING.md
