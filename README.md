@@ -2,36 +2,78 @@
 
 ![][status]
 
-The [HACL*] repository is a collection of high-assurance cryptographic algorithms developed as part of [Project Everest].
-It includes source code written in [F*], generated code in C, verified assembly code
-from the [Vale] project, and an agile multiplexed cryptographic provider called [EverCrypt].
-As such, the full [HACL*] repository contains many software artifacts and a complicated build system
-that can be intimidating to a crypto developer who simply wishes to use verified crypto.
-
-This repository addresses this gap by presenting several usable crypto packages developed by Cryspen on top of HACL\*.
+This repository contains ready-to-use crypto packages developed by [Cryspen] on top of [HACL*].
 In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
-as well as Rust, OCaml, and JavaScript bindings for this library. Cryspen is in the process of adding more usable APIs for crypto
-primitives, as well as extensive documentation for these APIs. Cryspen is also working on more optimized versions of some
-algorithms.
+as well as Rust, OCaml, and JavaScript bindings for this library.
 
-## Build
+Currently, we are in the process of adding more usable APIs, [providing extensive documentation](https://tech.cryspen.com/hacl-packages/), and further optimizing the algorithms.
 
-We uses [cmake] to configure the C build and [ninja] to build.
+## What is HACL\* and why should you use HACL Packages?
 
-Quick start: `./mach build --test`
+[HACL*] is a collection of high-assurance cryptographic algorithms developed as part of [Project Everest].
+It includes source code written in [F*], generated C code, verified assembly code from the [Vale] project, and an agile multiplexed cryptographic provider called [EverCrypt].
+As such, the full HACL\* repository contains many software artifacts and a complicated build system that can be intimidating to a crypto developer who simply wishes to use verified crypto.
 
-Build dependencies
+## Quickstart
+
+### Install build dependencies
+
+We need the following dependencies ...
 
 - [cmake] (3.17 or newer)
 - [ninja] (1.10 or newer)
 - [python] (3.6 or newer)
+- [clang] (7 or newer) or [gcc] (7 or newer)
 
-## mach
+Depending on your system you can install them as follows (click to expand) ...
 
-All actions are driven by [mach].
-See `./mach --help` for details.
+<details>
+  <summary><b>Arch Linux</b></summary>
 
-## Platform Support
+```sh
+$ sudo pacman -S cmake ninja python
+
+# Either of ...
+$ sudo pacman -S clang
+$ sudo pacman -S gcc
+```
+</details>
+
+<details>
+  <summary><b>Ubuntu</b></summary>
+  
+```sh
+$ sudo apt install cmake ninja-build python3
+
+# Either of ...
+$ sudo apt install clang
+$ sudo apt install gcc
+```
+</details>
+
+<details>
+  <summary><b>macOS</b></summary>
+
+```sh
+$ brew install cmake ninja python
+
+# Either of ...
+$ brew install llvm
+$ brew install gcc
+```
+</details>
+
+## Build (and test) HACL Packages
+
+You can run ...
+
+```sh
+$ ./mach build --test
+```
+
+... to build HACL Packages and run the tests. All actions are driven by [mach]. See `./mach --help` for details.
+
+## Platform support
 
 The HACL Packages are supported based on the following tiers.
 
@@ -113,7 +155,7 @@ Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 Tests require the [nlohmann_json] package to read json test files.
 CMake takes care of pulling and building the package.
 
-## Code Style
+## Code style
 
 Handwritten C and CPP code is formatted with the Mozilla clang-format style.
 
@@ -127,8 +169,11 @@ HACL packages are licensed under either of
 at your option.
 
 [//]: # "links"
+[cryspen]: https://www.cryspen.com/
 [cmake]: https://cmake.org/
 [ninja]: https://ninja-build.org/
+[clang]: https://clang.llvm.org/
+[gcc]: https://gcc.gnu.org/
 [mach]: ./mach
 [gtest]: https://google.github.io/googletest/
 [nlohmann_json]: https://github.com/nlohmann/json
