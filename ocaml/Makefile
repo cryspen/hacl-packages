@@ -48,6 +48,7 @@ BLOCKLIST= Hacl_HPKE_Curve64_CP128_SHA256.c Hacl_HPKE_Curve64_CP128_SHA512.c \
 			Hacl_HPKE_Curve51_CP128_SHA512.c Hacl_HPKE_Curve51_CP32_SHA256.c \
 			Hacl_HPKE_Curve51_CP32_SHA512.c Hacl_HPKE_P256_CP128_SHA256.c \
 			Hacl_HPKE_P256_CP32_SHA256.c Hacl_Frodo1344.c Hacl_Frodo640.c \
+			Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.c \
 			Hacl_Frodo976.c Hacl_Frodo64.c Hacl_Frodo_KEM.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
 BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
