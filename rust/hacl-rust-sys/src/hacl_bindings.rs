@@ -8,7 +8,7 @@ include!("bindings/bindings.rs");
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
 pub struct EverCrypt_AEAD_state_s {
-    r#impl: Spec_Cipher_Expansion_impl,
+    r#impl: u8,
     ek: *mut u8,
 }
 
