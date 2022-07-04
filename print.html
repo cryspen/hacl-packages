@@ -167,7 +167,7 @@ As such, the full <a href="https://hacl-star.github.io">HACL*</a> repository con
 <p>The following tables gives an overview over the algorithms supported by the HACL
 packages.</p>
 <p>For a detailed description fo the Support column, please see the <a href="./architectures.html">Architectures section</a>.</p>
-<table><thead><tr><th>Family</th><th>Algorithm</th><th>Support</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>Family</th><th>Algorithm</th><th>Support</th></tr></thead><tbody>
 <tr><td>AEAD</td><td>AES-GCM 128</td><td>AES-NI &amp; CLMUL (x86 only)</td></tr>
 <tr><td>AEAD</td><td>AES-GCM 256</td><td>AES-NI &amp; CLMUL (x86 only)</td></tr>
 <tr><td>AEAD</td><td>Chacha20-Poly1305</td><td>Portable | vec128 | vec256</td></tr>
@@ -189,6 +189,7 @@ packages.</p>
 <tr><td>MAC</td><td>HMAC</td><td>Portable (depends on hash)</td></tr>
 <tr><td>MAC</td><td>Poly1305</td><td>Portable | vec128 | vec256 | x64 ASM</td></tr>
 </tbody></table>
+</div>
 <p>TODO:</p>
 <ul>
 <li><input disabled="" type="checkbox"/>
@@ -252,12 +253,12 @@ there is no guarantee that they work.</p>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="architectures"><a class="header" href="#architectures">Architectures</a></h1>
 <p>The HACL C library has different optimization for different platforms.</p>
-<table><thead><tr><th></th><th>x86</th><th>x86-64</th><th>Arm32</th><th>Arm64</th><th>s390x</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th></th><th>x86</th><th>x86-64</th><th>Arm32</th><th>Arm64</th><th>s390x</th></tr></thead><tbody>
 <tr><td>Portable C</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
 <tr><td>Vec128</td><td>-</td><td>SSE2, SSE3, SSE4.1</td><td>-</td><td>NEON</td><td>z14</td></tr>
 <tr><td>Vec256</td><td>-</td><td>AVX, AVX2</td><td>-</td><td>-</td><td>-</td></tr>
 </tbody></table>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="mach"><a class="header" href="#mach">mach</a></h1>
 <p>The main entry point for all operations is the <code>mach</code> script.</p>
 <h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
