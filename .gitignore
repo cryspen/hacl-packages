@@ -18,3 +18,8 @@ config/.cache
 .DS_Store
 .vscode
 rust/.c
+
+cmake-build-debug
+
+# CLion
+.idea
