@@ -1,0 +1,42 @@
+name: mach_build
+description: mach | Build (Debug + Release)
+inputs:
+  bits:
+    description: Bits (`32`, `64`)
+    required: true
+  edition:
+    description: Edition (`c89`, ``)
+    required: true
+  target:
+    description: Target
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - run: echo "BITS_FLAG=-m32" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.bits == '32' }}
+    - run: echo "BITS_FLAG=" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.bits == '64' }}
+
+    - run: echo "EDITION_FLAG=-ec89" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.edition == 'c89' }}
+    - run: echo "EDITION_FLAG=" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.edition == '' }}
+
+    - run: echo "TARGET_FLAG=--target ${{ inputs.target }}" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.target != '' }}
+    - run: echo "TARGET_FLAG=" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.target == '' }}
+
+    - name: mach | Build (Debug + Release)
+      shell: bash
+      run: |
+        ./mach build -v --tests $BITS_FLAG $EDITION_FLAG $TARGET_FLAG
+        ./mach build -v --tests --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG
