@@ -46,3 +46,5 @@ pub use crate::{
     signature::key_gen as signature_key_gen,
     x25519::key_gen as x25519_key_gen,
 };
+
+pub use crate::bignum::*;
