@@ -7,3 +7,4 @@
 #include "hacl/Hacl_Spec.h"
 #include "hacl/Hacl_SHA3.h"
 #include "hacl/Hacl_RSAPSS.h"
+#include "hacl/Hacl_Bignum4096.h"

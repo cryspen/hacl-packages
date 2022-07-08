@@ -1051,3 +1051,112 @@ extern "C" {
         msg: *mut u8,
     ) -> bool;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s {
+    pub len: u32,
+    pub n: *mut u64,
+    pub mu: u64,
+    pub r2: *mut u64,
+}
+pub type Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64 = Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s;
+extern "C" {
+    pub fn Hacl_Bignum4096_add(a: *mut u64, b: *mut u64, res: *mut u64) -> u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_sub(a: *mut u64, b: *mut u64, res: *mut u64) -> u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_add_mod(n: *mut u64, a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_sub_mod(n: *mut u64, a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mul(a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_sqr(a: *mut u64, res: *mut u64);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod(n: *mut u64, a: *mut u64, res: *mut u64) -> bool;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_exp_vartime(
+        n: *mut u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_exp_consttime(
+        n: *mut u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_inv_prime_vartime(n: *mut u64, a: *mut u64, res: *mut u64) -> bool;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mont_ctx_init(
+        n: *mut u64,
+    ) -> *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mont_ctx_free(k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_exp_vartime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_exp_consttime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_mod_inv_prime_vartime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_new_bn_from_bytes_be(len: u32, b: *mut u8) -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_new_bn_from_bytes_le(len: u32, b: *mut u8) -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_bn_to_bytes_be(b: *mut u64, res: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_bn_to_bytes_le(b: *mut u64, res: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_lt_mask(a: *mut u64, b: *mut u64) -> u64;
+}
+extern "C" {
+    pub fn Hacl_Bignum4096_eq_mask(a: *mut u64, b: *mut u64) -> u64;
+}

@@ -29,6 +29,7 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_function("Hacl_P256_.*")
         .allowlist_function("Hacl_RSAPSS_.*")
         .allowlist_function("Hacl_SHA3_.*")
+        .allowlist_function("Hacl_Bignum4096_.*")
         .allowlist_var("EverCrypt_Error_.*")
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
