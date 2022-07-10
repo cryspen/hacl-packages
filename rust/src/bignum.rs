@@ -52,7 +52,7 @@ impl TryFrom<&[u8]> for Bignum {
 
         unsafe {
             // Let's create a short-lived mutable clone of our big endian input
-            let data = vec![0u8; be_vec.len()].clone().as_mut_ptr();
+            let data = vec![0u8; be_vec.len()].as_mut_ptr();
 
             let raw_bn = vec![0u8; BN_BYTE_LENGTH].as_mut_ptr();
 
@@ -72,7 +72,22 @@ impl TryFrom<&[u8]> for Bignum {
 }
 
 impl Bignum {
+    /// returns a vector of big-endian bytes
     pub fn to_vec8(&self) -> Vec<u8> {
         self.bn.to_vec()
+    }
+
+    /// Returns true if self < other
+    pub fn lt(&self, other: &Bignum) -> bool {
+        // We probably don't need to clone() here, as I don't think that the
+        // data is actually mutated. But let's be careful here.
+        let a = self.hacl_bn.clone().as_mut_ptr();
+        let b =other.hacl_bn.clone().as_mut_ptr();
+
+        let hacl_result: u64;
+        unsafe {
+            hacl_result = Hacl_Bignum4096_lt_mask(a, b);
+        }
+        hacl_result != 0u64
     }
 }
