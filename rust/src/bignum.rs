@@ -7,20 +7,15 @@
 
 use hacl_rust_sys::*;
 use libc;
-use std::mem;
-use std::slice;
 
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
 
-const BYTES_PER_WORD: usize = mem::size_of::<HaclBnWord>();
 const BN_BITSIZE: usize = 4096;
-
-const BN_SLICE_LENGTH: usize = BN_BITSIZE / (BYTES_PER_WORD * 8);
 const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
 pub enum Error {
     DeconversionError,
@@ -38,43 +33,22 @@ pub struct Bignum {
     // than to use the hacl functions for turning one into a byte array.
     // So we will use a byte array as our primary internal representation
     bn: Vec<u8>,
-
-    // hacl_bn is a slice that is the Rust-friendly version of their `*mut u64`
-    // It is designed to be converted into what the FFI wants without having to
-    // go through Hacl_Bignum4096_new_bn_from_bytes_be each time.
-    hacl_bn: Vec<HaclBnWord>,
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
-impl TryFrom<&[u8]> for Bignum {
+impl TryFrom<Vec<u8>> for Bignum {
     type Error = Error;
-    fn try_from(be_bytes: &[u8]) -> Result<Bignum, Error> {
+    fn try_from(be_bytes: Vec<u8>) -> Result<Bignum, Error> {
         if !(1..=BN_BYTE_LENGTH).contains(&be_bytes.len()) {
             return Err(Error::BadInputLength);
         }
-        let bn: Vec<u8>;
-        let hacl_bn: Vec<HaclBnWord>;
+        Ok(Self {bn: be_bytes.to_vec()})
+    }
+}
 
-        unsafe {
-            // Let's create a short-lived mutable clone of our big endian input
-            let data = vec![0u8; be_bytes.len()].as_mut_ptr();
-
-            let raw_bn = vec![0u8; BN_BYTE_LENGTH].as_mut_ptr();
-
-            let hacl_raw_bn: HaclBnType =
-                Hacl_Bignum4096_new_bn_from_bytes_be(be_bytes.len() as u32, data);
-            if hacl_raw_bn.is_null() {
-                return Err(Error::AllocationError);
-            }
-
-            hacl_bn = slice::from_raw_parts_mut(hacl_raw_bn, BN_SLICE_LENGTH).to_vec();
-
-            Hacl_Bignum4096_bn_to_bytes_be(hacl_raw_bn, raw_bn);
-            libc::free(hacl_raw_bn as *mut libc::c_void);
-            bn = Vec::from_raw_parts(raw_bn, BN_BYTE_LENGTH, BN_BYTE_LENGTH);
-        };
-
-        Ok(Self { bn, hacl_bn })
+unsafe fn free_hacl_bn(bn: HaclBnType) {
+    if !bn.is_null() {
+        libc::free(bn as *mut libc::c_void);
     }
 }
 
@@ -84,17 +58,30 @@ impl Bignum {
         self.bn.to_vec()
     }
 
-    /// Returns true if self < other
-    pub fn lt(&self, other: &Bignum) -> bool {
-        // We probably don't need to clone() here, as I don't think that the
-        // data is actually mutated. But let's be careful here.
-        let a = self.hacl_bn.clone().as_mut_ptr();
-        let b = other.hacl_bn.clone().as_mut_ptr();
+    // This returns a pointer to an unknown amount of data
+    unsafe fn get_hacl_bn(&self) -> Result<HaclBnType, Error> {
+        let data = &mut self.bn.clone()[..];
+        let data_mut_ptr = data.as_mut_ptr();
 
+        let hacl_raw_bn: HaclBnType =
+                Hacl_Bignum4096_new_bn_from_bytes_be(self.bn.len() as u32, data_mut_ptr);
+        if hacl_raw_bn.is_null() {
+            return Err(Error::AllocationError);
+        }
+        Ok(hacl_raw_bn)
+    }
+
+    /// Returns true if self < other
+    pub fn lt(&self, other: &Bignum) -> Result<bool, Error> {
+        
         let hacl_result: HaclBnWord;
         unsafe {
+            let a = self.get_hacl_bn()?;
+            let b = other.get_hacl_bn()?;
             hacl_result = Hacl_Bignum4096_lt_mask(a, b);
+            free_hacl_bn(a);
+            free_hacl_bn(b);
         }
-        hacl_result != 0 as HaclBnWord
+        Ok(hacl_result != 0 as HaclBnWord)
     }
 }
