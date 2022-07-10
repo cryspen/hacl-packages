@@ -7,14 +7,17 @@
 
 use hacl_rust_sys::*;
 use libc;
+use std::mem;
 use std::slice;
 
+// We need a feature flag for this
+type HaclBnWord = u64;
+// type HaclBnWord = u32;
+
+const BYTES_PER_WORD: usize = mem::size_of::<HaclBnWord>();
 const BN_BITSIZE: usize = 4096;
-// TODO: We need a feature flag for 32 v 64 bit systems
-// This is for building for 64bit systems.
-const BN_SLICE_LENGTH: usize = BN_BITSIZE / 64;
-// This is for building for 32bit systems.
-// const BN_SLICE_LENGTH: usize = BN_BITSIZE / 32;
+
+const BN_SLICE_LENGTH: usize = BN_BITSIZE / (BYTES_PER_WORD * 8);
 const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 
 #[derive(Debug)]
@@ -26,8 +29,7 @@ pub enum Error {
 }
 
 /// HaclBnType is used in unsafe operations
-
-type HaclBnType = *mut u64;
+type HaclBnType = *mut HaclBnWord;
 
 #[derive(Debug)]
 pub struct Bignum {
@@ -39,7 +41,7 @@ pub struct Bignum {
     // hacl_bn is a slice that is the Rust-friendly version of their `*mut u64`
     // It is designed to be converted into what the FFI wants without having to
     // go through Hacl_Bignum4096_new_bn_from_bytes_be each time.
-    hacl_bn: Vec<u64>,
+    hacl_bn: Vec<HaclBnWord>,
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
@@ -49,7 +51,7 @@ impl TryFrom<&[u8]> for Bignum {
         let length: u32 = be_bytes.len() as u32;
 
         let bn: Vec<u8>;
-        let hacl_bn: Vec<u64>;
+        let hacl_bn: Vec<HaclBnWord>;
 
         unsafe {
             // Let's create a short-lived mutable clone of our big endian input
@@ -86,10 +88,10 @@ impl Bignum {
         let a = self.hacl_bn.clone().as_mut_ptr();
         let b = other.hacl_bn.clone().as_mut_ptr();
 
-        let hacl_result: u64;
+        let hacl_result: HaclBnWord;
         unsafe {
             hacl_result = Hacl_Bignum4096_lt_mask(a, b);
         }
-        hacl_result != 0u64
+        hacl_result != 0 as HaclBnWord
     }
 }
