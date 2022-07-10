@@ -24,6 +24,7 @@ const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 /// Errors for Bignum operations
 pub enum Error {
     DeconversionError,
+    BadInputLength,
     ConversionError,
     AllocationError,
 }
@@ -48,8 +49,9 @@ pub struct Bignum {
 impl TryFrom<&[u8]> for Bignum {
     type Error = Error;
     fn try_from(be_bytes: &[u8]) -> Result<Bignum, Error> {
-        let length: u32 = be_bytes.len() as u32;
-
+        if !(1..=BN_BYTE_LENGTH).contains(&be_bytes.len()) {
+            return Err(Error::BadInputLength);
+        }
         let bn: Vec<u8>;
         let hacl_bn: Vec<HaclBnWord>;
 
@@ -59,7 +61,8 @@ impl TryFrom<&[u8]> for Bignum {
 
             let raw_bn = vec![0u8; BN_BYTE_LENGTH].as_mut_ptr();
 
-            let hacl_raw_bn: HaclBnType = Hacl_Bignum4096_new_bn_from_bytes_be(length, data);
+            let hacl_raw_bn: HaclBnType =
+                Hacl_Bignum4096_new_bn_from_bytes_be(be_bytes.len() as u32, data);
             if hacl_raw_bn.is_null() {
                 return Err(Error::AllocationError);
             }
