@@ -7,7 +7,7 @@
 
 use hacl_rust_sys::*;
 use std::{slice};
-use libc::{free};
+use libc;
 
 
 const BN_BITSIZE: usize = 4096;
@@ -47,24 +47,32 @@ pub struct Bignum<'a> {
 
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
-impl TryFrom <&[u8]> for Bignum<'_> {
+impl TryFrom <&[u8]> for Bignum<'static> {
     type Error = Error;
     fn try_from(be_vec: &[u8]) -> Result<Bignum<'static>, Error> {
         let length:u32 = be_vec.len() as u32;
+        
         let bn: [u8; 512];
         let hacl_bn: &[u64];
         
         unsafe {
+            // Let's create a short-lived mutable clone of our big endian input
+            let data = vec![0u8; be_vec.len()].clone().as_mut_ptr();
+
+            let mut raw_bn = vec![0u8; 512].as_mut_ptr();
+
             let hacl_raw_bn: HaclBnType = Hacl_Bignum4096_new_bn_from_bytes_be(
                 length,
-                be_vec.as_mut_ptr()
+                data,
             );
             if hacl_raw_bn.is_null() {
                 return Err(Error::AllocationError)
             }
-            hacl_bn = slice::from_raw_parts(hacl_raw_bn, 64 as usize);
-            Hacl_Bignum4096_bn_to_bytes_be(hacl_raw_bn, bn.as_mut_ptr())
-            libc::free(hacl_raw_bn)
+
+            hacl_bn = slice::from_raw_parts(hacl_raw_bn, 64usize);
+            Hacl_Bignum4096_bn_to_bytes_be(hacl_raw_bn, raw_bn);
+            libc::free(hacl_raw_bn as *mut libc::c_void);
+            bn = raw_bn.to_vec();
         };
 
         Ok(Self {bn, hacl_bn})
