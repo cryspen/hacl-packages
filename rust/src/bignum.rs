@@ -7,6 +7,7 @@
 
 use hacl_rust_sys::*;
 use libc;
+use std::slice;
 
 const BN_BITSIZE: usize = 4096;
 // TODO: We need a feature flag for 32 v 64 bit systems
@@ -44,15 +45,15 @@ pub struct Bignum {
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
 impl TryFrom<&[u8]> for Bignum {
     type Error = Error;
-    fn try_from(be_vec: &[u8]) -> Result<Bignum, Error> {
-        let length: u32 = be_vec.len() as u32;
+    fn try_from(be_bytes: &[u8]) -> Result<Bignum, Error> {
+        let length: u32 = be_bytes.len() as u32;
 
         let bn: Vec<u8>;
         let hacl_bn: Vec<u64>;
 
         unsafe {
             // Let's create a short-lived mutable clone of our big endian input
-            let data = vec![0u8; be_vec.len()].as_mut_ptr();
+            let data = vec![0u8; be_bytes.len()].as_mut_ptr();
 
             let raw_bn = vec![0u8; BN_BYTE_LENGTH].as_mut_ptr();
 
@@ -61,7 +62,8 @@ impl TryFrom<&[u8]> for Bignum {
                 return Err(Error::AllocationError);
             }
 
-            hacl_bn = Vec::from_raw_parts(hacl_raw_bn, BN_SLICE_LENGTH, BN_SLICE_LENGTH);
+            hacl_bn = slice::from_raw_parts_mut(hacl_raw_bn, BN_SLICE_LENGTH).to_vec();
+
             Hacl_Bignum4096_bn_to_bytes_be(hacl_raw_bn, raw_bn);
             libc::free(hacl_raw_bn as *mut libc::c_void);
             bn = Vec::from_raw_parts(raw_bn, BN_BYTE_LENGTH, BN_BYTE_LENGTH);
@@ -82,7 +84,7 @@ impl Bignum {
         // We probably don't need to clone() here, as I don't think that the
         // data is actually mutated. But let's be careful here.
         let a = self.hacl_bn.clone().as_mut_ptr();
-        let b =other.hacl_bn.clone().as_mut_ptr();
+        let b = other.hacl_bn.clone().as_mut_ptr();
 
         let hacl_result: u64;
         unsafe {
