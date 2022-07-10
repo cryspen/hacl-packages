@@ -13,6 +13,7 @@ readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages/rust"
 
 [dependencies]
+libc = "0.2"
 
 [build-dependencies]
 libc = { version = "0.2", default-features = false }
