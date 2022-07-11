@@ -3,27 +3,20 @@ use test_util::*;
 
 use hacl_rust::bignum::{Bignum, Error};
 
+fn bn_from_u64(n: u64) -> Bignum {
+        let v = n.to_be_bytes().to_vec();
+        let bn: Result<Bignum, Error> = v.try_into();
+        bn.unwrap()
+ }
+
 #[test]
-fn test_lt() {
-    let v5_vec = vec![5u8, 0u8];
-    let v2_vec = vec![2u8, 1u8];
-    let v5_bn: Result<Bignum, Error>;
-    let v2_bn: Result<Bignum, Error>;
-    v5_bn = v5_vec.try_into();
-    match v5_bn {
-        Err(_) => assert!(false, "Didn't create v5"),
-        Ok(_) => assert!(true),
-    }
-    let v5_bn = v5_bn.unwrap();
+#[allow(clippy::neg_cmp_op_on_partial_ord)]
+fn test_partial_ord() {
+    let v2038_bn = bn_from_u64(2038_u64);
+    let v1337_bn = bn_from_u64(1337_u64);
 
-    v2_bn = v2_vec.try_into();
-    match v2_bn {
-        Err(_) => assert!(false, "Didn't create v5"),
-        Ok(_) => assert!(true),
-    }
-    let v2_bn = v2_bn.unwrap();
-
-    let is_lt = v2_bn < v5_bn;
-
-    assert!(is_lt);
+    assert!(v1337_bn < v2038_bn, "1337 should be lt 2038");
+    assert!(v1337_bn != v2038_bn, "1337 should be not equal to 2038");
+    assert!(!(v1337_bn > v2038_bn), "1337 should not be gt 2038");
+    assert!(!(v1337_bn == v2038_bn), "1337 should not be equal to 2038");
 }
