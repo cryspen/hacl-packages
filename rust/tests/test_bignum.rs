@@ -4,10 +4,10 @@ use test_util::*;
 use hacl_rust::bignum::{Bignum, Error};
 
 fn bn_from_u64(n: u64) -> Bignum {
-        let v = n.to_be_bytes().to_vec();
-        let bn: Result<Bignum, Error> = v.try_into();
-        bn.unwrap()
- }
+    let v = n.to_be_bytes().to_vec();
+    let bn: Result<Bignum, Error> = v.try_into();
+    bn.unwrap()
+}
 
 #[test]
 #[allow(clippy::neg_cmp_op_on_partial_ord)]

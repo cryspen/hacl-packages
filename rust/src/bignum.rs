@@ -8,10 +8,52 @@
 use hacl_rust_sys::*;
 use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
+use std::fmt;
 
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
+
+#[inline(always)]
+unsafe fn free_hacl_bn(bn: HaclBnType) {
+    if !bn.is_null() {
+        libc::free(bn as *mut libc::c_void);
+    }
+}
+
+struct HaclBn {
+    v: Option<HaclBnType>,
+}
+impl Drop for HaclBn {
+    fn drop(&mut self) {
+        match self.v {
+            Some(x) => unsafe { free_hacl_bn(x)},
+            None => {},
+        }
+    }
+}
+
+impl fmt::Debug for HaclBn {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = match self.is_null_or_none() {
+            true => "is null or None",
+            false => "isn't null",
+        };
+        write!(f, "HaclBn {}.", msg)
+    }
+}
+
+impl HaclBn {
+    fn is_null_or_none(&self) -> bool {
+        match self.v {
+            None => true,
+            Some(x) => x.is_null(),
+        }
+    }
+}
+
+/// HaclBnType is used in unsafe operations
+type HaclBnType = *mut HaclBnWord;
 
 const BN_BITSIZE: usize = 4096;
 const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
@@ -25,15 +67,13 @@ pub enum Error {
     AllocationError,
 }
 
-/// HaclBnType is used in unsafe operations
-type HaclBnType = *mut HaclBnWord;
-
 #[derive(Debug)]
 pub struct Bignum {
     // There does not appear to be a way to get the size of a hacl_Bignum other
     // than to use the hacl functions for turning one into a byte array.
     // So we will use a byte array as our primary internal representation
     bn: Vec<u8>,
+    handle: HaclBn,
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
@@ -43,8 +83,18 @@ impl TryFrom<Vec<u8>> for Bignum {
         if !(1..=BN_BYTE_LENGTH).contains(&be_bytes.len()) {
             return Err(Error::BadInputLength);
         }
+        let bytes: &mut [u8] = &mut be_bytes.clone()[..];
+        let mut handle = HaclBn {v: None};
+        unsafe {
+            handle.v =
+                Some(Hacl_Bignum4096_new_bn_from_bytes_be(bytes.len() as u32, bytes.as_mut_ptr()));
+            if handle.is_null_or_none() {
+                return Err(Error::ConversionError);
+            }
+        }
         Ok(Self {
             bn: be_bytes.to_vec(),
+            handle,
         })
     }
 }
@@ -78,13 +128,6 @@ impl PartialEq for Bignum {
             free_hacl_bn(b);
         }
         hacl_result != 0 as HaclBnWord
-    }
-}
-
-#[inline(always)]
-unsafe fn free_hacl_bn(bn: HaclBnType) {
-    if !bn.is_null() {
-        libc::free(bn as *mut libc::c_void);
     }
 }
 
