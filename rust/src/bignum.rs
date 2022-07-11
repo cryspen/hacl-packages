@@ -28,12 +28,14 @@ struct HaclBn {
 
 impl Default for HaclBn {
     fn default() -> Self {
-        Self {v: ptr::null::<HaclBnType>() as _ }
+        Self {
+            v: ptr::null::<HaclBnType>() as _,
+        }
     }
 }
 impl Drop for HaclBn {
     fn drop(&mut self) {
-         unsafe { free_hacl_bn(self.v)}
+        unsafe { free_hacl_bn(self.v) }
     }
 }
 
@@ -72,77 +74,46 @@ pub struct Bignum {
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
-impl TryFrom<Vec<u8>> for Bignum {
-    type Error = Error;
-    fn try_from(be_bytes: Vec<u8>) -> Result<Bignum, Error> {
-        if !(1..=BN_BYTE_LENGTH).contains(&be_bytes.len()) {
-            return Err(Error::BadInputLength);
-        }
-        let bytes: &mut [u8] = &mut be_bytes.clone()[..];
-        let mut handle = HaclBn::default();
-        unsafe {
-            handle.v =
-                Hacl_Bignum4096_new_bn_from_bytes_be(bytes.len() as u32, bytes.as_mut_ptr());
-            if handle.v.is_null() {
-                return Err(Error::ConversionError);
-            }
-        }
-        Ok(Self {
-            bn: be_bytes.to_vec(),
-            handle,
-        })
-    }
-}
 
 impl PartialEq for Bignum {
     /// Returns true self == other.
-    /// Returns false if there is a problem obtaining the hacl pointers
-    /// for either self or other (hence this is _Partial_ Eq).
     fn eq(&self, other: &Bignum) -> bool {
-        // We can't just compare on self.bn, as we would want
-        // !vec[0, 5] != !vec[5] even though the big numbers they
-        // represent are the same.
         let hacl_result: HaclBnWord;
         unsafe {
-            let a = self.get_hacl_bn();
-            let a: HaclBnType = match a {
-                Ok(x) => x,
-                Err(_) => return false,
-            };
-            let b = other.get_hacl_bn();
-            let b = match b {
-                Ok(x) => x,
-                Err(_) => {
-                    free_hacl_bn(a);
-                    return false;
-                }
-            };
-
-            hacl_result = Hacl_Bignum4096_eq_mask(a, b);
-            free_hacl_bn(a);
-            free_hacl_bn(b);
+            hacl_result = Hacl_Bignum4096_eq_mask(self.handle.v, other.handle.v);
         }
         hacl_result != 0 as HaclBnWord
     }
 }
 
+unsafe fn get_hacl_bn(bn: Vec<u8>) -> Result<HaclBnType, Error> {
+    let data = &mut bn.clone()[..];
+    let data_mut_ptr = data.as_mut_ptr();
+
+    let hacl_raw_bn: HaclBnType =
+        Hacl_Bignum4096_new_bn_from_bytes_be(bn.len() as u32, data_mut_ptr);
+    if hacl_raw_bn.is_null() {
+        return Err(Error::AllocationError);
+    }
+    Ok(hacl_raw_bn)
+}
+
 impl Bignum {
+    pub fn new(be_bytes: Vec<u8>) -> Result<Self, Error> {
+        if !(1..=BN_BYTE_LENGTH).contains(&be_bytes.len()) {
+            return Err(Error::BadInputLength);
+        }
+        let hacl_bn = unsafe { get_hacl_bn(be_bytes.clone())? };
+
+        Ok(Self {
+            bn: be_bytes.to_vec(),
+            handle: HaclBn { v: hacl_bn },
+        })
+    }
+
     /// returns a vector of big-endian bytes
     pub fn to_vec8(&self) -> Vec<u8> {
         self.bn.to_vec()
-    }
-
-    // This returns a pointer to an unknown amount of data
-    unsafe fn get_hacl_bn(&self) -> Result<HaclBnType, Error> {
-        let data = &mut self.bn.clone()[..];
-        let data_mut_ptr = data.as_mut_ptr();
-
-        let hacl_raw_bn: HaclBnType =
-            Hacl_Bignum4096_new_bn_from_bytes_be(self.bn.len() as u32, data_mut_ptr);
-        if hacl_raw_bn.is_null() {
-            return Err(Error::AllocationError);
-        }
-        Ok(hacl_raw_bn)
     }
 }
 
@@ -151,49 +122,14 @@ impl PartialOrd for Bignum {
         let lt_result: HaclBnWord;
         let eq_result: HaclBnWord;
         unsafe {
-            let a = self.get_hacl_bn();
-            let a: HaclBnType = match a {
-                Ok(x) => x,
-                Err(_) => return None,
-            };
-            let b = other.get_hacl_bn();
-            let b = match b {
-                Ok(x) => x,
-                Err(_) => {
-                    free_hacl_bn(a);
-                    return None;
-                }
-            };
-            lt_result = Hacl_Bignum4096_lt_mask(a, b);
-            eq_result = Hacl_Bignum4096_eq_mask(a, b);
-            free_hacl_bn(a);
-            free_hacl_bn(b);
+            lt_result = Hacl_Bignum4096_lt_mask(self.handle.v, other.handle.v);
+            eq_result = Hacl_Bignum4096_eq_mask(self.handle.v, other.handle.v);
         }
-        if eq_result == 0 as HaclBnWord {
+        if eq_result != 0 as HaclBnWord {
             return Some(Equal);
         } else if lt_result == 0 as HaclBnWord {
             return Some(Greater);
         }
         Some(Less)
-    }
-
-    fn lt(&self, other: &Self) -> bool {
-        matches!(self.bn.partial_cmp(&other.bn), Some(Less))
-    }
-
-    fn le(&self, other: &Self) -> bool {
-        // Pattern `Some(Less | Eq)` optimizes worse than negating `None | Some(Greater)`.
-        // FIXME: The root cause was fixed upstream in LLVM with:
-        // https://github.com/llvm/llvm-project/commit/9bad7de9a3fb844f1ca2965f35d0c2a3d1e11775
-        // Revert this workaround once support for LLVM 12 gets dropped.
-        !matches!(self.partial_cmp(other), None | Some(Greater))
-    }
-
-    fn gt(&self, other: &Self) -> bool {
-        matches!(self.partial_cmp(other), Some(Greater))
-    }
-
-    fn ge(&self, other: &Self) -> bool {
-        matches!(self.partial_cmp(other), Some(Greater | Equal))
     }
 }

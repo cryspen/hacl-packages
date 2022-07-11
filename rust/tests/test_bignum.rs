@@ -4,8 +4,9 @@ use test_util::*;
 use hacl_rust::bignum::{Bignum, Error};
 
 fn bn_from_u64(n: u64) -> Bignum {
-    let v = n.to_be_bytes().to_vec();
-    let bn: Result<Bignum, Error> = v.try_into();
+    let b = n.to_be_bytes();
+    let v = b.to_vec();
+    let bn: Result<Bignum, Error> = Bignum::new(v);
     bn.unwrap()
 }
 
