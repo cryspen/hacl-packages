@@ -23,7 +23,7 @@ fn test_lt() {
     }
     let v2_bn = v2_bn.unwrap();
 
-    let is_lt = v2_bn.lt(&v5_bn).unwrap();
+    let is_lt = v2_bn < v5_bn;
 
     assert!(is_lt);
 }

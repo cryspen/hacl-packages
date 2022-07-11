@@ -7,6 +7,7 @@
 
 use hacl_rust_sys::*;
 use libc;
+use std::cmp::Ordering::{Equal, Greater, Less};
 
 // We need a feature flag for this
 type HaclBnWord = u64;
@@ -105,17 +106,56 @@ impl Bignum {
         }
         Ok(hacl_raw_bn)
     }
+}
 
-    /// Returns true if self < other
-    pub fn lt(&self, other: &Bignum) -> Result<bool, Error> {
-        let hacl_result: HaclBnWord;
+impl PartialOrd for Bignum {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        let lt_result: HaclBnWord;
+        let eq_result: HaclBnWord;
         unsafe {
-            let a = self.get_hacl_bn()?;
-            let b = other.get_hacl_bn()?;
-            hacl_result = Hacl_Bignum4096_lt_mask(a, b);
+            let a = self.get_hacl_bn();
+            let a: HaclBnType = match a {
+                Ok(x) => x,
+                Err(_) => return None,
+            };
+            let b = other.get_hacl_bn();
+            let b = match b {
+                Ok(x) => x,
+                Err(_) => {
+                    free_hacl_bn(a);
+                    return None;
+                }
+            };
+            lt_result = Hacl_Bignum4096_lt_mask(a, b);
+            eq_result = Hacl_Bignum4096_eq_mask(a, b);
             free_hacl_bn(a);
             free_hacl_bn(b);
         }
-        Ok(hacl_result != 0 as HaclBnWord)
+        if eq_result == 0 as HaclBnWord {
+            return Some(Equal);
+        } else if lt_result == 0 as HaclBnWord {
+            return Some(Greater);
+        }
+        Some(Less)
+    }
+
+    fn lt(&self, other: &Self) -> bool {
+        matches!(self.bn.partial_cmp(&other.bn), Some(Less))
+    }
+
+    fn le(&self, other: &Self) -> bool {
+        // Pattern `Some(Less | Eq)` optimizes worse than negating `None | Some(Greater)`.
+        // FIXME: The root cause was fixed upstream in LLVM with:
+        // https://github.com/llvm/llvm-project/commit/9bad7de9a3fb844f1ca2965f35d0c2a3d1e11775
+        // Revert this workaround once support for LLVM 12 gets dropped.
+        !matches!(self.partial_cmp(other), None | Some(Greater))
+    }
+
+    fn gt(&self, other: &Self) -> bool {
+        matches!(self.partial_cmp(other), Some(Greater))
+    }
+
+    fn ge(&self, other: &Self) -> bool {
+        matches!(self.partial_cmp(other), Some(Greater | Equal))
     }
 }
