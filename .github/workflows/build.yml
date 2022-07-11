@@ -206,13 +206,10 @@ jobs:
       - name: Release Build
         run: ./mach build --release --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
         with:
-          name: ${{ matrix.target }}-${SHORT_SHA}
-          path: |
-            build/Debug
-            build/Release
+          name: ${{ matrix.target }}
 
   s390x-gcc:
     runs-on: ubuntu-latest
@@ -241,15 +238,10 @@ jobs:
           mkdir pkg-debug
           ./mach install -p $PWD/pkg-debug
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
         with:
-          name: linux-s390x-gcc10-${SHORT_SHA}
-          path: |
-            pkg-debug
-            pkg-release
-            build/Debug
-            build/Release
+          name: linux-s390x-gcc10
 
   # ----------------------------------------------------------------------------
 
@@ -267,11 +259,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build
 
-      - name: Build
+      - name: Build (Release)
         run: ./_build.sh
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Build (Debug)
+        run: ninja -f build-Debug.ninja -C build
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
         with:
-          name: linux-default-${SHORT_SHA}
-          path: build/Release
+          name: linux-default
