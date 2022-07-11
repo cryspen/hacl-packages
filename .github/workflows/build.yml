@@ -144,6 +144,10 @@ jobs:
       matrix:
         bits: [ 32, 64 ]
         args: [ "", "--msvc" ]
+        exclude:
+        # See issue #92.
+          - bits: 32
+            args: "--msvc"
 
     steps:
       - name: Setup | Developer Command Prompt (x86)
