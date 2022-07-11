@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
+#include "Hacl_Hash_Base.h"
 #include "Hacl_RSAPSS.h"
 #include "Hacl_Spec.h"
 #include "util.h"
@@ -105,42 +106,6 @@ sign(bytes e,
   *out = got;
 }
 
-// TODO: Remove Copy&Paste. Is `hash_len` in `Hacl_RSAPSS.c` part of API?
-static inline uint32_t
-hash_len(Spec_Hash_Definitions_hash_alg a)
-{
-  switch (a) {
-    case Spec_Hash_Definitions_MD5: {
-      return (uint32_t)16U;
-    }
-    case Spec_Hash_Definitions_SHA1: {
-      return (uint32_t)20U;
-    }
-    case Spec_Hash_Definitions_SHA2_224: {
-      return (uint32_t)28U;
-    }
-    case Spec_Hash_Definitions_SHA2_256: {
-      return (uint32_t)32U;
-    }
-    case Spec_Hash_Definitions_SHA2_384: {
-      return (uint32_t)48U;
-    }
-    case Spec_Hash_Definitions_SHA2_512: {
-      return (uint32_t)64U;
-    }
-    case Spec_Hash_Definitions_Blake2S: {
-      return (uint32_t)32U;
-    }
-    case Spec_Hash_Definitions_Blake2B: {
-      return (uint32_t)64U;
-    }
-    default: {
-      throw std::invalid_argument(
-        "Incomplete match of Spec_Hash_Definitions_*.");
-    }
-  }
-}
-
 TEST(RsaPssSignSuite, Group)
 {
   bytes e = from_hex("010001");
@@ -187,7 +152,7 @@ TEST(RsaPssSignSuite, Group)
   };
 
   for (auto hash_alg : hashes) {
-    uint32_t saltLen = hash_len(hash_alg);
+    uint32_t saltLen = Hacl_Hash_Definitions_hash_len(hash_alg);
     bytes salt(saltLen, 'A');
 
     bytes signature(n.size());
