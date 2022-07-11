@@ -11,6 +11,10 @@ inputs:
     description: Target
     required: false
     default: ""
+  args:
+    description: Any extra arguments
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -38,5 +42,5 @@ runs:
     - name: mach | Build (Debug + Release)
       shell: bash
       run: |
-        ./mach build -v --tests $BITS_FLAG $EDITION_FLAG $TARGET_FLAG
-        ./mach build -v --tests --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG
+        ./mach build -v --tests $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
+        ./mach build -v --tests --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
