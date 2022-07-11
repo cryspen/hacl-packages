@@ -9,6 +9,7 @@ use hacl_rust_sys::*;
 use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
+use std::ptr;
 
 // We need a feature flag for this
 type HaclBnWord = u64;
@@ -22,33 +23,27 @@ unsafe fn free_hacl_bn(bn: HaclBnType) {
 }
 
 struct HaclBn {
-    v: Option<HaclBnType>,
+    v: HaclBnType,
+}
+
+impl Default for HaclBn {
+    fn default() -> Self {
+        Self {v: ptr::null::<HaclBnType>() as _ }
+    }
 }
 impl Drop for HaclBn {
     fn drop(&mut self) {
-        match self.v {
-            Some(x) => unsafe { free_hacl_bn(x)},
-            None => {},
-        }
+         unsafe { free_hacl_bn(self.v)}
     }
 }
 
 impl fmt::Debug for HaclBn {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let msg = match self.is_null_or_none() {
-            true => "is null or None",
+        let msg = match self.v.is_null() {
+            true => "is null",
             false => "isn't null",
         };
         write!(f, "HaclBn {}.", msg)
-    }
-}
-
-impl HaclBn {
-    fn is_null_or_none(&self) -> bool {
-        match self.v {
-            None => true,
-            Some(x) => x.is_null(),
-        }
     }
 }
 
@@ -84,11 +79,11 @@ impl TryFrom<Vec<u8>> for Bignum {
             return Err(Error::BadInputLength);
         }
         let bytes: &mut [u8] = &mut be_bytes.clone()[..];
-        let mut handle = HaclBn {v: None};
+        let mut handle = HaclBn::default();
         unsafe {
             handle.v =
-                Some(Hacl_Bignum4096_new_bn_from_bytes_be(bytes.len() as u32, bytes.as_mut_ptr()));
-            if handle.is_null_or_none() {
+                Hacl_Bignum4096_new_bn_from_bytes_be(bytes.len() as u32, bytes.as_mut_ptr());
+            if handle.v.is_null() {
                 return Err(Error::ConversionError);
             }
         }
