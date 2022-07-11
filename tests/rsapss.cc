@@ -140,15 +140,10 @@ TEST(RsaPssSignSuite, Group)
   };
 
   std::vector<Spec_Hash_Definitions_hash_alg> hashes{
-    // TODO(API): How to know what is supported?
-    // Spec_Hash_Definitions_MD5,
-    // Spec_Hash_Definitions_SHA1,
-    // Spec_Hash_Definitions_SHA2_224,
+    // TODO: #100
     Spec_Hash_Definitions_SHA2_256,
     Spec_Hash_Definitions_SHA2_384,
     Spec_Hash_Definitions_SHA2_512,
-    // Spec_Hash_Definitions_Blake2B,
-    // Spec_Hash_Definitions_Blake2S,
   };
 
   for (auto hash_alg : hashes) {
