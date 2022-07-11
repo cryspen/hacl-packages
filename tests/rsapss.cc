@@ -80,13 +80,7 @@ TEST_P(RsaPssVerifySuite, Group)
 {
   auto group = GetParam();
 
-  // std::cout << "e: " << bytes_to_hex(group.e) << std::endl
-  //           << "n: " << bytes_to_hex(group.n) << std::endl;
-
   for (auto test : group.tests) {
-    // std::cout << "msg: " << bytes_to_hex(test.msg) << std::endl
-    //           << "sgnt: " << bytes_to_hex(test.sgnt) << std::endl;
-
     bool got;
     verify(group.e, group.n, group.saltLen, group.a, test.msg, test.sgnt, &got);
 
@@ -159,19 +153,19 @@ read_json(char* path)
       }
 
       tests.push_back(Test{
-        tcId : tcId,
-        msg : msg,
-        sgnt : sgnt,
-        expected : expected,
+        .tcId = tcId,
+        .msg = msg,
+        .sgnt = sgnt,
+        .expected = expected,
       });
     }
 
     testGroups.push_back({
-      e : e,
-      n : n,
-      saltLen : saltLen,
-      a : a,
-      tests : tests,
+      .e = e,
+      .n = n,
+      .saltLen = saltLen,
+      .a = a,
+      .tests = tests,
     });
   }
 
@@ -187,16 +181,6 @@ INSTANTIATE_TEST_SUITE_P(RsaPss2048Sha256Salt32,
                          RsaPssVerifySuite,
                          ::testing::ValuesIn(read_json(const_cast<char*>(
                            "rsa_pss_2048_sha256_mgf1_32_test.json"))));
-
-// INSTANTIATE_TEST_SUITE_P(RsaPss2048Sha512256Salt28,
-//                          RsaPssVerifySuite,
-//                          ::testing::ValuesIn(read_json(const_cast<char*>(
-//                            "rsa_pss_2048_sha512_256_mgf1_28_test.json"))));
-//
-// INSTANTIATE_TEST_SUITE_P(RsaPss2048Sha512256Salt32,
-//                         RsaPssVerifySuite,
-//                         ::testing::ValuesIn(read_json(const_cast<char*>(
-//                           "rsa_pss_2048_sha512_256_mgf1_32_test.json"))));
 
 INSTANTIATE_TEST_SUITE_P(RsaPss3072Sha256Salt32,
                          RsaPssVerifySuite,
