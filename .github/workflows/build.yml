@@ -145,7 +145,7 @@ jobs:
         bits: [ 32, 64 ]
         args: [ "", "--msvc" ]
         exclude:
-        # See issue #92.
+          # See issue #92.
           - bits: 32
             args: "--msvc"
 
@@ -189,22 +189,20 @@ jobs:
       matrix:
         target: [ "aarch64-linux-android" ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Output short_sha
-        uses: ./.github/actions/make_short_sha
-
       - name: Setup
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build
 
-      - name: Debug Build
-        run: ./mach build --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Release Build
-        run: ./mach build --release --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+          args: --ndk $ANDROID_NDK_HOME
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
