@@ -15,37 +15,40 @@ use std::ptr;
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
 
-#[inline(always)]
-unsafe fn free_hacl_bn(bn: HaclBnType) {
-    if !bn.is_null() {
-        libc::free(bn as *mut libc::c_void);
+struct HaclBnHandle(HaclBnType);
+
+impl Default for HaclBnHandle {
+    fn default() -> Self {
+        Self(ptr::null::<HaclBnType>() as _)
     }
 }
-
-struct HaclBn {
-    v: HaclBnType,
-}
-
-impl Default for HaclBn {
-    fn default() -> Self {
-        Self {
-            v: ptr::null::<HaclBnType>() as _,
+impl Drop for HaclBnHandle {
+    fn drop(&mut self) {
+        unsafe {
+            if !self.0.is_null() {
+                libc::free(self.0 as *mut libc::c_void);
+            }
         }
     }
 }
-impl Drop for HaclBn {
-    fn drop(&mut self) {
-        unsafe { free_hacl_bn(self.v) }
-    }
-}
 
-impl fmt::Debug for HaclBn {
+impl fmt::Debug for HaclBnHandle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let msg = match self.v.is_null() {
+        let msg = match self.0.is_null() {
             true => "is null",
             false => "isn't null",
         };
         write!(f, "HaclBn {}.", msg)
+    }
+}
+
+impl Bignum {
+    /// Attempts to create a new Bignum with the same values.
+    /// Allocates new memory with a new pointer to that memory
+    pub fn try_clone(&self) -> Result<Self, Error> {
+        let new_bn = self.bn.clone();
+        
+        Bignum::new(new_bn)  
     }
 }
 
@@ -58,7 +61,6 @@ const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 #[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
 pub enum Error {
-    DeconversionError,
     BadInputLength,
     ConversionError,
     AllocationError,
@@ -70,7 +72,7 @@ pub struct Bignum {
     // than to use the hacl functions for turning one into a byte array.
     // So we will use a byte array as our primary internal representation
     bn: Vec<u8>,
-    handle: HaclBn,
+    handle: HaclBnHandle,
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
@@ -80,7 +82,7 @@ impl PartialEq for Bignum {
     fn eq(&self, other: &Bignum) -> bool {
         let hacl_result: HaclBnWord;
         unsafe {
-            hacl_result = Hacl_Bignum4096_eq_mask(self.handle.v, other.handle.v);
+            hacl_result = Hacl_Bignum4096_eq_mask(self.handle.0, other.handle.0);
         }
         hacl_result != 0 as HaclBnWord
     }
@@ -88,10 +90,9 @@ impl PartialEq for Bignum {
 
 unsafe fn get_hacl_bn(bn: Vec<u8>) -> Result<HaclBnType, Error> {
     let data = &mut bn.clone()[..];
-    let data_mut_ptr = data.as_mut_ptr();
 
     let hacl_raw_bn: HaclBnType =
-        Hacl_Bignum4096_new_bn_from_bytes_be(bn.len() as u32, data_mut_ptr);
+        Hacl_Bignum4096_new_bn_from_bytes_be(bn.len() as u32, data.as_mut_ptr());
     if hacl_raw_bn.is_null() {
         return Err(Error::AllocationError);
     }
@@ -107,7 +108,7 @@ impl Bignum {
 
         Ok(Self {
             bn: be_bytes.to_vec(),
-            handle: HaclBn { v: hacl_bn },
+            handle: HaclBnHandle(hacl_bn),
         })
     }
 
@@ -122,8 +123,8 @@ impl PartialOrd for Bignum {
         let lt_result: HaclBnWord;
         let eq_result: HaclBnWord;
         unsafe {
-            lt_result = Hacl_Bignum4096_lt_mask(self.handle.v, other.handle.v);
-            eq_result = Hacl_Bignum4096_eq_mask(self.handle.v, other.handle.v);
+            lt_result = Hacl_Bignum4096_lt_mask(self.handle.0, other.handle.0);
+            eq_result = Hacl_Bignum4096_eq_mask(self.handle.0, other.handle.0);
         }
         if eq_result != 0 as HaclBnWord {
             return Some(Equal);
