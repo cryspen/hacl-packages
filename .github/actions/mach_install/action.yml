@@ -1,0 +1,11 @@
+name: mach_install
+description: mach | Install (Debug + Release)
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        mkdir pkg-debug
+        ./mach install -p $PWD/pkg-debug
+        mkdir pkg-release
+        ./mach install -p $PWD/pkg-release -c Release
