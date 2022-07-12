@@ -369,6 +369,9 @@
         "curve25519": [
             "x25519.cc"
         ],
+        "rsapss": [
+            "rsapss.cc"
+        ],
         "hmac": [
             "hmac.cc"
         ],
