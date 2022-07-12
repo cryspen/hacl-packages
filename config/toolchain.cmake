@@ -116,8 +116,6 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INTRINSICS)
         endif()
     endif()
 endif()
-# TODO: Check for these
-set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
 
 # Set OS consistently for compiling, independent of cross-compilation
 # Note that HACL_TARGET_OS is set by the cross-compilation tool chain when using
