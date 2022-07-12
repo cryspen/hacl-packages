@@ -1,4 +1,4 @@
-name: c
+name: build
 
 on:
   push:
@@ -8,286 +8,262 @@ on:
   workflow_dispatch:
 
 jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ gcc, clang ]
+        version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
+        bits: [ 32, 64 ]
+        edition: [ c89, "" ]
+        exclude:
+          - compiler: gcc
+            version: 12
+          - compiler: gcc
+            version: 13
+          - compiler: gcc
+            version: 14
+          # Not available
+          - compiler: clang
+            version: 13
+          # Not available
+          - compiler: clang
+            version: 14
+
+    steps:
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | Install Ninja
+        run: sudo apt-get install ninja-build
+
+      - name: Setup | Install GCC
+        if: ${{ matrix.compiler == 'gcc' }}
+        run: |
+          sudo apt-get install gcc-${{ matrix.version }} g++-${{ matrix.version }}
+          echo "CC=gcc-${{ matrix.version }}" >> $GITHUB_ENV
+          echo "CXX=g++-${{ matrix.version }}" >> $GITHUB_ENV
+
+      - name: Setup | Install GCC (multilib libraries)
+        if: ${{ matrix.compiler == 'gcc' && matrix.bits == 32 }}
+        run: sudo apt-get install gcc-${{ matrix.version }}-multilib g++-${{ matrix.version }}-multilib
+
+      - name: Setup | Install Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          sudo apt-get install clang-${{ matrix.version }}
+          echo "CC=clang-${{ matrix.version }}" >> $GITHUB_ENV
+          echo "CXX=clang++-${{ matrix.version }}" >> $GITHUB_ENV
+
+      - name: Setup | Install Clang (multilib libraries)
+        if: ${{ matrix.compiler == 'clang' && matrix.bits == 32 }}
+        run: sudo apt-get install gcc-multilib g++-multilib
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
+
   macos:
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        compiler: [{ cpp: g++-11, c: gcc-11 }, { cpp: clang++, c: clang }]
-    env:
-      CC: ${{ matrix.compiler.c }}
-      CXX: ${{ matrix.compiler.cpp }}
+        compiler: [ gcc, clang ]
+        version: [ 9, 10, 11, 12, 13, 14 ]
+        bits: [ 64 ]
+        target: [ "", "aarch64-apple-ios", "aarch64-apple-darwin" ]
+        exclude:
+          - compiler: gcc
+            version: 13
+          - compiler: gcc
+            version: 14
+          - compiler: clang
+            version: 9
+          # Not available in brew
+          - compiler: clang
+            version: 10
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
+      - name: Setup | Install Ninja
         run: brew install ninja
-      - name: Debug Build & Test
-        run: ./mach build --test -v
-      - name: Release Build & Test
-        run: ./mach build --release --test -v
-      - name: Install
+
+      - name: Setup | Install GCC
+        if: ${{ matrix.compiler == 'gcc' }}
         run: |
-          mkdir pkg-release
-          ./mach install -p $PWD/pkg-release -c Release
-          mkdir pkg-debug
-          ./mach install -p $PWD/pkg-debug
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+          brew install gcc@${{ matrix.version }}
+          echo "CC=gcc-${{ matrix.version }}" >> $GITHUB_ENV
+          echo "CXX=g++-${{ matrix.version }}" >> $GITHUB_ENV
+
+      - name: Setup | Install Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          brew install llvm@${{ matrix.version }}
+          echo "CC=$(brew --prefix llvm@${{ matrix.version }})/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@${{ matrix.version }})/bin/clang++" >> $GITHUB_ENV
+          ls /usr/local/opt/llvm@${{ matrix.version }}/bin
+          echo $CC
+          echo $CXX
+          clang++ --version
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
         with:
-          name: macos-x64-${{ matrix.compiler.c }}-${{ steps.vars.outputs.short_sha }}
-          path: |
-            pkg-debug
-            pkg-release
-            build/Debug
-            build/Release
-  macos-aarch64:
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target: ["aarch64-apple-ios", "aarch64-apple-darwin"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: brew install ninja
-      - name: Debug Build
-        run: ./mach build --tests -v --target ${{ matrix.target }}
-      - name: Release Build
-        run: ./mach build --release --tests -v --target ${{ matrix.target }}
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+
+      - name: mach | Test (aarch64 is not tested)
+        if: ${{ matrix.target == '' }}
+        uses: ./.github/actions/mach_test
         with:
-          name: ${{ matrix.target }}-${{ steps.vars.outputs.short_sha }}
-          path: |
-            build/Debug
-            build/Release
-  linux-gcc:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [7, 8, 9, 10, 11]
-    env:
-      CC: gcc-${{ matrix.compiler }}
-      CXX: g++-${{ matrix.compiler }}
-    steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build gcc-${{ matrix.compiler }} g++-${{ matrix.compiler }}
-      - uses: actions/checkout@v2
-      - name: Debug Build & Test
-        run: ./mach build --test -v
-      - name: Release Build & Test
-        run: ./mach build --release --test -v
-      - name: Install
-        run: |
-          mkdir pkg-release
-          ./mach install -p $PWD/pkg-release -c Release
-          mkdir pkg-debug
-          ./mach install -p $PWD/pkg-debug
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
         with:
-          name: linux-x64-gcc${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}
-          path: |
-            pkg-debug
-            pkg-release
-            build/Debug
-            build/Release
-  linux-clang:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [7, 8, 9, 10]
-        options: ["", "-m32", "-ec89"]
-    env:
-      CC: clang-${{ matrix.compiler }}
-      CXX: clang++-${{ matrix.compiler }}
-    steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build clang-${{ matrix.compiler }} gcc-multilib g++-multilib
-      - uses: actions/checkout@v2
-      - name: Debug Build & Test
-        run: ./mach build --test -v ${{ matrix.options }}
-      - name: Release Build & Test
-        run: ./mach build --release --test -v ${{ matrix.options }}
-      - name: Install
-        run: |
-          mkdir pkg-release
-          ./mach install -p $PWD/pkg-release -c Release
-          mkdir pkg-debug
-          ./mach install -p $PWD/pkg-debug
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: linux-x64-clang${{ matrix.compiler }}-${{ steps.vars.outputs.short_sha }}${{ matrix.options }}
-          path: |
-            pkg-debug
-            pkg-release
-            build/Debug
-            build/Release
-  # XXX: This fails because c89 is utterly broken. We might want to do this at
-  #      some point.
-  c89:
-    runs-on: ubuntu-18.04
-    env:
-      CC: gcc-4.8
-      CXX: g++-4.8
-    steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build gcc-4.8 g++-4.8
-      - uses: actions/checkout@v2
-      - name: Debug Build
-        run: ./mach build -v ${{ matrix.options }} -e c89 || true
-      # - name: Release Build
-      #   run: ./mach build --release -v ${{ matrix.options }} -e c89
-      # - name: Install
-      #   run: |
-      #     mkdir pkg-release
-      #     ./mach install -p $PWD/pkg-release -c Release
-      #     mkdir pkg-debug
-      #     ./mach install -p $PWD/pkg-debug
-      # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: linux-x64-gcc48-c89-${{ steps.vars.outputs.short_sha }}${{ matrix.options }}
-      #     path: |
-      #       pkg-debug
-      #       pkg-release
-      #       build/Debug
-      #       build/Release
-  android:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target: ["aarch64-linux-android"]
-    steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build
-      - uses: actions/checkout@v2
-      - name: Debug Build
-        run: ./mach build --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
-      - name: Release Build
-        run: ./mach build --release --tests -v --target ${{ matrix.target }} --ndk $ANDROID_NDK_HOME
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.target }}-${{ steps.vars.outputs.short_sha }}
-          path: |
-            build/Debug
-            build/Release
-  s390x-gcc:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
-      - uses: actions/checkout@v2
-      - name: Debug Build
-        run: ./mach build --tests --target s390x -v
-      - name: Release Build
-        run: ./mach build --release --target s390x --tests -v
-      - name: Install
-        run: |
-          mkdir pkg-release
-          ./mach install -p $PWD/pkg-release -c Release
-          mkdir pkg-debug
-          ./mach install -p $PWD/pkg-debug
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: linux-s390x-gcc10-${{ steps.vars.outputs.short_sha }}
-          path: |
-            pkg-debug
-            pkg-release
-            build/Debug
-            build/Release
+          name: macos_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.target }}
+
   windows:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        options:
-          [
-            { args: "", arch: x64 },
-            { args: "--msvc", arch: x64 },
-            { args: "-m32", arch: x86 },
-          ]
+        bits: [ 32, 64 ]
+        args: [ "", "--msvc" ]
+        exclude:
+          # See issue #92.
+          - bits: 32
+            args: "--msvc"
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Setup | Developer Command Prompt (x86)
+        if: ${{ matrix.bits == 32 }}
+        uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ matrix.options.arch }}
-      - name: Output name
-        id: vars
-        shell: bash
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
-      - name: Setup
+          arch: x86
+
+      - name: Setup | Developer Command Prompt (x64)
+        if: ${{ matrix.bits == 64 }}
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Setup | Install Ninja
         run: choco install ninja
-      - name: Debug Build & Test
-        run: python mach build --test -v ${{ matrix.options.args }}
-      - name: Release Build & Test
-        run: python mach build --release --test -v ${{ matrix.options.args }}
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
         with:
-          name: windows${{ matrix.options.args }}-${{ steps.vars.outputs.short_sha }}
-          path: |
-            build/Debug
-            build/Release
-  default:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+          args: ${{ matrix.args }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: windows_${{ matrix.bits }}_v${{ matrix.edition }}_${{ matrix.args }}
+
+  # ----------------------------------------------------------------------------
+
+  android:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ "aarch64-linux-android" ]
     steps:
-      - name: Output name
-        id: vars
-        run: |
-          echo ::set-output name=short_sha::${GITHUB_SHA: -8}
       - name: Setup
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build
-      - uses: actions/checkout@v2
-      - name: Build
-        run: ./_build.sh
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
         with:
-          name: linux-default-${{ steps.vars.outputs.short_sha }}
-          path: build/Release
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+          args: --ndk $ANDROID_NDK_HOME
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: ${{ matrix.target }}
+
+  s390x-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Output short_sha
+        uses: ./.github/actions/make_short_sha
+
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
+
+      - name: Debug Build
+        run: ./mach build --tests --target s390x -v
+
+      - name: Release Build
+        run: ./mach build --release --target s390x --tests -v
+
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux-s390x-gcc10
+
+  # ----------------------------------------------------------------------------
+
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Output short_sha
+        uses: ./.github/actions/make_short_sha
+
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+
+      - name: Build (Release)
+        run: ./_build.sh
+
+      - name: Build (Debug)
+        run: ninja -f build-Debug.ninja -C build
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux-default
