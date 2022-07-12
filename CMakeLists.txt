@@ -235,7 +235,7 @@ if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     # TODO: include inline assembly source code
 endif()
 if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
-    # TODO: include intrinsics source code
+    set(HACL_CAN_COMPILE_INTRINSICS 1)
 endif()
 
 # x64
