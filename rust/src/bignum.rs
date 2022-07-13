@@ -61,7 +61,7 @@ impl Bignum {
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
-        Bignum::new(be_bytes.to_vec())
+        Bignum::new(be_bytes)
     }
 }
 
@@ -90,17 +90,19 @@ pub struct Bignum {
     is_one: bool,
 }
 
-pub const ONE: Bignum = Bignum {
-    is_one: true,
-    is_zero: false,
-    handle: None,
-};
+impl Bignum {
+    pub const ONE: Bignum = Bignum {
+        is_one: true,
+        is_zero: false,
+        handle: None,
+    };
 
-pub const ZERO: Bignum = Bignum {
-    is_one: false,
-    is_zero: true,
-    handle: None,
-};
+    pub const ZERO: Bignum = Bignum {
+        is_one: false,
+        is_zero: true,
+        handle: None,
+    };
+}
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
 
@@ -178,14 +180,14 @@ enum ZeroOneOther {
 }
 
 impl Bignum {
-    pub fn new(be_bytes: Vec<u8>) -> Result<Self, Error> {
+    pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
         let bn = trim_left_zero(&be_bytes);
         if bn.len() > BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
         match one_zero_other(&bn) {
-            ZeroOneOther::One => Ok(ONE),
-            ZeroOneOther::Zero => Ok(ZERO),
+            ZeroOneOther::One => Ok(Bignum::ONE),
+            ZeroOneOther::Zero => Ok(Bignum::ZERO),
             ZeroOneOther::Other => {
                 let hacl_bn = unsafe { get_hacl_bn(bn.clone())? };
                 Ok(Self {

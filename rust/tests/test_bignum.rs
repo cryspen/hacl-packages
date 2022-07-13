@@ -2,25 +2,41 @@ mod test_util;
 use hex;
 use test_util::*;
 
-use hacl_rust::bignum::{Bignum, Error, ONE, ZERO};
+use hacl_rust::bignum::{Bignum, Error};
 
 fn bn_from_u64(n: u64) -> Bignum {
     let b = n.to_be_bytes();
-    let v = b.to_vec();
-    let bn: Result<Bignum, Error> = Bignum::new(v);
+    let bn: Result<Bignum, Error> = Bignum::new(&b);
     bn.unwrap()
 }
 
 #[test]
 #[allow(clippy::neg_cmp_op_on_partial_ord)]
 fn test_partial_ord() {
-    let v2038_bn = bn_from_u64(2038_u64);
-    let v1337_bn = bn_from_u64(1337_u64);
+    let trials = 1_000;
+    let mut small_rng = SmallRng::seed_from_u64(123_u64);
 
-    assert!(v1337_bn < v2038_bn, "1337 should be lt 2038");
-    assert!(v1337_bn != v2038_bn, "1337 should be not equal to 2038");
-    assert!(!(v1337_bn > v2038_bn), "1337 should not be gt 2038");
-    assert!(!(v1337_bn == v2038_bn), "1337 should not be equal to 2038");
+    let dest: &mut [u8; 16] = &mut [0; 16];
+    for trial in 0..trials {
+
+        // we create random a: u128 and a_bn: Bignum
+        // which should have same numeric value.
+        // And we do the same for b and b_bn.
+        small_rng.fill_bytes(dest);
+        let a = u128::from_be_bytes(*dest);
+        let a_bn = Bignum::new(dest).unwrap();
+        small_rng.fill_bytes(dest);
+        let b = u128::from_be_bytes(*dest);
+        let b_bn =  Bignum::new(dest).unwrap();
+
+        assert!(a_bn == a_bn);
+        let i_cmp = a.partial_cmp(&b).unwrap();
+        let b_cmp = a_bn.partial_cmp(&b_bn).unwrap();
+
+        assert!(i_cmp == b_cmp,
+            "i_cmp {:?} != b_cmp {:?} for (a={},b={}) in trial {}",
+            i_cmp, b_cmp, a, b, trial);
+    }
 }
 
 use rand::prelude::SmallRng;
@@ -42,10 +58,10 @@ fn test_memleak() {
         data.fill(0);
 
         small_rng.fill_bytes(&mut data[..]);
-        let a = Bignum::new(data.to_vec()).unwrap();
+        let a = Bignum::new(data).unwrap();
 
         small_rng.fill_bytes(&mut data[..]);
-        let b = Bignum::new(data.to_vec()).unwrap();
+        let b = Bignum::new(data).unwrap();
 
         let mut true_count = 0;
 
@@ -65,16 +81,16 @@ fn test_memleak() {
 
 #[test]
 fn test_constants() {
-    let b001 = &Bignum::new([0_u8, 0, 1].to_vec()).unwrap(); 
-    let b101 = &Bignum::new([1_u8, 0, 1].to_vec()).unwrap();
-    let b000 = &Bignum::new([0_u8, 0, 0].to_vec()).unwrap();
-    let b222 = &Bignum::new([2_u8, 2, 2].to_vec()).unwrap();
+    let b001 = &Bignum::new(&[0_u8, 0, 1]).unwrap();
+    let b101 = &Bignum::new(&[1_u8, 0, 1]).unwrap();
+    let b000 = &Bignum::new(&[0_u8, 0, 0]).unwrap();
+    let b222 = &Bignum::new(&[2_u8, 2, 2]).unwrap();
 
-    for bn in [&ONE, &ZERO, b001, b101, b000, b222] {
+    for bn in [&Bignum::ONE, &Bignum::ZERO, b001, b101, b000, b222] {
         assert!(bn == bn, "Something isn't equal to itself")
     }
 
-    struct TestVector<'a>{
+    struct TestVector<'a> {
         a: &'a Bignum,
         b: &'a Bignum,
         expected: bool,
@@ -82,68 +98,67 @@ fn test_constants() {
     }
 
     let tests = [
-        TestVector{
-            a: &ONE,
-            b: &ZERO,
+        TestVector {
+            a: &Bignum::ONE,
+            b: &Bignum::ZERO,
             expected: false,
             name: "ONE, ZERO",
-
         },
-        TestVector{
+        TestVector {
             a: b000,
-            b: &ZERO,
+            b: &Bignum::ZERO,
             expected: true,
             name: "b000, ZERO",
         },
-        TestVector{
+        TestVector {
             a: b001,
-            b: &ZERO,
+            b: &Bignum::ZERO,
             expected: false,
             name: "b001, ZERO",
         },
-        TestVector{
+        TestVector {
             a: b101,
-            b: &ZERO,
+            b: &Bignum::ZERO,
             expected: false,
             name: "b101, ZERO",
         },
-        TestVector{
+        TestVector {
             a: b222,
-            b: &ZERO,
+            b: &Bignum::ZERO,
             expected: false,
             name: "b222, ZERO",
         },
-        TestVector{
+        TestVector {
             a: b000,
-            b: &ONE,
+            b: &Bignum::ONE,
             expected: false,
             name: "b001, ONE",
         },
-        TestVector{
+        TestVector {
             a: b001,
-            b: &ONE,
+            b: &Bignum::ONE,
             expected: true,
             name: "b001, ONE",
         },
-        TestVector{
+        TestVector {
             a: b101,
-            b: &ONE,
+            b: &Bignum::ONE,
             expected: false,
             name: "b101, ONE",
         },
-        TestVector{
+        TestVector {
             a: b222,
-            b: &ONE,
+            b: &Bignum::ONE,
             expected: false,
             name: "b222, ONE",
         },
-        TestVector{
-            a: &ZERO,
-            b: &ONE,
+        TestVector {
+            a: &Bignum::ZERO,
+            b: &Bignum::ONE,
             expected: false,
             name: "ZERO, ONE",
         },
-        TestVector{
+        TestVector {
             a: b222,
             b: b101,
             expected: false,
@@ -152,7 +167,15 @@ fn test_constants() {
     ];
 
     for t in tests {
-        assert!((t.a == t.b) == t.expected, "(a,b) Unexpected result for {}", t.name);
-        assert!((t.b == t.a) == t.expected, "(b,a) Unexpected result for {}", t.name);
+        assert!(
+            (t.a == t.b) == t.expected,
+            "(a,b) Unexpected result for {}",
+            t.name
+        );
+        assert!(
+            (t.b == t.a) == t.expected,
+            "(b,a) Unexpected result for {}",
+            t.name
+        );
     }
 }
