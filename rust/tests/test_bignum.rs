@@ -2,7 +2,7 @@ mod test_util;
 use hex;
 use test_util::*;
 
-use hacl_rust::bignum::{Bignum, Error};
+use hacl_rust::bignum::{Bignum, Error, ONE, ZERO};
 
 fn bn_from_u64(n: u64) -> Bignum {
     let b = n.to_be_bytes();
@@ -60,5 +60,99 @@ fn test_memleak() {
         }
 
         assert!(true_count == 1, "We have the wrong number of truths.")
+    }
+}
+
+#[test]
+fn test_constants() {
+    let b001 = &Bignum::new([0_u8, 0, 1].to_vec()).unwrap(); 
+    let b101 = &Bignum::new([1_u8, 0, 1].to_vec()).unwrap();
+    let b000 = &Bignum::new([0_u8, 0, 0].to_vec()).unwrap();
+    let b222 = &Bignum::new([2_u8, 2, 2].to_vec()).unwrap();
+
+    for bn in [&ONE, &ZERO, b001, b101, b000, b222] {
+        assert!(bn == bn, "Something isn't equal to itself")
+    }
+
+    struct TestVector<'a>{
+        a: &'a Bignum,
+        b: &'a Bignum,
+        expected: bool,
+        name: &'a str,
+    }
+
+    let tests = [
+        TestVector{
+            a: &ONE,
+            b: &ZERO,
+            expected: false,
+            name: "ONE, ZERO",
+
+        },
+        TestVector{
+            a: b000,
+            b: &ZERO,
+            expected: true,
+            name: "b000, ZERO",
+        },
+        TestVector{
+            a: b001,
+            b: &ZERO,
+            expected: false,
+            name: "b001, ZERO",
+        },
+        TestVector{
+            a: b101,
+            b: &ZERO,
+            expected: false,
+            name: "b101, ZERO",
+        },
+        TestVector{
+            a: b222,
+            b: &ZERO,
+            expected: false,
+            name: "b222, ZERO",
+        },
+        TestVector{
+            a: b000,
+            b: &ONE,
+            expected: false,
+            name: "b001, ONE",
+        },
+        TestVector{
+            a: b001,
+            b: &ONE,
+            expected: true,
+            name: "b001, ONE",
+        },
+        TestVector{
+            a: b101,
+            b: &ONE,
+            expected: false,
+            name: "b101, ONE",
+        },
+        TestVector{
+            a: b222,
+            b: &ONE,
+            expected: false,
+            name: "b222, ONE",
+        },
+        TestVector{
+            a: &ZERO,
+            b: &ONE,
+            expected: false,
+            name: "ZERO, ONE",
+        },
+        TestVector{
+            a: b222,
+            b: b101,
+            expected: false,
+            name: "b222, b101",
+        },
+    ];
+
+    for t in tests {
+        assert!((t.a == t.b) == t.expected, "(a,b) Unexpected result for {}", t.name);
+        assert!((t.b == t.a) == t.expected, "(b,a) Unexpected result for {}", t.name);
     }
 }

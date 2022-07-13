@@ -4,6 +4,10 @@
 //!
 //! It safely (one hopes) wraps the unsafe Hacl_Bignum operations and provides
 //! a struct (type) Bignum that should conceal the nasty pointers to mutable data.
+//!
+//! There are some optimizations when the big number is 1 or 0, exposing those
+//! to potential side channel attacks. We are assuming that values of 1 and 0 are
+//! never meant to be secrets.
 
 use hacl_rust_sys::*;
 use libc;
@@ -86,13 +90,13 @@ pub struct Bignum {
     is_one: bool,
 }
 
-const ONE: Bignum = Bignum {
+pub const ONE: Bignum = Bignum {
     is_one: true,
     is_zero: false,
     handle: None,
 };
 
-const ZERO: Bignum = Bignum {
+pub const ZERO: Bignum = Bignum {
     is_one: false,
     is_zero: true,
     handle: None,
@@ -193,7 +197,16 @@ impl Bignum {
         }
     }
 
-    /// returns a vector of big-endian bytes
+    /// Returns true of our Bignum is 1. False otherwise.
+    pub fn is_one(&self) -> bool {
+        self.is_one
+    }
+    /// Returns true of our Bignum is 0. False otherwise.
+    pub fn is_zero(&self) -> bool {
+        self.is_zero
+    }
+
+    /// returns a vector of big-endian bytes.
     pub fn to_vec8(&self) -> Vec<u8> {
         if self.is_one {
             return VEC_ONE.to_vec();
@@ -205,7 +218,7 @@ impl Bignum {
         // The handle better be good if we aren't zero or one
         let handle = self.handle.as_ref().unwrap().0;
 
-        let be_bytes = &mut [0_u8; 512];
+        let be_bytes = &mut [0_u8; BN_BYTE_LENGTH];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
 
         trim_left_zero(&be_bytes.to_vec())
@@ -273,7 +286,7 @@ mod tests {
             },
             TestVector {
                 a: vec![0_u8, 1],
-                b: vec![0_u8, 0], 
+                b: vec![0_u8, 0],
                 expected: false,
                 expected_a_len: 1,
                 name: "(1,0), len(2,2)",
@@ -284,6 +297,20 @@ mod tests {
                 expected: true,
                 expected_a_len: 2,
                 name: "(256,256), len(3,2)",
+            },
+            TestVector {
+                a: vec![0_u8, 0, 1, 0, 7],
+                b: vec![0_u8, 1, 0, 6],
+                expected: false,
+                expected_a_len: 3,
+                name: "(263,262), len(4,5)",
+            },
+            TestVector {
+                a: vec![0_u8, 0, 2, 0],
+                b: vec![0_u8, 0, 0, 2],
+                expected: false,
+                expected_a_len: 2,
+                name: "(512,2), len(4,4)",
             },
         ];
         for t in tests {
@@ -296,7 +323,8 @@ mod tests {
                 "Expected {} for {}. A: {:?}. B: {:?}",
                 t.expected,
                 t.name,
-                a_trim, b_trim
+                a_trim,
+                b_trim
             );
 
             let a_trim_len = a_trim.len();
