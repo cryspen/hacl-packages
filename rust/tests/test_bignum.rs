@@ -1,4 +1,5 @@
 mod test_util;
+use hex;
 use test_util::*;
 
 use hacl_rust::bignum::{Bignum, Error};
