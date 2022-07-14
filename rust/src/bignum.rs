@@ -133,7 +133,7 @@ impl PartialEq for Bignum {
     }
 }
 
-unsafe fn get_hacl_bn(bn: Vec<u8>) -> Result<HaclBnType, Error> {
+unsafe fn new_handle(bn: Vec<u8>) -> Result<HaclBnType, Error> {
     let data = &mut bn.clone()[..];
 
     let hacl_raw_bn: HaclBnType =
@@ -188,7 +188,7 @@ impl Bignum {
             ZeroOneOther::One => Ok(Bignum::ONE),
             ZeroOneOther::Zero => Ok(Bignum::ZERO),
             ZeroOneOther::Other => {
-                let hacl_bn = unsafe { get_hacl_bn(be_bytes.to_vec())? };
+                let hacl_bn = unsafe { new_handle(be_bytes.to_vec())? };
                 Ok(Self {
                     is_one: false,
                     is_zero: false,
