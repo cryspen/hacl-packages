@@ -79,16 +79,17 @@ fn test_partial_ord() {
     let trials = 1_000;
     let mut small_rng = SmallRng::seed_from_u64(123_u64);
 
-    let dest: &mut [u8; 16] = &mut [0; 16];
+    let dest: &mut [u8; 512] = &mut [0; 512];
     for trial in 0..trials {
         // we create random a: u128 and a_bn: Bignum
         // which should have same numeric value.
         // And we do the same for b and b_bn.
         small_rng.fill_bytes(dest);
-        let a = u128::from_be_bytes(*dest);
+        let a = *dest;
         let a_bn = Bignum::new(dest).unwrap();
+
         small_rng.fill_bytes(dest);
-        let b = u128::from_be_bytes(*dest);
+        let b = *dest;
         let b_bn = Bignum::new(dest).unwrap();
 
         assert!(a_bn == a_bn);
@@ -97,11 +98,9 @@ fn test_partial_ord() {
 
         assert!(
             i_cmp == b_cmp,
-            "i_cmp {:?} != b_cmp {:?} for (a={},b={}) in trial {}",
+            "i_cmp {:?} != b_cmp {:?} in trial {}",
             i_cmp,
             b_cmp,
-            a,
-            b,
             trial
         );
     }

@@ -69,7 +69,7 @@ impl Bignum {
 type HaclBnType = *mut HaclBnWord;
 
 const BN_BITSIZE: usize = 4096;
-const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
+pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 
 #[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
