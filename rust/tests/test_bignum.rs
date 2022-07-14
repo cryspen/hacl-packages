@@ -1,30 +1,29 @@
 mod test_util;
 
-use data_encoding::HEXLOWER;
 use std::fmt;
 
-use hacl_rust::bignum::{Bignum, Error};
+use hacl_rust::bignum::Bignum;
 
 use rand::prelude::SmallRng;
 use rand::{RngCore, SeedableRng};
 
 #[test]
 fn test_to_from() {
-    let trials = 1_000;
+    let trials = 50;
     let mut small_rng = SmallRng::seed_from_u64(2038_u64);
 
     #[derive(Clone)]
     struct Failure {
-        a: Vec<u8>,
-        b: Vec<u8>,
+        in_data: Vec<u8>,
+        out_data: Vec<u8>,
         bad_prefix: Option<Vec<u8>>,
         trial: u32,
     }
     impl fmt::Debug for Failure {
         fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
             fmt.debug_struct("Failure")
-                .field("a", &format_args!("{:?}\n", &self.a))
-                .field("b", &format_args!("{:?}\n", &self.b))
+                .field("in", &format_args!("{:?}\n", &self.in_data))
+                .field("out", &format_args!("{:?}\n", &self.out_data))
                 .field("bad_prefix", &format_args!("{:?}\n", &self.bad_prefix))
                 .field("trial", &format_args!("{:?}\n", &self.trial))
                 .finish()
@@ -36,9 +35,9 @@ fn test_to_from() {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             writeln!(
                 f,
-                "(a.len: {}, b.len: {}, bad_prefix: {:?}, trial: {})",
-                self.a.len(),
-                self.b.len(),
+                "(in.len: {}, out.len: {}, bad_prefix: {:?}, trial: {})",
+                self.in_data.len(),
+                self.out_data.len(),
                 self.bad_prefix,
                 self.trial
             )
@@ -73,18 +72,21 @@ fn test_to_from() {
 
     let mut failures: FailureVec = FailureVec(Vec::new());
 
+    // const test_size: usize = Bignum::BN_BYTE_LENGTH - 16;
+    const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 15;
+
     for trial in 0..trials {
-        let mut dest: [u8; 512 - 16] = [0; 512 - 16];
+        let mut dest: [u8; TEST_SIZE] = [0;  TEST_SIZE];
         small_rng.fill_bytes(&mut dest);
 
-        let a_data = dest;
-        let a_vec = dest.to_vec();
+        let in_data = dest;
+        let in_vec = dest.to_vec();
 
-        let a_bn = Bignum::new(&a_data).unwrap();
-        let b_vec = a_bn.to_vec8();
+        let bn = Bignum::new(&in_data).unwrap();
+        let b_vec = bn.to_vec8();
 
         let mut trimmed_b: Vec<u8> = Vec::new();
-        let len_diff = b_vec.len() - a_vec.len();
+        let len_diff = b_vec.len() - in_vec.len();
         let mut should_be_zeros_but_isnt: Vec<u8> = vec![0; len_diff];
         if len_diff > 0 {
             trimmed_b = if let Some(v) = b_vec.strip_prefix(vec![0_u8; len_diff].as_slice()) {
@@ -100,10 +102,10 @@ fn test_to_from() {
             None
         };
 
-        if !trimmed_b.eq(&a_vec) {
+        if !trimmed_b.eq(&in_vec) {
             let f = &Failure {
-                a: a_vec.clone(),
-                b: b_vec.clone(),
+                in_data: in_data.to_vec(),
+                out_data: b_vec.clone(),
                 bad_prefix,
                 trial,
             };

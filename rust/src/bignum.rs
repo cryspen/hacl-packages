@@ -10,7 +10,7 @@
 //! never meant to be secrets.
 
 use hacl_rust_sys::*;
-use libc::{self, TIOCM_SR};
+use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
 use std::ptr;
@@ -69,7 +69,7 @@ impl Bignum {
 type HaclBnType = *mut HaclBnWord;
 
 const BN_BITSIZE: usize = 4096;
-pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
+
 
 #[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
@@ -102,6 +102,8 @@ impl Bignum {
         is_zero: true,
         handle: None,
     };
+
+    pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 }
 
 // We will really want From<whatever-we-use-in-core-for-byte-arrays>
@@ -134,7 +136,7 @@ impl PartialEq for Bignum {
 }
 
 unsafe fn new_handle(bn: Vec<u8>) -> Result<HaclBnType, Error> {
-    let mut data: [u8; BN_BYTE_LENGTH] = [0; BN_BYTE_LENGTH];
+    let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
     data[..bn.len()].copy_from_slice(&bn);
 
     let hacl_raw_bn: HaclBnType =
@@ -182,7 +184,7 @@ enum ZeroOneOther {
 
 impl Bignum {
     pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
-        if be_bytes.len() > BN_BYTE_LENGTH {
+        if be_bytes.len() > Bignum::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
         match one_zero_other(&trim_left_zero(be_bytes)) {
@@ -220,7 +222,7 @@ impl Bignum {
         // The handle better be good if we aren't zero or one
         let handle = self.handle.as_ref().unwrap().0;
 
-        let be_bytes = &mut [0_u8; BN_BYTE_LENGTH];
+        let be_bytes = &mut [0_u8; Bignum::BN_BYTE_LENGTH];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
 
         trim_left_zero(&be_bytes.to_vec())
