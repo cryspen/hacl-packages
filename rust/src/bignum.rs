@@ -225,7 +225,7 @@ impl Bignum {
         let be_bytes = &mut [0_u8; Bignum::BN_BYTE_LENGTH];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
 
-        trim_left_zero(&be_bytes.to_vec())
+        be_bytes.to_vec()
     }
 }
 
