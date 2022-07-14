@@ -59,7 +59,7 @@ fn test_to_from() {
 
         let out_hex = HEXLOWER.encode(&b_vec);
 
-        if a_hex != out_hex {
+        if !a_hex.ends_with(&out_hex) {
             let f = &Failure{
                 a: a_vec.clone(),
                 b: b_vec.clone(),
