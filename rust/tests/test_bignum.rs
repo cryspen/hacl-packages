@@ -72,7 +72,6 @@ fn test_to_from() {
 
     let mut failures: FailureVec = FailureVec(Vec::new());
 
-
     /*
     Results seem to differ with phase of the moon.
     There is almost certainly some unitialized memory
@@ -87,11 +86,11 @@ fn test_to_from() {
     With -{14,9,8} I get 0 failures out of 1000
     */
 
-    // const test_size: usize = Bignum::BN_BYTE_LENGTH - 16;
+    //const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 16;
     const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 14;
 
-    for trial in 0..trials {
-        let mut dest: [u8; TEST_SIZE] = [0;  TEST_SIZE];
+    for trial in 1..=trials {
+        let mut dest: [u8; TEST_SIZE] = [0; TEST_SIZE];
         small_rng.fill_bytes(&mut dest);
 
         let in_data = dest;

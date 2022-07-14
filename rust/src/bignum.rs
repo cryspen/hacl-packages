@@ -70,7 +70,6 @@ type HaclBnType = *mut HaclBnWord;
 
 const BN_BITSIZE: usize = 4096;
 
-
 #[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
 pub enum Error {
