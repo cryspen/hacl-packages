@@ -134,7 +134,8 @@ impl PartialEq for Bignum {
 }
 
 unsafe fn new_handle(bn: Vec<u8>) -> Result<HaclBnType, Error> {
-    let data = &mut bn.clone()[..];
+    let mut data: [u8; BN_BYTE_LENGTH] = [0; BN_BYTE_LENGTH];
+    data[..bn.len()].copy_from_slice(&bn);
 
     let hacl_raw_bn: HaclBnType =
         Hacl_Bignum4096_new_bn_from_bytes_be(bn.len() as u32, data.as_mut_ptr());

@@ -17,6 +17,7 @@ fn test_to_from() {
     struct Failure {
         a: Vec<u8>,
         b: Vec<u8>,
+        bad_prefix: Option<Vec<u8>>,
         trial: u32,
     }
     impl fmt::Debug for Failure {
@@ -24,6 +25,7 @@ fn test_to_from() {
             fmt.debug_struct("Failure")
                 .field("a", &format_args!("{:?}\n", &self.a))
                 .field("b", &format_args!("{:?}\n", &self.b))
+                .field("bad_prefix", &format_args!("{:?}\n", &self.bad_prefix))
                 .field("trial", &format_args!("{:?}\n", &self.trial))
                 .finish()
         }
@@ -32,17 +34,44 @@ fn test_to_from() {
     // Less verbose than {:?}
     impl fmt::Display for Failure {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(
+            writeln!(
                 f,
-                "(a.len: {}, b.len: {}, trial: {})",
+                "(a.len: {}, b.len: {}, bad_prefix: {:?}, trial: {})",
                 self.a.len(),
                 self.b.len(),
+                self.bad_prefix,
                 self.trial
             )
         }
     }
+    #[derive(Clone)]
+    struct FailureVec(Vec<Failure>);
 
-    let mut failures: Vec<Failure> = Vec::new();
+    // There is probably a better way to get FailureVec to inherit
+    // Vec methods, but I only need two.
+    impl FailureVec {
+        fn is_empty(&self) -> bool {
+            self.0.is_empty()
+        }
+        fn len(&self) -> usize {
+            self.0.len()
+        }
+        fn push(&mut self, v: Failure) {
+            self.0.push(v)
+        }
+    }
+
+    impl fmt::Display for FailureVec {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            writeln!(f, "Failures:")?;
+            for v in &self.0 {
+                write!(f, "\t{}", v)?;
+            }
+            Ok(())
+        }
+    }
+
+    let mut failures: FailureVec = FailureVec(Vec::new());
 
     for trial in 0..trials {
         let mut dest: [u8; 512 - 16] = [0; 512 - 16];
@@ -51,17 +80,31 @@ fn test_to_from() {
         let a_data = dest;
         let a_vec = dest.to_vec();
 
-        let a_hex = HEXLOWER.encode(&a_data);
-
         let a_bn = Bignum::new(&a_data).unwrap();
         let b_vec = a_bn.to_vec8();
 
-        let out_hex = HEXLOWER.encode(&b_vec);
+        let mut trimmed_b: Vec<u8> = Vec::new();
+        let len_diff = b_vec.len() - a_vec.len();
+        let mut should_be_zeros_but_isnt: Vec<u8> = vec![0; len_diff];
+        if len_diff > 0 {
+            trimmed_b = if let Some(v) = b_vec.strip_prefix(vec![0_u8; len_diff].as_slice()) {
+                v.to_vec()
+            } else {
+                should_be_zeros_but_isnt = b_vec[..len_diff].to_vec();
+                b_vec.to_vec()
+            }
+        }
+        let bad_prefix = if should_be_zeros_but_isnt.iter().any(|&x| x != 0_u8) {
+            Some(should_be_zeros_but_isnt)
+        } else {
+            None
+        };
 
-        if !a_hex.ends_with(&out_hex) {
+        if !trimmed_b.eq(&a_vec) {
             let f = &Failure {
                 a: a_vec.clone(),
                 b: b_vec.clone(),
+                bad_prefix,
                 trial,
             };
             failures.push(f.clone());
@@ -70,7 +113,7 @@ fn test_to_from() {
 
     assert!(
         failures.is_empty(),
-        "{:?}\nThere were {} in-out failure(s) out of {} trials",
+        "{}\nThere were {} in-out failure(s) out of {} trials",
         failures,
         failures.len(),
         trials
