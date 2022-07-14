@@ -10,7 +10,7 @@
 //! never meant to be secrets.
 
 use hacl_rust_sys::*;
-use libc;
+use libc::{self, TIOCM_SR};
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
 use std::ptr;
@@ -181,15 +181,14 @@ enum ZeroOneOther {
 
 impl Bignum {
     pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
-        let bn = trim_left_zero(&be_bytes);
-        if bn.len() > BN_BYTE_LENGTH {
+        if be_bytes.len() > BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
-        match one_zero_other(&bn) {
+        match one_zero_other(&trim_left_zero(be_bytes)) {
             ZeroOneOther::One => Ok(Bignum::ONE),
             ZeroOneOther::Zero => Ok(Bignum::ZERO),
             ZeroOneOther::Other => {
-                let hacl_bn = unsafe { get_hacl_bn(bn.clone())? };
+                let hacl_bn = unsafe { get_hacl_bn(be_bytes.to_vec())? };
                 Ok(Self {
                     is_one: false,
                     is_zero: false,

@@ -1,9 +1,7 @@
-
 mod test_util;
 
-use std::mem;
-use std::fmt;
 use data_encoding::HEXLOWER;
+use std::fmt;
 
 use hacl_rust::bignum::{Bignum, Error};
 
@@ -31,39 +29,52 @@ fn test_to_from() {
         }
     }
 
+    // Less verbose than {:?}
+    impl fmt::Display for Failure {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(
+                f,
+                "(a.len: {}, b.len: {}, trial: {})",
+                self.a.len(),
+                self.b.len(),
+                self.trial
+            )
+        }
+    }
+
     let mut failures: Vec<Failure> = Vec::new();
 
     for trial in 0..trials {
-        // we create random a: u128 and a_bn: Bignum
-        // which should have same numeric value.
-        let mut dest: [u8; 512 - 16] = unsafe { mem::zeroed() };
+        let mut dest: [u8; 512 - 16] = [0; 512 - 16];
         small_rng.fill_bytes(&mut dest);
 
-        // Thank you slack exchange. I never would have figured that this
-        // is the way to make an immutable copy of a mutable object.
         let a_data = dest;
         let a_vec = dest.to_vec();
 
         let a_hex = HEXLOWER.encode(&a_data);
-    
+
         let a_bn = Bignum::new(&a_data).unwrap();
         let b_vec = a_bn.to_vec8();
 
         let out_hex = HEXLOWER.encode(&b_vec);
 
         if !a_hex.ends_with(&out_hex) {
-            let f = &Failure{
+            let f = &Failure {
                 a: a_vec.clone(),
                 b: b_vec.clone(),
                 trial,
             };
             failures.push(f.clone());
         }
-
     }
 
-    assert!(failures.is_empty(), "{:?}\nThere were {} in-out failure(s) out of {} trials",
-            failures, failures.len(), trials);
+    assert!(
+        failures.is_empty(),
+        "{:?}\nThere were {} in-out failure(s) out of {} trials",
+        failures,
+        failures.len(),
+        trials
+    );
 }
 
 #[test]
