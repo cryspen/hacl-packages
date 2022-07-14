@@ -5,23 +5,15 @@ use std::mem;
 use std::fmt;
 use data_encoding::HEXLOWER;
 
-
-
 use hacl_rust::bignum::{Bignum, Error};
 
 use rand::prelude::SmallRng;
 use rand::{RngCore, SeedableRng};
 
-fn bn_from_u64(n: u64) -> Bignum {
-    let b = n.to_be_bytes();
-    let bn: Result<Bignum, Error> = Bignum::new(&b);
-    bn.unwrap()
-}
-
 #[test]
 fn test_to_from() {
     let trials = 1_000;
-    let mut small_rng = SmallRng::seed_from_u64(123_u64);
+    let mut small_rng = SmallRng::seed_from_u64(2038_u64);
 
     #[derive(Clone)]
     struct Failure {
@@ -32,9 +24,9 @@ fn test_to_from() {
     impl fmt::Debug for Failure {
         fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
             fmt.debug_struct("Failure")
-                .field("a", &self.a)
-                .field("b", &self.b)
-                .field("trial", &self.trial)
+                .field("a", &format_args!("{:?}\n", &self.a))
+                .field("b", &format_args!("{:?}\n", &self.b))
+                .field("trial", &format_args!("{:?}\n", &self.trial))
                 .finish()
         }
     }
@@ -44,7 +36,7 @@ fn test_to_from() {
     for trial in 0..trials {
         // we create random a: u128 and a_bn: Bignum
         // which should have same numeric value.
-        let mut dest: [u8; 512] = unsafe { mem::zeroed() };
+        let mut dest: [u8; 512 - 16] = unsafe { mem::zeroed() };
         small_rng.fill_bytes(&mut dest);
 
         // Thank you slack exchange. I never would have figured that this
@@ -68,9 +60,10 @@ fn test_to_from() {
             failures.push(f.clone());
         }
 
-        assert!(failures.is_empty(), "There were {} in-out failure(s) out of {} trials\n{:?}",
-            failures.len(), trials, failures);
     }
+
+    assert!(failures.is_empty(), "{:?}\nThere were {} in-out failure(s) out of {} trials",
+            failures, failures.len(), trials);
 }
 
 #[test]
