@@ -223,33 +223,40 @@ class Config:
         # cmake wants the unix style for paths apparently
         with open(cmake_config, 'w') as out:
             for a in self.hacl_compile_feature:
-                out.write("set(SOURCES_%s %s)\n" %
-                          (a, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a]).replace(separator, '/')))
+                out.write("set(SOURCES_%s\n\t%s\n)\n" %
+                          (a,
+                           "\n\t".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.hacl_compile_feature[a]).replace(
+                               separator, '/')))
 
-            out.write("set(INCLUDES %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes).replace(separator, '/'))
+            out.write("set(INCLUDES\n\t%s\n)\n" %
+                      "\n\t".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes).replace(separator, '/'))
 
-            out.write("set(PUBLIC_INCLUDES %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes).replace(separator, '/'))
+            out.write("set(PUBLIC_INCLUDES\n\t%s\n)\n" %
+                      "\n\t".join(join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes).replace(separator,
+                                                                                                          '/'))
 
-            out.write("set(ALGORITHMS %s)\n" %
-                      " ".join(a for a in self.hacl_files).replace(separator, '/'))
+            out.write("set(ALGORITHMS\n\t%s\n)\n" %
+                      "\n\t".join(a for a in self.hacl_files).replace(separator, '/'))
 
-            out.write("set(INCLUDE_PATHS %s)\n" %
-                      " ".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths).replace(separator, '/'))
+            out.write("set(INCLUDE_PATHS\n\t%s\n)\n" %
+                      "\n\t".join(join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths).replace(separator, '/'))
 
-            out.write("set(TEST_SOURCES %s)\n" %
-                      (" ".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources).replace(separator, '/')))
+            out.write("set(TEST_SOURCES\n\t%s\n)\n" %
+                      ("\n\t".join(join("${PROJECT_SOURCE_DIR}", "tests", f) for f in self.test_sources).replace(
+                          separator,
+                          '/')))
 
             for os in self.vale_files:
-                out.write("set(VALE_SOURCES_%s %s)\n" %
-                          (os, " ".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.vale_files[os]).replace(separator, '/')))
+                out.write("set(VALE_SOURCES_%s\n\t%s\n)\n" %
+                          (os,
+                           "\n\t".join(join("${PROJECT_SOURCE_DIR}", f) for f in self.vale_files[os]).replace(separator,
+                                                                                                              '/')))
 
-            out.write("set(ALGORITHM_TEST_FILES %s)\n" %
-                      " ".join("TEST_FILES_"+a for a in self.tests).replace(separator, '/'))
+            out.write("set(ALGORITHM_TEST_FILES\n\t%s\n)\n" %
+                      "\n\t".join("TEST_FILES_" + a for a in self.tests).replace(separator, '/'))
             for a in self.tests:
-                out.write("set(TEST_FILES_%s %s)\n" %
-                          (a, " ".join(f for f in self.tests[a]).replace(separator, '/')))
+                out.write("set(TEST_FILES_%s\n\t%s\n)\n" %
+                          (a, "\n\t".join(f for f in self.tests[a]).replace(separator, '/')))
 
     def dep_config(self):
         print(" [mach] Collecting files and dependencies ...")
