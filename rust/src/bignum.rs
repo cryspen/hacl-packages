@@ -134,12 +134,13 @@ impl PartialEq for Bignum {
     }
 }
 
-unsafe fn new_handle(bn: Vec<u8>) -> Result<HaclBnType, Error> {
+unsafe fn new_handle(bn: &[u8]) -> Result<HaclBnType, Error> {
     let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
-    data[..bn.len()].copy_from_slice(&bn);
+    let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
+    data[diff_len..].copy_from_slice(bn);
 
     let hacl_raw_bn: HaclBnType =
-        Hacl_Bignum4096_new_bn_from_bytes_be(bn.len() as u32, data.as_mut_ptr());
+        Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
     if hacl_raw_bn.is_null() {
         return Err(Error::AllocationError);
     }
@@ -190,7 +191,7 @@ impl Bignum {
             ZeroOneOther::One => Ok(Bignum::ONE),
             ZeroOneOther::Zero => Ok(Bignum::ZERO),
             ZeroOneOther::Other => {
-                let hacl_bn = unsafe { new_handle(be_bytes.to_vec())? };
+                let hacl_bn = unsafe { new_handle(be_bytes)? };
                 Ok(Self {
                     is_one: false,
                     is_zero: false,

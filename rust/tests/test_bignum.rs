@@ -72,22 +72,8 @@ fn test_to_from() {
 
     let mut failures: FailureVec = FailureVec(Vec::new());
 
-    /*
-    Results seem to differ with phase of the moon.
-    There is almost certainly some unitialized memory
-    problem here. I don't know the bug(s) are
-
-    - in my test code,
-    - in my HACL wrapping
-    - in HACL
-
-    With -{16,15} I get 997 failures out of 1000
-    With -15 I get 997 failures out of 1000
-    With -{14,9,8} I get 0 failures out of 1000
-    */
-
-    //const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 16;
-    const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 14;
+    const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 17;
+    // const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 14;
 
     for trial in 1..=trials {
         let mut dest: [u8; TEST_SIZE] = [0; TEST_SIZE];
