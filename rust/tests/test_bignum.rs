@@ -131,17 +131,19 @@ fn test_partial_ord() {
     let trials = 1_000;
     let mut small_rng = SmallRng::seed_from_u64(123_u64);
 
-    let dest: &mut [u8; 512] = &mut [0; 512];
+    // let byte_size = Bignum::BN_BYTE_LENGTH - 256;
+    let byte_size = Bignum::BN_BYTE_LENGTH;
+    let dest  = &mut vec![0; byte_size];
     for trial in 0..trials {
         // we create random a: u128 and a_bn: Bignum
         // which should have same numeric value.
         // And we do the same for b and b_bn.
         small_rng.fill_bytes(dest);
-        let a = *dest;
+        let a = dest.to_vec();
         let a_bn = Bignum::new(dest).unwrap();
 
         small_rng.fill_bytes(dest);
-        let b = *dest;
+        let b = dest.to_vec();
         let b_bn = Bignum::new(dest).unwrap();
 
         assert!(a_bn == a_bn);
