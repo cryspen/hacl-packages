@@ -14,7 +14,7 @@ use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
 use std::ptr;
-
+use data_encoding::{HEXUPPER};
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
@@ -246,6 +246,17 @@ impl Bignum {
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
 
         be_bytes.to_vec()
+    }
+
+    /// A hex representation of the big-endian representation
+    pub fn to_hex(&self) -> String {
+        let mut be_bytes = trim_left_zero(&self.to_vec8());
+        if be_bytes.len() % 2 == 1 {
+            // There are probably better ways to do this.
+            be_bytes.insert(0, 0_u8);
+        }
+
+        HEXUPPER.encode(&be_bytes)
     }
 }
 
