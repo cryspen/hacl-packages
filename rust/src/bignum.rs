@@ -134,11 +134,10 @@ impl PartialEq for Bignum {
     }
 }
 
-// removing leading zeros
 unsafe fn new_handle(bn: &[u8]) -> Result<HaclBnType, Error> {
-    let in_vec = trim_left_zero(bn);
-    let mut data  = vec![0_u8; in_vec.len()];
-    data[..].copy_from_slice(&in_vec);
+    let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
+    let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
+    data[diff_len..].copy_from_slice(bn);
 
     let hacl_raw_bn: HaclBnType =
         Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
@@ -147,6 +146,7 @@ unsafe fn new_handle(bn: &[u8]) -> Result<HaclBnType, Error> {
     }
     Ok(hacl_raw_bn)
 }
+
 // Some Vec<u8> utilities
 
 const VEC_ONE: [u8; 1] = [1_u8];
