@@ -133,7 +133,7 @@ fn test_partial_ord() {
 
     // let byte_size = Bignum::BN_BYTE_LENGTH - 256;
     let byte_size = Bignum::BN_BYTE_LENGTH;
-    let dest  = &mut vec![0; byte_size];
+    let dest = &mut vec![0; byte_size];
     for trial in 0..trials {
         // we create random a: u128 and a_bn: Bignum
         // which should have same numeric value.

@@ -36,6 +36,7 @@ impl Drop for HaclBnHandle {
     }
 }
 
+
 impl fmt::Debug for HaclBnHandle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = match self.0.is_null() {
@@ -73,9 +74,28 @@ const BN_BITSIZE: usize = 4096;
 #[derive(Debug, PartialEq)]
 /// Errors for Bignum operations
 pub enum Error {
+    /// You are trying to convert more bytes than BN_BYTE_LENGTH
     BadInputLength,
+
+    /// Something went wrong when trying to convert to or from a bignum.
     ConversionError,
+
+    /// HACL call returned a null pointer. Probably an allocation error
     AllocationError,
+
+    /// The Bignum is malformed, as it is neither 0, 1, nor has a handle.
+    /// This should not happen.
+    NoHandle,
+
+    /// The modulus is zero or one. Don't used mod operations in such cases.
+    UselessModulus,
+
+    /// You tried to compute 0^0. That is undefined.
+    ZeroToZero,
+
+    /// HACL calls sometimes return errors on a variety of conditions.
+    /// The best we can do is tell you that this happened.
+    HaclError,
 }
 
 #[derive(Debug)]
@@ -257,6 +277,82 @@ impl PartialOrd for Bignum {
             return Some(Greater);
         }
         Some(Less)
+    }
+}
+
+// More math.
+impl Bignum {
+    // We will try to use the same function signatures as exist in
+    // num-bigint::BigUint, except that we will wrap in Results where
+    // num-bigint panics
+    // https://docs.rs/num-bigint/latest/num_bigint/struct.BigUint.html
+
+    pub fn modpow(&self, exponent: &Self, modulus: &Self) -> Result<Self, Error> {
+        //! Returns (self ^ exponent) % modulus.
+        //!
+        //! # Errors
+        //! - Error if modulus < 2.
+        //! - Error if both self and exponent are zero.
+        //! - Error if
+        //!     * modulus is even
+        //!     * self is not less than modulus
+        //!
+        //! # Security
+        //! We are assuming that we can leak timing information if base or exponent
+        //! are 1 or 0.
+
+        if self.is_zero && exponent.is_zero {
+            return Err(Error::ZeroToZero);
+        }
+        if modulus.is_zero || modulus.is_one {
+            return Err(Error::UselessModulus);
+        }
+
+        if self.is_zero {
+            return Ok(Bignum::ZERO);
+        }
+        if self.is_one {
+            return Ok(Bignum::ONE);
+        }
+        if exponent.is_zero {
+            return Ok(Bignum::ONE);
+        }
+        if exponent.is_one {
+            return self.try_clone();
+        }
+
+        // We should now be in a state in which we know that base and exponent
+        // are greater than 1, so we need call Hacl_Bignum4096_mod_exp_consttime
+
+        // let's get the Hacl parameters (and with the names used by HACL)
+        // a^b mod n into res
+        let n = modulus.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let b = exponent.handle.as_ref().ok_or(Error::NoHandle)?.0;
+
+        // I still can't find a way to get the size of Hacl bignnums, so will
+        // just use the maximum
+        #[allow(non_snake_case)]
+        let bBits = 8 * Self::BN_BYTE_LENGTH;
+
+        let mut res: [u64; BN_BITSIZE / 64] = [0; BN_BITSIZE / 64];
+        // let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
+        // data[diff_len..].copy_from_slice(bn);
+
+        let hacl_ret_val: bool;
+        unsafe {
+            hacl_ret_val =
+                Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, res.as_mut_ptr())
+        }
+        if !hacl_ret_val {
+            Err(Error::HaclError)
+        } else {
+            Ok(Self {
+                is_one: false,
+                is_zero: false,
+                handle: Some(HaclBnHandle(res.clone().as_mut_ptr())),
+            })
+        }
     }
 }
 
