@@ -29,6 +29,11 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
     for algorithm in tests:
         for test in tests[algorithm]:
             test_name = os.path.splitext(test)[0]
+
+            # Always set LLVM_PROFILE_FILE.
+            # File will only be created if compiled with coverage instrumentation.
+            my_env["LLVM_PROFILE_FILE"] = f"{test_name}.profraw"
+
             if len(algorithms) == 0 or test_name in algorithms or algorithm in algorithms:
                 file_name = Path(test).stem
                 if sys.platform == "win32":

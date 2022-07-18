@@ -72,7 +72,8 @@ def install(args):
                       action='store_true'),
              argument(
                  "-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),
-             argument("--no-build", help="Don't actually build (don't run ninja).", action='store_true')])
+             argument("--no-build", help="Don't actually build (don't run ninja).", action='store_true'),
+             argument("--coverage", help="Build with coverage instrumentation.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
 
@@ -111,6 +112,7 @@ def build(args):
         - sanitizer
         - edition
         - disable
+        - coverage
     """
     cmake_args = []
     # Verbosity
@@ -156,8 +158,17 @@ def build(args):
         cxxflags.append("-m32")
         m32 = True
 
-    # Our default compiler is clang.
-    compiler = os.getenv('CC', 'clang')
+    # Set CC and CXX to clang(++) if unset.
+    if "CC" not in os.environ:
+        print("Setting \"CC=clang\".")
+        os.environ["CC"] = "clang"
+
+    if "CXX" not in os.environ:
+        print("Setting \"CXX=clang++\".")
+        os.environ["CXX"] = "clang++"
+
+    compiler = os.environ["CC"]
+
     windows = False
 
     # Select the source folder to use (regular, c89, msvc)
@@ -242,6 +253,22 @@ def build(args):
 
     # if verbose:
     #     cmake_args.extend(["--debug-output", "--trace"])
+
+    # Check if we want to compile with coverage information.
+    if args.coverage:
+        if windows:
+            print("The `--coverage` flag is not supported on Windows.")
+            exit(1)
+
+        if os.environ["CC"] == "clang" and os.environ["CXX"] == "clang++":
+            cflags.append("-fprofile-instr-generate")
+            cflags.append("-fcoverage-mapping")
+            cxxflags.append("-fprofile-instr-generate")
+            cxxflags.append("-fcoverage-mapping")
+        else:
+            print(
+                f"Coverage measurement is only supported with clang/clang++ but compilers were {os.environ['CC']}/{os.environ['CXX']}.")
+            exit(1)
 
     if len(cflags) != 0:
         cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
