@@ -329,3 +329,136 @@ INSTANTIATE_TEST_SUITE_P(RsaPss4096Sha512Salt32,
                          RsaPssVerifySuite,
                          ::testing::ValuesIn(read_json(const_cast<char*>(
                            "rsa_pss_4096_sha512_mgf1_32_test.json"))));
+
+// -----------------------------------------------------------------------------
+
+TEST(BadSecretKey, RsaPssLoadKey)
+{
+  // (e, d, n)
+  std::vector<std::tuple<bytes, bytes, bytes>> tests{
+    { from_hex(""), from_hex(""), from_hex("") },
+    { from_hex(""), from_hex("AA"), from_hex("") },
+    { from_hex("AA"), from_hex(""), from_hex("") },
+    { from_hex("AA"), from_hex("AA"), from_hex("") },
+    { from_hex("AA"), from_hex("AA"), from_hex("AA") },
+    { from_hex("AA"), from_hex("AAAA"), from_hex("AA") },
+    { from_hex("AAAA"), from_hex("AA"), from_hex("AA") },
+    { from_hex("AAAA"), from_hex("AAAA"), from_hex("AA") },
+  };
+
+  for (auto test : tests) {
+    bytes e, d, n;
+    std::tie(e, d, n) = test;
+
+    uint64_t* skey = Hacl_RSAPSS_new_rsapss_load_skey(
+      n.size() * 8, e.size() * 8, d.size() * 8, n.data(), e.data(), d.data());
+
+      ASSERT_TRUE(skey == NULL);
+  }
+}
+
+TEST(BadPublicKey, RsaPssLoadKey)
+{
+  // (e, n)
+  std::vector<std::tuple<bytes, bytes>> tests{
+    { from_hex(""), from_hex("") },
+    { from_hex(""), from_hex("FF") },
+    { from_hex("AA"), from_hex("") },
+  };
+
+  for (auto test : tests) {
+    bytes e, n;
+    std::tie(e, n) = test;
+
+    uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(
+      n.size() * 8, e.size() * 8, n.data(), e.data());
+
+    ASSERT_TRUE(pkey == NULL);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+TEST(WrongHashSign, RsaPssDeathTest)
+{
+  bytes e = from_hex("010001");
+  bytes d = from_hex(
+    "12ddcf5652e462db7bd689e1604cf27dacb7435105880c8acac24ef9302c29bc819eaee139"
+    "66d471114053e17d8ae3bca57460d1b177f8bd37bfbbee243cb5e3dde2ae34dff6b3095939"
+    "c5c74d56a674a12b270d8213a6268ec3f332dd9cf746ba097b6ce8490be4dabfb83d02560e"
+    "da766a3551681725230f31f7a67bc8f5e8968103426eac652a30893251431e434597c06487"
+    "b05b49b7a6d2e4d263de4f7e7788471b19e8aa64f3dce41bf1f55f057d50187f95379a7f93"
+    "09f6afa62ceca1e988df7c8dc484101349ca131fe9c4b4d42c63c788dc6e6ce93f11a0567c"
+    "2830022c5ee73c1c55c668e2cdcc1fb88c91bfdd33e014c29cb8af2e84c14cf9f8ad");
+  bytes n = from_hex(
+    "bb6707ae65f4ee9e65ee1a1c08b431e556cd1000dc5358b97098c9546de8ef9b5a227cbd89"
+    "fbca5fa1b0e7527cb4fd66d934f0edc166cf6f7944fb44997a0023885c319f25b7927b0c03"
+    "74132f5ab38de2bfb25228ab4cf4c3932662d4af7dab73e2da520016b7df4d97575ffb90ff"
+    "b0bda1b791f6e09cd70bc04bdc19b757279f271476fe774737ab816d0da86254a45cd98d5b"
+    "ce77ccd950e1f16f572a4e45a292b501e6394e2e49cf547302222529cb754d3d255512fe83"
+    "5874020d9f8662e22c000c8af6247be141bab2abf4a712ee1590d260bf3bb907a151604ec9"
+    "354fc806f86eeaeb4df53dd822412189567fb5fc0bc2082a7c4f613834a72f985c27");
+
+  bytes msg = from_hex("ffffffffffffffffff");
+
+  bytes signature(n.size());
+
+  uint32_t saltLen = 16;
+  bytes salt(saltLen, 'A');
+
+  // Spec_Hash_Definitions_MD5 is not supported and must fail.
+  ASSERT_DEATH(
+    {
+      bool got_sign = false;
+      sign(e, d, n, salt, Spec_Hash_Definitions_MD5, msg, signature, &got_sign);
+    },
+    "^KaRaMeL incomplete match at .*$");
+}
+
+TEST(WrongHashVerify, RsaPssDeathTest)
+{
+  bytes e = from_hex("010001");
+  bytes d = from_hex(
+    "12ddcf5652e462db7bd689e1604cf27dacb7435105880c8acac24ef9302c29bc819eaee139"
+    "66d471114053e17d8ae3bca57460d1b177f8bd37bfbbee243cb5e3dde2ae34dff6b3095939"
+    "c5c74d56a674a12b270d8213a6268ec3f332dd9cf746ba097b6ce8490be4dabfb83d02560e"
+    "da766a3551681725230f31f7a67bc8f5e8968103426eac652a30893251431e434597c06487"
+    "b05b49b7a6d2e4d263de4f7e7788471b19e8aa64f3dce41bf1f55f057d50187f95379a7f93"
+    "09f6afa62ceca1e988df7c8dc484101349ca131fe9c4b4d42c63c788dc6e6ce93f11a0567c"
+    "2830022c5ee73c1c55c668e2cdcc1fb88c91bfdd33e014c29cb8af2e84c14cf9f8ad");
+  bytes n = from_hex(
+    "bb6707ae65f4ee9e65ee1a1c08b431e556cd1000dc5358b97098c9546de8ef9b5a227cbd89"
+    "fbca5fa1b0e7527cb4fd66d934f0edc166cf6f7944fb44997a0023885c319f25b7927b0c03"
+    "74132f5ab38de2bfb25228ab4cf4c3932662d4af7dab73e2da520016b7df4d97575ffb90ff"
+    "b0bda1b791f6e09cd70bc04bdc19b757279f271476fe774737ab816d0da86254a45cd98d5b"
+    "ce77ccd950e1f16f572a4e45a292b501e6394e2e49cf547302222529cb754d3d255512fe83"
+    "5874020d9f8662e22c000c8af6247be141bab2abf4a712ee1590d260bf3bb907a151604ec9"
+    "354fc806f86eeaeb4df53dd822412189567fb5fc0bc2082a7c4f613834a72f985c27");
+
+  bytes msg = from_hex("ffffffffffffffffff");
+
+  bytes signature(n.size());
+
+  uint32_t saltLen = 16;
+  bytes salt(saltLen, 'A');
+
+  bool got_sign = false;
+  sign(
+    e, d, n, salt, Spec_Hash_Definitions_SHA2_256, msg, signature, &got_sign);
+
+  ASSERT_TRUE(got_sign);
+
+  // Spec_Hash_Definitions_MD5 is not supported and must fail.
+  ASSERT_DEATH(
+    {
+      bool got_verify = false;
+      verify(e,
+             n,
+             salt.size(),
+             Spec_Hash_Definitions_MD5,
+             msg,
+             signature,
+             &got_verify);
+    },
+    "^KaRaMeL incomplete match at .*$");
+}
