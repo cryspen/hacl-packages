@@ -51,10 +51,9 @@ impl Bignum {
     /// Attempts to create a new Bignum with the same values.
     /// Allocates new memory with a new pointer to that memory
     pub fn try_clone(&self) -> Result<Self, Error> {
-        if self.is_one || self.is_zero {
+        if self.is_one() || self.is_zero() {
             return Ok(Bignum {
-                is_one: self.is_one,
-                is_zero: self.is_zero,
+                zero_one_other: self.zero_one_other,
                 handle: None,
             });
         }
@@ -105,20 +104,17 @@ pub struct Bignum {
     handle: Option<HaclBnHandle>,
 
     // I am assuming that a BN of 0 or 1 is never a secret.
-    is_zero: bool,
-    is_one: bool,
+    zero_one_other: ZeroOneOther,
 }
 
 impl Bignum {
     pub const ONE: Bignum = Bignum {
-        is_one: true,
-        is_zero: false,
+        zero_one_other: ZeroOneOther::One,
         handle: None,
     };
 
     pub const ZERO: Bignum = Bignum {
-        is_one: false,
-        is_zero: true,
+        zero_one_other: ZeroOneOther::Zero,
         handle: None,
     };
 
@@ -130,10 +126,10 @@ impl Bignum {
 impl PartialEq for Bignum {
     /// Returns true self == other.
     fn eq(&self, other: &Bignum) -> bool {
-        if self.is_one && other.is_one {
+        if self.is_one() && other.is_one() {
             return true;
         }
-        if self.is_zero && other.is_zero {
+        if self.is_zero() && other.is_zero() {
             return true;
         }
 
@@ -196,6 +192,7 @@ fn one_zero_other(v: &[u8]) -> ZeroOneOther {
     }
 }
 
+#[derive(Debug,Copy,Clone,PartialEq,Eq)]
 enum ZeroOneOther {
     Zero,
     One,
@@ -213,32 +210,48 @@ impl Bignum {
             ZeroOneOther::Other => {
                 let hacl_bn = unsafe { new_handle(be_bytes)? };
                 Ok(Self {
-                    is_one: false,
-                    is_zero: false,
+                    zero_one_other: ZeroOneOther::Other,
                     handle: Some(HaclBnHandle(hacl_bn)),
                 })
             }
         }
     }
 
+    #[allow(dead_code)]
+    fn one_zero_other_true(&self) -> ZeroOneOther {
+        // if marked zero or one we trust that, but
+        // but we have to check if marked false
+        if self.is_one() {
+            return ZeroOneOther::One;
+        }
+        if self.is_zero() {
+            return ZeroOneOther::Zero;
+        }
+        // Now we need to check for false negative.
+        // If I could create a static or const Hacl BN for 1 or 0 I would,
+        // and I would compare using the HACL library.
+
+        let be_vec = self.to_vec8();
+        one_zero_other(&be_vec)
+        
+    }
+
     /// Returns true of our Bignum is 1. False otherwise.
     pub fn is_one(&self) -> bool {
-        self.is_one
+        self.zero_one_other == ZeroOneOther::One
     }
     /// Returns true of our Bignum is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
-        self.is_zero
+        self.zero_one_other == ZeroOneOther::Zero
     }
 
     /// returns a vector of big-endian bytes.
     pub fn to_vec8(&self) -> Vec<u8> {
-        if self.is_one {
-            return VEC_ONE.to_vec();
+        match self.zero_one_other {
+            ZeroOneOther::One => return VEC_ONE.to_vec(),
+            ZeroOneOther::Zero => return VEC_ZERO.to_vec(),
+            ZeroOneOther::Other => {},
         }
-        if self.is_zero {
-            return VEC_ZERO.to_vec();
-        }
-
         // The handle better be good if we aren't zero or one
         let handle = self.handle.as_ref().unwrap().0;
 
@@ -264,7 +277,7 @@ impl Bignum {
 
 impl PartialOrd for Bignum {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        if (self.is_one && other.is_one) || (self.is_zero && other.is_zero) {
+        if (self.is_one() && other.is_one()) || (self.is_zero() && other.is_zero()) {
             return Some(Equal);
         }
         let a_handle = match &self.handle {
@@ -312,23 +325,23 @@ impl Bignum {
         //! We are assuming that we can leak timing information if base or exponent
         //! are 1 or 0.
 
-        if self.is_zero && exponent.is_zero {
+        if self.is_zero() && exponent.is_zero() {
             return Err(Error::ZeroToZero);
         }
-        if modulus.is_zero || modulus.is_one {
+        if modulus.is_zero() || modulus.is_one() {
             return Err(Error::UselessModulus);
         }
 
-        if self.is_zero {
+        if self.is_zero() {
             return Ok(Bignum::ZERO);
         }
-        if self.is_one {
+        if self.is_one() {
             return Ok(Bignum::ONE);
         }
-        if exponent.is_zero {
+        if exponent.is_zero() {
             return Ok(Bignum::ONE);
         }
-        if exponent.is_one {
+        if exponent.is_one() {
             return self.try_clone();
         }
 
@@ -347,8 +360,6 @@ impl Bignum {
         let bBits = 8 * Self::BN_BYTE_LENGTH;
 
         let mut res: [u64; BN_BITSIZE / 64] = [0; BN_BITSIZE / 64];
-        // let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
-        // data[diff_len..].copy_from_slice(bn);
 
         let hacl_ret_val: bool;
         unsafe {
@@ -359,8 +370,8 @@ impl Bignum {
             Err(Error::HaclError)
         } else {
             Ok(Self {
-                is_one: false,
-                is_zero: false,
+                // This can falsely state that this isn't 1 or zero.
+                zero_one_other: ZeroOneOther::Other,
                 handle: Some(HaclBnHandle(res.clone().as_mut_ptr())),
             })
         }
