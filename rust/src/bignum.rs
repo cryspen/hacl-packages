@@ -9,12 +9,12 @@
 //! to potential side channel attacks. We are assuming that values of 1 and 0 are
 //! never meant to be secrets.
 
+use data_encoding::{HEXUPPER, HEXUPPER_PERMISSIVE};
 use hacl_rust_sys::*;
 use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
 use std::ptr;
-use data_encoding::{HEXUPPER};
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
@@ -36,6 +36,25 @@ impl Drop for HaclBnHandle {
     }
 }
 
+impl HaclBnHandle {
+    fn to_vec8(&self) -> Result<Vec<u8>, Error> {
+        let handle = self.0;
+        if self.0.is_null() {
+            return Err(Error::NoHandle);
+        }
+
+        let be_bytes = &mut [0_u8; Bignum::BN_BYTE_LENGTH];
+        unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
+
+        Ok(be_bytes.to_vec())
+    }
+
+    // panics if self isn't a good pointer
+    fn zero_one_other(&self) -> ZeroOneOther {
+        let be_vec = self.to_vec8().unwrap();
+        one_zero_other(&be_vec)
+    }
+}
 
 impl fmt::Debug for HaclBnHandle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -95,6 +114,10 @@ pub enum Error {
     /// HACL calls sometimes return errors on a variety of conditions.
     /// The best we can do is tell you that this happened.
     HaclError,
+
+    /// data_encoding encountered a decoding error.
+    // TODO: Actually pass along the DecodingError
+    Decoding,
 }
 
 #[derive(Debug)]
@@ -192,7 +215,7 @@ fn one_zero_other(v: &[u8]) -> ZeroOneOther {
     }
 }
 
-#[derive(Debug,Copy,Clone,PartialEq,Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum ZeroOneOther {
     Zero,
     One,
@@ -233,7 +256,6 @@ impl Bignum {
 
         let be_vec = self.to_vec8();
         one_zero_other(&be_vec)
-        
     }
 
     /// Returns true of our Bignum is 1. False otherwise.
@@ -250,15 +272,11 @@ impl Bignum {
         match self.zero_one_other {
             ZeroOneOther::One => return VEC_ONE.to_vec(),
             ZeroOneOther::Zero => return VEC_ZERO.to_vec(),
-            ZeroOneOther::Other => {},
+            ZeroOneOther::Other => {}
         }
         // The handle better be good if we aren't zero or one
-        let handle = self.handle.as_ref().unwrap().0;
-
-        let be_bytes = &mut [0_u8; Bignum::BN_BYTE_LENGTH];
-        unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
-
-        be_bytes.to_vec()
+        let handle = self.handle.as_ref().unwrap();
+        handle.to_vec8().unwrap()
     }
 
     /// A hex representation of the big-endian representation
@@ -270,6 +288,14 @@ impl Bignum {
         }
 
         HEXUPPER.encode(&be_bytes)
+    }
+    /// From a hex string
+    pub fn from_hex(s: &str) -> Result<Self, Error> {
+        let be_bytes = HEXUPPER_PERMISSIVE
+            .decode(s.as_bytes())
+            .map_err(|_| Error::Decoding)?;
+
+        Self::new(&be_bytes)
     }
 }
 
@@ -367,14 +393,15 @@ impl Bignum {
                 Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, res.as_mut_ptr())
         }
         if !hacl_ret_val {
-            Err(Error::HaclError)
-        } else {
-            Ok(Self {
-                // This can falsely state that this isn't 1 or zero.
-                zero_one_other: ZeroOneOther::Other,
-                handle: Some(HaclBnHandle(res.clone().as_mut_ptr())),
-            })
+            return Err(Error::HaclError);
         }
+        let handle: HaclBnHandle = HaclBnHandle(res.as_mut_ptr());
+        let zero_one_other = handle.zero_one_other();
+
+        Ok(Self {
+            zero_one_other,
+            handle: Some(handle),
+        })
     }
 }
 
