@@ -4,6 +4,7 @@ use std::fmt;
 
 use hacl_rust::bignum::Bignum;
 
+use data_encoding::HEXUPPER;
 use rand::prelude::SmallRng;
 use rand::{RngCore, SeedableRng};
 
@@ -294,6 +295,32 @@ fn test_constants() {
             (t.b == t.a) == t.expected,
             "(b,a) Unexpected result for {}",
             t.name
+        );
+    }
+}
+
+#[test]
+fn test_hex() {
+    let trials = 100;
+
+    // really should loop to try at different lengths, including odd ones
+    let vec_size = Bignum::BN_BYTE_LENGTH - 129;
+    let mut small_rng = SmallRng::seed_from_u64(1138_u64);
+
+    for trial in 1..=trials {
+        let mut dest = vec![0_u8; vec_size];
+        small_rng.fill_bytes(&mut dest);
+
+        let in_hex = HEXUPPER.encode(&dest);
+        let bn = Bignum::from_hex(in_hex.as_str()).unwrap();
+        let out_hex = bn.to_hex();
+
+        assert!(
+            in_hex == out_hex,
+            "Hexes aren't equal in trial {}\n\tin: {}\n\tout {}",
+            trial,
+            in_hex,
+            out_hex
         );
     }
 }

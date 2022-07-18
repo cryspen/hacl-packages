@@ -49,10 +49,9 @@ impl HaclBnHandle {
         Ok(be_bytes.to_vec())
     }
 
-    // panics if self isn't a good pointer
-    fn zero_one_other(&self) -> ZeroOneOther {
-        let be_vec = self.to_vec8().unwrap();
-        one_zero_other(&be_vec)
+    fn zero_one_other(&self) -> Result<ZeroOneOther, Error> {
+        let be_vec = self.to_vec8()?;
+        Ok(one_zero_other(&be_vec))
     }
 }
 
@@ -117,7 +116,7 @@ pub enum Error {
 
     /// data_encoding encountered a decoding error.
     // TODO: Actually pass along the DecodingError
-    Decoding,
+    Decoding(data_encoding::DecodeError),
 }
 
 #[derive(Debug)]
@@ -143,8 +142,6 @@ impl Bignum {
 
     pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 }
-
-// We will really want From<whatever-we-use-in-core-for-byte-arrays>
 
 impl PartialEq for Bignum {
     /// Returns true self == other.
@@ -254,7 +251,12 @@ impl Bignum {
         // If I could create a static or const Hacl BN for 1 or 0 I would,
         // and I would compare using the HACL library.
 
-        let be_vec = self.to_vec8();
+        // We are assuming that we have a safe handle, otherwise panic.
+        let handle = self.handle.as_ref().expect("Hacl handle should be defined");
+
+        let be_vec = handle
+            .to_vec8()
+            .expect("Should be able to get a vec from a ");
         one_zero_other(&be_vec)
     }
 
@@ -286,15 +288,20 @@ impl Bignum {
             // There are probably better ways to do this.
             be_bytes.insert(0, 0_u8);
         }
+        // that can sometimes leave us with two zero bytes at the beginning
 
-        HEXUPPER.encode(&be_bytes)
+        let tmp_hex = HEXUPPER.encode(&be_bytes);
+        let s = tmp_hex.as_str();
+        match s.strip_prefix("00") {
+            None => s.to_string(),
+            Some(x) => x.to_string(),
+        }
     }
     /// From a hex string
     pub fn from_hex(s: &str) -> Result<Self, Error> {
         let be_bytes = HEXUPPER_PERMISSIVE
             .decode(s.as_bytes())
-            .map_err(|_| Error::Decoding)?;
-
+            .map_err(Error::Decoding)?;
         Self::new(&be_bytes)
     }
 }
@@ -396,7 +403,7 @@ impl Bignum {
             return Err(Error::HaclError);
         }
         let handle: HaclBnHandle = HaclBnHandle(res.as_mut_ptr());
-        let zero_one_other = handle.zero_one_other();
+        let zero_one_other = handle.zero_one_other()?;
 
         Ok(Self {
             zero_one_other,
