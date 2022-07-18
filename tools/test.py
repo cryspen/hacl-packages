@@ -18,7 +18,7 @@ from os.path import join
 from pathlib import Path
 
 
-def run_tests(tests, bin_path, test_args=[], algorithms=[]):
+def run_tests(tests, bin_path, test_args=[], algorithms=[], coverage=False):
     print("Running tests ...")
     if not os.path.exists(binary_path(bin_path)):
         print("! Nothing is built! Please build first. Aborting!")
@@ -56,6 +56,8 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
                       help="The algorithms to test.", type=str),
              argument("-l", "--language",
                       help="Language bindings to test.", type=str),
+             argument("--coverage",
+                      help="Test with coverage instrumentation.", action="store_true"),
              argument("-v", "--verbose", help="Make tests verbose.",
                       action='store_true')])
 def test(args):
@@ -91,4 +93,4 @@ def test(args):
 
     # parse file
     config = json.loads(data)
-    run_tests(config['tests'], "Debug", algorithms=algorithms)
+    run_tests(config['tests'], "Debug", algorithms=algorithms, coverage=args.coverage)
