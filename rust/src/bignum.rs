@@ -37,6 +37,21 @@ impl Drop for HaclBnHandle {
 }
 
 impl HaclBnHandle {
+    fn new() -> Result<Self, Error> {
+        let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
+        // We don't want this to be one or zero
+        data[data.len() - 1] = 255;
+
+        let hacl_raw_bn: HaclBnType;
+        unsafe {
+            hacl_raw_bn =
+                Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
+        }
+        if hacl_raw_bn.is_null() {
+            return Err(Error::AllocationError);
+        }
+        Ok(HaclBnHandle(hacl_raw_bn))
+    }
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         let handle = self.0;
         if self.0.is_null() {
@@ -392,17 +407,15 @@ impl Bignum {
         #[allow(non_snake_case)]
         let bBits = 8 * Self::BN_BYTE_LENGTH;
 
-        let mut res: [u64; BN_BITSIZE / 64] = [0; BN_BITSIZE / 64];
+        let handle = HaclBnHandle::new()?;
 
         let hacl_ret_val: bool;
         unsafe {
-            hacl_ret_val =
-                Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, res.as_mut_ptr())
+            hacl_ret_val = Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, handle.0);
         }
         if !hacl_ret_val {
             return Err(Error::HaclError);
         }
-        let handle: HaclBnHandle = HaclBnHandle(res.as_mut_ptr());
         let zero_one_other = handle.zero_one_other()?;
 
         Ok(Self {
