@@ -301,7 +301,8 @@ fn test_constants() {
 
 #[test]
 fn test_hex() {
-    let trials = 100;
+    // run enough trials to know that we will get some leading zero bytes. 
+    let trials = 1_000;
 
     // really should loop to try at different lengths, including odd ones
     let vec_size = Bignum::BN_BYTE_LENGTH - 129;
@@ -316,7 +317,7 @@ fn test_hex() {
         let out_hex = bn.to_hex();
 
         assert!(
-            in_hex == out_hex,
+            in_hex.trim_start_matches("00") == out_hex.trim_start_matches("00"),
             "Hexes aren't equal in trial {}\n\tin: {}\n\tout {}",
             trial,
             in_hex,
