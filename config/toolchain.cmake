@@ -109,15 +109,15 @@ endif()
 # Check for intrinsics support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF)
-    # x86 or x86_64
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64|i386|i586|i686|i86pc|ia32")
+    # x86_64
+    # x86 (i386|i586|i686|i86pc|ia32) has been used before but doesn't
+    # actually work so it's disabled here.
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
         if(NOT BUG_81300)
             set(TOOLCHAIN_CAN_COMPILE_INTRINSICS TRUE)
         endif()
     endif()
 endif()
-# TODO: Check for these
-set(TOOLCHAIN_CAN_COMPILE_INTRINSICS OFF) # XXX: FOR TESTING ONLY
 
 # Set OS consistently for compiling, independent of cross-compilation
 # Note that HACL_TARGET_OS is set by the cross-compilation tool chain when using
