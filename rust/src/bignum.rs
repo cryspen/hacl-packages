@@ -94,6 +94,32 @@ impl fmt::Debug for HaclBnHandle {
     }
 }
 
+// Creating a montgomery context for a Hacl bignum is extremely useful
+// for those numbers that will be used as moduli.
+//
+// Again, we need a feature flag for 32 bit systems.
+struct MontgomeryContext(*mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64);
+// struct MontgomeryContext(*mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32);
+
+impl Drop for MontgomeryContext {
+    fn drop(&mut self) {
+        unsafe {
+            Hacl_Bignum4096_mont_ctx_free(self.0);
+        }
+    }
+}
+
+impl MontgomeryContext {
+    fn from_bn(bn_handle: HaclBnHandle) -> Result<Self, Error> {
+        let mut ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
+
+        match ctx.is_null() {
+            true => Err(Error::MontgomeryContextInitError),
+            _ => Ok(Self(ctx)),
+        }
+    }
+}
+
 impl Bignum {
     /// Attempts to create a new Bignum with the same values.
     /// Allocates new memory with a new pointer to that memory
@@ -144,8 +170,11 @@ pub enum Error {
     HaclError,
 
     /// data_encoding encountered a decoding error.
-    // TODO: Actually pass along the DecodingError
     Decoding(data_encoding::DecodeError),
+
+    /// Something went wrong when trying to init a Montgomery context.
+    /// That's all we know.
+    MontgomeryContextInitError,
 }
 
 #[derive(Debug)]
