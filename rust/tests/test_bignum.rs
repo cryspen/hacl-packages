@@ -316,8 +316,12 @@ fn test_hex() {
         let bn = Bignum::from_hex(in_hex.as_str()).unwrap();
         let out_hex = bn.to_hex();
 
+        let in_hex = in_hex.trim_start_matches("00");
+
+        let out_hex = out_hex.trim_start_matches("00");
+
         assert!(
-            in_hex.trim_start_matches("00") == out_hex.trim_start_matches("00"),
+            in_hex == out_hex,
             "Hexes aren't equal in trial {}\n\tin: {}\n\tout {}",
             trial,
             in_hex,
