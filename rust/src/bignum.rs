@@ -14,19 +14,17 @@ use hacl_rust_sys::*;
 use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
-use std::ptr;
+
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
 
 struct HaclBnHandle(HaclBnType);
 
-impl Default for HaclBnHandle {
-    fn default() -> Self {
-        Self(ptr::null::<HaclBnType>() as _)
-    }
-}
 impl Drop for HaclBnHandle {
+    // We need to make sure that the referents are only
+    // ever allocated by HaclBn... Otherwise, we will
+    // panic when trying to drop these.
     fn drop(&mut self) {
         unsafe {
             if !self.0.is_null() {
@@ -52,6 +50,20 @@ impl HaclBnHandle {
         }
         Ok(HaclBnHandle(hacl_raw_bn))
     }
+    fn from_vec8(bn: &[u8]) -> Result<Self, Error> {
+        let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
+        let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
+        data[diff_len..].copy_from_slice(bn);
+
+        let hacl_raw_bn: HaclBnType =
+            unsafe { Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr()) };
+
+        if hacl_raw_bn.is_null() {
+            return Err(Error::AllocationError);
+        }
+        Ok(HaclBnHandle(hacl_raw_bn))
+    }
+
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         let handle = self.0;
         if self.0.is_null() {
@@ -64,6 +76,8 @@ impl HaclBnHandle {
         Ok(be_bytes.to_vec())
     }
 
+    // This is expensive. We only want to call it when the data
+    // pointed to has changed.
     fn zero_one_other(&self) -> Result<ZeroOneOther, Error> {
         let be_vec = self.to_vec8()?;
         Ok(one_zero_other(&be_vec))
@@ -90,7 +104,7 @@ impl Bignum {
                 handle: None,
             });
         }
-        let old_handle = self.handle.as_ref().unwrap().0;
+        let old_handle = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
@@ -185,19 +199,6 @@ impl PartialEq for Bignum {
     }
 }
 
-unsafe fn new_handle(bn: &[u8]) -> Result<HaclBnType, Error> {
-    let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
-    let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
-    data[diff_len..].copy_from_slice(bn);
-
-    let hacl_raw_bn: HaclBnType =
-        Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
-    if hacl_raw_bn.is_null() {
-        return Err(Error::AllocationError);
-    }
-    Ok(hacl_raw_bn)
-}
-
 // Some Vec<u8> utilities
 
 const VEC_ONE: [u8; 1] = [1_u8];
@@ -243,36 +244,13 @@ impl Bignum {
             ZeroOneOther::One => Ok(Bignum::ONE),
             ZeroOneOther::Zero => Ok(Bignum::ZERO),
             ZeroOneOther::Other => {
-                let hacl_bn = unsafe { new_handle(be_bytes)? };
+                let handle = HaclBnHandle::from_vec8(be_bytes)?;
                 Ok(Self {
                     zero_one_other: ZeroOneOther::Other,
-                    handle: Some(HaclBnHandle(hacl_bn)),
+                    handle: Some(handle),
                 })
             }
         }
-    }
-
-    #[allow(dead_code)]
-    fn one_zero_other_true(&self) -> ZeroOneOther {
-        // if marked zero or one we trust that, but
-        // but we have to check if marked false
-        if self.is_one() {
-            return ZeroOneOther::One;
-        }
-        if self.is_zero() {
-            return ZeroOneOther::Zero;
-        }
-        // Now we need to check for false negative.
-        // If I could create a static or const Hacl BN for 1 or 0 I would,
-        // and I would compare using the HACL library.
-
-        // We are assuming that we have a safe handle, otherwise panic.
-        let handle = self.handle.as_ref().expect("Hacl handle should be defined");
-
-        let be_vec = handle
-            .to_vec8()
-            .expect("Should be able to get a vec from a ");
-        one_zero_other(&be_vec)
     }
 
     /// Returns true of our Bignum is 1. False otherwise.
@@ -285,20 +263,25 @@ impl Bignum {
     }
 
     /// returns a vector of big-endian bytes.
-    pub fn to_vec8(&self) -> Vec<u8> {
+    pub fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         match self.zero_one_other {
-            ZeroOneOther::One => return VEC_ONE.to_vec(),
-            ZeroOneOther::Zero => return VEC_ZERO.to_vec(),
+            ZeroOneOther::One => return Ok(VEC_ONE.to_vec()),
+            ZeroOneOther::Zero => return Ok(VEC_ZERO.to_vec()),
             ZeroOneOther::Other => {}
         }
         // The handle better be good if we aren't zero or one
-        let handle = self.handle.as_ref().unwrap();
-        handle.to_vec8().unwrap()
+        let handle = self.handle.as_ref().ok_or(Error::NoHandle)?;
+        handle.to_vec8()
     }
 
     /// A hex representation of the big-endian representation
     pub fn to_hex(&self) -> String {
-        let mut be_bytes = trim_left_zero(&self.to_vec8());
+        let mut be_bytes = if let Ok(v) = self.to_vec8() {
+            trim_left_zero(&v)
+        } else {
+            return "".to_string();
+        };
+
         if be_bytes.len() % 2 == 1 {
             // There are probably better ways to do this.
             be_bytes.insert(0, 0_u8);

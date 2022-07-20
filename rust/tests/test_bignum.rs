@@ -84,7 +84,7 @@ fn test_to_from() {
         let in_vec = dest.to_vec();
 
         let bn = Bignum::new(&in_data).unwrap();
-        let b_vec = bn.to_vec8();
+        let b_vec = bn.to_vec8().unwrap();
 
         let mut trimmed_b: Vec<u8> = Vec::new();
         let len_diff = b_vec.len() - in_vec.len();
