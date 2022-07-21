@@ -111,12 +111,22 @@ impl Drop for MontgomeryContext {
 
 impl MontgomeryContext {
     fn from_bn(bn_handle: HaclBnHandle) -> Result<Self, Error> {
-        let mut ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
+        let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
 
         match ctx.is_null() {
             true => Err(Error::MontgomeryContextInitError),
             _ => Ok(Self(ctx)),
         }
+    }
+}
+
+impl fmt::Debug for MontgomeryContext {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = match self.0.is_null() {
+            true => "is null",
+            false => "isn't null",
+        };
+        write!(f, "Mont ctx {}.", msg)
     }
 }
 
@@ -127,6 +137,7 @@ impl Bignum {
         if self.is_one() || self.is_zero() {
             return Ok(Bignum {
                 zero_one_other: self.zero_one_other,
+                mont_ctx: None,
                 handle: None,
             });
         }
@@ -183,6 +194,9 @@ pub struct Bignum {
     // So we will keep this very unsafe pointer around.
     handle: Option<HaclBnHandle>,
 
+    // Montgomery context handle
+    mont_ctx: Option<MontgomeryContext>,
+
     // I am assuming that a BN of 0 or 1 is never a secret.
     zero_one_other: ZeroOneOther,
 }
@@ -191,11 +205,13 @@ impl Bignum {
     pub const ONE: Bignum = Bignum {
         zero_one_other: ZeroOneOther::One,
         handle: None,
+        mont_ctx: None,
     };
 
     pub const ZERO: Bignum = Bignum {
         zero_one_other: ZeroOneOther::Zero,
         handle: None,
+        mont_ctx: None,
     };
 
     pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
@@ -277,6 +293,7 @@ impl Bignum {
                 Ok(Self {
                     zero_one_other: ZeroOneOther::Other,
                     handle: Some(handle),
+                    mont_ctx: None,
                 })
             }
         }
@@ -433,6 +450,7 @@ impl Bignum {
         Ok(Self {
             zero_one_other,
             handle: Some(handle),
+            mont_ctx: None,
         })
     }
 }
