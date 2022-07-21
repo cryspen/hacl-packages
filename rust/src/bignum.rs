@@ -46,7 +46,7 @@ impl HaclBnHandle {
                 Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
         }
         if hacl_raw_bn.is_null() {
-            return Err(Error::AllocationError);
+            return Err(Error::HaclError("new_bn_from_bytes".into()));
         }
         Ok(HaclBnHandle(hacl_raw_bn))
     }
@@ -59,7 +59,7 @@ impl HaclBnHandle {
             unsafe { Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr()) };
 
         if hacl_raw_bn.is_null() {
-            return Err(Error::AllocationError);
+            return Err(Error::HaclError("new_bn_from_bytes".into()));
         }
         Ok(HaclBnHandle(hacl_raw_bn))
     }
@@ -113,9 +113,9 @@ impl MontgomeryContext {
     fn from_bn(bn_handle: &HaclBnHandle) -> Result<Self, Error> {
         let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
 
-        match ctx.is_null() {
-            true => Err(Error::MontgomeryContextInitError),
-            _ => Ok(Self(ctx)),
+        match !ctx.is_null() {
+            false => Err(Error::HaclError("mont_ctx".into())),
+            true => Ok(Self(ctx)),
         }
     }
 }
@@ -189,9 +189,6 @@ pub enum Error {
     /// Something went wrong when trying to convert to or from a bignum.
     ConversionError,
 
-    /// HACL call returned a null pointer. Probably an allocation error
-    AllocationError,
-
     /// The Bignum is malformed, as it is neither 0, 1, nor has a handle.
     /// This should not happen.
     NoHandle,
@@ -203,15 +200,12 @@ pub enum Error {
     ZeroToZero,
 
     /// HACL calls sometimes return errors on a variety of conditions.
-    /// The best we can do is tell you that this happened.
-    HaclError,
+    /// The best we can do is tell you that this happened, and provide
+    /// a hint of what Hacl call produced the error.
+    HaclError(String),
 
     /// data_encoding encountered a decoding error.
     Decoding(data_encoding::DecodeError),
-
-    /// Something went wrong when trying to init a Montgomery context.
-    /// That's all we know.
-    MontgomeryContextInitError,
 }
 
 #[derive(Debug)]
@@ -469,7 +463,7 @@ impl Bignum {
             hacl_ret_val = Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, handle.0);
         }
         if !hacl_ret_val {
-            return Err(Error::HaclError);
+            return Err(Error::HaclError("mod_exp_consttime".to_string()));
         }
         let zero_one_other = handle.zero_one_other()?;
 
