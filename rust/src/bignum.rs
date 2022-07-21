@@ -110,7 +110,7 @@ impl Drop for MontgomeryContext {
 }
 
 impl MontgomeryContext {
-    fn from_bn(bn_handle: HaclBnHandle) -> Result<Self, Error> {
+    fn from_bn(bn_handle: &HaclBnHandle) -> Result<Self, Error> {
         let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
 
         match ctx.is_null() {
@@ -146,6 +146,32 @@ impl Bignum {
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
         Bignum::new(be_bytes)
+    }
+
+    /// If this number is to be used as a modulus in modular arithmetic,
+    /// it will be useful to have it set up a Montgomery context.
+    /// This doesn't return a value if all is well, otherwise an error.
+    ///
+    /// This is dysfunctional in that it changes the state of self, but
+    /// it doesn't change the value. And we really don't want to compute
+    /// this for every bn.
+    pub fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
+        if self.mont_ctx.is_some() {
+            // cool, this has already be set up
+            return Ok(());
+        }
+        if self.zero_one_other != ZeroOneOther::Other {
+            return Err(Error::ZeroOrOne);
+        }
+
+        let ctx: MontgomeryContext = match &self.handle {
+            None => return Err(Error::NoHandle),
+            Some(h) => MontgomeryContext::from_bn(h)?,
+        };
+
+        self.mont_ctx = Some(ctx);
+
+        Ok(())
     }
 }
 
@@ -186,6 +212,9 @@ pub enum Error {
     /// Something went wrong when trying to init a Montgomery context.
     /// That's all we know.
     MontgomeryContextInitError,
+
+    /// You tried to use zero or 1 as a modulus. Don't do that.
+    ZeroOrOne,
 }
 
 #[derive(Debug)]
