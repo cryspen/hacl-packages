@@ -161,7 +161,7 @@ impl Bignum {
             return Ok(());
         }
         if self.zero_one_other != ZeroOneOther::Other {
-            return Err(Error::ZeroOrOne);
+            return Err(Error::UselessModulus);
         }
 
         let ctx: MontgomeryContext = match &self.handle {
@@ -212,9 +212,6 @@ pub enum Error {
     /// Something went wrong when trying to init a Montgomery context.
     /// That's all we know.
     MontgomeryContextInitError,
-
-    /// You tried to use zero or 1 as a modulus. Don't do that.
-    ZeroOrOne,
 }
 
 #[derive(Debug)]
