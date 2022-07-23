@@ -8,31 +8,30 @@
 
 import json
 import os
-from os.path import join as join_path
 import pathlib
 import re
 import shutil
 import subprocess
+from os.path import join as join_path
 
-from tools.utils import argument, subcommand
-from tools.utils import mprint as print
+from tools.utils import argument, mprint as print, subcommand
 
 
 def raw_dependencies(src_dir, c_file):
-    compiler = os.getenv('CC', 'clang')
-    include_paths = ['karamel/krmllib/dist/minimal',
-                     'karamel/include', src_dir]
-    includes = '-I ' + ' -I '.join(include_paths)
+    compiler = os.getenv("CC", "clang")
+    include_paths = ["karamel/krmllib/dist/minimal", "karamel/include", src_dir]
+    includes = "-I " + " -I ".join(include_paths)
     result = subprocess.run(
-        compiler + ' ' + includes + ' -MM ' + os.path.join(src_dir, c_file),
+        compiler + " " + includes + " -MM " + os.path.join(src_dir, c_file),
         stdout=subprocess.PIPE,
         shell=True,
-        check=True)
-    return result.stdout.decode('utf-8')
+        check=True,
+    )
+    return result.stdout.decode("utf-8")
 
 
 def abs_path(relative):
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', relative))
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", relative))
 
 
 def source_files(directory):
@@ -40,7 +39,7 @@ def source_files(directory):
     source_file_names = []
     for f in os.listdir(directory):
         f = os.path.join(directory, f)
-        if os.path.isfile(f) and f[-2:] == '.c':
+        if os.path.isfile(f) and f[-2:] == ".c":
             source_files_abs.append(os.path.abspath(f))
             source_file_names.append(os.path.basename(f))
     return source_files_abs, source_file_names
@@ -56,7 +55,7 @@ def dependencies(src_dir, c_file):
         # Remove object file and split the lines
         line = re.sub("(\w*).o: ", "", line)
         line = line.strip()
-        line = line.split(' ')
+        line = line.split(" ")
         try:
             line.remove("\\")
         except:
@@ -64,18 +63,17 @@ def dependencies(src_dir, c_file):
             pass
 
         # Drop karamel files.
-        line = [file for file in line if not file.startswith('krml')]
+        line = [file for file in line if not file.startswith("krml")]
 
         # Sources
         # For source files we only care about the file name. Drop the path.
         line = list(map(lambda file: os.path.basename(file), line))
         # Make them c files.
-        line = list(map(lambda file: file[:-2]+'.c', line))
+        line = list(map(lambda file: file[:-2] + ".c", line))
         # If there's a corresponding c file to the header, we need this.
         line = [file for file in line if file in source_names]
         # Make paths absolute
-        line = list(map(lambda file: abs_path(
-            os.path.join(src_dir, file)), line))
+        line = list(map(lambda file: abs_path(os.path.join(src_dir, file)), line))
         files.extend(line)
 
     file_names = []
@@ -87,7 +85,7 @@ def dependencies(src_dir, c_file):
 
 def read_config(config_file_name):
     # read file
-    with open(config_file_name, 'r') as f:
+    with open(config_file_name, "r") as f:
         data = f.read()
 
     # parse file
@@ -112,11 +110,11 @@ def headers(editions):
     includes = {}
     include_names = {}
     for edition, new_dist_dir, _, _ in editions:
-        files = [file for file in os.listdir(
-            new_dist_dir) if file.endswith('.h')]
+        files = [file for file in os.listdir(new_dist_dir) if file.endswith(".h")]
         include_names[edition] = [os.path.basename(file) for file in files]
-        includes[edition] = [abs_path(os.path.join(
-            new_dist_dir, file)) for file in files]
+        includes[edition] = [
+            abs_path(os.path.join(new_dist_dir, file)) for file in files
+        ]
     return includes, include_names
 
 
@@ -127,7 +125,7 @@ def all_files(config_file, editions):
     file_names = {}
     for edition, new_dist_dir, _, _ in editions:
         for file in required_files:
-            if file.endswith('.c'):
+            if file.endswith(".c"):
                 t_files, t_file_names = dependencies(new_dist_dir, file)
                 if edition in files:
                     files[edition].extend(t_files)
@@ -151,11 +149,12 @@ def all_files(config_file, editions):
         # remove vale
         files[edition] = [file for file in files[edition] if not "Vale" in file]
         file_names[edition] = [
-            file for file in file_names[edition] if not "Vale" in file]
-        includes[edition] = [
-            file for file in includes[edition] if not "Vale" in file]
+            file for file in file_names[edition] if not "Vale" in file
+        ]
+        includes[edition] = [file for file in includes[edition] if not "Vale" in file]
         include_names[edition] = [
-            file for file in include_names[edition] if not "Vale" in file]
+            file for file in include_names[edition] if not "Vale" in file
+        ]
 
     return files, file_names, includes, include_names
 
@@ -168,10 +167,10 @@ def rm(file):
 
 
 def clean():
-    for filename in os.listdir('src'):
-        rm(os.path.join('src', filename))
-    for filename in os.listdir('include'):
-        rm(os.path.join('include', filename))
+    for filename in os.listdir("src"):
+        rm(os.path.join("src", filename))
+    for filename in os.listdir("include"):
+        rm(os.path.join("include", filename))
 
 
 def update_hacl(files, includes, editions):
@@ -185,36 +184,55 @@ def update_hacl(files, includes, editions):
         include_dest = abs_path(include_dest)
         for file in includes[edition]:
             pathlib.Path(include_dest).mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(file, os.path.join(
-                include_dest, os.path.basename(file)))
-        internal_includes = os.path.join(abs_path(new_dist_dir), 'internal')
-        dest_internal = os.path.join(include_dest, 'internal')
+            shutil.copyfile(file, os.path.join(include_dest, os.path.basename(file)))
+        internal_includes = os.path.join(abs_path(new_dist_dir), "internal")
+        dest_internal = os.path.join(include_dest, "internal")
         shutil.copytree(internal_includes, dest_internal)
 
 
-@subcommand([argument("-s", "--hacl-home",
-                      help="The base directory of the HACL* repository.", type=str),
-             argument("-v", "--verbose", help="Make it verbose.",
-                      action='store_true')])
+@subcommand(
+    [
+        argument(
+            "-s",
+            "--hacl-home",
+            help="The base directory of the HACL* repository.",
+            type=str,
+        ),
+        argument("-v", "--verbose", help="Make it verbose.", action="store_true"),
+    ]
+)
 def update(args):
     """Update the source code in this project with the upstream HACL* code."""
-    hacl_home = '../../hacl-star'  # this the default hacl home we use.
+    hacl_home = "../../hacl-star"  # this the default hacl home we use.
     if args.hacl_home:
         hacl_home = args.hacl_home
     if not os.path.isdir(hacl_home):
-        print("Unable to find %s.\nPlease provide the path to the root directory of your local copy of hacl-star." % hacl_home)
+        print(
+            "Unable to find %s.\nPlease provide the path to the root directory of your local copy of hacl-star."
+            % hacl_home
+        )
         exit(1)
-    hacl_dist = join_path(hacl_home, 'dist')
-    src_path = 'src'
-    include_path = 'include'
+    hacl_dist = join_path(hacl_home, "dist")
+    src_path = "src"
+    include_path = "include"
     """
     editions = [(name, new-code, target-src-dir, target-include-dir)]
     """
-    editions = [('std', join_path(hacl_dist, 'gcc-compatible'), src_path, include_path),
-                ('c89', join_path(hacl_dist, 'c89-compatible'),
-                 join_path(src_path, 'c89'), join_path(include_path, 'c89')),
-                ('msvc', join_path(hacl_dist, 'msvc-compatible'), join_path(src_path, 'msvc'), join_path(include_path, 'msvc'))]
-    config_file = join_path('config', 'config.json')
-    files, file_names, includes, include_names = all_files(
-        config_file, editions)
+    editions = [
+        ("std", join_path(hacl_dist, "gcc-compatible"), src_path, include_path),
+        (
+            "c89",
+            join_path(hacl_dist, "c89-compatible"),
+            join_path(src_path, "c89"),
+            join_path(include_path, "c89"),
+        ),
+        (
+            "msvc",
+            join_path(hacl_dist, "msvc-compatible"),
+            join_path(src_path, "msvc"),
+            join_path(include_path, "msvc"),
+        ),
+    ]
+    config_file = join_path("config", "config.json")
+    files, file_names, includes, include_names = all_files(config_file, editions)
     update_hacl(files, includes, editions)
