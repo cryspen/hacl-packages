@@ -114,7 +114,7 @@ impl MontgomeryContext {
         let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
 
         match !ctx.is_null() {
-            false => Err(Error::HaclError("mont_ctx".into())),
+            false => Err(Error::HaclError("mont_ctx_init".into())),
             true => Ok(Self(ctx)),
         }
     }
@@ -206,6 +206,10 @@ pub enum Error {
 
     /// data_encoding encountered a decoding error.
     Decoding(data_encoding::DecodeError),
+
+    /// If I used proper logic with `match`, `if let`, and so on, we wouldn't need
+    /// a ShouldNotHappen error. But here we are
+    ShouldNotHappen,
 }
 
 #[derive(Debug)]
@@ -446,8 +450,7 @@ impl Bignum {
         // are greater than 1, so we need call Hacl_Bignum4096_mod_exp_consttime
 
         // let's get the Hacl parameters (and with the names used by HACL)
-        // a^b mod n into res
-        let n = modulus.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        // a^b mod n into res or a^b montgomery_mod k into res
         let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
         let b = exponent.handle.as_ref().ok_or(Error::NoHandle)?.0;
 
@@ -458,9 +461,17 @@ impl Bignum {
 
         let handle = HaclBnHandle::new()?;
 
-        let hacl_ret_val: bool;
-        unsafe {
-            hacl_ret_val = Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, handle.0);
+        let mut hacl_ret_val: bool = true;
+        if modulus.mont_ctx.is_none() {
+            let n = modulus.handle.as_ref().ok_or(Error::NoHandle)?.0;
+            unsafe {
+                hacl_ret_val = Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, handle.0);
+            }
+        } else {
+            let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+            unsafe {
+                Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.0);
+            }
         }
         if !hacl_ret_val {
             return Err(Error::HaclError("mod_exp_consttime".to_string()));

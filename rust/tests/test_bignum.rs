@@ -403,3 +403,21 @@ fn test_modpow_big() {
 
     assert!(result == expected);
 }
+
+#[test]
+fn test_mont_modpow_big() {
+    let base_hex = BIG_B.to_uppercase().replace('_', "");
+    let exp_hex = BIG_E.to_uppercase().replace('_', "");
+    let mod_hex = BIG_M.to_uppercase().replace('_', "");
+    let expected_hex = BIG_R.to_uppercase().replace('_', "");
+
+    let base = Bignum::from_hex(&base_hex).unwrap();
+    let exp = Bignum::from_hex(&exp_hex).unwrap();
+    let mut modulus = Bignum::from_hex(&mod_hex).unwrap();
+    modulus.precomp_mont_ctx().unwrap();
+    let expected = Bignum::from_hex(&expected_hex).unwrap();
+
+    let result = base.modpow(&exp, &modulus).unwrap();
+
+    assert!(result == expected);
+}
