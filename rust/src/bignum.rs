@@ -82,6 +82,28 @@ impl HaclBnHandle {
         let be_vec = self.to_vec8()?;
         Ok(one_zero_other(&be_vec))
     }
+
+    /*
+    There are a number of public Hacl_Bignum functions that say that bad things will
+    happen if the some of their inputs are even. But the same library does not give
+    us a nice way of checking.
+
+    The same documentation tells us not to use the internal representation of a bn, but it also tells us that the limbs are little endian. In particular
+
+    > Furthermore, the
+    > limbs are stored in little-endian format, i.e. the least significant limb is at
+    > index 0. Each limb is stored in native format in memory. Example:
+    >
+    >   `uint64_t sixteen[64] = { 0x10 }`
+
+    This of course will be different on 32 bit systems, but I will assume that the
+    zero index'ed limb is the least significant.
+    */
+    /// returns true if the value of the bn pointed to is odd.
+    fn ref_is_odd(&self) -> bool {
+        let least_limb = unsafe { *(self.0.offset(0)) };
+        least_limb % 2 == 1
+    }
 }
 
 impl fmt::Debug for HaclBnHandle {
@@ -177,31 +199,14 @@ impl Bignum {
         Ok(())
     }
 
-    /*
-    There are a number of public Hacl_Bignum functions that say that bad things will
-    happen if the some of their inputs are even. But the same library does not give
-    us a nice way of checking.
-
-    The same documentation tells us not to use the internal representation of a bn, but it also tells us that the limbs are little endian. In particular
-
-    > Furthermore, the
-    > limbs are stored in little-endian format, i.e. the least significant limb is at
-    > index 0. Each limb is stored in native format in memory. Example:
-    >
-    >   `uint64_t sixteen[64] = { 0x10 }`
-
-    This of course will be different on 32 bit systems, but I will assume that the
-    zero index'ed limb is the least significant.
-    */
-    fn is_odd(&self) -> Result<bool, Error> {
+    pub fn is_odd(&self) -> Result<bool, Error> {
         match self.zero_one_other {
             ZeroOneOther::One => Ok(true),
             ZeroOneOther::Zero => Ok(false),
-            _ => {
-                let h = &self.handle.as_ref().ok_or(Error::NoHandle)?.0;
-                let least_limb = unsafe { *(h.offset(0)) };
-                Ok(least_limb % 2 == 1)
-            }
+            _ => match &self.handle {
+                None => Err(Error::NoHandle),
+                Some(h) => Ok(h.ref_is_odd()),
+            },
         }
     }
 }
@@ -366,13 +371,14 @@ impl Bignum {
     /// returns a vector of big-endian bytes.
     pub fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         match self.zero_one_other {
-            ZeroOneOther::One => return Ok(VEC_ONE.to_vec()),
-            ZeroOneOther::Zero => return Ok(VEC_ZERO.to_vec()),
-            ZeroOneOther::Other => {}
+            ZeroOneOther::One => Ok(VEC_ONE.to_vec()),
+            ZeroOneOther::Zero => Ok(VEC_ZERO.to_vec()),
+            ZeroOneOther::Other => {
+                // The handle better be good if we aren't zero or one
+                let handle = self.handle.as_ref().ok_or(Error::NoHandle)?;
+                handle.to_vec8()
+            }
         }
-        // The handle better be good if we aren't zero or one
-        let handle = self.handle.as_ref().ok_or(Error::NoHandle)?;
-        handle.to_vec8()
     }
 
     /// A hex representation of the big-endian representation

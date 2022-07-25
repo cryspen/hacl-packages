@@ -33,6 +33,7 @@ serde = {version = "1.0", features = ["derive"]}
 criterion = "^0.3"
 rand = {version = "0.8", features = ["small_rng"]}
 data-encoding = "2.3"
+regex = "1.6"
 
 [[bench]]
 name = "benchmark"

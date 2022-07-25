@@ -1,5 +1,6 @@
 mod test_util;
 
+use regex::Regex;
 use std::fmt;
 
 use hacl_rust::bignum::Bignum;
@@ -420,4 +421,35 @@ fn test_mont_modpow_big() {
     let result = base.modpow(&exp, &modulus).unwrap();
 
     assert!(result == expected);
+}
+
+#[test]
+fn test_is_odd() {
+    let b = BIG_B.to_uppercase().replace('_', "");
+    let e = BIG_E.to_uppercase().replace('_', "");
+    let m = BIG_M.to_uppercase().replace('_', "");
+    let r = BIG_R.to_uppercase().replace('_', "");
+
+    let re_last = Regex::new(r"(..)$").unwrap();
+    for t in [b, e, m, r] {
+        // There must be better ways to do this without bringing in all the regex machinery
+        let caps = re_last.captures(&t).unwrap();
+        let last_byte = HEXUPPER.decode(caps[0].as_bytes()).unwrap();
+        let pp_byte = last_byte[0].wrapping_add(1);
+        let mm_byte = last_byte[0].wrapping_sub(1);
+
+        let t_pp = re_last.replace(&t, HEXUPPER.encode(&[pp_byte]));
+        let t_mm = re_last.replace(&t, HEXUPPER.encode(&[mm_byte]));
+
+        let bn = Bignum::from_hex(&t).unwrap();
+        let bn_pp = Bignum::from_hex(&t_pp).unwrap();
+        let bn_mm = Bignum::from_hex(&t_mm).unwrap();
+
+        let is_odd_t = bn.is_odd().unwrap();
+        let is_odd_pp = bn_pp.is_odd().unwrap();
+        let is_odd_mm = bn_mm.is_odd().unwrap();
+
+        assert!(is_odd_pp == is_odd_mm);
+        assert!(is_odd_t != is_odd_mm);
+    }
 }
