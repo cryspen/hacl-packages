@@ -3,7 +3,7 @@ mod test_util;
 use regex::Regex;
 use std::fmt;
 
-use hacl_rust::bignum::Bignum;
+use hacl_rust::bignum::BigUInt;
 
 use data_encoding::HEXUPPER;
 use rand::prelude::SmallRng;
@@ -74,7 +74,7 @@ fn test_to_from() {
 
     let mut failures: FailureVec = FailureVec(Vec::new());
 
-    const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 17;
+    const TEST_SIZE: usize = BigUInt::BN_BYTE_LENGTH - 17;
     // const TEST_SIZE: usize = Bignum::BN_BYTE_LENGTH - 14;
 
     for trial in 1..=trials {
@@ -84,7 +84,7 @@ fn test_to_from() {
         let in_data = dest;
         let in_vec = dest.to_vec();
 
-        let bn = Bignum::new(&in_data).unwrap();
+        let bn = BigUInt::new(&in_data).unwrap();
         let b_vec = bn.to_vec8().unwrap();
 
         let mut trimmed_b: Vec<u8> = Vec::new();
@@ -134,7 +134,7 @@ fn test_partial_ord() {
     let mut small_rng = SmallRng::seed_from_u64(123_u64);
 
     // let byte_size = Bignum::BN_BYTE_LENGTH - 256;
-    let byte_size = Bignum::BN_BYTE_LENGTH;
+    let byte_size = BigUInt::BN_BYTE_LENGTH;
     let dest = &mut vec![0; byte_size];
     for trial in 0..trials {
         // we create random a: u128 and a_bn: Bignum
@@ -142,11 +142,11 @@ fn test_partial_ord() {
         // And we do the same for b and b_bn.
         small_rng.fill_bytes(dest);
         let a = dest.to_vec();
-        let a_bn = Bignum::new(dest).unwrap();
+        let a_bn = BigUInt::new(dest).unwrap();
 
         small_rng.fill_bytes(dest);
         let b = dest.to_vec();
-        let b_bn = Bignum::new(dest).unwrap();
+        let b_bn = BigUInt::new(dest).unwrap();
 
         assert!(a_bn == a_bn);
         let i_cmp = a.partial_cmp(&b).unwrap();
@@ -178,10 +178,10 @@ fn test_memleak() {
         data.fill(0);
 
         small_rng.fill_bytes(&mut data[..]);
-        let a = Bignum::new(data).unwrap();
+        let a = BigUInt::new(data).unwrap();
 
         small_rng.fill_bytes(&mut data[..]);
-        let b = Bignum::new(data).unwrap();
+        let b = BigUInt::new(data).unwrap();
 
         let mut true_count = 0;
 
@@ -201,80 +201,80 @@ fn test_memleak() {
 
 #[test]
 fn test_constants() {
-    let b001 = &Bignum::new(&[0_u8, 0, 1]).unwrap();
-    let b101 = &Bignum::new(&[1_u8, 0, 1]).unwrap();
-    let b000 = &Bignum::new(&[0_u8, 0, 0]).unwrap();
-    let b222 = &Bignum::new(&[2_u8, 2, 2]).unwrap();
+    let b001 = &BigUInt::new(&[0_u8, 0, 1]).unwrap();
+    let b101 = &BigUInt::new(&[1_u8, 0, 1]).unwrap();
+    let b000 = &BigUInt::new(&[0_u8, 0, 0]).unwrap();
+    let b222 = &BigUInt::new(&[2_u8, 2, 2]).unwrap();
 
-    for bn in [&Bignum::ONE, &Bignum::ZERO, b001, b101, b000, b222] {
+    for bn in [&BigUInt::ONE, &BigUInt::ZERO, b001, b101, b000, b222] {
         assert!(bn == bn, "Something isn't equal to itself")
     }
 
     struct TestVector<'a> {
-        a: &'a Bignum,
-        b: &'a Bignum,
+        a: &'a BigUInt,
+        b: &'a BigUInt,
         expected: bool,
         name: &'a str,
     }
 
     let tests = [
         TestVector {
-            a: &Bignum::ONE,
-            b: &Bignum::ZERO,
+            a: &BigUInt::ONE,
+            b: &BigUInt::ZERO,
             expected: false,
             name: "ONE, ZERO",
         },
         TestVector {
             a: b000,
-            b: &Bignum::ZERO,
+            b: &BigUInt::ZERO,
             expected: true,
             name: "b000, ZERO",
         },
         TestVector {
             a: b001,
-            b: &Bignum::ZERO,
+            b: &BigUInt::ZERO,
             expected: false,
             name: "b001, ZERO",
         },
         TestVector {
             a: b101,
-            b: &Bignum::ZERO,
+            b: &BigUInt::ZERO,
             expected: false,
             name: "b101, ZERO",
         },
         TestVector {
             a: b222,
-            b: &Bignum::ZERO,
+            b: &BigUInt::ZERO,
             expected: false,
             name: "b222, ZERO",
         },
         TestVector {
             a: b000,
-            b: &Bignum::ONE,
+            b: &BigUInt::ONE,
             expected: false,
             name: "b001, ONE",
         },
         TestVector {
             a: b001,
-            b: &Bignum::ONE,
+            b: &BigUInt::ONE,
             expected: true,
             name: "b001, ONE",
         },
         TestVector {
             a: b101,
-            b: &Bignum::ONE,
+            b: &BigUInt::ONE,
             expected: false,
             name: "b101, ONE",
         },
         TestVector {
             a: b222,
-            b: &Bignum::ONE,
+            b: &BigUInt::ONE,
             expected: false,
             name: "b222, ONE",
         },
         TestVector {
-            a: &Bignum::ZERO,
-            b: &Bignum::ONE,
+            a: &BigUInt::ZERO,
+            b: &BigUInt::ONE,
             expected: false,
             name: "ZERO, ONE",
         },
@@ -306,7 +306,7 @@ fn test_hex() {
     let trials = 1_000;
 
     // really should loop to try at different lengths, including odd ones
-    let vec_size = Bignum::BN_BYTE_LENGTH - 129;
+    let vec_size = BigUInt::BN_BYTE_LENGTH - 129;
     let mut small_rng = SmallRng::seed_from_u64(1138_u64);
 
     for trial in 1..=trials {
@@ -314,7 +314,7 @@ fn test_hex() {
         small_rng.fill_bytes(&mut dest);
 
         let in_hex = HEXUPPER.encode(&dest);
-        let bn = Bignum::from_hex(in_hex.as_str()).unwrap();
+        let bn = BigUInt::from_hex(in_hex.as_str()).unwrap();
         let out_hex = bn.to_hex();
 
         let in_hex = in_hex.trim_start_matches("00");
@@ -395,10 +395,10 @@ fn test_modpow_big() {
     let mod_hex = BIG_M.to_uppercase().replace('_', "");
     let expected_hex = BIG_R.to_uppercase().replace('_', "");
 
-    let base = Bignum::from_hex(&base_hex).unwrap();
-    let exp = Bignum::from_hex(&exp_hex).unwrap();
-    let modulus = Bignum::from_hex(&mod_hex).unwrap();
-    let expected = Bignum::from_hex(&expected_hex).unwrap();
+    let base = BigUInt::from_hex(&base_hex).unwrap();
+    let exp = BigUInt::from_hex(&exp_hex).unwrap();
+    let modulus = BigUInt::from_hex(&mod_hex).unwrap();
+    let expected = BigUInt::from_hex(&expected_hex).unwrap();
 
     let result = base.modpow(&exp, &modulus).unwrap();
 
@@ -412,11 +412,11 @@ fn test_mont_modpow_big() {
     let mod_hex = BIG_M.to_uppercase().replace('_', "");
     let expected_hex = BIG_R.to_uppercase().replace('_', "");
 
-    let base = Bignum::from_hex(&base_hex).unwrap();
-    let exp = Bignum::from_hex(&exp_hex).unwrap();
-    let mut modulus = Bignum::from_hex(&mod_hex).unwrap();
+    let base = BigUInt::from_hex(&base_hex).unwrap();
+    let exp = BigUInt::from_hex(&exp_hex).unwrap();
+    let mut modulus = BigUInt::from_hex(&mod_hex).unwrap();
     modulus.precomp_mont_ctx().unwrap();
-    let expected = Bignum::from_hex(&expected_hex).unwrap();
+    let expected = BigUInt::from_hex(&expected_hex).unwrap();
 
     let result = base.modpow(&exp, &modulus).unwrap();
 
@@ -425,30 +425,66 @@ fn test_mont_modpow_big() {
 
 #[test]
 fn test_is_odd() {
+    struct TestVector<'a> {
+        hex: String,
+        is_odd: bool,
+        name: &'a str,
+    }
+
+    // use the numbers (hex strings) we had for modpow testing
     let b = BIG_B.to_uppercase().replace('_', "");
     let e = BIG_E.to_uppercase().replace('_', "");
     let m = BIG_M.to_uppercase().replace('_', "");
     let r = BIG_R.to_uppercase().replace('_', "");
 
+    let tests = vec![
+        TestVector {
+            hex: b,
+            is_odd: true,
+            name: "b",
+        },
+        TestVector {
+            hex: e,
+            is_odd: false,
+            name: "e",
+        },
+        TestVector {
+            hex: m,
+            is_odd: true,
+            name: "m",
+        },
+        TestVector {
+            hex: r,
+            is_odd: false,
+            name: "r",
+        },
+    ];
+
     let re_last = Regex::new(r"(..)$").unwrap();
-    for t in [b, e, m, r] {
+    for t in tests {
         // There must be better ways to do this without bringing in all the regex machinery
-        let caps = re_last.captures(&t).unwrap();
+        let caps = re_last.captures(&t.hex).unwrap();
         let last_byte = HEXUPPER.decode(caps[0].as_bytes()).unwrap();
         let pp_byte = last_byte[0].wrapping_add(1);
         let mm_byte = last_byte[0].wrapping_sub(1);
 
-        let t_pp = re_last.replace(&t, HEXUPPER.encode(&[pp_byte]));
-        let t_mm = re_last.replace(&t, HEXUPPER.encode(&[mm_byte]));
+        let t_pp = re_last.replace(&t.hex, HEXUPPER.encode(&[pp_byte]));
+        let t_mm = re_last.replace(&t.hex, HEXUPPER.encode(&[mm_byte]));
 
-        let bn = Bignum::from_hex(&t).unwrap();
-        let bn_pp = Bignum::from_hex(&t_pp).unwrap();
-        let bn_mm = Bignum::from_hex(&t_mm).unwrap();
+        let bn = BigUInt::from_hex(&t.hex).unwrap();
+        let bn_pp = BigUInt::from_hex(&t_pp).unwrap();
+        let bn_mm = BigUInt::from_hex(&t_mm).unwrap();
 
         let is_odd_t = bn.is_odd().unwrap();
         let is_odd_pp = bn_pp.is_odd().unwrap();
         let is_odd_mm = bn_mm.is_odd().unwrap();
 
+        assert!(
+            is_odd_t == t.is_odd,
+            "{}'s oddness should be {}",
+            t.name,
+            t.is_odd
+        );
         assert!(is_odd_pp == is_odd_mm);
         assert!(is_odd_t != is_odd_mm);
     }

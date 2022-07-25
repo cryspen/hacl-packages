@@ -1,9 +1,9 @@
-//! Bignum
+//! bignum
 //!
 //! This module implements friendlier bignum for 4096 bit bignums
 //!
 //! It safely (one hopes) wraps the unsafe Hacl_Bignum operations and provides
-//! a struct (type) Bignum that should conceal the nasty pointers to mutable data.
+//! a struct (type) BigUInt that should conceal the nasty pointers to mutable data.
 //!
 //! There are some optimizations when the big number is 1 or 0, exposing those
 //! to potential side channel attacks. We are assuming that values of 1 and 0 are
@@ -36,7 +36,7 @@ impl Drop for HaclBnHandle {
 
 impl HaclBnHandle {
     fn new() -> Result<Self, Error> {
-        let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
+        let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
         // We don't want this to be one or zero
         data[data.len() - 1] = 255;
 
@@ -51,8 +51,8 @@ impl HaclBnHandle {
         Ok(HaclBnHandle(hacl_raw_bn))
     }
     fn from_vec8(bn: &[u8]) -> Result<Self, Error> {
-        let mut data: [u8; Bignum::BN_BYTE_LENGTH] = [0; Bignum::BN_BYTE_LENGTH];
-        let diff_len = Bignum::BN_BYTE_LENGTH - bn.len();
+        let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
+        let diff_len = BigUInt::BN_BYTE_LENGTH - bn.len();
         data[diff_len..].copy_from_slice(bn);
 
         let hacl_raw_bn: HaclBnType =
@@ -70,7 +70,7 @@ impl HaclBnHandle {
             return Err(Error::NoHandle);
         }
 
-        let be_bytes = &mut [0_u8; Bignum::BN_BYTE_LENGTH];
+        let be_bytes = &mut [0_u8; BigUInt::BN_BYTE_LENGTH];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(handle, be_bytes.as_mut_ptr()) }
 
         Ok(be_bytes.to_vec())
@@ -152,12 +152,16 @@ impl fmt::Debug for MontgomeryContext {
     }
 }
 
-impl Bignum {
-    /// Attempts to create a new Bignum with the same values.
+/// BigUInt is the wrapper for the HACL (generated) C library
+/// for large (up to 4096 bits) unsigned integers.
+/// While it can be used for smaller unsigned integers, it
+/// will be wasteful in time and memory for things substantially smaller.
+impl BigUInt {
+    /// Attempts to create a new BigUInt with the same values.
     /// Allocates new memory with a new pointer to that memory
     pub fn try_clone(&self) -> Result<Self, Error> {
         if self.is_one() || self.is_zero() {
-            return Ok(Bignum {
+            return Ok(BigUInt {
                 zero_one_other: self.zero_one_other,
                 mont_ctx: None,
                 handle: None,
@@ -167,7 +171,7 @@ impl Bignum {
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
-        Bignum::new(be_bytes)
+        BigUInt::new(be_bytes)
     }
 
     /// If this number is to be used as a modulus in modular arithmetic,
@@ -199,6 +203,7 @@ impl Bignum {
         Ok(())
     }
 
+    /// (self % 2) == 1
     pub fn is_odd(&self) -> Result<bool, Error> {
         match self.zero_one_other {
             ZeroOneOther::One => Ok(true),
@@ -225,7 +230,7 @@ pub enum Error {
     /// Something went wrong when trying to convert to or from a bignum.
     ConversionError,
 
-    /// The Bignum is malformed, as it is neither 0, 1, nor has a handle.
+    /// The BigUInt is malformed, as it is neither 0, 1, nor has a handle.
     /// This should not happen.
     NoHandle,
 
@@ -249,7 +254,7 @@ pub enum Error {
 }
 
 #[derive(Debug)]
-pub struct Bignum {
+pub struct BigUInt {
     // There does not appear to be a way to get the size of a hacl_Bignum
     // So we will keep this very unsafe pointer around.
     handle: Option<HaclBnHandle>,
@@ -261,14 +266,14 @@ pub struct Bignum {
     zero_one_other: ZeroOneOther,
 }
 
-impl Bignum {
-    pub const ONE: Bignum = Bignum {
+impl BigUInt {
+    pub const ONE: BigUInt = BigUInt {
         zero_one_other: ZeroOneOther::One,
         handle: None,
         mont_ctx: None,
     };
 
-    pub const ZERO: Bignum = Bignum {
+    pub const ZERO: BigUInt = BigUInt {
         zero_one_other: ZeroOneOther::Zero,
         handle: None,
         mont_ctx: None,
@@ -277,9 +282,9 @@ impl Bignum {
     pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 }
 
-impl PartialEq for Bignum {
+impl PartialEq for BigUInt {
     /// Returns true self == other.
-    fn eq(&self, other: &Bignum) -> bool {
+    fn eq(&self, other: &BigUInt) -> bool {
         if self.is_one() && other.is_one() {
             return true;
         }
@@ -340,14 +345,14 @@ enum ZeroOneOther {
     Other,
 }
 
-impl Bignum {
+impl BigUInt {
     pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
-        if be_bytes.len() > Bignum::BN_BYTE_LENGTH {
+        if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
         match one_zero_other(&trim_left_zero(be_bytes)) {
-            ZeroOneOther::One => Ok(Bignum::ONE),
-            ZeroOneOther::Zero => Ok(Bignum::ZERO),
+            ZeroOneOther::One => Ok(BigUInt::ONE),
+            ZeroOneOther::Zero => Ok(BigUInt::ZERO),
             ZeroOneOther::Other => {
                 let handle = HaclBnHandle::from_vec8(be_bytes)?;
                 Ok(Self {
@@ -359,11 +364,11 @@ impl Bignum {
         }
     }
 
-    /// Returns true of our Bignum is 1. False otherwise.
+    /// Returns true of our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
         self.zero_one_other == ZeroOneOther::One
     }
-    /// Returns true of our Bignum is 0. False otherwise.
+    /// Returns true of our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
         self.zero_one_other == ZeroOneOther::Zero
     }
@@ -413,7 +418,7 @@ impl Bignum {
 
 // Now the math
 
-impl PartialOrd for Bignum {
+impl PartialOrd for BigUInt {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         if (self.is_one() && other.is_one()) || (self.is_zero() && other.is_zero()) {
             return Some(Equal);
@@ -443,7 +448,7 @@ impl PartialOrd for Bignum {
 }
 
 // More math.
-impl Bignum {
+impl BigUInt {
     // We will try to use the same function signatures as exist in
     // num-bigint::BigUint, except that we will wrap in Results where
     // num-bigint panics
@@ -471,13 +476,13 @@ impl Bignum {
         }
 
         if self.is_zero() {
-            return Ok(Bignum::ZERO);
+            return Ok(BigUInt::ZERO);
         }
         if self.is_one() {
-            return Ok(Bignum::ONE);
+            return Ok(BigUInt::ONE);
         }
         if exponent.is_zero() {
-            return Ok(Bignum::ONE);
+            return Ok(BigUInt::ONE);
         }
         if exponent.is_one() {
             return self.try_clone();
