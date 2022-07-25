@@ -13,10 +13,8 @@
 use data_encoding::{HEXUPPER, HEXUPPER_PERMISSIVE};
 use hacl_rust_sys::*;
 use libc;
-use num::{One, Zero};
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
-use std::ops::{Add, Mul};
 
 // We need a feature flag for this
 type HaclBnWord = u64;
@@ -515,17 +513,42 @@ impl BigUInt {
             .map_err(Error::Decoding)?;
         Self::new(&be_bytes)
     }
+
+    /// if self is zero or one with no allocated Hacl BN handle, this will
+    /// allocate a Hacl Bignum 1 or 0.
+    ///
+    /// # Errors
+    ///
+    /// - Passes errors from [HaclBnHandle::from_vec8()]
+    /// - [Error::NoHandle] if not 0 or 1 and there is no handle in place.
+    #[allow(dead_code)]
+    fn ensure_handle(&mut self) -> Result<(), Error> {
+        if self.handle.is_some() {
+            return Ok(());
+        }
+        match self.zero_one_other {
+            ZeroOneOther::One => {
+                self.handle = Some(HaclBnHandle::from_vec8(&VEC_ONE)?);
+                Ok(())
+            }
+            ZeroOneOther::Zero => {
+                self.handle = Some(HaclBnHandle::from_vec8(&VEC_ZERO)?);
+                Ok(())
+            }
+            ZeroOneOther::Other => Err(Error::NoHandle),
+        }
+    }
 }
 
 // Can't implement One and Zero until Addition and Multiplication are implemented.
 // impl num::One for BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 1. False otherwise.
-    fn is_one(&self) -> bool {
+    pub fn is_one(&self) -> bool {
         self.zero_one_other == ZeroOneOther::One
     }
     /// returns a BigUInt representing the value 1.
-    fn one() -> Self {
+    pub fn one() -> Self {
         BigUInt::ONE
     }
 }
@@ -533,20 +556,51 @@ impl BigUInt {
 // impl num::Zero for BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 0. False otherwise.
-    fn is_zero(&self) -> bool {
+    pub fn is_zero(&self) -> bool {
         self.zero_one_other == ZeroOneOther::Zero
     }
-    // returns a BigUInt representing the value 0.
-    fn zero() -> Self {
+    /// returns a BigUInt representing the value 0.
+    pub fn zero() -> Self {
         BigUInt::ZERO
     }
 }
 
-/* coming soon
-impl Add<&BigUInt> for BigUInt {
+impl BigUInt {
+    /// (a + b) % self.
+    ///
+    /// The mutability is doesn't change the numeric value, but is need for some
+    /// precomputation in some cases and we do not wish to preform that computation
+    /// repeatedly.
+    pub fn add_mod(mut self, a: &mut Self, b: &mut Self) -> Result<Self, Error> {
+        if a.is_zero() {
+            return b.try_clone();
+        }
+        if b.is_zero() {
+            return a.try_clone();
+        }
 
+        if self.mont_ctx.is_none() {
+            self.precomp_mont_ctx()?;
+        }
+        let a = a.mod_reduce(&mut self)?;
+        let b = b.mod_reduce(&mut self)?;
+
+        let result_handle = HaclBnHandle::new()?;
+
+        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+
+        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.0) }
+        let zero_one_other = result_handle.zero_one_other()?;
+
+        Ok(Self {
+            zero_one_other,
+            handle: Some(result_handle),
+            mont_ctx: None,
+        })
+    }
 }
-*/
 
 impl PartialOrd for BigUInt {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
@@ -663,24 +717,28 @@ impl BigUInt {
         })
     }
 
-    /// num % self
-    ///
-    /// `self` is mutable to allow for some precomputation that should only
-    /// be done once for anything used as a modulus.
+    /// self % modulus
     ///
     /// # Errors
     /// - `UselessModulus` if self < 2 or if self is even.
     /// - `HaclError` if something some Hacl call returned an error
     ///
-    pub fn mod_reduce(&mut self, num: &Self) -> Result<Self, Error> {
-        if self.mont_ctx.is_none() {
-            self.precomp_mont_ctx()?;
+    /// Despite the mutability of `self` and `modulus` their numeric values
+    /// don't change. There are just some handy internal precomputations which
+    /// may be performed.
+    pub fn mod_reduce(&mut self, modulus: &mut Self) -> Result<Self, Error> {
+        if modulus.mont_ctx.is_none() {
+            modulus.precomp_mont_ctx()?;
+        }
+
+        if self.handle.is_none() {
+            self.ensure_handle()?;
         }
 
         let handle = HaclBnHandle::new()?;
 
-        let a = num.handle.as_ref().ok_or(Error::NoHandle)?.0;
-        let k = self.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_precomp(k, a, handle.0);
         }
@@ -691,6 +749,32 @@ impl BigUInt {
             handle: Some(handle),
             mont_ctx: None,
         })
+    }
+
+    /// self = self % modulus
+    ///
+    /// self is updated with its modular reduction mod modulus.
+    ///
+    /// modulus does not have its value changed despite its mutability which is
+    /// used for updating some precomputation if needed.
+    pub fn mod_reduce_mut(&mut self, modulus: &mut Self) -> Result<(), Error> {
+        if modulus.mont_ctx.is_none() {
+            modulus.precomp_mont_ctx()?;
+        }
+
+        let handle = HaclBnHandle::new()?;
+
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        unsafe {
+            Hacl_Bignum4096_mod_precomp(k, a, handle.0);
+        }
+
+        self.zero_one_other = handle.zero_one_other()?;
+        self.handle = Some(handle);
+        self.mont_ctx = None;
+
+        Ok(())
     }
 }
 
