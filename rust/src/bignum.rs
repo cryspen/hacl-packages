@@ -163,6 +163,9 @@ impl Bignum {
         if self.zero_one_other != ZeroOneOther::Other {
             return Err(Error::UselessModulus);
         }
+        if !self.is_odd()? {
+            return Err(Error::UselessModulus);
+        }
 
         let ctx: MontgomeryContext = match &self.handle {
             None => return Err(Error::NoHandle),
@@ -172,6 +175,34 @@ impl Bignum {
         self.mont_ctx = Some(ctx);
 
         Ok(())
+    }
+
+    /*
+    There are a number of public Hacl_Bignum functions that say that bad things will
+    happen if the some of their inputs are even. But the same library does not give
+    us a nice way of checking.
+
+    The same documentation tells us not to use the internal representation of a bn, but it also tells us that the limbs are little endian. In particular
+
+    > Furthermore, the
+    > limbs are stored in little-endian format, i.e. the least significant limb is at
+    > index 0. Each limb is stored in native format in memory. Example:
+    >
+    >   `uint64_t sixteen[64] = { 0x10 }`
+
+    This of course will be different on 32 bit systems, but I will assume that the
+    zero index'ed limb is the least significant.
+    */
+    fn is_odd(&self) -> Result<bool, Error> {
+        match self.zero_one_other {
+            ZeroOneOther::One => Ok(true),
+            ZeroOneOther::Zero => Ok(false),
+            _ => {
+                let h = &self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+                let least_limb = unsafe { *(h.offset(0)) };
+                Ok(least_limb % 2 == 1)
+            }
+        }
     }
 }
 
