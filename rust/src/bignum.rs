@@ -13,19 +13,26 @@
 use data_encoding::{HEXUPPER, HEXUPPER_PERMISSIVE};
 use hacl_rust_sys::*;
 use libc;
+use num::{One, Zero};
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
+use std::ops::{Add, Mul};
 
 // We need a feature flag for this
 type HaclBnWord = u64;
 // type HaclBnWord = u32;
 
+/// A pointer to HACL_Bignum data allocated by the HACL library.
+/// It typically points to 4096 bits of data, although some HACL
+/// math operations will have this point to 8192 bits.
 struct HaclBnHandle(HaclBnType);
 
 impl Drop for HaclBnHandle {
     // We need to make sure that the referents are only
     // ever allocated by HaclBn... Otherwise, we will
     // panic when trying to drop these.
+    // So never create a HaclBnHandle through anything other
+    // then the HaclBnHandle functions.
     fn drop(&mut self) {
         unsafe {
             if !self.0.is_null() {
@@ -36,6 +43,17 @@ impl Drop for HaclBnHandle {
 }
 
 impl HaclBnHandle {
+    /// Has HACL create a to BN_BYTE_LENGTH bytes. This pointer can only be
+    /// freed by HACL, which is called in the implementation
+    /// of Drop for this structure
+    ///
+    /// The the referent of this pointer is expected to be filled by other HACL
+    /// functions. The only guarantee on the referent is that it does not
+    /// correspond to 1 or 0.
+    ///
+    /// # Errors
+    ///
+    /// - `HaclError` if HACL call returns an error condition.
     fn new() -> Result<Self, Error> {
         let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
         // We don't want this to be one or zero
@@ -51,7 +69,25 @@ impl HaclBnHandle {
         }
         Ok(HaclBnHandle(hacl_raw_bn))
     }
+
+    /// Has HACL create a to BN_BYTE_LENGTH bytes. This pointer can only be
+    /// freed by HACL, which is called in the implementation
+    /// of Drop for this structure
+    ///
+    /// The data pointed to is the HACL_Bignum form of the number
+    /// represented by the big endian bn argument.
+    ///
+    /// Caller is responsible for ensuring that bn.len() <= BN_BYTE_LENGTH
+    ///
+    /// # Errors
+    ///
+    /// - `HaclError` The HACL library indicated some error. What error did it indicate? We may never know.
     fn from_vec8(bn: &[u8]) -> Result<Self, Error> {
+        // Is it wasteful to allocate the the full BN_BYTE_LENGTH chunk of memory
+        // if bn happens to be a lot shorter? Almost certainly. But for reasons
+        // I (jpgoldberg) do not understand, I could never get this to work
+        // any other way despite the fact that the Hacl_Bignum call
+        // asks for the length of the data.
         let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
         let diff_len = BigUInt::BN_BYTE_LENGTH - bn.len();
         data[diff_len..].copy_from_slice(bn);
@@ -65,6 +101,11 @@ impl HaclBnHandle {
         Ok(HaclBnHandle(hacl_raw_bn))
     }
 
+    /// Returns the big endian vector of bytes corresponding to the value
+    /// pointed to by self.
+    ///
+    /// # Error
+    /// - `NoHandle` if self is a null pointer.
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         let handle = self.0;
         if self.0.is_null() {
@@ -77,8 +118,11 @@ impl HaclBnHandle {
         Ok(be_bytes.to_vec())
     }
 
-    // This is expensive. We only want to call it when the data
-    // pointed to has changed.
+    /// Returns `ZeroOneOther` depending on whether the value pointed to
+    /// corresponds to zero, one, or other.
+    ///
+    /// This is expensive. We only want to call it when the data
+    /// pointed to has changed. We use this to set quicker to check flags.
     fn zero_one_other(&self) -> Result<ZeroOneOther, Error> {
         let be_vec = self.to_vec8()?;
         Ok(one_zero_other(&be_vec))
@@ -100,7 +144,11 @@ impl HaclBnHandle {
     This of course will be different on 32 bit systems, but I will assume that the
     zero index'ed limb is the least significant.
     */
-    /// returns true if the value of the bn pointed to is odd.
+    /// Returns true if the value of the bn pointed to is odd.
+    ///
+    /// This method depends on HACL internal data layout, which we
+    /// are told not to rely on. Always test this with any new update
+    /// of HACL.
     fn ref_is_odd(&self) -> bool {
         let least_limb = unsafe { *(self.0.offset(0)) };
         least_limb % 2 == 1
@@ -306,22 +354,50 @@ impl PartialEq for BigUInt {
     ///
     /// If the value pointed to by `self` is the same as the value pointed to by
     /// `other`, this returns true.
+    ///
+    /// If self or other is malformed (doesn't successfully have a numerical value)
+    /// return false. (This shouldn't ever happen.)
     fn eq(&self, other: &BigUInt) -> bool {
+        // first we cover all of the 1 and zero case
+        // (the following code makes it look like I would have failed fizzbuzz)
+        // The ones
         if self.is_one() && other.is_one() {
             return true;
         }
+        if self.is_one() && !other.is_one() {
+            return false;
+        }
+        if !self.is_one() && other.is_one() {
+            return false;
+        }
+        // The zeros
         if self.is_zero() && other.is_zero() {
             return true;
         }
+        if self.is_zero() && !other.is_zero() {
+            return false;
+        }
+        if !self.is_zero() && other.is_zero() {
+            return false;
+        }
 
+        // Now that we've dealt with all of the ones and zero cases
+        // we treat comparison of anything without a handle to be false
         let a_handle = match &self.handle {
             None => return false,
             Some(x) => x.0,
         };
+        if a_handle.is_null() {
+            return false;
+        }
+
         let b_handle = match &other.handle {
             None => return false,
             Some(x) => x.0,
         };
+        if b_handle.is_null() {
+            return false;
+        }
 
         let hacl_result: HaclBnWord;
         unsafe {
@@ -340,12 +416,12 @@ const VEC_ZERO: [u8; 1] = [0_u8];
 // with second argument that is T -> bool,
 // but let me just do this the very concrete way.
 fn trim_left_zero(v: &[u8]) -> Vec<u8> {
-    let r: Vec<u8> = v.iter().copied().skip_while(|x| *x == 0_u8).collect();
+    let result: Vec<u8> = v.iter().copied().skip_while(|x| *x == 0_u8).collect();
 
-    if r.is_empty() {
+    if result.is_empty() {
         VEC_ZERO.to_vec()
     } else {
-        r
+        result
     }
 }
 
@@ -391,15 +467,6 @@ impl BigUInt {
                 })
             }
         }
-    }
-
-    /// Returns true if our BigUInt is 1. False otherwise.
-    pub fn is_one(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::One
-    }
-    /// Returns true if our BigUInt is 0. False otherwise.
-    pub fn is_zero(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::Zero
     }
 
     /// returns a vector of big-endian bytes.
@@ -450,7 +517,36 @@ impl BigUInt {
     }
 }
 
-// Now the math
+// Can't implement One and Zero until Addition and Multiplication are implemented.
+// impl num::One for BigUInt {
+impl BigUInt {
+    /// Returns true if our BigUInt is 1. False otherwise.
+    fn is_one(&self) -> bool {
+        self.zero_one_other == ZeroOneOther::One
+    }
+    /// returns a BigUInt representing the value 1.
+    fn one() -> Self {
+        BigUInt::ONE
+    }
+}
+
+// impl num::Zero for BigUInt {
+impl BigUInt {
+    /// Returns true if our BigUInt is 0. False otherwise.
+    fn is_zero(&self) -> bool {
+        self.zero_one_other == ZeroOneOther::Zero
+    }
+    // returns a BigUInt representing the value 0.
+    fn zero() -> Self {
+        BigUInt::ZERO
+    }
+}
+
+/* coming soon
+impl Add<&BigUInt> for BigUInt {
+
+}
+*/
 
 impl PartialOrd for BigUInt {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
@@ -560,6 +656,36 @@ impl BigUInt {
 
         let zero_one_other = handle.zero_one_other()?;
 
+        Ok(Self {
+            zero_one_other,
+            handle: Some(handle),
+            mont_ctx: None,
+        })
+    }
+
+    /// num % self
+    ///
+    /// `self` is mutable to allow for some precomputation that should only
+    /// be done once for anything used as a modulus.
+    ///
+    /// # Errors
+    /// - `UselessModulus` if self < 2 or if self is even.
+    /// - `HaclError` if something some Hacl call returned an error
+    ///
+    pub fn mod_reduce(&mut self, num: &Self) -> Result<Self, Error> {
+        if self.mont_ctx.is_none() {
+            self.precomp_mont_ctx()?;
+        }
+
+        let handle = HaclBnHandle::new()?;
+
+        let a = num.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let k = self.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        unsafe {
+            Hacl_Bignum4096_mod_precomp(k, a, handle.0);
+        }
+
+        let zero_one_other = handle.zero_one_other()?;
         Ok(Self {
             zero_one_other,
             handle: Some(handle),
