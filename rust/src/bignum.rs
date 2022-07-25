@@ -1,3 +1,4 @@
+#![warn(missing_docs)]
 //! bignum
 //!
 //! This module implements friendlier bignum for 4096 bit bignums
@@ -152,10 +153,6 @@ impl fmt::Debug for MontgomeryContext {
     }
 }
 
-/// BigUInt is the wrapper for the HACL (generated) C library
-/// for large (up to 4096 bits) unsigned integers.
-/// While it can be used for smaller unsigned integers, it
-/// will be wasteful in time and memory for things substantially smaller.
 impl BigUInt {
     /// Attempts to create a new BigUInt with the same values.
     /// Allocates new memory with a new pointer to that memory
@@ -253,6 +250,25 @@ pub enum Error {
     ShouldNotHappen,
 }
 
+/// BigUInt is the wrapper for the HACL (generated) C library
+/// for large (up to 4096 bits) unsigned integers.
+/// While it can be used for smaller unsigned integers, it
+/// will be wasteful in time and memory for things substantially smaller.
+///
+/// ## A note on mutating moduli
+///
+/// BigUInt's that are to be used as moduli in modular need to be declared as
+/// mutable. We do not mutate the actual value they store, but the first time
+/// they are used in some operations, some pre-computations are performed that
+/// we only want to compute once for each BigUInt to be used as a modulus.
+/// That pre-computation is of no use for numbers that will not be used as a modulus.
+///
+/// ## Safety
+///
+/// All of the public functions safe. There is a lot of use of `unsafe` internally,
+/// but what you see before you is designed to safely contain it.
+/// But many functions which really should never fail are set to return Results,
+/// as additional precautions.  
 #[derive(Debug)]
 pub struct BigUInt {
     // There does not appear to be a way to get the size of a hacl_Bignum
@@ -267,23 +283,29 @@ pub struct BigUInt {
 }
 
 impl BigUInt {
+    /// A BigUint representing the value 1
     pub const ONE: BigUInt = BigUInt {
         zero_one_other: ZeroOneOther::One,
         handle: None,
         mont_ctx: None,
     };
 
+    /// A BigUint representing the value 0
     pub const ZERO: BigUInt = BigUInt {
         zero_one_other: ZeroOneOther::Zero,
         handle: None,
         mont_ctx: None,
     };
 
+    /// The maximum number of bytes in the byte vector representation of the value
     pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
 }
 
 impl PartialEq for BigUInt {
-    /// Returns true self == other.
+    /// self == other
+    ///
+    /// If the value pointed to by `self` is the same as the value pointed to by
+    /// `other`, this returns true.
     fn eq(&self, other: &BigUInt) -> bool {
         if self.is_one() && other.is_one() {
             return true;
@@ -346,6 +368,13 @@ enum ZeroOneOther {
 }
 
 impl BigUInt {
+    /// creates a new BigUint from an array of bytes.
+    ///
+    /// # Errors
+    ///
+    /// - `BadInputLength`: Length of input exceeds `BN_BYTE_LENGTH`
+    /// - `HaclError`: Something went wrong with the internal call to the
+    ///     HACL library. Probably a memory allocation error.
     pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
         if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
@@ -364,16 +393,21 @@ impl BigUInt {
         }
     }
 
-    /// Returns true of our BigUInt is 1. False otherwise.
+    /// Returns true if our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
         self.zero_one_other == ZeroOneOther::One
     }
-    /// Returns true of our BigUInt is 0. False otherwise.
+    /// Returns true if our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
         self.zero_one_other == ZeroOneOther::Zero
     }
 
     /// returns a vector of big-endian bytes.
+    ///
+    /// # Errors
+    ///
+    /// - `NoHandle`. Somehow or other self never got its HACL bn pointer set up.
+    /// - `HaclError`. The call to the HACL function returned an unspecified error. Probably memory allocation problem.
     pub fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         match self.zero_one_other {
             ZeroOneOther::One => Ok(VEC_ONE.to_vec()),
@@ -454,8 +488,11 @@ impl BigUInt {
     // num-bigint panics
     // https://docs.rs/num-bigint/latest/num_bigint/struct.BigUint.html
 
-    pub fn modpow(&self, exponent: &Self, modulus: &Self) -> Result<Self, Error> {
+    pub fn modpow(&self, exponent: &Self, modulus: &mut Self) -> Result<Self, Error> {
         //! Returns (self ^ exponent) % modulus.
+        //!
+        //! `modulus` must be mutable to allow for some precomputation on itself.
+        //! The actual value it points to is not changed.
         //!
         //! # Errors
         //! - Error if modulus < 2.
@@ -465,8 +502,13 @@ impl BigUInt {
         //!     * self is not less than modulus
         //!
         //! # Security
-        //! We are assuming that we can leak timing information if base or exponent
+        //!
+        //! This is a constant time operation
+        //! designed to avoid side-channel attacks,
+        //! but it does reveal timing information if the  base or exponent
         //! are 1 or 0.
+        //!
+        //! We are assuming that a value of 1 or 0 is never a secret for a BigUInt.
 
         if self.is_zero() && exponent.is_zero() {
             return Err(Error::ZeroToZero);
@@ -503,21 +545,19 @@ impl BigUInt {
 
         let handle = HaclBnHandle::new()?;
 
-        let mut hacl_ret_val: bool = true;
+        // The computation to create the Montgomery form of the modulus is
+        // going to be done even if we use Hacl_Bignum4096_mod_exp_consttime
+        // but we won't get to keep that around unless we explicitly compute it.
+        //
         if modulus.mont_ctx.is_none() {
-            let n = modulus.handle.as_ref().ok_or(Error::NoHandle)?.0;
-            unsafe {
-                hacl_ret_val = Hacl_Bignum4096_mod_exp_consttime(n, a, bBits as u32, b, handle.0);
-            }
-        } else {
-            let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-            unsafe {
-                Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.0);
-            }
+            modulus.precomp_mont_ctx()?;
         }
-        if !hacl_ret_val {
-            return Err(Error::HaclError("mod_exp_consttime".to_string()));
+
+        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        unsafe {
+            Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.0);
         }
+
         let zero_one_other = handle.zero_one_other()?;
 
         Ok(Self {
