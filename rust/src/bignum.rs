@@ -245,18 +245,6 @@ impl BigUInt {
 
         Ok(())
     }
-
-    /// (self % 2) == 1
-    pub fn is_odd(&self) -> Result<bool, Error> {
-        match self.zero_one_other {
-            ZeroOneOther::One => Ok(true),
-            ZeroOneOther::Zero => Ok(false),
-            _ => match &self.handle {
-                None => Err(Error::NoHandle),
-                Some(h) => Ok(h.ref_is_odd()),
-            },
-        }
-    }
 }
 
 /// HaclBnType is used in unsafe operations
@@ -301,20 +289,33 @@ pub enum Error {
 /// While it can be used for smaller unsigned integers, it
 /// will be wasteful in time and memory for things substantially smaller.
 ///
-/// ## A note on mutating moduli
+/// ## Broken methods
 ///
-/// BigUInt's that are to be used as moduli in modular need to be declared as
-/// mutable. We do not mutate the actual value they store, but the first time
-/// they are used in some operations, some pre-computations are performed that
-/// we only want to compute once for each BigUInt to be used as a modulus.
-/// That pre-computation is of no use for numbers that will not be used as a modulus.
+/// At the moment there is a big known bug stemming from the fact that the HACL
+/// library does not give us a way to create 8192-bit numbers, but sometimes
+/// requires numbers of that type as arguments.
+/// Such methods will be labeled as broken.
+///
+/// ## <a name="mutability"></a>A note on functional mutability
+///
+/// Many of the methods call for mutable BigUInts.
+/// These do not change the actual value represented,
+/// but instead allow for some internal pre-computation.
+///
+/// For example, numbers used as moduli need a certain precomputation
+/// that will fail for even numbers and for 1.
+/// So it is very useful to selectively perform that precomputation.
+/// There are other precomputation (or memory allocations) that are
+/// selectively applied to other numbers.
 ///
 /// ## Safety
 ///
 /// All of the public functions safe. There is a lot of use of `unsafe` internally,
 /// but what you see before you is designed to safely contain it.
 /// But many functions which really should never fail are set to return Results,
-/// as additional precautions.  
+/// as additional precautions.
+///
+/// [mutability]: #a-note-on-functional-mutability
 #[derive(Debug)]
 pub struct BigUInt {
     // There does not appear to be a way to get the size of a hacl_Bignum
@@ -329,6 +330,8 @@ pub struct BigUInt {
 }
 
 impl BigUInt {
+    //! Constants
+
     /// A BigUint representing the value 1
     pub const ONE: BigUInt = BigUInt {
         zero_one_other: ZeroOneOther::One,
@@ -348,6 +351,8 @@ impl BigUInt {
 }
 
 impl PartialEq for BigUInt {
+    //! Implements [PartialEq] for [BigUInt]
+
     /// self == other
     ///
     /// If the value pointed to by `self` is the same as the value pointed to by
@@ -442,12 +447,19 @@ enum ZeroOneOther {
 }
 
 impl BigUInt {
+    //! Functions and methods for creating [BigUInt]
+    //! and methods for exporting their values in other formats.
+    //!
+    //! Functions [one][BigUInt::one] and [zero][BigUInt::zero]
+    //! for creating [BigUInt]s of value 0 or 1
+    //! are listed in a different section.
+
     /// creates a new BigUint from an array of bytes.
     ///
     /// # Errors
     ///
-    /// - `BadInputLength`: Length of input exceeds `BN_BYTE_LENGTH`
-    /// - `HaclError`: Something went wrong with the internal call to the
+    /// - [Error::BadInputLength]: Length of input exceeds [BigUInt::BN_BYTE_LENGTH]
+    /// - [Error::HaclError]: Something went wrong with the internal call to the
     ///     HACL library. Probably a memory allocation error.
     pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
         if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
@@ -485,8 +497,24 @@ impl BigUInt {
         }
     }
 
-    /// A hex representation of the big-endian representation
+    /// An uppercase hex representation of the big-endian representation
+    /// of the value of `self`.
+    ///
+    /// Output is an uppercase string representing a whole number of bytes,
+    /// but does not include a leading 0 bytes.
+    /// For example a value equivalent to decimal 3053 will yield `0BED`.
+    /// A value of zero will yield `00`.
+    ///
+    /// # Errors
+    ///
+    /// This method does not return errors,
+    /// but if things which shouldn't happen happen it will return an empty string.
     pub fn to_hex(&self) -> String {
+        if self.is_one() {
+            return "01".to_string();
+        } else if self.is_zero() {
+            return "00".to_string();
+        }
         let mut be_bytes = if let Ok(v) = self.to_vec8() {
             trim_left_zero(&v)
         } else {
@@ -506,7 +534,10 @@ impl BigUInt {
             Some(x) => x.to_string(),
         }
     }
-    /// From a hex string
+
+    /// The argument is upper case hex [str]
+    /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
+    /// which represents a big-endian sequence of bytes.
     pub fn from_hex(s: &str) -> Result<Self, Error> {
         let be_bytes = HEXUPPER_PERMISSIVE
             .decode(s.as_bytes())
@@ -540,8 +571,7 @@ impl BigUInt {
     }
 }
 
-// Can't implement One and Zero until Addition and Multiplication are implemented.
-// impl num::One for BigUInt {
+/// Incomplete implementation of `num::traits::One`
 impl BigUInt {
     /// Returns true if our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
@@ -553,7 +583,7 @@ impl BigUInt {
     }
 }
 
-// impl num::Zero for BigUInt {
+/// Incomplete implementation of `num::traits::One`
 impl BigUInt {
     /// Returns true if our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
@@ -562,43 +592,6 @@ impl BigUInt {
     /// returns a BigUInt representing the value 0.
     pub fn zero() -> Self {
         BigUInt::ZERO
-    }
-}
-
-impl BigUInt {
-    /// (a + b) % self.
-    ///
-    /// The mutability is doesn't change the numeric value, but is need for some
-    /// precomputation in some cases and we do not wish to preform that computation
-    /// repeatedly.
-    pub fn add_mod(mut self, a: &mut Self, b: &mut Self) -> Result<Self, Error> {
-        if a.is_zero() {
-            return b.try_clone();
-        }
-        if b.is_zero() {
-            return a.try_clone();
-        }
-
-        if self.mont_ctx.is_none() {
-            self.precomp_mont_ctx()?;
-        }
-        let a = a.mod_reduce(&mut self)?;
-        let b = b.mod_reduce(&mut self)?;
-
-        let result_handle = HaclBnHandle::new()?;
-
-        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-
-        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.0) }
-        let zero_one_other = result_handle.zero_one_other()?;
-
-        Ok(Self {
-            zero_one_other,
-            handle: Some(result_handle),
-            mont_ctx: None,
-        })
     }
 }
 
@@ -631,17 +624,67 @@ impl PartialOrd for BigUInt {
     }
 }
 
-// More math.
+/// Arithmetic methods
 impl BigUInt {
     // We will try to use the same function signatures as exist in
     // num-bigint::BigUint, except that we will wrap in Results where
     // num-bigint panics
     // https://docs.rs/num-bigint/latest/num_bigint/struct.BigUint.html
 
+    /// (self % 2) == 1
+    pub fn is_odd(&self) -> Result<bool, Error> {
+        match self.zero_one_other {
+            ZeroOneOther::One => Ok(true),
+            ZeroOneOther::Zero => Ok(false),
+            _ => match &self.handle {
+                None => Err(Error::NoHandle),
+                Some(h) => Ok(h.ref_is_odd()),
+            },
+        }
+    }
+
+    /// `(a + b) % self`.
+    ///
+    /// This method is [broken](#broken-methods). Do not use.
+    ///
+    /// The [mutability](#mutability) doesn't change the numeric values
+    /// but is needed for some
+    /// precomputation in some cases and we do not wish to preform that computation
+    /// repeatedly.
+    pub fn add_mod(mut self, a: &mut Self, b: &mut Self) -> Result<Self, Error> {
+        if a.is_zero() {
+            return b.try_clone();
+        }
+        if b.is_zero() {
+            return a.try_clone();
+        }
+
+        if self.mont_ctx.is_none() {
+            self.precomp_mont_ctx()?;
+        }
+        let a = a.mod_reduce(&mut self)?;
+        let b = b.mod_reduce(&mut self)?;
+
+        let result_handle = HaclBnHandle::new()?;
+
+        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+
+        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.0) }
+        let zero_one_other = result_handle.zero_one_other()?;
+
+        Ok(Self {
+            zero_one_other,
+            handle: Some(result_handle),
+            mont_ctx: None,
+        })
+    }
+
     pub fn modpow(&self, exponent: &Self, modulus: &mut Self) -> Result<Self, Error> {
-        //! Returns (self ^ exponent) % modulus.
+        //! `(self ^ exponent) % modulus`
         //!
-        //! `modulus` must be mutable to allow for some precomputation on itself.
+        //! `modulus` must be [mutable](#mutability) to allow for some precomputation on itself.
         //! The actual value it points to is not changed.
         //!
         //! # Errors
@@ -717,15 +760,16 @@ impl BigUInt {
         })
     }
 
-    /// self % modulus
+    /// `self % modulus`
+    ///
+    /// This method is [broken](#broken-methods). Do not use.
     ///
     /// # Errors
     /// - `UselessModulus` if self < 2 or if self is even.
     /// - `HaclError` if something some Hacl call returned an error
     ///
-    /// Despite the mutability of `self` and `modulus` their numeric values
-    /// don't change. There are just some handy internal precomputations which
-    /// may be performed.
+    /// Despite the [mutability](#mutability) of `self` and `modulus`
+    /// their numeric values don't change.
     pub fn mod_reduce(&mut self, modulus: &mut Self) -> Result<Self, Error> {
         if modulus.mont_ctx.is_none() {
             modulus.precomp_mont_ctx()?;
@@ -751,7 +795,9 @@ impl BigUInt {
         })
     }
 
-    /// self = self % modulus
+    /// `self = self % modulus`
+    ///
+    /// This method is [broken](#broken-methods). Do not use.
     ///
     /// self is updated with its modular reduction mod modulus.
     ///
