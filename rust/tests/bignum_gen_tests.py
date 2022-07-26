@@ -33,12 +33,12 @@ class ReductionTriple:
         self.result: int = num % modulus
 
     def __str__(self) -> str:
-        s = f"""TestVector{{
-            a: {u_hex(self.num)},
-            m: {u_hex(self.modulus)},
-            expected: {u_hex(self.result)},
+        s = f'''TestVector{{
+            a: "{u_hex(self.num)}",
+            m: "{u_hex(self.modulus)}",
+            expected: "{u_hex(self.result)}",
         }},
-        """
+        '''
 
         return s
 
