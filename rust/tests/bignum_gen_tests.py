@@ -30,10 +30,13 @@ class ReductionTriple:
     def __init__(self, num: int, modulus: int):
         self.num: int = num
         self.modulus: int = modulus
+
+        if self.modulus % 2 == 0:
+            self.modulus += 1
         self.result: int = num % modulus
 
     def __str__(self) -> str:
-        s = f'''TestVector{{
+        s = f'''\tTestVector{{
             a: "{u_hex(self.num)}",
             m: "{u_hex(self.modulus)}",
             expected: "{u_hex(self.result)}",
@@ -57,7 +60,7 @@ def create_rand_reductions(count: int) -> list[ReductionTriple]:
 def main():
     r_list = create_rand_reductions(10)
     for r in r_list:
-        print(r)
+        print(r, end='')
 
 
 if __name__ == "__main__":
