@@ -23,7 +23,10 @@ type HaclBnWord = u64;
 /// A pointer to HACL_Bignum data allocated by the HACL library.
 /// It typically points to 4096 bits of data, although some HACL
 /// math operations will have this point to 8192 bits.
-struct HaclBnHandle(HaclBnType);
+struct HaclBnHandle {
+    ptr: HaclBnType,
+    bitsize: usize,
+}
 
 impl Drop for HaclBnHandle {
     // We need to make sure that the referents are only
@@ -33,8 +36,8 @@ impl Drop for HaclBnHandle {
     // then the HaclBnHandle functions.
     fn drop(&mut self) {
         unsafe {
-            if !self.0.is_null() {
-                libc::free(self.0 as *mut libc::c_void);
+            if !self.ptr.is_null() {
+                libc::free(self.ptr as *mut libc::c_void);
             }
         }
     }
@@ -52,20 +55,51 @@ impl HaclBnHandle {
     /// # Errors
     ///
     /// - `HaclError` if HACL call returns an error condition.
-    fn new() -> Result<Self, Error> {
-        let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
-        // We don't want this to be one or zero
-        data[data.len() - 1] = 255;
+    fn new(bitsize: usize) -> Result<Self, Error> {
+        // bad things happen if bitsize is not a multiple of the 64 (or perhaps 4096)
+        if bitsize % 64 != 0 {
+            return Err(Error::BadInputLength);
+        }
+        let byte_length = 8 * bitsize;
+
+        let mut data_vec = vec![255_u8; byte_length];
+        data_vec.shrink_to_fit();
+        let data_ptr = data_vec.as_mut_ptr();
 
         let hacl_raw_bn: HaclBnType;
         unsafe {
-            hacl_raw_bn =
-                Hacl_Bignum4096_new_bn_from_bytes_be(data.len() as u32, data.as_mut_ptr());
+            hacl_raw_bn = Hacl_Bignum4096_new_bn_from_bytes_be(byte_length as u32, data_ptr);
         }
         if hacl_raw_bn.is_null() {
             return Err(Error::HaclError("new_bn_from_bytes".into()));
         }
-        Ok(HaclBnHandle(hacl_raw_bn))
+        Ok(HaclBnHandle {
+            ptr: hacl_raw_bn,
+            bitsize,
+        })
+    }
+
+    fn supersized(&self) -> Result<Self, Error> {
+        let bitsize = 2 * BN_BITSIZE;
+        let byte_length = bitsize / 8;
+
+        let mut big_end_bytes = self.to_vec8()?;
+        big_end_bytes.shrink_to_fit();
+        let be_ptr = big_end_bytes.as_mut_ptr();
+        // Do I need to pad this with a whole bunch of leading zeros.
+        // I hope not.
+
+        let hacl_raw_bn: HaclBnType;
+        unsafe {
+            hacl_raw_bn = Hacl_Bignum4096_new_bn_from_bytes_be(byte_length as u32, be_ptr);
+        }
+        if hacl_raw_bn.is_null() {
+            return Err(Error::HaclError("new_bn_from_bytes".into()));
+        }
+        Ok(HaclBnHandle {
+            ptr: hacl_raw_bn,
+            bitsize,
+        })
     }
 
     /// Has HACL create a to BN_BYTE_LENGTH bytes. This pointer can only be
@@ -86,6 +120,7 @@ impl HaclBnHandle {
         // I (jpgoldberg) do not understand, I could never get this to work
         // any other way despite the fact that the Hacl_Bignum call
         // asks for the length of the data.
+
         let mut data: [u8; BigUInt::BN_BYTE_LENGTH] = [0; BigUInt::BN_BYTE_LENGTH];
         let diff_len = BigUInt::BN_BYTE_LENGTH - bn.len();
         data[diff_len..].copy_from_slice(bn);
@@ -96,7 +131,10 @@ impl HaclBnHandle {
         if hacl_raw_bn.is_null() {
             return Err(Error::HaclError("new_bn_from_bytes".into()));
         }
-        Ok(HaclBnHandle(hacl_raw_bn))
+        Ok(HaclBnHandle {
+            ptr: hacl_raw_bn,
+            bitsize: BN_BITSIZE,
+        })
     }
 
     /// Returns the big endian vector of bytes corresponding to the value
@@ -105,8 +143,8 @@ impl HaclBnHandle {
     /// # Error
     /// - `NoHandle` if self is a null pointer.
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
-        let handle = self.0;
-        if self.0.is_null() {
+        let handle = self.ptr;
+        if self.ptr.is_null() {
             return Err(Error::NoHandle);
         }
 
@@ -148,14 +186,14 @@ impl HaclBnHandle {
     /// are told not to rely on. Always test this with any new update
     /// of HACL.
     fn ref_is_odd(&self) -> bool {
-        let least_limb = unsafe { *(self.0.offset(0)) };
+        let least_limb = unsafe { *(self.ptr.offset(0)) };
         least_limb % 2 == 1
     }
 }
 
 impl fmt::Debug for HaclBnHandle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let msg = match self.0.is_null() {
+        let msg = match self.ptr.is_null() {
             true => "is null",
             false => "isn't null",
         };
@@ -180,7 +218,7 @@ impl Drop for MontgomeryContext {
 
 impl MontgomeryContext {
     fn from_bn(bn_handle: &HaclBnHandle) -> Result<Self, Error> {
-        let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.0) };
+        let ctx = unsafe { Hacl_Bignum4096_mont_ctx_init(bn_handle.ptr) };
 
         match !ctx.is_null() {
             false => Err(Error::HaclError("mont_ctx_init".into())),
@@ -210,7 +248,7 @@ impl BigUInt {
                 handle: None,
             });
         }
-        let old_handle = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let old_handle = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
@@ -244,6 +282,13 @@ impl BigUInt {
         self.mont_ctx = Some(ctx);
 
         Ok(())
+    }
+
+    fn is_supersized(&self) -> bool {
+        match &self.handle {
+            None => false,
+            Some(h) => h.bitsize > BN_BITSIZE,
+        }
     }
 }
 
@@ -388,7 +433,7 @@ impl PartialEq for BigUInt {
         // we treat comparison of anything without a handle to be false
         let a_handle = match &self.handle {
             None => return false,
-            Some(x) => x.0,
+            Some(x) => x.ptr,
         };
         if a_handle.is_null() {
             return false;
@@ -396,7 +441,7 @@ impl PartialEq for BigUInt {
 
         let b_handle = match &other.handle {
             None => return false,
-            Some(x) => x.0,
+            Some(x) => x.ptr,
         };
         if b_handle.is_null() {
             return false;
@@ -602,11 +647,11 @@ impl PartialOrd for BigUInt {
         }
         let a_handle = match &self.handle {
             None => return None,
-            Some(h) => h.0,
+            Some(h) => h.ptr,
         };
         let b_handle = match &other.handle {
             None => return None,
-            Some(h) => h.0,
+            Some(h) => h.ptr,
         };
 
         let lt_result: HaclBnWord;
@@ -665,13 +710,13 @@ impl BigUInt {
         let a = a.mod_reduce(&mut self)?;
         let b = b.mod_reduce(&mut self)?;
 
-        let result_handle = HaclBnHandle::new()?;
+        let result_handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
-        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
 
-        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.0) }
+        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
         let zero_one_other = result_handle.zero_one_other()?;
 
         Ok(Self {
@@ -728,15 +773,15 @@ impl BigUInt {
 
         // let's get the Hacl parameters (and with the names used by HACL)
         // a^b mod n into res or a^b montgomery_mod k into res
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
-        let b = exponent.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let b = exponent.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
 
         // I still can't find a way to get the size of Hacl bignnums, so will
         // just use the maximum
         #[allow(non_snake_case)]
         let bBits = 8 * Self::BN_BYTE_LENGTH;
 
-        let handle = HaclBnHandle::new()?;
+        let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
         // The computation to create the Montgomery form of the modulus is
         // going to be done even if we use Hacl_Bignum4096_mod_exp_consttime
@@ -748,7 +793,7 @@ impl BigUInt {
 
         let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
-            Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.0);
+            Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.ptr);
         }
 
         let zero_one_other = handle.zero_one_other()?;
@@ -779,12 +824,12 @@ impl BigUInt {
             self.ensure_handle()?;
         }
 
-        let handle = HaclBnHandle::new()?;
+        let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
-            Hacl_Bignum4096_mod_precomp(k, a, handle.0);
+            Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
         }
 
         let zero_one_other = handle.zero_one_other()?;
@@ -808,12 +853,12 @@ impl BigUInt {
             modulus.precomp_mont_ctx()?;
         }
 
-        let handle = HaclBnHandle::new()?;
+        let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.0;
+        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
-            Hacl_Bignum4096_mod_precomp(k, a, handle.0);
+            Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
         }
 
         self.zero_one_other = handle.zero_one_other()?;
