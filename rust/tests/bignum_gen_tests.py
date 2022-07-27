@@ -33,7 +33,7 @@ class ReductionTriple:
 
         if self.modulus % 2 == 0:
             self.modulus += 1
-        self.result: int = num % modulus
+        self.result: int = num % self.modulus
 
     def __str__(self) -> str:
         s = f'''\tTestVector{{
@@ -58,7 +58,7 @@ def create_rand_reductions(count: int) -> list[ReductionTriple]:
 
 
 def main():
-    r_list = create_rand_reductions(10)
+    r_list = create_rand_reductions(5)
     for r in r_list:
         print(r, end='')
 
