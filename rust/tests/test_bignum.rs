@@ -84,7 +84,7 @@ fn test_to_from() {
         let in_data = dest;
         let in_vec = dest.to_vec();
 
-        let bn = BigUInt::new(&in_data).unwrap();
+        let bn = BigUInt::from_bytes_be(&in_data).unwrap();
         let b_vec = bn.to_vec8().unwrap();
 
         let mut trimmed_b: Vec<u8> = Vec::new();
@@ -142,11 +142,11 @@ fn test_partial_ord() {
         // And we do the same for b and b_bn.
         small_rng.fill_bytes(dest);
         let a = dest.to_vec();
-        let a_bn = BigUInt::new(dest).unwrap();
+        let a_bn = BigUInt::from_bytes_be(dest).unwrap();
 
         small_rng.fill_bytes(dest);
         let b = dest.to_vec();
-        let b_bn = BigUInt::new(dest).unwrap();
+        let b_bn = BigUInt::from_bytes_be(dest).unwrap();
 
         assert!(a_bn == a_bn);
         let i_cmp = a.partial_cmp(&b).unwrap();
@@ -178,10 +178,10 @@ fn test_memleak() {
         data.fill(0);
 
         small_rng.fill_bytes(&mut data[..]);
-        let a = BigUInt::new(data).unwrap();
+        let a = BigUInt::from_bytes_be(data).unwrap();
 
         small_rng.fill_bytes(&mut data[..]);
-        let b = BigUInt::new(data).unwrap();
+        let b = BigUInt::from_bytes_be(data).unwrap();
 
         let mut true_count = 0;
 
@@ -201,10 +201,10 @@ fn test_memleak() {
 
 #[test]
 fn test_constants() {
-    let b001 = &BigUInt::new(&[0_u8, 0, 1]).unwrap();
-    let b101 = &BigUInt::new(&[1_u8, 0, 1]).unwrap();
-    let b000 = &BigUInt::new(&[0_u8, 0, 0]).unwrap();
-    let b222 = &BigUInt::new(&[2_u8, 2, 2]).unwrap();
+    let b001 = &BigUInt::from_bytes_be(&[0_u8, 0, 1]).unwrap();
+    let b101 = &BigUInt::from_bytes_be(&[1_u8, 0, 1]).unwrap();
+    let b000 = &BigUInt::from_bytes_be(&[0_u8, 0, 0]).unwrap();
+    let b222 = &BigUInt::from_bytes_be(&[2_u8, 2, 2]).unwrap();
 
     for bn in [&BigUInt::ONE, &BigUInt::ZERO, b001, b101, b000, b222] {
         assert!(bn == bn, "Something isn't equal to itself")
@@ -685,7 +685,7 @@ fn test_add_mod() {
         let modulus = BigUInt::from_hex(t.m).unwrap();
         let expected = BigUInt::from_hex(t.expected).unwrap();
 
-        let result = modulus.add_mod(&mut a, &mut b).expect("add_mod() failed");
+        let result = modulus.modadd(&mut a, &mut b).expect("add_mod() failed");
 
         // we need to get the hex version of the result in case we need to report
         // it in a test failure.

@@ -252,7 +252,7 @@ impl BigUInt {
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
-        BigUInt::new(be_bytes)
+        BigUInt::from_bytes_be(be_bytes)
     }
 
     /// If this number is to be used as a modulus in modular arithmetic,
@@ -520,7 +520,7 @@ impl BigUInt {
     /// - [Error::BadInputLength]: Length of input exceeds [BigUInt::BN_BYTE_LENGTH]
     /// - [Error::HaclError]: Something went wrong with the internal call to the
     ///     HACL library. Probably a memory allocation error.
-    pub fn new(be_bytes: &[u8]) -> Result<Self, Error> {
+    pub fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
         if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
@@ -601,7 +601,7 @@ impl BigUInt {
         let be_bytes = HEXUPPER_PERMISSIVE
             .decode(s.as_bytes())
             .map_err(Error::Decoding)?;
-        Self::new(&be_bytes)
+        Self::from_bytes_be(&be_bytes)
     }
 
     /// if self is zero or one with no allocated Hacl BN handle, this will
@@ -715,7 +715,7 @@ impl BigUInt {
     /// but is needed for some
     /// precomputation in some cases and we do not wish to preform that computation
     /// repeatedly.
-    pub fn add_mod(mut self, a: &mut Self, b: &mut Self) -> Result<Self, Error> {
+    pub fn modadd(mut self, a: &mut Self, b: &mut Self) -> Result<Self, Error> {
         if a.is_zero() {
             return b.try_clone();
         }
