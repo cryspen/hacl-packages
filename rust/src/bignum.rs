@@ -79,19 +79,19 @@ impl HaclBnHandle {
         })
     }
 
-    fn supersized(&self) -> Result<Self, Error> {
+    fn supersize(&self) -> Result<Self, Error> {
         let bitsize = 2 * BN_BITSIZE;
         let byte_length = bitsize / 8;
 
-        let mut big_end_bytes = self.to_vec8()?;
-        big_end_bytes.shrink_to_fit();
-        let be_ptr = big_end_bytes.as_mut_ptr();
-        // Do I need to pad this with a whole bunch of leading zeros.
-        // I hope not.
+        let mut data: [u8; 2 * BigUInt::BN_BYTE_LENGTH] = [0; 2 * BigUInt::BN_BYTE_LENGTH];
+        let old_vec = &self.to_vec8()?;
+        let diff_len = 2 * BigUInt::BN_BYTE_LENGTH - old_vec.len();
+        data[diff_len..].copy_from_slice(old_vec);
+        let data_ptr = data.as_mut_ptr();
 
         let hacl_raw_bn: HaclBnType;
         unsafe {
-            hacl_raw_bn = Hacl_Bignum4096_new_bn_from_bytes_be(byte_length as u32, be_ptr);
+            hacl_raw_bn = Hacl_Bignum4096_new_bn_from_bytes_be(byte_length as u32, data_ptr);
         }
         if hacl_raw_bn.is_null() {
             return Err(Error::HaclError("new_bn_from_bytes".into()));
@@ -284,11 +284,27 @@ impl BigUInt {
         Ok(())
     }
 
-    fn is_supersized(&self) -> bool {
+    fn is_supersize(&self) -> bool {
         match &self.handle {
             None => false,
             Some(h) => h.bitsize > BN_BITSIZE,
         }
+    }
+
+    fn supersize(&mut self) -> Result<Self, Error> {
+        self.ensure_handle()?;
+        let handle = self
+            .handle
+            .as_ref()
+            .expect("supersize: cannot happen")
+            .supersize()?;
+        let zero_one_other = self.zero_one_other;
+
+        Ok(Self {
+            zero_one_other,
+            handle: Some(handle),
+            mont_ctx: None,
+        })
     }
 }
 
@@ -645,12 +661,17 @@ impl PartialOrd for BigUInt {
         if (self.is_one() && other.is_one()) || (self.is_zero() && other.is_zero()) {
             return Some(Equal);
         }
+        if self.is_supersize() != other.is_supersize() {
+            // We can probably do better,
+            // but let's leave the Partial in PartialEq
+            return None;
+        }
         let a_handle = match &self.handle {
-            None => return None,
+            None => return None, // really shouldn't happen
             Some(h) => h.ptr,
         };
         let b_handle = match &other.handle {
-            None => return None,
+            None => return None, // really shouldn't happen
             Some(h) => h.ptr,
         };
 
@@ -823,10 +844,11 @@ impl BigUInt {
         if self.handle.is_none() {
             self.ensure_handle()?;
         }
+        let base = &self.supersize()?;
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let a = base.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
@@ -872,6 +894,7 @@ impl BigUInt {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn test_trim_left_zero() {
         struct TestVector<'a> {
