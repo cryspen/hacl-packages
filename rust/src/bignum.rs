@@ -350,13 +350,6 @@ pub enum Error {
 /// While it can be used for smaller unsigned integers, it
 /// will be wasteful in time and memory for things substantially smaller.
 ///
-/// ## Broken methods
-///
-/// At the moment there is a big known bug stemming from the fact that the HACL
-/// library does not give us a way to create 8192-bit numbers, but sometimes
-/// requires numbers of that type as arguments.
-/// Such methods will be labeled as broken.
-///
 /// ## <a name="mutability"></a>A note on functional mutability
 ///
 /// Many of the methods call for mutable BigUInts.
@@ -711,7 +704,7 @@ impl BigUInt {
 
     /// `(a + b) % self`.
     ///
-    /// This method is [broken](#broken-methods). Do not use.
+    /// This method is not yet tested
     ///
     /// The [mutability](#mutability) doesn't change the numeric values
     /// but is needed for some
@@ -828,8 +821,6 @@ impl BigUInt {
 
     /// `self % modulus`
     ///
-    /// This method is [broken](#broken-methods). Do not use.
-    ///
     /// # Errors
     /// - `UselessModulus` if self < 2 or if self is even.
     /// - `HaclError` if something some Hacl call returned an error
@@ -864,7 +855,7 @@ impl BigUInt {
 
     /// `self = self % modulus`
     ///
-    /// This method is [broken](#broken-methods). Do not use.
+    /// This method is not yet tested.
     ///
     /// self is updated with its modular reduction mod modulus.
     ///
