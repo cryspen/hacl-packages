@@ -388,6 +388,91 @@ pub struct BigUInt {
     zero_one_other: ZeroOneOther,
 }
 
+/// What every BigUInt needs
+pub trait BigIntable {
+    /// creates a [BigUInt] from a slice of bytes representing
+    /// value in big-endian order.
+    fn from_bytes_be(_: &[u8]) -> Result<Self, Error>
+    where
+        Self: std::marker::Sized;
+
+    /// returns a vector of big-endian bytes
+    fn to_vec8(&self) -> Result<Vec<u8>, Error>;
+
+    /// An uppercase hex representation of the big-endian representation
+    /// of the value of `self`.
+    ///
+    /// Output is an uppercase string representing a whole number of bytes,
+    /// but does not include a leading 0 bytes.
+    /// For example a value equivalent to decimal 3053 will yield `0BED`.
+    /// A value of zero will yield `00`.
+    fn to_hex(&self) -> String;
+}
+
+/// A modulus is a [BigUInt] that is to be used as a modulus for
+/// modular arithmetic.
+pub struct Modulus {
+    bn: BigUInt,
+}
+
+impl BigIntable for Modulus {
+    fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
+        // we can't just call BigUInt::from_bytes_be to create a
+        // temporary bn because when that gets dropped bad
+        // the memory pointed to by the handle is freed.
+        if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
+            return Err(Error::BadInputLength);
+        }
+        match one_zero_other(&trim_left_zero(be_bytes)) {
+            ZeroOneOther::Other => {
+                let handle = HaclBnHandle::from_vec8(be_bytes)?;
+                if !&handle.ref_is_odd() {
+                    Err(Error::UselessModulus)
+                } else {
+                    let mont_ctx = MontgomeryContext::from_bn(&handle)?;
+                    let bn = BigUInt {
+                        zero_one_other: ZeroOneOther::Other,
+                        handle: Some(handle),
+                        mont_ctx: Some(mont_ctx),
+                    };
+
+                    Ok(Self { bn })
+                }
+            }
+            _ => Err(Error::UselessModulus),
+        }
+    }
+
+    fn to_vec8(&self) -> Result<Vec<u8>, Error> {
+        self.bn.handle.as_ref().expect("shouldn't happen").to_vec8()
+    }
+
+    /// An uppercase hex representation of the big-endian representation
+    /// of the value of `self`.
+    ///
+    /// Output is an uppercase string representing a whole number of bytes,
+    /// but does not include a leading 0 bytes.
+    /// For example a value equivalent to decimal 3053 will yield `0BED`.
+    /// A value of zero will yield `00`.
+    fn to_hex(&self) -> String {
+        let mut be_bytes = if let Ok(v) = self.to_vec8() {
+            trim_left_zero(&v)
+        } else {
+            return "".to_string();
+        };
+        if be_bytes.len() % 2 == 1 {
+            // There are probably better ways to do this.
+            be_bytes.insert(0, 0_u8);
+        }
+        let tmp_hex = HEXUPPER.encode(&be_bytes);
+        let s = tmp_hex.as_str();
+        match s.strip_prefix("00") {
+            None => s.to_string(),
+            Some(x) => x.to_string(),
+        }
+    }
+}
+
 impl BigUInt {
     //! Constants
 
