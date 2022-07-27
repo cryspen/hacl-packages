@@ -257,11 +257,16 @@ impl BigUInt {
 
     /// If this number is to be used as a modulus in modular arithmetic,
     /// it will be useful to have it set up a Montgomery context.
-    /// This doesn't return a value if all is well, otherwise an error.
+    /// This doesn't a value if all is well, otherwise an error.
     ///
-    /// This is dysfunctional in that it changes the state of self, but
-    /// it doesn't change the value. And we really don't want to compute
-    /// this for every bn.
+    /// This is dysfunctional in that it changes the state of self,
+    /// but the [mutability](#mutability) doesn't change the value
+    /// represented; it merely performs some pre-computation if necessary
+    ///
+    /// # Errors
+    /// - [Error::UselessModulus]: The modulus is either < 2 or is even.
+    /// - [Error::HaclError]: Something went wrong at a deeper level.
+    ///
     pub fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
         if self.mont_ctx.is_some() {
             // cool, this has already be set up
@@ -704,7 +709,7 @@ impl BigUInt {
 
     /// `(a + b) % self`.
     ///
-    /// This method is not yet tested
+    /// The modulus (`self`) must not be even and must not be 1.
     ///
     /// The [mutability](#mutability) doesn't change the numeric values
     /// but is needed for some
@@ -721,6 +726,9 @@ impl BigUInt {
         if self.mont_ctx.is_none() {
             self.precomp_mont_ctx()?;
         }
+        // HACL notes say the caller is responsible for ensuring
+        // that a < n and b < n.
+        // This is where we take on our responsibility
         let a = a.mod_reduce(&mut self)?;
         let b = b.mod_reduce(&mut self)?;
 

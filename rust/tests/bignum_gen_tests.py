@@ -1,6 +1,5 @@
 # A place to generate some test data for bignum
 
-from ast import Num
 from random import randint
 
 from numpy import append
@@ -57,8 +56,43 @@ def create_rand_reductions(count: int) -> list[ReductionTriple]:
     return tests
 
 
+class ModAddQuad:
+    def __init__(self, a: int, b: int, modulus: int):
+        self.a: int = a
+        self.b: int = b
+        self.modulus: int = modulus
+
+        if self.modulus % 2 == 0:
+            self.modulus += 1
+        self.result: int = (self.a + self.b) % self.modulus
+
+    def __str__(self) -> str:
+        s = f'''\tTestVector{{
+            a: "{u_hex(self.a)}",
+            b: "{u_hex(self.b)}",
+            m: "{u_hex(self.modulus)}",
+            expected: "{u_hex(self.result)}",
+        }},
+        '''
+
+        return s
+
+
+def create_mod_add(count: int) -> list[ModAddQuad]:
+    tests: list[ModAddQuad] = []
+    for _ in range(count):
+        a = rand()
+        b = rand()
+        m = rand()
+        quad = ModAddQuad(a, b,  m)
+        tests.append(quad)
+
+    return tests
+
+
 def main():
-    r_list = create_rand_reductions(5)
+    # r_list = create_rand_reductions(5)
+    r_list = create_mod_add(5)
     for r in r_list:
         print(r, end='')
 
