@@ -473,6 +473,59 @@ impl BigIntable for Modulus {
     }
 }
 
+impl Modulus {
+    /// `number % self`
+    pub fn reduce(&mut self, number: &mut BigUInt) -> Result<BigUInt, Error> {
+        if number.handle.is_none() {
+            number.ensure_handle()?;
+        }
+        let a = &number.supersize()?;
+
+        let handle = HaclBnHandle::new(BN_BITSIZE)?;
+
+        let a = a.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let k = self.bn.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        unsafe {
+            Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
+        }
+
+        let zero_one_other = handle.zero_one_other()?;
+        Ok(BigUInt {
+            zero_one_other,
+            handle: Some(handle),
+            mont_ctx: None,
+        })
+    }
+
+    /// Creates a new [Modulus] from a [BigUInt]
+    ///
+    /// # Errors
+    ///
+    /// - [Error::UselessModulus] if argument is < 2, is even, or is supersized.
+    /// - Any variety of [Error::HaclError] or other errors that can arise from trying to allocate a new [BigIntable].
+    pub fn from_biguint(src_bn: &BigUInt) -> Result<Self, Error> {
+        if src_bn.zero_one_other != ZeroOneOther::Other {
+            return Err(Error::UselessModulus);
+        }
+        if src_bn.handle.is_none() {
+            return Err(Error::ShouldNotHappen);
+        }
+        if !src_bn.is_odd()? {
+            return Err(Error::UselessModulus);
+        }
+        if src_bn.is_supersize() {
+            return Err(Error::UselessModulus);
+        }
+
+        // Sadly we have to re-allocate the same data to be able
+        // to use the safety we get from dropping.
+        let mut bn = src_bn.try_clone()?;
+        bn.precomp_mont_ctx()?;
+
+        Ok(Self { bn })
+    }
+}
+
 impl BigUInt {
     //! Constants
 
