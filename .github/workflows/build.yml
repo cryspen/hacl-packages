@@ -221,7 +221,7 @@ jobs:
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
-          args: --ndk $ANDROID_NDK_HOME
+          args: --ndk $ANDROID_NDK_LATEST_HOME
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
