@@ -474,6 +474,16 @@ impl BigIntable for Modulus {
 }
 
 impl Modulus {
+    /// The argument is upper case hex [str]
+    /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
+    /// which represents a big-endian sequence of bytes.
+    pub fn from_hex(s: &str) -> Result<Self, Error> {
+        let be_bytes = HEXUPPER_PERMISSIVE
+            .decode(s.as_bytes())
+            .map_err(Error::Decoding)?;
+        Self::from_bytes_be(&be_bytes)
+    }
+
     /// `number % self`
     pub fn reduce(&mut self, number: &mut BigUInt) -> Result<BigUInt, Error> {
         if number.handle.is_none() {
@@ -523,6 +533,36 @@ impl Modulus {
         bn.precomp_mont_ctx()?;
 
         Ok(Self { bn })
+    }
+
+    /// (a + b) % self
+    pub fn add(mut self, a: &mut BigUInt, b: &mut BigUInt) -> Result<BigUInt, Error> {
+        if a.is_zero() {
+            return b.try_clone();
+        }
+        if b.is_zero() {
+            return a.try_clone();
+        }
+        // HACL notes say the caller is responsible for ensuring
+        // that a < n and b < n.
+        // This is where we take on our responsibility
+        let a = self.reduce(a)?;
+        let b = self.reduce(b)?;
+
+        let result_handle = HaclBnHandle::new(BN_BITSIZE)?;
+
+        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let nh = self.bn.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+
+        unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
+        let zero_one_other = result_handle.zero_one_other()?;
+
+        Ok(BigUInt {
+            zero_one_other,
+            handle: Some(result_handle),
+            mont_ctx: None,
+        })
     }
 }
 

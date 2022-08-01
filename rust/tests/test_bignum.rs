@@ -3,7 +3,7 @@ mod test_util;
 use regex::Regex;
 use std::fmt;
 
-use hacl_rust::bignum::BigUInt;
+use hacl_rust::bignum::{BigUInt, Modulus};
 
 use data_encoding::HEXUPPER;
 use rand::prelude::SmallRng;
@@ -682,10 +682,10 @@ fn test_add_mod() {
     for (i, t) in tests.iter().enumerate() {
         let mut a = BigUInt::from_hex(t.a).unwrap();
         let mut b = BigUInt::from_hex(t.b).unwrap();
-        let modulus = BigUInt::from_hex(t.m).unwrap();
+        let modulus = Modulus::from_hex(t.m).unwrap();
         let expected = BigUInt::from_hex(t.expected).unwrap();
 
-        let result = modulus.modadd(&mut a, &mut b).expect("add_mod() failed");
+        let result = modulus.add(&mut a, &mut b).expect("add_mod() failed");
 
         // we need to get the hex version of the result in case we need to report
         // it in a test failure.
