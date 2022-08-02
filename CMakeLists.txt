@@ -293,6 +293,13 @@ endif()
 # Write configuration
 configure_file(config/Config.h.in config.h)
 
+# Coverage
+if(ENABLE_COVERAGE)
+    message(STATUS "Coverage instrumentation enabled")
+    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
+endif()
+
 # Sanitizer
 if(ENABLE_ASAN)
     add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
@@ -382,6 +389,12 @@ if(ENABLE_TESTS)
         add_executable(${TEST_NAME}
             ${TEST_FILE}
         )
+
+        # Coverage
+        if(ENABLE_COVERAGE)
+            target_compile_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+            target_link_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+        endif()
 
         # Be nice to MSVC and make sure we don't have variable length arrays in
         # tests
