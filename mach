@@ -17,7 +17,9 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import config_cache, subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
+from tools.utils import config_cache, subcommand, argument, json_config, \
+    dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd, \
+    coverage_dependency_check
 from tools.test import run_tests
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
@@ -267,6 +269,9 @@ def build(args):
         if windows:
             print("The `--coverage` flag is not supported on Windows.")
             exit(1)
+
+        # Check that `lcov` and `genhtml` are installed (and callable).
+        coverage_dependency_check()
 
         if "clang" in compiler and "clang++" in compiler_cxx:
             cmake_args.append("-DENABLE_COVERAGE=ON")

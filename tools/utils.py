@@ -107,3 +107,13 @@ def dependency_check():
     # check_cmd("clang")
     print()
     Path(config_check_file()).touch()
+
+
+def coverage_dependency_check():
+    """
+    Check that `lcov`, and `genhtml` are installed (and callable).
+    """
+
+    check_cmd("lcov")
+    check_cmd("genhtml")
+    print()
