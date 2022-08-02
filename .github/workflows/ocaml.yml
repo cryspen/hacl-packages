@@ -4,7 +4,26 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
   pull_request:
+    # Can't use an YAML anchor because "Anchors are not currently supported." (GitHub 12/07/2022)
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
   workflow_dispatch:
 
 jobs:
