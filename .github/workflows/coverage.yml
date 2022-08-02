@@ -1,0 +1,74 @@
+name: Test Coveralls
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
+  pull_request:
+    # Can't use an YAML anchor because "Anchors are not currently supported." (GitHub 12/07/2022)
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | Install Ninja
+        run: sudo apt-get install ninja-build
+
+      - name: Setup | Install Clang
+        run: |
+          sudo apt-get install clang-11
+          echo "CC=clang-11" >> $GITHUB_ENV
+          echo "CXX=clang++-11" >> $GITHUB_ENV
+
+      - name: Setup | Install LCOV
+        run: sudo apt-get install lcov
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
+        with:
+          bits: 64
+          args: --coverage
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
+        with:
+          bits: 64
+          args: --coverage
+
+      - name: Generate reports
+        run: |
+          export PATH=/usr/lib/llvm-11/bin:$PATH
+          chmod +x ./tools/coverage.sh
+          ./tools/coverage.sh
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: build/Debug/coverage/full/full.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
