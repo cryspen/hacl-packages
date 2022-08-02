@@ -80,15 +80,15 @@ def mprint(*args, **kwargs):
 
 
 def check_cmd(cmd):
-    mprint("Found ", end="")
-    # XXX: capture_output=True would be nice but is only available in >Python3.6
-    return_code = subprocess.run([cmd, '--version']).returncode
-    if return_code == 0:
-        print("%s" % cmd, end="  ")
-    else:
-        print()
+    mprint(f"Probing for {cmd}: ", end="")
+    try:
+        subprocess.check_call(
+            [cmd, '--version'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(f"Found")
+    except:
+        print("Not found (!)")
         mprint(
-            '! Please make sure that "%s" is installed and in your path.' % (cmd))
+            f'Error: Please make sure that "{cmd}" is installed and in your PATH.')
         exit(1)
 
 
