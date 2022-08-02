@@ -156,8 +156,18 @@ def build(args):
         cxxflags.append("-m32")
         m32 = True
 
+    if "CC" not in os.environ:
+        print('Please set the "CC" environment variable, e.g., `export CC=...`.')
+        exit(1)
+
+    if "CXX" not in os.environ:
+        print('Please set the "CXX" environment variable, e.g., `export CXX=...`.')
+        exit(1)
+
     # Our default compiler is clang.
-    compiler = os.getenv('CC', 'clang')
+    compiler = os.getenv('CC')
+    compiler_cxx = os.getenv('CXX')
+
     windows = False
 
     # Select the source folder to use (regular, c89, msvc)
