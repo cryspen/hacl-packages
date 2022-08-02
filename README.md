@@ -150,6 +150,17 @@ packages.
 
 Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 
+### Measure Test Coverage
+
+Additional tools are required to measure (and view) test coverage.
+Make sure you have `lcov` and `genhtml`.
+
+For Ubuntu these can be installed via ...
+
+```sh
+$ sudo apt install lcov
+```
+
 ### Dependencies
 
 Tests require the [nlohmann_json] package to read json test files.
