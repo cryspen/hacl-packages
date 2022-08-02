@@ -72,7 +72,9 @@ def install(args):
                       action='store_true'),
              argument(
                  "-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),
-             argument("--no-build", help="Don't actually build (don't run ninja).", action='store_true')])
+             argument(
+                 "--no-build", help="Don't actually build (don't run ninja).", action='store_true'),
+             argument("--coverage", help="Build with coverage instrumentation.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
 
@@ -111,6 +113,7 @@ def build(args):
         - sanitizer
         - edition
         - disable
+        - coverage
     """
     cmake_args = []
     # Verbosity
@@ -252,6 +255,19 @@ def build(args):
 
     # if verbose:
     #     cmake_args.extend(["--debug-output", "--trace"])
+
+    # Check if we want to compile with coverage information.
+    if args.coverage:
+        if windows:
+            print("The `--coverage` flag is not supported on Windows.")
+            exit(1)
+
+        if "clang" in compiler and "clang++" in compiler_cxx:
+            cmake_args.append("-DENABLE_COVERAGE=ON")
+        else:
+            print(
+                f"Coverage measurement is only supported with clang/clang++ but compilers were {compiler}/{compiler_cxx}.")
+            exit(1)
 
     if len(cflags) != 0:
         cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
