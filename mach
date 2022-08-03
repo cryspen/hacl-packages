@@ -161,17 +161,8 @@ def build(args):
         cxxflags.append("-m32")
         m32 = True
 
-    if "CC" not in os.environ:
-        print('Please set the "CC" environment variable, e.g., `export CC=...`.')
-        exit(1)
-
-    if "CXX" not in os.environ:
-        print('Please set the "CXX" environment variable, e.g., `export CXX=...`.')
-        exit(1)
-
     # Our default compiler is clang.
-    compiler = os.getenv('CC')
-    compiler_cxx = os.getenv('CXX')
+    compiler = os.getenv('CC', "clang")
 
     windows = False
 
@@ -267,12 +258,7 @@ def build(args):
         # Check that `lcov` and `genhtml` are installed (and callable).
         coverage_dependency_check()
 
-        if "clang" in compiler and "clang++" in compiler_cxx:
-            cmake_args.append("-DENABLE_COVERAGE=ON")
-        else:
-            print(
-                f"Coverage measurement is only supported with clang/clang++ but compilers were {compiler}/{compiler_cxx}.")
-            exit(1)
+        cmake_args.append("-DENABLE_COVERAGE=ON")
 
     if len(cflags) != 0:
         cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
