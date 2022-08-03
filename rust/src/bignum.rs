@@ -242,13 +242,13 @@ impl BigUInt {
     /// Allocates new memory with a new pointer to that memory
     pub fn try_clone(&self) -> Result<Self, Error> {
         if self.is_one() || self.is_zero() {
-            return Ok(BigUInt {
-                zero_one_other: self.zero_one_other,
+            return Ok(BigUInt(BUI {
+                zero_one_other: self.0.zero_one_other,
                 mont_ctx: None,
                 handle: None,
-            });
+            }));
         }
-        let old_handle = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let old_handle = self.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let be_bytes = &mut [0_u8; 512];
         unsafe { Hacl_Bignum4096_bn_to_bytes_be(old_handle, be_bytes.as_mut_ptr()) }
 
@@ -268,29 +268,29 @@ impl BigUInt {
     /// - [Error::HaclError]: Something went wrong at a deeper level.
     ///
     pub fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
-        if self.mont_ctx.is_some() {
+        if self.0.mont_ctx.is_some() {
             // cool, this has already be set up
             return Ok(());
         }
-        if self.zero_one_other != ZeroOneOther::Other {
+        if self.0.zero_one_other != ZeroOneOther::Other {
             return Err(Error::UselessModulus);
         }
         if !self.is_odd()? {
             return Err(Error::UselessModulus);
         }
 
-        let ctx: MontgomeryContext = match &self.handle {
+        let ctx: MontgomeryContext = match &self.0.handle {
             None => return Err(Error::NoHandle),
             Some(h) => MontgomeryContext::from_bn(h)?,
         };
 
-        self.mont_ctx = Some(ctx);
+        self.0.mont_ctx = Some(ctx);
 
         Ok(())
     }
 
     fn is_supersize(&self) -> bool {
-        match &self.handle {
+        match &self.0.handle {
             None => false,
             Some(h) => h.bitsize > BN_BITSIZE,
         }
@@ -299,17 +299,18 @@ impl BigUInt {
     fn supersize(&mut self) -> Result<Self, Error> {
         self.ensure_handle()?;
         let handle = self
+            .0
             .handle
             .as_ref()
             .expect("supersize: cannot happen")
             .supersize()?;
-        let zero_one_other = self.zero_one_other;
+        let zero_one_other = self.0.zero_one_other;
 
-        Ok(Self {
+        Ok(Self(BUI {
             zero_one_other,
             handle: Some(handle),
             mont_ctx: None,
-        })
+        }))
     }
 }
 
@@ -375,8 +376,14 @@ pub enum Error {
 /// as additional precautions.
 ///
 /// [mutability]: #a-note-on-functional-mutability
+pub struct BigUInt(BUI);
+
+/// A modulus is a [BigUInt] that is to be used as a modulus for
+/// modular arithmetic.
+pub struct Modulus(BUI);
+
 #[derive(Debug)]
-pub struct BigUInt {
+struct BUI {
     // There does not appear to be a way to get the size of a hacl_Bignum
     // So we will keep this very unsafe pointer around.
     handle: Option<HaclBnHandle>,
@@ -409,12 +416,6 @@ pub trait BigIntable {
     fn to_hex(&self) -> String;
 }
 
-/// A modulus is a [BigUInt] that is to be used as a modulus for
-/// modular arithmetic.
-pub struct Modulus {
-    bn: BigUInt,
-}
-
 impl BigIntable for Modulus {
     fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
         // we can't just call BigUInt::from_bytes_be to create a
@@ -430,13 +431,13 @@ impl BigIntable for Modulus {
                     Err(Error::UselessModulus)
                 } else {
                     let mont_ctx = MontgomeryContext::from_bn(&handle)?;
-                    let bn = BigUInt {
+                    let bui = BUI {
                         zero_one_other: ZeroOneOther::Other,
                         handle: Some(handle),
                         mont_ctx: Some(mont_ctx),
                     };
 
-                    Ok(Self { bn })
+                    Ok(Self(bui))
                 }
             }
             _ => Err(Error::UselessModulus),
@@ -444,7 +445,7 @@ impl BigIntable for Modulus {
     }
 
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
-        self.bn.handle.as_ref().expect("shouldn't happen").to_vec8()
+        self.0.handle.as_ref().expect("shouldn't happen").to_vec8()
     }
 
     /// An uppercase hex representation of the big-endian representation
@@ -486,25 +487,25 @@ impl Modulus {
 
     /// `number % self`
     pub fn reduce(&mut self, number: &mut BigUInt) -> Result<BigUInt, Error> {
-        if number.handle.is_none() {
+        if number.0.handle.is_none() {
             number.ensure_handle()?;
         }
         let a = &number.supersize()?;
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = a.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
-        let k = self.bn.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let a = a.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let k = self.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
         }
 
         let zero_one_other = handle.zero_one_other()?;
-        Ok(BigUInt {
+        Ok(BigUInt(BUI {
             zero_one_other,
             handle: Some(handle),
             mont_ctx: None,
-        })
+        }))
     }
 
     /// Creates a new [Modulus] from a [BigUInt]
@@ -514,10 +515,10 @@ impl Modulus {
     /// - [Error::UselessModulus] if argument is < 2, is even, or is supersized.
     /// - Any variety of [Error::HaclError] or other errors that can arise from trying to allocate a new [BigIntable].
     pub fn from_biguint(src_bn: &BigUInt) -> Result<Self, Error> {
-        if src_bn.zero_one_other != ZeroOneOther::Other {
+        if src_bn.0.zero_one_other != ZeroOneOther::Other {
             return Err(Error::UselessModulus);
         }
-        if src_bn.handle.is_none() {
+        if src_bn.0.handle.is_none() {
             return Err(Error::ShouldNotHappen);
         }
         if !src_bn.is_odd()? {
@@ -532,7 +533,7 @@ impl Modulus {
         let mut bn = src_bn.try_clone()?;
         bn.precomp_mont_ctx()?;
 
-        Ok(Self { bn })
+        Ok(Self { 0: bn.0 })
     }
 
     /// (a + b) % self
@@ -551,18 +552,18 @@ impl Modulus {
 
         let result_handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
-        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
-        let nh = self.bn.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let ah = a.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let bh = b.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let nh = self.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
 
         unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
         let zero_one_other = result_handle.zero_one_other()?;
 
-        Ok(BigUInt {
+        Ok(BigUInt(BUI {
             zero_one_other,
             handle: Some(result_handle),
             mont_ctx: None,
-        })
+        }))
     }
 }
 
@@ -570,18 +571,18 @@ impl BigUInt {
     //! Constants
 
     /// A BigUint representing the value 1
-    pub const ONE: BigUInt = BigUInt {
+    pub const ONE: BigUInt = BigUInt(BUI {
         zero_one_other: ZeroOneOther::One,
         handle: None,
         mont_ctx: None,
-    };
+    });
 
     /// A BigUint representing the value 0
-    pub const ZERO: BigUInt = BigUInt {
+    pub const ZERO: BigUInt = BigUInt(BUI {
         zero_one_other: ZeroOneOther::Zero,
         handle: None,
         mont_ctx: None,
-    };
+    });
 
     /// The maximum number of bytes in the byte vector representation of the value
     pub const BN_BYTE_LENGTH: usize = BN_BITSIZE / 8;
@@ -623,7 +624,7 @@ impl PartialEq for BigUInt {
 
         // Now that we've dealt with all of the ones and zero cases
         // we treat comparison of anything without a handle to be false
-        let a_handle = match &self.handle {
+        let a_handle = match &self.0.handle {
             None => return false,
             Some(x) => x.ptr,
         };
@@ -631,7 +632,7 @@ impl PartialEq for BigUInt {
             return false;
         }
 
-        let b_handle = match &other.handle {
+        let b_handle = match &other.0.handle {
             None => return false,
             Some(x) => x.ptr,
         };
@@ -708,9 +709,11 @@ impl BigUInt {
             ZeroOneOther::Other => {
                 let handle = HaclBnHandle::from_vec8(be_bytes)?;
                 Ok(Self {
-                    zero_one_other: ZeroOneOther::Other,
-                    handle: Some(handle),
-                    mont_ctx: None,
+                    0: BUI {
+                        zero_one_other: ZeroOneOther::Other,
+                        handle: Some(handle),
+                        mont_ctx: None,
+                    },
                 })
             }
         }
@@ -723,12 +726,12 @@ impl BigUInt {
     /// - `NoHandle`. Somehow or other self never got its HACL bn pointer set up.
     /// - `HaclError`. The call to the HACL function returned an unspecified error. Probably memory allocation problem.
     pub fn to_vec8(&self) -> Result<Vec<u8>, Error> {
-        match self.zero_one_other {
+        match self.0.zero_one_other {
             ZeroOneOther::One => Ok(VEC_ONE.to_vec()),
             ZeroOneOther::Zero => Ok(VEC_ZERO.to_vec()),
             ZeroOneOther::Other => {
                 // The handle better be good if we aren't zero or one
-                let handle = self.handle.as_ref().ok_or(Error::NoHandle)?;
+                let handle = self.0.handle.as_ref().ok_or(Error::NoHandle)?;
                 handle.to_vec8()
             }
         }
@@ -791,16 +794,16 @@ impl BigUInt {
     /// - [Error::NoHandle] if not 0 or 1 and there is no handle in place.
     #[allow(dead_code)]
     fn ensure_handle(&mut self) -> Result<(), Error> {
-        if self.handle.is_some() {
+        if self.0.handle.is_some() {
             return Ok(());
         }
-        match self.zero_one_other {
+        match self.0.zero_one_other {
             ZeroOneOther::One => {
-                self.handle = Some(HaclBnHandle::from_vec8(&VEC_ONE)?);
+                self.0.handle = Some(HaclBnHandle::from_vec8(&VEC_ONE)?);
                 Ok(())
             }
             ZeroOneOther::Zero => {
-                self.handle = Some(HaclBnHandle::from_vec8(&VEC_ZERO)?);
+                self.0.handle = Some(HaclBnHandle::from_vec8(&VEC_ZERO)?);
                 Ok(())
             }
             ZeroOneOther::Other => Err(Error::NoHandle),
@@ -812,7 +815,7 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::One
+        self.0.zero_one_other == ZeroOneOther::One
     }
     /// returns a BigUInt representing the value 1.
     pub fn one() -> Self {
@@ -824,7 +827,7 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::Zero
+        self.0.zero_one_other == ZeroOneOther::Zero
     }
     /// returns a BigUInt representing the value 0.
     pub fn zero() -> Self {
@@ -842,11 +845,11 @@ impl PartialOrd for BigUInt {
             // but let's leave the Partial in PartialEq
             return None;
         }
-        let a_handle = match &self.handle {
+        let a_handle = match &self.0.handle {
             None => return None, // really shouldn't happen
             Some(h) => h.ptr,
         };
-        let b_handle = match &other.handle {
+        let b_handle = match &other.0.handle {
             None => return None, // really shouldn't happen
             Some(h) => h.ptr,
         };
@@ -875,10 +878,10 @@ impl BigUInt {
 
     /// (self % 2) == 1
     pub fn is_odd(&self) -> Result<bool, Error> {
-        match self.zero_one_other {
+        match self.0.zero_one_other {
             ZeroOneOther::One => Ok(true),
             ZeroOneOther::Zero => Ok(false),
-            _ => match &self.handle {
+            _ => match &self.0.handle {
                 None => Err(Error::NoHandle),
                 Some(h) => Ok(h.ref_is_odd()),
             },
@@ -901,7 +904,7 @@ impl BigUInt {
             return a.try_clone();
         }
 
-        if self.mont_ctx.is_none() {
+        if self.0.mont_ctx.is_none() {
             self.precomp_mont_ctx()?;
         }
         // HACL notes say the caller is responsible for ensuring
@@ -912,17 +915,19 @@ impl BigUInt {
 
         let result_handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let ah = a.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
-        let bh = b.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
-        let nh = self.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let ah = a.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let bh = b.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
+        let nh = self.0.handle.as_ref().ok_or(Error::ShouldNotHappen)?.ptr;
 
         unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
         let zero_one_other = result_handle.zero_one_other()?;
 
         Ok(Self {
-            zero_one_other,
-            handle: Some(result_handle),
-            mont_ctx: None,
+            0: BUI {
+                zero_one_other,
+                handle: Some(result_handle),
+                mont_ctx: None,
+            },
         })
     }
 
@@ -973,8 +978,8 @@ impl BigUInt {
 
         // let's get the Hacl parameters (and with the names used by HACL)
         // a^b mod n into res or a^b montgomery_mod k into res
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
-        let b = exponent.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let a = self.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let b = exponent.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
 
         // I still can't find a way to get the size of Hacl bignnums, so will
         // just use the maximum
@@ -987,11 +992,11 @@ impl BigUInt {
         // going to be done even if we use Hacl_Bignum4096_mod_exp_consttime
         // but we won't get to keep that around unless we explicitly compute it.
         //
-        if modulus.mont_ctx.is_none() {
+        if modulus.0.mont_ctx.is_none() {
             modulus.precomp_mont_ctx()?;
         }
 
-        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let k = modulus.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_exp_consttime_precomp(k, a, bBits as u32, b, handle.ptr);
         }
@@ -999,9 +1004,11 @@ impl BigUInt {
         let zero_one_other = handle.zero_one_other()?;
 
         Ok(Self {
-            zero_one_other,
-            handle: Some(handle),
-            mont_ctx: None,
+            0: BUI {
+                zero_one_other,
+                handle: Some(handle),
+                mont_ctx: None,
+            },
         })
     }
 
@@ -1014,28 +1021,30 @@ impl BigUInt {
     /// Despite the [mutability](#mutability) of `self` and `modulus`
     /// their numeric values don't change.
     pub fn mod_reduce(&mut self, modulus: &mut Self) -> Result<Self, Error> {
-        if modulus.mont_ctx.is_none() {
+        if modulus.0.mont_ctx.is_none() {
             modulus.precomp_mont_ctx()?;
         }
 
-        if self.handle.is_none() {
+        if self.0.handle.is_none() {
             self.ensure_handle()?;
         }
         let base = &self.supersize()?;
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = base.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
-        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let a = base.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let k = modulus.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
         }
 
         let zero_one_other = handle.zero_one_other()?;
         Ok(Self {
-            zero_one_other,
-            handle: Some(handle),
-            mont_ctx: None,
+            0: BUI {
+                zero_one_other,
+                handle: Some(handle),
+                mont_ctx: None,
+            },
         })
     }
 
@@ -1048,21 +1057,21 @@ impl BigUInt {
     /// modulus does not have its value changed despite its mutability which is
     /// used for updating some precomputation if needed.
     pub fn mod_reduce_mut(&mut self, modulus: &mut Self) -> Result<(), Error> {
-        if modulus.mont_ctx.is_none() {
+        if modulus.0.mont_ctx.is_none() {
             modulus.precomp_mont_ctx()?;
         }
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
 
-        let a = self.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
-        let k = modulus.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
+        let a = self.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
+        let k = modulus.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
             Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
         }
 
-        self.zero_one_other = handle.zero_one_other()?;
-        self.handle = Some(handle);
-        self.mont_ctx = None;
+        self.0.zero_one_other = handle.zero_one_other()?;
+        self.0.handle = Some(handle);
+        self.0.mont_ctx = None;
 
         Ok(())
     }
