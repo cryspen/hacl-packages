@@ -47,7 +47,7 @@ jobs:
         run: sudo apt-get install lcov
 
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: mach | Build
         uses: ./.github/actions/mach_build
@@ -64,7 +64,6 @@ jobs:
       - name: Generate reports
         run: |
           export PATH=/usr/lib/llvm-11/bin:$PATH
-          chmod +x ./tools/coverage.sh
           ./tools/coverage.sh
 
       - name: Coveralls
