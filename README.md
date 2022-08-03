@@ -157,6 +157,7 @@ Test coverage in HACL Packages can be measured with ...
 ```sh
 ./mach build --coverage
 ./mach test --coverage
+./tools/coverage.sh
 ```
 
 Note that only clang is supported as a compiler and you may get an error ...
@@ -181,6 +182,12 @@ For Ubuntu these can be installed via ...
 
 ```sh
 $ sudo apt install lcov
+```
+
+When everything went well you should be able to view the coverage reports with, e.g., ...
+
+```sh
+firefox build/Debug/coverage/full/html/index.html
 ```
 
 ### Dependencies
