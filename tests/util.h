@@ -60,3 +60,15 @@ compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
   }
   return ok;
 }
+
+std::vector<bytes> split_vector_randomly(const bytes data) {
+  // FIXME: Make this random :P
+  std::vector<bytes> out;
+  for (auto c : data) {
+    std::vector<uint8_t> chunk;
+    chunk.push_back(c);
+    out.push_back(chunk);
+  }
+
+  return out;
+}
