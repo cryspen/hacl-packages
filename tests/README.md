@@ -29,6 +29,10 @@ The test vectors are from [Project Wycheproof].
 
 The test vectors are from [Project Wycheproof].
 
+## poly1305
+
+The test vectors are from [RFC8439] and [Adiantum].
+
 ## rsapss
 
 The test vectors are from [Project Wycheproof].
@@ -51,3 +55,5 @@ The test vectors are from [Project Wycheproof].
 [emilbayes/blake2b]: https://github.com/emilbayes/blake2b/blob/master/test-vectors.json
 [NIST's Cryptographic Algorithm Validation Program]: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing
 [Project Wycheproof]: https://github.com/google/wycheproof/tree/2196000605e45d91097147c9c71f26b72af58003
+[Adiantum]: https://github.com/google/adiantum
+[RFC8439]: https://datatracker.ietf.org/doc/html/rfc8439#appendix-A.3
