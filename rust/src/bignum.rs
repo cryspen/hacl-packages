@@ -242,7 +242,7 @@ impl BigUInt {
     /// Allocates new memory with a new pointer to that memory
     pub fn try_clone(&self) -> Result<Self, Error> {
         if self.is_one() || self.is_zero() {
-            return Ok(BigUInt(BUI {
+            return Ok(BigUInt(Bui {
                 zero_one_other: self.0.zero_one_other,
                 mont_ctx: None,
                 handle: None,
@@ -306,7 +306,7 @@ impl BigUInt {
             .supersize()?;
         let zero_one_other = self.0.zero_one_other;
 
-        Ok(Self(BUI {
+        Ok(Self(Bui {
             zero_one_other,
             handle: Some(handle),
             mont_ctx: None,
@@ -376,14 +376,14 @@ pub enum Error {
 /// as additional precautions.
 ///
 /// [mutability]: #a-note-on-functional-mutability
-pub struct BigUInt(BUI);
+pub struct BigUInt(Bui);
 
 /// A modulus is a [BigUInt] that is to be used as a modulus for
 /// modular arithmetic.
-pub struct Modulus(BUI);
+pub struct Modulus(Bui);
 
 #[derive(Debug)]
-struct BUI {
+struct Bui {
     // There does not appear to be a way to get the size of a hacl_Bignum
     // So we will keep this very unsafe pointer around.
     handle: Option<HaclBnHandle>,
@@ -431,7 +431,7 @@ impl BigIntable for Modulus {
                     Err(Error::UselessModulus)
                 } else {
                     let mont_ctx = MontgomeryContext::from_bn(&handle)?;
-                    let bui = BUI {
+                    let bui = Bui {
                         zero_one_other: ZeroOneOther::Other,
                         handle: Some(handle),
                         mont_ctx: Some(mont_ctx),
@@ -486,7 +486,7 @@ impl Modulus {
     }
 
     /// `number % self`
-    pub fn reduce(&mut self, number: &mut BigUInt) -> Result<BigUInt, Error> {
+    pub fn reduce(&self, number: &mut BigUInt) -> Result<BigUInt, Error> {
         if number.0.handle.is_none() {
             number.ensure_handle()?;
         }
@@ -501,7 +501,7 @@ impl Modulus {
         }
 
         let zero_one_other = handle.zero_one_other()?;
-        Ok(BigUInt(BUI {
+        Ok(BigUInt(Bui {
             zero_one_other,
             handle: Some(handle),
             mont_ctx: None,
@@ -533,11 +533,11 @@ impl Modulus {
         let mut bn = src_bn.try_clone()?;
         bn.precomp_mont_ctx()?;
 
-        Ok(Self { 0: bn.0 })
+        Ok(Self(bn.0))
     }
 
     /// (a + b) % self
-    pub fn add(mut self, a: &mut BigUInt, b: &mut BigUInt) -> Result<BigUInt, Error> {
+    pub fn add(self, a: &mut BigUInt, b: &mut BigUInt) -> Result<BigUInt, Error> {
         if a.is_zero() {
             return b.try_clone();
         }
@@ -559,7 +559,7 @@ impl Modulus {
         unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
         let zero_one_other = result_handle.zero_one_other()?;
 
-        Ok(BigUInt(BUI {
+        Ok(BigUInt(Bui {
             zero_one_other,
             handle: Some(result_handle),
             mont_ctx: None,
@@ -571,14 +571,14 @@ impl BigUInt {
     //! Constants
 
     /// A BigUint representing the value 1
-    pub const ONE: BigUInt = BigUInt(BUI {
+    pub const ONE: BigUInt = BigUInt(Bui {
         zero_one_other: ZeroOneOther::One,
         handle: None,
         mont_ctx: None,
     });
 
     /// A BigUint representing the value 0
-    pub const ZERO: BigUInt = BigUInt(BUI {
+    pub const ZERO: BigUInt = BigUInt(Bui {
         zero_one_other: ZeroOneOther::Zero,
         handle: None,
         mont_ctx: None,
@@ -708,13 +708,11 @@ impl BigUInt {
             ZeroOneOther::Zero => Ok(BigUInt::ZERO),
             ZeroOneOther::Other => {
                 let handle = HaclBnHandle::from_vec8(be_bytes)?;
-                Ok(Self {
-                    0: BUI {
+                Ok(Self(Bui {
                         zero_one_other: ZeroOneOther::Other,
                         handle: Some(handle),
                         mont_ctx: None,
-                    },
-                })
+                    }))
             }
         }
     }
@@ -922,13 +920,11 @@ impl BigUInt {
         unsafe { Hacl_Bignum4096_add_mod(nh, ah, bh, result_handle.ptr) }
         let zero_one_other = result_handle.zero_one_other()?;
 
-        Ok(Self {
-            0: BUI {
+        Ok(Self(Bui {
                 zero_one_other,
                 handle: Some(result_handle),
                 mont_ctx: None,
-            },
-        })
+            }))
     }
 
     pub fn modpow(&self, exponent: &Self, modulus: &mut Self) -> Result<Self, Error> {
@@ -1003,13 +999,11 @@ impl BigUInt {
 
         let zero_one_other = handle.zero_one_other()?;
 
-        Ok(Self {
-            0: BUI {
+        Ok(Self(Bui {
                 zero_one_other,
                 handle: Some(handle),
                 mont_ctx: None,
-            },
-        })
+            }))
     }
 
     /// `self % modulus`
@@ -1039,13 +1033,11 @@ impl BigUInt {
         }
 
         let zero_one_other = handle.zero_one_other()?;
-        Ok(Self {
-            0: BUI {
+        Ok(Self(Bui {
                 zero_one_other,
                 handle: Some(handle),
                 mont_ctx: None,
-            },
-        })
+            }))
     }
 
     /// `self = self % modulus`
