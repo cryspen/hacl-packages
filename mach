@@ -52,6 +52,7 @@ def install(args):
              argument("--tests", help="Build tests.", action='store_true'),
              argument("--test", help="Build and run tests.",
                       action='store_true'),
+             argument("--benchmarks", help="Build benchmarks.", action='store_true'),
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
              argument("-a", "--algorithms",
@@ -238,6 +239,11 @@ def build(args):
         cmake_args.extend(features_to_disable)
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
+    if args.benchmarks:
+        if args.tests or args.test:
+            print("! Benchmarks can't be built at the same time as tests for now. See #115")
+            exit(1)
+        cmake_args.append("-DENABLE_BENCHMARKS=ON")
     if args.sanitizer:
         if windows:
             print("! Sanitizers are not supporte on Windows.")
