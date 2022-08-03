@@ -7,14 +7,20 @@ typedef std::vector<uint8_t> bytes;
 std::vector<uint8_t>
 from_hex(const std::string& hex)
 {
-  if (hex.length() % 2 == 1) {
+  // Create a copy of hex ...
+  auto hex_copy = hex;
+  // ... without whitespace.
+  hex_copy.erase(remove_if(hex_copy.begin(), hex_copy.end(), isspace),
+                 hex_copy.end());
+
+  if (hex_copy.length() % 2 == 1) {
     throw std::invalid_argument("Odd-length hex string");
   }
 
-  int len = static_cast<int>(hex.length()) / 2;
+  int len = static_cast<int>(hex_copy.length()) / 2;
   std::vector<uint8_t> out(len);
   for (int i = 0; i < len; i += 1) {
-    std::string byte = hex.substr(2 * i, 2);
+    std::string byte = hex_copy.substr(2 * i, 2);
     out[i] = static_cast<uint8_t>(strtol(byte.c_str(), nullptr, 16));
   }
 
