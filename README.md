@@ -152,7 +152,29 @@ Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 
 ### Measure Test Coverage
 
-Additional tools are required to measure (and view) test coverage.
+Test coverage in HACL Packages can be measured with ...
+
+```sh
+./mach build --coverage
+./mach test --coverage
+```
+
+Note that only clang is supported as a compiler and you may get an error ...
+
+```
+cc: error: unrecognized command-line option ‘-fprofile-instr-generate’; did you mean ‘-fprofile-generate’?
+```
+
+... when your default compiler is not clang.
+In this case, try to set the `CC` and `CXX` environment variables accordingly ...
+
+```sh
+export CC=clang
+export CXX=clang++
+```
+
+Furthermore, additional tools are required to measure (and view) test coverage.
+
 Make sure you have `lcov` and `genhtml`.
 
 For Ubuntu these can be installed via ...
