@@ -155,7 +155,7 @@ Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 Test coverage in HACL Packages can be measured with ...
 
 ```sh
-./mach build --coverage
+./mach build --tests --coverage
 ./mach test --coverage
 ./tools/coverage.sh
 ```
