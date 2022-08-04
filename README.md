@@ -150,6 +150,46 @@ packages.
 
 Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 
+### Measure Test Coverage
+
+Test coverage in HACL Packages can be measured with ...
+
+```sh
+./mach build --tests --coverage
+./mach test --coverage
+./tools/coverage.sh
+```
+
+Note that only clang is supported as a compiler and you may get an error ...
+
+```
+cc: error: unrecognized command-line option ‘-fprofile-instr-generate’; did you mean ‘-fprofile-generate’?
+```
+
+... when your default compiler is not clang.
+In this case, try to set the `CC` and `CXX` environment variables accordingly ...
+
+```sh
+export CC=clang
+export CXX=clang++
+```
+
+Furthermore, additional tools are required to measure (and view) test coverage.
+
+Make sure you have `lcov` and `genhtml`.
+
+For Ubuntu these can be installed via ...
+
+```sh
+$ sudo apt install lcov
+```
+
+When everything went well you should be able to view the coverage reports with, e.g., ...
+
+```sh
+firefox build/Debug/coverage/full/html/index.html
+```
+
 ### Dependencies
 
 Tests require the [nlohmann_json] package to read json test files.

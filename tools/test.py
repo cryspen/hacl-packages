@@ -18,7 +18,7 @@ from os.path import join
 from pathlib import Path
 
 
-def run_tests(tests, bin_path, test_args=[], algorithms=[]):
+def run_tests(tests, bin_path, test_args=[], algorithms=[], coverage=False):
     print("Running tests ...")
     if not os.path.exists(binary_path(bin_path)):
         print("! Nothing is built! Please build first. Aborting!")
@@ -29,6 +29,11 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
     for algorithm in tests:
         for test in tests[algorithm]:
             test_name = os.path.splitext(test)[0]
+
+            # Always set LLVM_PROFILE_FILE.
+            # File will only be created if compiled with coverage instrumentation.
+            my_env["LLVM_PROFILE_FILE"] = f"{test_name}.profraw"
+
             if len(algorithms) == 0 or test_name in algorithms or algorithm in algorithms:
                 file_name = Path(test).stem
                 if sys.platform == "win32":
@@ -44,6 +49,40 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
                 print(" ".join(test_cmd))
                 subprocess.run(test_cmd, check=True, shell=True, env=my_env)
 
+                if coverage:
+                    generate_report(test_name, my_env)
+
+
+def generate_report(test, env):
+    print(f"Generating coverage report for {test}.")
+    subprocess.run(["mkdir", "-p", f"coverage/{test}/html"], env=env)
+    subprocess.run([
+        "llvm-profdata",
+        "merge",
+        "-sparse",
+        f"{test}.profraw",
+        "-o",
+        f"coverage/{test}/{test}.profdata"
+    ], env=env)
+    with open(f"coverage/{test}/{test}.lcov", 'wb') as lcov_file:
+        subprocess.run([
+            "llvm-cov",
+            "export",
+            "-format",
+            "lcov",
+            "--instr-profile",
+            f"coverage/{test}/{test}.profdata",
+            test,
+            "../../src",
+        ], stdout=lcov_file, env=env)
+    subprocess.run([
+        "genhtml",
+        f"coverage/{test}/{test}.lcov",
+        f"-o",
+        f"coverage/{test}/html"
+    ], env=env)
+
+
 # TODO: add arguments (pass through gtest arguments and easy filters)
 
 
@@ -51,6 +90,8 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[]):
                       help="The algorithms to test.", type=str),
              argument("-l", "--language",
                       help="Language bindings to test.", type=str),
+             argument("--coverage",
+                      help="Test with coverage instrumentation.", action="store_true"),
              argument("-v", "--verbose", help="Make tests verbose.",
                       action='store_true')])
 def test(args):
@@ -86,4 +127,5 @@ def test(args):
 
     # parse file
     config = json.loads(data)
-    run_tests(config['tests'], "Debug", algorithms=algorithms)
+    run_tests(config['tests'], "Debug",
+              algorithms=algorithms, coverage=args.coverage)

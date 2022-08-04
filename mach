@@ -17,7 +17,9 @@ import os
 import shutil
 from tools.configure import Config
 
-from tools.utils import config_cache, subcommand, argument, json_config, dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd
+from tools.utils import config_cache, subcommand, argument, json_config, \
+    dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd, \
+    coverage_dependency_check
 from tools.test import run_tests
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
@@ -50,6 +52,7 @@ def install(args):
              argument("--tests", help="Build tests.", action='store_true'),
              argument("--test", help="Build and run tests.",
                       action='store_true'),
+             argument("--benchmarks", help="Build benchmarks.", action='store_true'),
              argument("-r", "--release", help="Build in release mode.",
                       action='store_true'),
              argument("-a", "--algorithms",
@@ -72,7 +75,9 @@ def install(args):
                       action='store_true'),
              argument(
                  "-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),
-             argument("--no-build", help="Don't actually build (don't run ninja).", action='store_true')])
+             argument(
+                 "--no-build", help="Don't actually build (don't run ninja).", action='store_true'),
+             argument("--coverage", help="Build with coverage instrumentation.", action='store_true')])
 def build(args):
     """Main entry point for building HACL
 
@@ -111,6 +116,7 @@ def build(args):
         - sanitizer
         - edition
         - disable
+        - coverage
     """
     cmake_args = []
     # Verbosity
@@ -157,7 +163,8 @@ def build(args):
         m32 = True
 
     # Our default compiler is clang.
-    compiler = os.getenv('CC', 'clang')
+    compiler = os.getenv('CC', "clang")
+
     windows = False
 
     # Select the source folder to use (regular, c89, msvc)
@@ -232,6 +239,11 @@ def build(args):
         cmake_args.extend(features_to_disable)
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
+    if args.benchmarks:
+        if args.tests or args.test:
+            print("! Benchmarks can't be built at the same time as tests for now. See #115")
+            exit(1)
+        cmake_args.append("-DENABLE_BENCHMARKS=ON")
     if args.sanitizer:
         if windows:
             print("! Sanitizers are not supporte on Windows.")
@@ -242,6 +254,17 @@ def build(args):
 
     # if verbose:
     #     cmake_args.extend(["--debug-output", "--trace"])
+
+    # Check if we want to compile with coverage information.
+    if args.coverage:
+        if windows:
+            print("The `--coverage` flag is not supported on Windows.")
+            exit(1)
+
+        # Check that `lcov` and `genhtml` are installed (and callable).
+        coverage_dependency_check()
+
+        cmake_args.append("-DENABLE_COVERAGE=ON")
 
     if len(cflags) != 0:
         cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
