@@ -238,6 +238,42 @@ impl fmt::Debug for MontgomeryContext {
 }
 
 impl BigUInt {
+    /// Takes ownership of self and returns a Modulus built from it.
+    pub fn into_modulus(mut self) -> Result<Modulus, Error> {
+        if self.0.zero_one_other != ZeroOneOther::Other {
+            Err(Error::BadModulus(ModulusError::LessThanTwo))
+        } else if !self.is_odd()? {
+            Err(Error::BadModulus(ModulusError::Even))
+        } else if self.is_supersize() {
+            Err(Error::BadModulus(ModulusError::TooLarge))
+        } else {
+            self.precomp_mont_ctx()?;
+
+            // Danger, danger, Will Robinson!
+            let mut sh = self.0.handle.ok_or(Error::NoHandle)?;
+
+            // Copy may not be implemented for HaclBnHandle, so we do this manually
+            let h = HaclBnHandle {
+                ptr: sh.ptr,
+                bitsize: sh.bitsize,
+            };
+
+            // We set self's handle to a null pointer so that when
+            // self drops it doesn't free the memory pointed to
+            // by the new Modulus's handle
+
+            sh.ptr = std::ptr::null_mut::<HaclBnWord>();
+            let zero_one_other = ZeroOneOther::Other;
+            let mont_ctx = self.0.mont_ctx;
+
+            Ok(Modulus(Bui {
+                zero_one_other,
+                handle: Some(h),
+                mont_ctx,
+            }))
+        }
+    }
+
     /// Attempts to create a new BigUInt with the same values.
     /// Allocates new memory with a new pointer to that memory
     pub fn try_clone(&self) -> Result<Self, Error> {
