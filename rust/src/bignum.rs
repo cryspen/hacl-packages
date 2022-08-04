@@ -409,7 +409,7 @@ struct Bui {
 }
 
 /// What every BigUInt needs
-pub trait BigIntable {
+pub trait BigUnsigned {
     /// creates a [BigUInt] from a slice of bytes representing
     /// value in big-endian order.
     fn from_bytes_be(_: &[u8]) -> Result<Self, Error>
@@ -429,7 +429,7 @@ pub trait BigIntable {
     fn to_hex(&self) -> String;
 }
 
-impl BigIntable for Modulus {
+impl BigUnsigned for Modulus {
     fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
         // we can't just call BigUInt::from_bytes_be to create a
         // temporary bn because when that gets dropped bad
