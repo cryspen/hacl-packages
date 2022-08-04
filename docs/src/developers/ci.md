@@ -44,22 +44,21 @@ matrix:
 
 ... to cover the following targets:
 
-| Virtual Environment      | Compiler                  | Architecture      |
-|--------------------------|---------------------------|-------------------|
-| **Tier 1**               |                           |                   |
-| Linux (ubuntu-latest)    | gcc (7-11), clang (7-12)  | x86\_64, i686     |
-| macOS (macos-latest)     | gcc (9-12), clang (11-14) | x86\_64           |
-| Windows (windows-latest) |                           | x86\_64, i686     |
-| **Tier 2**               |                           |                   |
-| Linux (ubuntu-latest)    | gcc (9-12), clang (11-14) | aarch64           |
-| macOS (macos-latest)     | gcc (9-12), clang (11-14) | aarch64           |
-| Android (ubuntu-latest)  | gcc (latest)              | aarch64           |
-| iOS (macos-latest)       | gcc (9-12), clang (11-14) | aarch64           |
-| **Tier 3**               |                           |                   |
-| s390x (ubuntu-latest)    | gcc (latest)              | aarch64           |
+| Virtual Environment      | Compiler                         | Architecture      |
+|--------------------------|----------------------------------|-------------------|
+| **Tier 1**               |                                  |                   |
+| Linux (ubuntu-latest)    | gcc (7-11), clang (7-12)         | x86\_64, i686     |
+| macOS (macos-latest)     | gcc (9-12), clang (11-14)        | x86\_64           |
+| Windows (windows-latest) | clang-cl (latest), msvc (latest) | x86\_64, i686     |
+| **Tier 2**               |                                  |                   |
+| Linux (ubuntu-latest)    | gcc (9-12), clang (11-14)        | aarch64           |
+| macOS (macos-latest)     | gcc (9-12), clang (11-14)        | aarch64           |
+| Android (ubuntu-latest)  | gcc (latest)                     | aarch64           |
+| iOS (macos-latest)       | gcc (9-12), clang (11-14)        | aarch64           |
+| **Tier 3**               |                                  |                   |
+| s390x (ubuntu-latest)    | gcc (latest)                     | aarch64           |
 
 Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "c89".
-On Windows, we run all jobs with and without the `--msvc` flag.
 
 [GitHub Actions]: https://docs.github.com/en/actions
 [HACL Packages project board]: https://github.com/orgs/cryspen/projects/1
