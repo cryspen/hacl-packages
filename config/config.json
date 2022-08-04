@@ -375,6 +375,9 @@
         "hmac": [
             "hmac.cc"
         ],
+        "md5": [
+            "md5.cc"
+        ],
         "sha2": [
             "sha2.cc"
         ],

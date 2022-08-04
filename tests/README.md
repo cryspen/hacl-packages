@@ -35,6 +35,10 @@ The test vectors are from [Project Wycheproof].
 
 *Note:* SHA-1 is not supported in Hacl and thus not tested.
 
+## md5
+
+The test vectors are from [RFC1321].
+
 ## sha2
 
 The test vectors are from [Cryptographic Algorithm Validation Program].
@@ -51,3 +55,4 @@ The test vectors are from [Project Wycheproof].
 [emilbayes/blake2b]: https://github.com/emilbayes/blake2b/blob/master/test-vectors.json
 [NIST's Cryptographic Algorithm Validation Program]: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing
 [Project Wycheproof]: https://github.com/google/wycheproof/tree/2196000605e45d91097147c9c71f26b72af58003
+[RFC1321]: https://datatracker.ietf.org/doc/html/rfc1321
