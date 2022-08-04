@@ -67,3 +67,8 @@ INSTANTIATE_TEST_SUITE_P(
   Rfc1231,
   Md5Suite,
   ::testing::ValuesIn(read_json(const_cast<char*>("rfc1321.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Cryspen,
+  Md5Suite,
+  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_md5.json"))));
