@@ -526,7 +526,7 @@ impl Modulus {
     /// # Errors
     ///
     /// - [Error::BadModulus] if argument is < 2, is even, or is supersized.
-    /// - Any variety of [Error::HaclError] or other errors that can arise from trying to allocate a new [BigIntable].
+    /// - Any variety of [Error::HaclError] or other errors that can arise from trying to allocate a new [BigUnsigned].
     pub fn from_biguint(src_bn: &BigUInt) -> Result<Self, Error> {
         if src_bn.0.zero_one_other != ZeroOneOther::Other {
             return Err(Error::BadModulus(ModulusError::LessThanTwo));
