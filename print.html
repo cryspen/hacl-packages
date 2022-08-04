@@ -427,7 +427,7 @@ If decryption succeeds, the resulting plaintext is stored in <code>m</code> and 
 function returns the success code <code>0</code>.
 If decryption fails, the array <code>m</code> remains unchanged and the function returns
 the error code <code>1</code>.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="hasing"><a class="header" href="#hasing">Hasing</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hashing"><a class="header" href="#hashing">Hashing</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hmac"><a class="header" href="#hmac">HMAC</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hkdf"><a class="header" href="#hkdf">HKDF</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ecdh"><a class="header" href="#ecdh">ECDH</a></h1>
@@ -436,7 +436,7 @@ the error code <code>1</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="randomness"><a class="header" href="#randomness">Randomness</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="evercrypt-apis"><a class="header" href="#evercrypt-apis">Evercrypt APIs</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="aead-1"><a class="header" href="#aead-1">AEAD</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="hasing-1"><a class="header" href="#hasing-1">Hasing</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hashing-1"><a class="header" href="#hashing-1">Hashing</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hmac-1"><a class="header" href="#hmac-1">HMAC</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hkdf-1"><a class="header" href="#hkdf-1">HKDF</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="randomness-1"><a class="header" href="#randomness-1">Randomness</a></h1>
@@ -613,6 +613,56 @@ Because the OCaml build requires information about the platform features we
 export <code>HACL_MAKE_CONFIG</code> to point to the CMake generated information.
 Then we can build the bindings with make.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h1>
+<p>The HACL Packages project uses <a href="https://docs.github.com/en/actions">GitHub Actions</a> as its primary CI/CD system.</p>
+<p>When a pull request (PR) or push is made to HACL Packages, the CI automatically runs a series of checks to ensure that all code compiles, all tests pass, and all changes are of a certain quality.
+To reduce the amount of computational work, the HACL Packages CI is configured to ignore commits that don't justify a CI run.
+For example, the CI will not run on changes of the README.md (and other <code>*.md</code> files in the root folder).
+If, for whatever reason, you think that a particular commit should not start the CI, consider including <code>[skip ci]</code> to your commit message.
+(See <a href="https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/">Skip pull request and push workflows</a>.)</p>
+<h1 id="workflows"><a class="header" href="#workflows">Workflows</a></h1>
+<p>The CI configuration files are located in the <code>.github/workflows</code> folder.
+Local actions reused across the HACL Packages CI are in the <code>.github/actions</code> folder.</p>
+<p>There are multiple workflow files with the following tasks:</p>
+<ul>
+<li><code>build.yml</code> builds and tests HACL Packages on many systems (see below).</li>
+<li><code>gh-pages.yml</code> builds and publishes new versions of this book.</li>
+<li><code>new_issue.yml</code> adds newly created issues to the <a href="https://github.com/orgs/cryspen/projects/1">HACL Packages project board</a>.</li>
+<li><code>ocaml.yml</code> builds the OCaml bindings for HACL packages.</li>
+<li><code>rust.yml</code> builds the Rust bindings for HACL packages.</li>
+</ul>
+<h2 id="what-systems-are-tested"><a class="header" href="#what-systems-are-tested">What systems are tested?</a></h2>
+<p>GitHub Actions uses the concept of a &quot;job matrix&quot; to fan out a single job description to multiple separate jobs.
+This is useful to test a job on different systems, e.g., Linux, macOS, and Windows.
+In HACL Packages, and especially in the <code>build</code> workflow, we use matrices of the form ...</p>
+<pre><code class="language-yaml">matrix:
+  compiler: [ gcc, clang ]
+  version: [ 7, 8, ..., 14 ]
+  bits: [ 32, 64 ]
+  edition: [ c89, &quot;&quot; ]
+  exclude:
+    - compiler: gcc
+      version: 12
+    # ...
+    # Not available
+    - compiler: clang
+      version: 14
+</code></pre>
+<p>... to cover the following targets:</p>
+<div class="table-wrapper"><table><thead><tr><th>Virtual Environment</th><th>Compiler</th><th>Architecture</th></tr></thead><tbody>
+<tr><td><strong>Tier 1</strong></td><td></td><td></td></tr>
+<tr><td>Linux (ubuntu-latest)</td><td>gcc (7-11), clang (7-12)</td><td>x86_64, i686</td></tr>
+<tr><td>macOS (macos-latest)</td><td>gcc (9-12), clang (11-14)</td><td>x86_64</td></tr>
+<tr><td>Windows (windows-latest)</td><td>clang-cl (latest), msvc (latest)</td><td>x86_64, i686</td></tr>
+<tr><td><strong>Tier 2</strong></td><td></td><td></td></tr>
+<tr><td>Linux (ubuntu-latest)</td><td>gcc (9-12), clang (11-14)</td><td>aarch64</td></tr>
+<tr><td>macOS (macos-latest)</td><td>gcc (9-12), clang (11-14)</td><td>aarch64</td></tr>
+<tr><td>Android (ubuntu-latest)</td><td>gcc (latest)</td><td>aarch64</td></tr>
+<tr><td>iOS (macos-latest)</td><td>gcc (9-12), clang (11-14)</td><td>aarch64</td></tr>
+<tr><td><strong>Tier 3</strong></td><td></td><td></td></tr>
+<tr><td>s390x (ubuntu-latest)</td><td>gcc (latest)</td><td>aarch64</td></tr>
+</tbody></table>
+</div>
+<p>Furthermore, on Linux, we test different &quot;editions&quot; of the C programming language, i.e., &quot;c89&quot;.</p>
 
                     </main>
 
