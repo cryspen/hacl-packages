@@ -264,7 +264,7 @@ impl BigUInt {
     /// represented; it merely performs some pre-computation if necessary
     ///
     /// # Errors
-    /// - [Error::UselessModulus]: The modulus is either < 2 or is even.
+    /// - [Error::BadModulus]: The modulus is either < 2 or is even.
     /// - [Error::HaclError]: Something went wrong at a deeper level.
     ///
     pub fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
@@ -273,10 +273,10 @@ impl BigUInt {
             return Ok(());
         }
         if self.0.zero_one_other != ZeroOneOther::Other {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::LessThanTwo));
         }
         if !self.is_odd()? {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::Even));
         }
 
         let ctx: MontgomeryContext = match &self.0.handle {
@@ -332,8 +332,8 @@ pub enum Error {
     /// This should not happen.
     NoHandle,
 
-    /// The modulus is zero or one. Don't used mod operations in such cases.
-    UselessModulus,
+    /// The modulus must be an odd number in (3..2^4096 -1)
+    BadModulus(ModulusError),
 
     /// You tried to compute 0^0. That is undefined.
     ZeroToZero,
@@ -349,6 +349,19 @@ pub enum Error {
     /// If I used proper logic with `match`, `if let`, and so on, we wouldn't need
     /// a ShouldNotHappen error. But here we are
     ShouldNotHappen,
+}
+
+/// How can a modulus be bad. Let me count the ways.
+#[derive(Debug, PartialEq)]
+pub enum ModulusError {
+    /// Is 1 or 0
+    LessThanTwo,
+
+    /// We can't cope with even moduli for our math
+    Even,
+
+    /// A modulus must be less than [BigUint::BN_BITSIZE] bits.
+    TooLarge,
 }
 
 /// BigUInt is the wrapper for the HACL (generated) C library
@@ -428,7 +441,7 @@ impl BigIntable for Modulus {
             ZeroOneOther::Other => {
                 let handle = HaclBnHandle::from_vec8(be_bytes)?;
                 if !&handle.ref_is_odd() {
-                    Err(Error::UselessModulus)
+                    Err(Error::BadModulus(ModulusError::Even))
                 } else {
                     let mont_ctx = MontgomeryContext::from_bn(&handle)?;
                     let bui = Bui {
@@ -440,7 +453,7 @@ impl BigIntable for Modulus {
                     Ok(Self(bui))
                 }
             }
-            _ => Err(Error::UselessModulus),
+            _ => Err(Error::BadModulus(ModulusError::LessThanTwo)),
         }
     }
 
@@ -512,20 +525,20 @@ impl Modulus {
     ///
     /// # Errors
     ///
-    /// - [Error::UselessModulus] if argument is < 2, is even, or is supersized.
+    /// - [Error::BadModulus] if argument is < 2, is even, or is supersized.
     /// - Any variety of [Error::HaclError] or other errors that can arise from trying to allocate a new [BigIntable].
     pub fn from_biguint(src_bn: &BigUInt) -> Result<Self, Error> {
         if src_bn.0.zero_one_other != ZeroOneOther::Other {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::LessThanTwo));
         }
         if src_bn.0.handle.is_none() {
             return Err(Error::ShouldNotHappen);
         }
         if !src_bn.is_odd()? {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::Even));
         }
         if src_bn.is_supersize() {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::TooLarge));
         }
 
         // Sadly we have to re-allocate the same data to be able
@@ -709,10 +722,10 @@ impl BigUInt {
             ZeroOneOther::Other => {
                 let handle = HaclBnHandle::from_vec8(be_bytes)?;
                 Ok(Self(Bui {
-                        zero_one_other: ZeroOneOther::Other,
-                        handle: Some(handle),
-                        mont_ctx: None,
-                    }))
+                    zero_one_other: ZeroOneOther::Other,
+                    handle: Some(handle),
+                    mont_ctx: None,
+                }))
             }
         }
     }
@@ -921,10 +934,10 @@ impl BigUInt {
         let zero_one_other = result_handle.zero_one_other()?;
 
         Ok(Self(Bui {
-                zero_one_other,
-                handle: Some(result_handle),
-                mont_ctx: None,
-            }))
+            zero_one_other,
+            handle: Some(result_handle),
+            mont_ctx: None,
+        }))
     }
 
     pub fn modpow(&self, exponent: &Self, modulus: &mut Self) -> Result<Self, Error> {
@@ -953,7 +966,7 @@ impl BigUInt {
             return Err(Error::ZeroToZero);
         }
         if modulus.is_zero() || modulus.is_one() {
-            return Err(Error::UselessModulus);
+            return Err(Error::BadModulus(ModulusError::Even));
         }
 
         if self.is_zero() {
@@ -1000,16 +1013,16 @@ impl BigUInt {
         let zero_one_other = handle.zero_one_other()?;
 
         Ok(Self(Bui {
-                zero_one_other,
-                handle: Some(handle),
-                mont_ctx: None,
-            }))
+            zero_one_other,
+            handle: Some(handle),
+            mont_ctx: None,
+        }))
     }
 
     /// `self % modulus`
     ///
     /// # Errors
-    /// - `UselessModulus` if self < 2 or if self is even.
+    /// - `BadModulus` if self < 2 or if self is even.
     /// - `HaclError` if something some Hacl call returned an error
     ///
     /// Despite the [mutability](#mutability) of `self` and `modulus`
@@ -1034,10 +1047,10 @@ impl BigUInt {
 
         let zero_one_other = handle.zero_one_other()?;
         Ok(Self(Bui {
-                zero_one_other,
-                handle: Some(handle),
-                mont_ctx: None,
-            }))
+            zero_one_other,
+            handle: Some(handle),
+            mont_ctx: None,
+        }))
     }
 
     /// `self = self % modulus`
