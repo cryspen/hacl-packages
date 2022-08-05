@@ -39,6 +39,20 @@ pub enum KeySize {
     N8192 = 1024,
 }
 
+impl TryFrom<usize> for KeySize {
+    type Error = Error;
+    fn try_from(s: usize) -> Result<KeySize, Self::Error> {
+        match s {
+            256 => Ok(Self::N2048),
+            384 => Ok(Self::N3072),
+            512 => Ok(Self::N4096),
+            768 => Ok(Self::N6144),
+            1024 => Ok(Self::N8192),
+            _ => Err(Error::InvalidKeySize),
+        }
+    }
+}
+
 /// An RSA-PSS public key
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PublicKey {
