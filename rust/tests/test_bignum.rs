@@ -178,10 +178,17 @@ fn test_memleak() {
         data.fill(0);
 
         small_rng.fill_bytes(&mut data[..]);
-        let a = BigUInt::from_bytes_be(data).unwrap();
+        let mut a = BigUInt::from_bytes_be(data).unwrap();
 
         small_rng.fill_bytes(&mut data[..]);
-        let b = BigUInt::from_bytes_be(data).unwrap();
+        let mut b = BigUInt::from_bytes_be(data).unwrap();
+
+        small_rng.fill_bytes(&mut data[..]);
+        // we need to moduli to be odd
+        let data_last = data.len() - 1;
+        data[data_last] |= 0x01;
+        let bm = BigUInt::from_bytes_be(data).unwrap();
+        let m = bm.into_modulus().unwrap();
 
         let mut true_count = 0;
 
@@ -195,7 +202,13 @@ fn test_memleak() {
             true_count += 1;
         }
 
-        assert!(true_count == 1, "We have the wrong number of truths.")
+        assert!(true_count == 1, "We have the wrong number of truths.");
+
+        let ra = m.reduce(&mut a).unwrap();
+        let rb = m.reduce(&mut b).unwrap();
+
+        assert!(ra <= a);
+        assert!(rb <= b);
     }
 }
 
@@ -682,7 +695,8 @@ fn test_add_mod() {
     for (i, t) in tests.iter().enumerate() {
         let mut a = BigUInt::from_hex(t.a).unwrap();
         let mut b = BigUInt::from_hex(t.b).unwrap();
-        let modulus = Modulus::from_hex(t.m).unwrap();
+        let m = BigUInt::from_hex(t.m).unwrap();
+        let modulus = m.into_modulus().unwrap();
         let expected = BigUInt::from_hex(t.expected).unwrap();
 
         let result = modulus.add(&mut a, &mut b).expect("add_mod() failed");

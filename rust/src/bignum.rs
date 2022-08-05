@@ -210,8 +210,10 @@ struct MontgomeryContext(*mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64);
 
 impl Drop for MontgomeryContext {
     fn drop(&mut self) {
-        unsafe {
-            Hacl_Bignum4096_mont_ctx_free(self.0);
+        if !self.0.is_null() {
+            unsafe {
+                Hacl_Bignum4096_mont_ctx_free(self.0);
+            }
         }
     }
 }
@@ -249,6 +251,8 @@ impl BigUInt {
         } else {
             self.precomp_mont_ctx()?;
 
+            let zero_one_other = ZeroOneOther::Other;
+
             // Danger, danger, Will Robinson!
             let mut sh = self.0.handle.ok_or(Error::NoHandle)?;
 
@@ -261,15 +265,17 @@ impl BigUInt {
             // We set self's handle to a null pointer so that when
             // self drops it doesn't free the memory pointed to
             // by the new Modulus's handle
-
             sh.ptr = std::ptr::null_mut::<HaclBnWord>();
-            let zero_one_other = ZeroOneOther::Other;
-            let mont_ctx = self.0.mont_ctx;
+
+            let mut mc = self.0.mont_ctx.ok_or(Error::ShouldNotHappen)?;
+            let mont_ctx = MontgomeryContext(mc.0);
+            // And now the same stunt with the Montgomery context
+            mc.0 = std::ptr::null_mut();
 
             Ok(Modulus(Bui {
                 zero_one_other,
                 handle: Some(h),
-                mont_ctx,
+                mont_ctx: Some(mont_ctx),
             }))
         }
     }
