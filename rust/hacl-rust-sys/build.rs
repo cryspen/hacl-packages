@@ -116,6 +116,20 @@ fn main() {
     // This is the default behaviour. It can be disabled when working on this
     // to pick up the local version. This is what the global mach script does.
     let hacl_path = if !mach_build {
+        // Check if we have to copy the C files first.
+        if !home_dir.join("..").join(".c").exists() {
+            println!(" >>> Copying HACL C file");
+            // ./mach rust
+            let mut mach_cmd = Command::new("./mach");
+            let cmake_status = mach_cmd
+                .current_dir(home_dir.join("..").join(".."))
+                .args(&["rust"])
+                .status()
+                .expect("Failed to run ./mach rust.");
+            if !cmake_status.success() {
+                panic!("Failed to run ./mac rust.")
+            }
+        }
         let c_path = home_dir.join("..").join(".c");
         build_hacl_c(&c_path);
         c_path.join("build").join("installed")
