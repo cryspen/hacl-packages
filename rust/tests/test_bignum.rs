@@ -4,6 +4,7 @@ use regex::Regex;
 use std::fmt;
 
 use hacl_rust::bignum::BigUInt;
+use hacl_rust::bignum::BigUnsigned;
 
 use data_encoding::HEXUPPER;
 use rand::prelude::SmallRng;

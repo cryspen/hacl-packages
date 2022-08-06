@@ -521,7 +521,7 @@ impl Bui {
 }
 
 /// What every BigUInt needs
-trait BigUnsigned {
+pub trait BigUnsigned {
     /// creates a [BigUInt] from a slice of bytes representing
     /// value in big-endian order.
     fn from_bytes_be(_: &[u8]) -> Result<Self, Error>
@@ -539,6 +539,13 @@ trait BigUnsigned {
     /// For example a value equivalent to decimal 3053 will yield `0BED`.
     /// A value of zero will yield `00`.
     fn to_hex(&self) -> String;
+
+    /// The argument is upper case hex [str]
+    /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
+    /// which represents a big-endian sequence of bytes.
+    fn from_hex(s: &str) -> Result<Self, Error>
+    where
+        Self: std::marker::Sized;
 }
 
 impl BigUnsigned for Modulus {
@@ -583,17 +590,37 @@ impl BigUnsigned for Modulus {
     fn to_hex(&self) -> String {
         self.0.to_hex()
     }
-}
 
-impl Modulus {
     /// The argument is upper case hex [str]
     /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
     /// which represents a big-endian sequence of bytes.
-    pub fn from_hex(s: &str) -> Result<Self, Error> {
+    fn from_hex(s: &str) -> Result<Self, Error> {
+        let bui = Bui::from_hex(s)?;
+        Ok(Self(bui))
+    }
+}
+
+impl BigUnsigned for BigUInt {
+    fn from_hex(s: &str) -> Result<Self, Error> {
         let bui = Bui::from_hex(s)?;
         Ok(Self(bui))
     }
 
+    fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
+        let bui = Bui::from_bytes_be(be_bytes)?;
+        Ok(Self(bui))
+    }
+
+    fn to_vec8(&self) -> Result<Vec<u8>, Error> {
+        self.0.to_vec8()
+    }
+
+    fn to_hex(&self) -> String {
+        self.0.to_hex()
+    }
+}
+
+impl Modulus {
     /// `number % self`
     pub fn reduce(&self, number: &mut BigUInt) -> Result<BigUInt, Error> {
         if number.0.handle.is_none() {
@@ -845,14 +872,6 @@ impl BigUInt {
     /// but if things which shouldn't happen happen it will return an empty string.
     pub fn to_hex(&self) -> String {
         self.0.to_hex()
-    }
-
-    /// The argument is upper case hex [str]
-    /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
-    /// which represents a big-endian sequence of bytes.
-    pub fn from_hex(s: &str) -> Result<Self, Error> {
-        let bui = Bui::from_hex(s)?;
-        Ok(Self(bui))
     }
 
     /// if self is zero or one with no allocated Hacl BN handle, this will
