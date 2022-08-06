@@ -3,7 +3,7 @@ mod test_util;
 use regex::Regex;
 use std::fmt;
 
-use hacl_rust::bignum::{BigUInt, Modulus};
+use hacl_rust::bignum::BigUInt;
 
 use data_encoding::HEXUPPER;
 use rand::prelude::SmallRng;

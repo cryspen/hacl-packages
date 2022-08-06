@@ -450,8 +450,78 @@ struct Bui {
     zero_one_other: ZeroOneOther,
 }
 
+impl Bui {
+    /// A BigUint representing the value 1
+    const ONE: Bui = Bui {
+        zero_one_other: ZeroOneOther::One,
+        handle: None,
+        mont_ctx: None,
+    };
+
+    /// A BigUint representing the value 0
+    const ZERO: Bui = Bui {
+        zero_one_other: ZeroOneOther::Zero,
+        handle: None,
+        mont_ctx: None,
+    };
+
+    fn to_vec8(&self) -> Result<Vec<u8>, Error> {
+        self.handle.as_ref().expect("shouldn't happen").to_vec8()
+    }
+
+    fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
+        if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
+            return Err(Error::BadInputLength);
+        }
+        match one_zero_other(&trim_left_zero(be_bytes)) {
+            ZeroOneOther::One => Ok(Bui::ONE),
+            ZeroOneOther::Zero => Ok(Bui::ZERO),
+            ZeroOneOther::Other => {
+                let handle = HaclBnHandle::from_vec8(be_bytes)?;
+                Ok(Bui {
+                    zero_one_other: ZeroOneOther::Other,
+                    handle: Some(handle),
+                    mont_ctx: None,
+                })
+            }
+        }
+    }
+    fn to_hex(&self) -> String {
+        if self.zero_one_other == ZeroOneOther::One {
+            return "01".to_string();
+        } else if self.zero_one_other == ZeroOneOther::Zero {
+            return "00".to_string();
+        }
+        let mut be_bytes = if let Ok(v) = self.to_vec8() {
+            trim_left_zero(&v)
+        } else {
+            return "".to_string();
+        };
+
+        if be_bytes.len() % 2 == 1 {
+            // There are probably better ways to do this.
+            be_bytes.insert(0, 0_u8);
+        }
+        // that can sometimes leave us with two zero bytes at the beginning
+
+        let tmp_hex = HEXUPPER.encode(&be_bytes);
+        let s = tmp_hex.as_str();
+        match s.strip_prefix("00") {
+            None => s.to_string(),
+            Some(x) => x.to_string(),
+        }
+    }
+
+    fn from_hex(s: &str) -> Result<Self, Error> {
+        let be_bytes = HEXUPPER_PERMISSIVE
+            .decode(s.as_bytes())
+            .map_err(Error::Decoding)?;
+        Self::from_bytes_be(&be_bytes)
+    }
+}
+
 /// What every BigUInt needs
-pub trait BigUnsigned {
+trait BigUnsigned {
     /// creates a [BigUInt] from a slice of bytes representing
     /// value in big-endian order.
     fn from_bytes_be(_: &[u8]) -> Result<Self, Error>
@@ -500,7 +570,7 @@ impl BigUnsigned for Modulus {
     }
 
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
-        self.0.handle.as_ref().expect("shouldn't happen").to_vec8()
+        self.0.to_vec8()
     }
 
     /// An uppercase hex representation of the big-endian representation
@@ -511,21 +581,7 @@ impl BigUnsigned for Modulus {
     /// For example a value equivalent to decimal 3053 will yield `0BED`.
     /// A value of zero will yield `00`.
     fn to_hex(&self) -> String {
-        let mut be_bytes = if let Ok(v) = self.to_vec8() {
-            trim_left_zero(&v)
-        } else {
-            return "".to_string();
-        };
-        if be_bytes.len() % 2 == 1 {
-            // There are probably better ways to do this.
-            be_bytes.insert(0, 0_u8);
-        }
-        let tmp_hex = HEXUPPER.encode(&be_bytes);
-        let s = tmp_hex.as_str();
-        match s.strip_prefix("00") {
-            None => s.to_string(),
-            Some(x) => x.to_string(),
-        }
+        self.0.to_hex()
     }
 }
 
@@ -534,10 +590,8 @@ impl Modulus {
     /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
     /// which represents a big-endian sequence of bytes.
     pub fn from_hex(s: &str) -> Result<Self, Error> {
-        let be_bytes = HEXUPPER_PERMISSIVE
-            .decode(s.as_bytes())
-            .map_err(Error::Decoding)?;
-        Self::from_bytes_be(&be_bytes)
+        let bui = Bui::from_hex(s)?;
+        Ok(Self(bui))
     }
 
     /// `number % self`
@@ -755,21 +809,8 @@ impl BigUInt {
     /// - [Error::HaclError]: Something went wrong with the internal call to the
     ///     HACL library. Probably a memory allocation error.
     pub fn from_bytes_be(be_bytes: &[u8]) -> Result<Self, Error> {
-        if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
-            return Err(Error::BadInputLength);
-        }
-        match one_zero_other(&trim_left_zero(be_bytes)) {
-            ZeroOneOther::One => Ok(BigUInt::ONE),
-            ZeroOneOther::Zero => Ok(BigUInt::ZERO),
-            ZeroOneOther::Other => {
-                let handle = HaclBnHandle::from_vec8(be_bytes)?;
-                Ok(Self(Bui {
-                    zero_one_other: ZeroOneOther::Other,
-                    handle: Some(handle),
-                    mont_ctx: None,
-                }))
-            }
-        }
+        let bui = Bui::from_bytes_be(be_bytes)?;
+        Ok(Self(bui))
     }
 
     /// returns a vector of big-endian bytes.
@@ -803,39 +844,15 @@ impl BigUInt {
     /// This method does not return errors,
     /// but if things which shouldn't happen happen it will return an empty string.
     pub fn to_hex(&self) -> String {
-        if self.is_one() {
-            return "01".to_string();
-        } else if self.is_zero() {
-            return "00".to_string();
-        }
-        let mut be_bytes = if let Ok(v) = self.to_vec8() {
-            trim_left_zero(&v)
-        } else {
-            return "".to_string();
-        };
-
-        if be_bytes.len() % 2 == 1 {
-            // There are probably better ways to do this.
-            be_bytes.insert(0, 0_u8);
-        }
-        // that can sometimes leave us with two zero bytes at the beginning
-
-        let tmp_hex = HEXUPPER.encode(&be_bytes);
-        let s = tmp_hex.as_str();
-        match s.strip_prefix("00") {
-            None => s.to_string(),
-            Some(x) => x.to_string(),
-        }
+        self.0.to_hex()
     }
 
     /// The argument is upper case hex [str]
     /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
     /// which represents a big-endian sequence of bytes.
     pub fn from_hex(s: &str) -> Result<Self, Error> {
-        let be_bytes = HEXUPPER_PERMISSIVE
-            .decode(s.as_bytes())
-            .map_err(Error::Decoding)?;
-        Self::from_bytes_be(&be_bytes)
+        let bui = Bui::from_hex(s)?;
+        Ok(Self(bui))
     }
 
     /// if self is zero or one with no allocated Hacl BN handle, this will
