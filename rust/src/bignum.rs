@@ -544,6 +544,117 @@ impl Bui {
 
         Ok(())
     }
+
+    fn is_one(&self) -> bool {
+        self.zero_one_other == ZeroOneOther::One
+    }
+
+    fn is_zero(&self) -> bool {
+        self.zero_one_other == ZeroOneOther::Zero
+    }
+
+    fn bitsize(&self) -> usize {
+        if self.zero_one_other != ZeroOneOther::Other {
+            8_usize
+        } else {
+            let h = self.handle.as_ref().expect("Shouldn't happen");
+            h.bitsize
+        }
+    }
+}
+
+impl PartialEq for Bui {
+    //! Implements [PartialEq] for [BigUInt]
+
+    /// self == other
+    ///
+    /// If the value pointed to by `self` is the same as the value pointed to by
+    /// `other`, this returns true.
+    ///
+    /// If self or other is malformed (doesn't successfully have a numerical value)
+    /// return false. (This shouldn't ever happen.)
+    fn eq(&self, other: &Bui) -> bool {
+        // first we cover all of the 1 and zero case
+        // (the following code makes it look like I would have failed fizzbuzz)
+        // The ones
+        if self.is_one() && other.is_one() {
+            return true;
+        }
+        if self.is_one() && !other.is_one() {
+            return false;
+        }
+        if !self.is_one() && other.is_one() {
+            return false;
+        }
+        // The zeros
+        if self.is_zero() && other.is_zero() {
+            return true;
+        }
+        if self.is_zero() && !other.is_zero() {
+            return false;
+        }
+        if !self.is_zero() && other.is_zero() {
+            return false;
+        }
+
+        // Now that we've dealt with all of the ones and zero cases
+        // we treat comparison of anything without a handle to be false
+        let a_handle = match &self.handle {
+            None => return false,
+            Some(x) => x.ptr,
+        };
+        if a_handle.is_null() {
+            return false;
+        }
+
+        let b_handle = match &other.handle {
+            None => return false,
+            Some(x) => x.ptr,
+        };
+        if b_handle.is_null() {
+            return false;
+        }
+
+        let hacl_result: HaclBnWord;
+        unsafe {
+            hacl_result = Hacl_Bignum4096_eq_mask(a_handle, b_handle);
+        }
+        hacl_result != 0 as HaclBnWord
+    }
+}
+
+impl PartialOrd for Bui {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        if (self.is_one() && other.is_one()) || (self.is_zero() && other.is_zero()) {
+            return Some(Equal);
+        }
+        let a_handle = match &self.handle {
+            None => return None, // really shouldn't happen
+            Some(h) => h.ptr,
+        };
+        let b_handle = match &other.handle {
+            None => return None, // really shouldn't happen
+            Some(h) => h.ptr,
+        };
+
+        // We do not know how to compare the 8192 bit things.
+        if self.bitsize() > BN_BITSIZE || other.bitsize() > BN_BITSIZE {
+            return None;
+        }
+
+        let lt_result: HaclBnWord;
+        let eq_result: HaclBnWord;
+        unsafe {
+            lt_result = Hacl_Bignum4096_lt_mask(a_handle, b_handle);
+            eq_result = Hacl_Bignum4096_eq_mask(a_handle, b_handle);
+        }
+        if eq_result != 0 as HaclBnWord {
+            return Some(Equal);
+        } else if lt_result == 0 as HaclBnWord {
+            return Some(Greater);
+        }
+        Some(Less)
+    }
 }
 
 /// What every BigUInt needs
@@ -748,52 +859,57 @@ impl PartialEq for BigUInt {
     /// If self or other is malformed (doesn't successfully have a numerical value)
     /// return false. (This shouldn't ever happen.)
     fn eq(&self, other: &BigUInt) -> bool {
-        // first we cover all of the 1 and zero case
-        // (the following code makes it look like I would have failed fizzbuzz)
-        // The ones
-        if self.is_one() && other.is_one() {
-            return true;
-        }
-        if self.is_one() && !other.is_one() {
-            return false;
-        }
-        if !self.is_one() && other.is_one() {
-            return false;
-        }
-        // The zeros
-        if self.is_zero() && other.is_zero() {
-            return true;
-        }
-        if self.is_zero() && !other.is_zero() {
-            return false;
-        }
-        if !self.is_zero() && other.is_zero() {
-            return false;
-        }
+        self.0.eq(&other.0)
+    }
+}
 
-        // Now that we've dealt with all of the ones and zero cases
-        // we treat comparison of anything without a handle to be false
-        let a_handle = match &self.0.handle {
-            None => return false,
-            Some(x) => x.ptr,
-        };
-        if a_handle.is_null() {
-            return false;
-        }
+impl PartialEq<Modulus> for BigUInt {
+    fn eq(&self, other: &Modulus) -> bool {
+        self.0.eq(&other.0)
+    }
+}
 
-        let b_handle = match &other.0.handle {
-            None => return false,
-            Some(x) => x.ptr,
-        };
-        if b_handle.is_null() {
-            return false;
-        }
+impl PartialEq for Modulus {
+    //! Implements [PartialEq] for [BigUInt]
 
-        let hacl_result: HaclBnWord;
-        unsafe {
-            hacl_result = Hacl_Bignum4096_eq_mask(a_handle, b_handle);
-        }
-        hacl_result != 0 as HaclBnWord
+    /// self == other
+    ///
+    /// If the value pointed to by `self` is the same as the value pointed to by
+    /// `other`, this returns true.
+    ///
+    /// If self or other is malformed (doesn't successfully have a numerical value)
+    /// return false. (This shouldn't ever happen.)
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
+impl PartialEq<BigUInt> for Modulus {
+    fn eq(&self, other: &BigUInt) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
+// There is probably a generic way or a macro_rules! way to get the following
+// four implementations into one thing. But I am not going to figure that out today.
+impl PartialOrd for BigUInt {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
+impl PartialOrd<Modulus> for BigUInt {
+    fn partial_cmp(&self, other: &Modulus) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
+impl PartialOrd for Modulus {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
+impl PartialOrd<BigUInt> for Modulus {
+    fn partial_cmp(&self, other: &BigUInt) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
     }
 }
 
@@ -917,7 +1033,7 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
-        self.0.zero_one_other == ZeroOneOther::One
+        self.0.is_one()
     }
     /// returns a BigUInt representing the value 1.
     pub fn one() -> Self {
@@ -929,45 +1045,11 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
-        self.0.zero_one_other == ZeroOneOther::Zero
+        self.0.is_zero()
     }
     /// returns a BigUInt representing the value 0.
     pub fn zero() -> Self {
         BigUInt::ZERO
-    }
-}
-
-impl PartialOrd for BigUInt {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        if (self.is_one() && other.is_one()) || (self.is_zero() && other.is_zero()) {
-            return Some(Equal);
-        }
-        if self.is_supersize() != other.is_supersize() {
-            // We can probably do better,
-            // but let's leave the Partial in PartialEq
-            return None;
-        }
-        let a_handle = match &self.0.handle {
-            None => return None, // really shouldn't happen
-            Some(h) => h.ptr,
-        };
-        let b_handle = match &other.0.handle {
-            None => return None, // really shouldn't happen
-            Some(h) => h.ptr,
-        };
-
-        let lt_result: HaclBnWord;
-        let eq_result: HaclBnWord;
-        unsafe {
-            lt_result = Hacl_Bignum4096_lt_mask(a_handle, b_handle);
-            eq_result = Hacl_Bignum4096_eq_mask(a_handle, b_handle);
-        }
-        if eq_result != 0 as HaclBnWord {
-            return Some(Equal);
-        } else if lt_result == 0 as HaclBnWord {
-            return Some(Greater);
-        }
-        Some(Less)
     }
 }
 
