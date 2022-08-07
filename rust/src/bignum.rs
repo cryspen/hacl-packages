@@ -457,7 +457,7 @@ impl Bui {
         if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
-        match one_zero_other(&trim_left_zero(be_bytes)) {
+        match one_zero_other(be_bytes) {
             ZeroOneOther::One => Ok(Bui::ONE),
             ZeroOneOther::Zero => Ok(Bui::ZERO),
             ZeroOneOther::Other => {
@@ -477,7 +477,7 @@ impl Bui {
             return "00".to_string();
         }
         let mut be_bytes = if let Ok(v) = self.to_vec8() {
-            trim_left_zero(&v)
+            trimmed_left(&v)
         } else {
             return "".to_string();
         };
@@ -690,7 +690,7 @@ impl BigUnsigned for Modulus {
         // we can't just call BigUInt::from_bytes_be to create a
         // temporary bn because when that gets dropped bad
         // the memory pointed to by the handle is freed.
-        match one_zero_other(&trim_left_zero(be_bytes)) {
+        match one_zero_other(be_bytes) {
             ZeroOneOther::Other => {
                 let mut bui = Bui::from_bytes_be(be_bytes)?;
                 bui.precomp_mont_ctx()?;
@@ -921,7 +921,7 @@ const VEC_ZERO: [u8; 1] = [0_u8];
 // This could be done for any Vec<T>
 // with second argument that is T -> bool,
 // but let me just do this the very concrete way.
-fn trim_left_zero(v: &[u8]) -> Vec<u8> {
+fn trimmed_left(v: &[u8]) -> Vec<u8> {
     let result: Vec<u8> = v.iter().copied().skip_while(|x| *x == 0_u8).collect();
 
     if result.is_empty() {
@@ -932,7 +932,7 @@ fn trim_left_zero(v: &[u8]) -> Vec<u8> {
 }
 
 fn one_zero_other(v: &[u8]) -> ZeroOneOther {
-    let b = trim_left_zero(v);
+    let b = trimmed_left(v);
     if b.eq(&VEC_ONE) {
         ZeroOneOther::One
     } else if b.eq(&VEC_ZERO) {
@@ -1311,8 +1311,8 @@ mod tests {
             },
         ];
         for t in tests {
-            let a_trim = trim_left_zero(&t.a);
-            let b_trim = trim_left_zero(&t.b);
+            let a_trim = trimmed_left(&t.a);
+            let b_trim = trimmed_left(&t.b);
 
             let equal_trims = a_trim == b_trim;
             assert!(
