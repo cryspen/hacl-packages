@@ -4,10 +4,11 @@
 //! This module implements friendlier bignum for 4096 bit bignums
 //!
 //! It safely (one hopes) wraps the unsafe Hacl_Bignum operations and provides
-//! a struct (type) BigUInt that should conceal the nasty pointers to mutable data.
+//! structs (types) [BigUInt] and [Modulus] that should conceal the nasty
+//! C allocated pointers to mutable data.
 //!
 //! There are some optimizations when the big number is 1 or 0, exposing those
-//! to potential side channel attacks. We are assuming that values of 1 and 0 are
+//! to side channel attacks. We are assuming that values of 1 and 0 are
 //! never meant to be secrets.
 
 use data_encoding::{HEXUPPER, HEXUPPER_PERMISSIVE};
@@ -49,8 +50,7 @@ impl HaclBnHandle {
     /// of Drop for this structure
     ///
     /// The the referent of this pointer is expected to be filled by other HACL
-    /// functions. The only guarantee on the referent is that it does not
-    /// correspond to 1 or 0.
+    /// functions.
     ///
     /// # Errors
     ///
@@ -79,6 +79,7 @@ impl HaclBnHandle {
         })
     }
 
+    // Some HACL 4096 bit arithmetic wants arguments to be 8192 bits.
     fn supersize(&self) -> Result<Self, Error> {
         let bitsize = 2 * BN_BITSIZE;
         let byte_length = bitsize / 8;
@@ -177,7 +178,8 @@ impl HaclBnHandle {
     >
     >   `uint64_t sixteen[64] = { 0x10 }`
 
-    This of course will be different on 32 bit systems, but I will assume that the
+    This of course will be different type on 32 bit systems,
+    but I expect that the logic should still apply and that the
     zero index'ed limb is the least significant.
     */
     /// Returns true if the value of the bn pointed to is odd.
@@ -244,7 +246,7 @@ impl BigUInt {
     pub fn into_modulus(mut self) -> Result<Modulus, Error> {
         if self.0.zero_one_other != ZeroOneOther::Other {
             Err(Error::BadModulus(ModulusError::LessThanTwo))
-        } else if !self.is_odd()? {
+        } else if self.is_even()? {
             Err(Error::BadModulus(ModulusError::Even))
         } else if self.is_supersize() {
             Err(Error::BadModulus(ModulusError::TooLarge))
@@ -310,25 +312,7 @@ impl BigUInt {
     /// - [Error::HaclError]: Something went wrong at a deeper level.
     ///
     pub fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
-        if self.0.mont_ctx.is_some() {
-            // cool, this has already be set up
-            return Ok(());
-        }
-        if self.0.zero_one_other != ZeroOneOther::Other {
-            return Err(Error::BadModulus(ModulusError::LessThanTwo));
-        }
-        if !self.is_odd()? {
-            return Err(Error::BadModulus(ModulusError::Even));
-        }
-
-        let ctx: MontgomeryContext = match &self.0.handle {
-            None => return Err(Error::NoHandle),
-            Some(h) => MontgomeryContext::from_bn(h)?,
-        };
-
-        self.0.mont_ctx = Some(ctx);
-
-        Ok(())
+        self.0.precomp_mont_ctx()
     }
 
     fn is_supersize(&self) -> bool {
@@ -518,6 +502,48 @@ impl Bui {
             .map_err(Error::Decoding)?;
         Self::from_bytes_be(&be_bytes)
     }
+
+    /// (self % 2) == 1
+    fn is_odd(&self) -> Result<bool, Error> {
+        match self.zero_one_other {
+            ZeroOneOther::One => Ok(true),
+            ZeroOneOther::Zero => Ok(false),
+            _ => match &self.handle {
+                None => Err(Error::NoHandle),
+                Some(h) => Ok(h.ref_is_odd()),
+            },
+        }
+    }
+
+    // I am guessing that the compiler knows better than I do whether to inline this.
+    fn is_even(&self) -> Result<bool, Error> {
+        match Bui::is_odd(self) {
+            Err(e) => Err(e),
+            Ok(b) => Ok(!b),
+        }
+    }
+
+    fn precomp_mont_ctx(&mut self) -> Result<(), Error> {
+        if self.mont_ctx.is_some() {
+            // cool, this has already be set up
+            return Ok(());
+        }
+        if self.zero_one_other != ZeroOneOther::Other {
+            return Err(Error::BadModulus(ModulusError::LessThanTwo));
+        }
+        if self.is_even()? {
+            return Err(Error::BadModulus(ModulusError::Even));
+        }
+
+        let ctx: MontgomeryContext = match &self.handle {
+            None => return Err(Error::NoHandle),
+            Some(h) => MontgomeryContext::from_bn(h)?,
+        };
+
+        self.mont_ctx = Some(ctx);
+
+        Ok(())
+    }
 }
 
 /// What every BigUInt needs
@@ -553,24 +579,11 @@ impl BigUnsigned for Modulus {
         // we can't just call BigUInt::from_bytes_be to create a
         // temporary bn because when that gets dropped bad
         // the memory pointed to by the handle is freed.
-        if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
-            return Err(Error::BadInputLength);
-        }
         match one_zero_other(&trim_left_zero(be_bytes)) {
             ZeroOneOther::Other => {
-                let handle = HaclBnHandle::from_vec8(be_bytes)?;
-                if !&handle.ref_is_odd() {
-                    Err(Error::BadModulus(ModulusError::Even))
-                } else {
-                    let mont_ctx = MontgomeryContext::from_bn(&handle)?;
-                    let bui = Bui {
-                        zero_one_other: ZeroOneOther::Other,
-                        handle: Some(handle),
-                        mont_ctx: Some(mont_ctx),
-                    };
-
-                    Ok(Self(bui))
-                }
+                let mut bui = Bui::from_bytes_be(be_bytes)?;
+                bui.precomp_mont_ctx()?;
+                Ok(Self(bui))
             }
             _ => Err(Error::BadModulus(ModulusError::LessThanTwo)),
         }
@@ -657,7 +670,7 @@ impl Modulus {
         if src_bn.0.handle.is_none() {
             return Err(Error::ShouldNotHappen);
         }
-        if !src_bn.is_odd()? {
+        if src_bn.is_even()? {
             return Err(Error::BadModulus(ModulusError::Even));
         }
         if src_bn.is_supersize() {
@@ -967,14 +980,11 @@ impl BigUInt {
 
     /// (self % 2) == 1
     pub fn is_odd(&self) -> Result<bool, Error> {
-        match self.0.zero_one_other {
-            ZeroOneOther::One => Ok(true),
-            ZeroOneOther::Zero => Ok(false),
-            _ => match &self.0.handle {
-                None => Err(Error::NoHandle),
-                Some(h) => Ok(h.ref_is_odd()),
-            },
-        }
+        self.0.is_odd()
+    }
+    /// (self % 2) == 0
+    pub fn is_even(&self) -> Result<bool, Error> {
+        self.0.is_even()
     }
 
     /// `(a + b) % self`.
