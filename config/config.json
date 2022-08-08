@@ -372,6 +372,9 @@
         "rsapss": [
             "rsapss.cc"
         ],
+        "hkdf": [
+            "hkdf.cc"
+        ],
         "hmac": [
             "hmac.cc"
         ],
