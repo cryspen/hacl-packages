@@ -17,6 +17,11 @@ The test vectors are from [Project Wycheproof].
 
 The test vectors are from [Project Wycheproof].
 
+## hkdf
+
+The test vectors are from [RFC5869] and [Project Wycheproof].
+The BLAKE2{s,b} test vectors were generated with [pyca/cryptography]. 
+
 ## p256_ecdh
 
 The test vectors are from [Project Wycheproof].
@@ -56,3 +61,5 @@ The test vectors are from [Project Wycheproof].
 [NIST's Cryptographic Algorithm Validation Program]: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing
 [Project Wycheproof]: https://github.com/google/wycheproof/tree/2196000605e45d91097147c9c71f26b72af58003
 [RFC1321]: https://datatracker.ietf.org/doc/html/rfc1321
+[RFC5869]: https://datatracker.ietf.org/doc/html/rfc5869
+[pyca/cryptography]: https://cryptography.io/en/3.4.2/development/custom-vectors/hkdf.html#creation 
