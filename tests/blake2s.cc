@@ -14,68 +14,18 @@
 #include "hacl-cpu-features.h"
 
 #include "Hacl_Hash_Blake2.h"
+#include "Hacl_Streaming_Blake2.h"
+
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_128.h"
+#include "Hacl_Streaming_Blake2s_128.h"
 #endif
 
-#include "blake2_vectors.h"
 #include "util.h"
 
 #include "EverCrypt_Hash.h"
 
 using json = nlohmann::json;
-
-bool
-print_test2s(int in_len,
-             uint8_t* in,
-             int key_len,
-             uint8_t* key,
-             int exp_len,
-             uint8_t* exp)
-{
-  bytes comp(exp_len, 0);
-  bool ok = false;
-
-  Hacl_Blake2s_32_blake2s(exp_len, comp.data(), in_len, in, key_len, key);
-  ok = compare_and_print(exp_len, comp.data(), exp);
-
-#ifdef HACL_CAN_COMPILE_VEC128
-  // We might have compiled vec128 blake2s but don't have it available on the
-  // CPU when running now.
-  if (hacl_vec128_support()) {
-    Hacl_Blake2s_128_blake2s(exp_len, comp.data(), in_len, in, key_len, key);
-    ok = ok && compare_and_print(exp_len, comp.data(), exp);
-  } else {
-    printf(" !!! NO VEC128 SUPPORT ON THIS MACHINE! !!!\n");
-    ok = ok && true;
-  }
-#endif
-
-  return ok;
-}
-
-class Blake2sTesting : public ::testing::TestWithParam<blake2_test_vector>
-{};
-
-TEST_P(Blake2sTesting, TryTestVectors)
-{
-  const blake2_test_vector& vectors2s(GetParam());
-  bool test = print_test2s(vectors2s.input_len,
-                           vectors2s.input,
-                           vectors2s.key_len,
-                           vectors2s.key,
-                           vectors2s.expected_len,
-                           vectors2s.expected);
-  EXPECT_TRUE(test);
-}
-
-INSTANTIATE_TEST_SUITE_P(TestVectors,
-                         Blake2sTesting,
-                         ::testing::ValuesIn(vectors2s));
-
-// === Test vectors === //
-
-#define bytes std::vector<uint8_t>
 
 typedef struct
 {
@@ -85,13 +35,111 @@ typedef struct
   bytes key;
 } TestCase;
 
-std::vector<TestCase>
-read_official_json()
-{
+class Blake2s : public ::testing::TestWithParam<TestCase>
+{};
 
+TEST_P(Blake2s, TryKAT)
+{
+  auto test = GetParam();
+
+  {
+    bytes got_digest(test.out_len);
+
+    Hacl_Blake2s_32_blake2s(test.out_len,
+                            got_digest.data(),
+                            test.input.size(),
+                            test.input.data(),
+                            test.key.size(),
+                            test.key.data());
+
+    bool outcome = false;
+    outcome =
+      compare_and_print(test.out_len, got_digest.data(), test.digest.data());
+
+    EXPECT_TRUE(outcome);
+  }
+
+  // Streaming variant.
+  {
+    bytes got_digest(test.out_len);
+
+    if (test.key.size() == 0) {
+      // Init
+      Hacl_Streaming_Blake2_blake2s_32_state* state =
+        Hacl_Streaming_Blake2_blake2s_32_no_key_create_in();
+      Hacl_Streaming_Blake2_blake2s_32_no_key_init(state);
+
+      // Update
+      Hacl_Streaming_Blake2_blake2s_32_no_key_update(
+        state, test.input.data(), test.input.size());
+
+      // Finish
+      Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, got_digest.data());
+      Hacl_Streaming_Blake2_blake2s_32_no_key_free(state);
+
+      bool outcome = compare_and_print(
+        test.digest.size(), got_digest.data(), test.digest.data());
+
+      EXPECT_TRUE(outcome);
+    }
+  }
+
+#ifdef HACL_CAN_COMPILE_VEC128
+  {
+    hacl_init_cpu_features();
+
+    if (hacl_vec128_support()) {
+      // TODO: Enable this. See https://github.com/project-everest/hacl-star/issues/586
+      //
+      //    Hacl_Blake2s_128_blake2s(expected_len, got_digest.data(), input_len,
+      //    input, key_len, key); outcome = outcome &&
+      //    compare_and_print(expected_len, got_digest.data(), expected);
+      //
+      //    // Streaming variant.
+      //    if (key_len == 0) {
+      //      // Init
+      //      Hacl_Streaming_Blake2s_128_blake2s_128_state_s* state =
+      //        Hacl_Streaming_Blake2s_128_blake2s_128_no_key_create_in();
+      //
+      //      // Update
+      //      Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update(state, input,
+      //      input_len);
+      //
+      //      // Finish
+      //      Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish(state,
+      //      got_digest.data());
+      //
+      //      outcome = outcome && compare_and_print(expected_len,
+      //      got_digest.data(), expected);
+      //    }
+    } else {
+      printf(" !!! NO VEC128 SUPPORT ON THIS MACHINE! !!!\n");
+    }
+  }
+#endif
+
+  // EverCrypt
+  {
+    EverCrypt_AutoConfig2_init();
+
+    if (test.key.size() == 0) {
+      bytes got_digest(test.out_len, 0);
+
+      EverCrypt_Hash_hash(EverCrypt_Hash_Blake2S_s,
+                          got_digest.data(),
+                          test.input.data(),
+                          test.input.size());
+
+      EXPECT_EQ(got_digest, test.digest);
+    }
+  }
+}
+
+std::vector<TestCase>
+read_official_json(std::string path)
+{
   // Read JSON test vector
-  std::string test_dir = "official.json";
-  std::ifstream json_test_file(test_dir);
+  std::ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
@@ -108,46 +156,31 @@ read_official_json()
       auto key = from_hex(test_case["key"]);
 
       tests_out.push_back({ out_len, digest, input, key });
+    } else if (test_case["hash"] == "blake2sp") {
+      // Skipping
+    } else if (test_case["hash"] == "blake2xs") {
+      // Skipping
+    } else if (test_case["hash"] == "blake2b") {
+      // Skipping
+    } else if (test_case["hash"] == "blake2bp") {
+      // Skipping
+    } else if (test_case["hash"] == "blake2xb") {
+      // Skipping
+    } else {
+      std::cout << test_case["hash"] << std::endl;
+      throw "Unexpected hash value.";
     }
   }
 
   return tests_out;
 }
 
-class Blake2sKAT : public ::testing::TestWithParam<TestCase>
-{};
+INSTANTIATE_TEST_SUITE_P(
+  Official,
+  Blake2s,
+  ::testing::ValuesIn(read_official_json("official.json")));
 
-TEST_P(Blake2sKAT, TryKAT)
-{
-  // Initialize CPU feature detection
-  hacl_init_cpu_features();
-  EverCrypt_AutoConfig2_init();
-  const TestCase& test_case(GetParam());
-
-  // Stupid const
-  uint8_t* input = const_cast<uint8_t*>(test_case.input.data());
-  uint8_t* key = const_cast<uint8_t*>(test_case.key.data());
-  uint8_t* digest = const_cast<uint8_t*>(test_case.digest.data());
-
-  bool test = print_test2s(test_case.input.size(),
-                           input,
-                           test_case.key.size(),
-                           key,
-                           test_case.out_len,
-                           digest);
-  EXPECT_TRUE(test);
-
-  if (test_case.key.size() == 0) {
-    bytes digest_evercrypt(test_case.out_len, 0);
-    uint8_t* input = const_cast<uint8_t*>(test_case.input.data());
-    EverCrypt_Hash_hash(EverCrypt_Hash_Blake2S_s,
-                        digest_evercrypt.data(),
-                        input,
-                        test_case.input.size());
-    EXPECT_EQ(digest_evercrypt, test_case.digest);
-  }
-}
-
-INSTANTIATE_TEST_SUITE_P(OfficialKat,
-                         Blake2sKAT,
-                         ::testing::ValuesIn(read_official_json()));
+INSTANTIATE_TEST_SUITE_P(
+  Vectors,
+  Blake2s,
+  ::testing::ValuesIn(read_official_json("vectors2s.json")));
