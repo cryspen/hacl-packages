@@ -54,3 +54,22 @@ compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
   }
   return ok;
 }
+
+std::vector<bytes>
+chunk(bytes data, size_t chunk_size)
+{
+  std::vector<bytes> out(data.size() / chunk_size);
+
+  auto start = data.begin();
+  auto end = data.end();
+
+  while (start != end) {
+    auto next =
+      std::distance(start, end) >= chunk_size ? start + chunk_size : end;
+
+    out.emplace_back(start, next);
+    start = next;
+  }
+
+  return out;
+}

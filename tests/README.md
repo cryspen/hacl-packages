@@ -34,6 +34,10 @@ The test vectors are from [Project Wycheproof].
 
 The test vectors are from [Project Wycheproof].
 
+## poly1305
+
+The test vectors are from [RFC8439].
+
 ## rsapss
 
 The test vectors are from [Project Wycheproof].
@@ -62,4 +66,5 @@ The test vectors are from [Project Wycheproof].
 [Project Wycheproof]: https://github.com/google/wycheproof/tree/2196000605e45d91097147c9c71f26b72af58003
 [RFC1321]: https://datatracker.ietf.org/doc/html/rfc1321
 [RFC5869]: https://datatracker.ietf.org/doc/html/rfc5869
+[RFC8439]: https://datatracker.ietf.org/doc/html/rfc8439#appendix-A.3
 [pyca/cryptography]: https://cryptography.io/en/3.4.2/development/custom-vectors/hkdf.html#creation 
