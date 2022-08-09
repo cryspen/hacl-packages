@@ -15,6 +15,7 @@
 #include "util.h"
 
 #include "Hacl_Chacha20Poly1305_32.h"
+#include "Hacl_Chacha20_Vec32.h"
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Chacha20Poly1305_128.h"
 #endif
@@ -241,6 +242,20 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
   int res = Hacl_Chacha20Poly1305_32_aead_decrypt(
     key, iv, test_case.aad.size(), aad, msg_size, plaintext.data(), ct, tag);
   EXPECT_EQ(res, test_case.valid ? 0 : 1);
+
+  {
+    bytes got_ct = bytes(test_case.msg.size());
+    Hacl_Chacha20_Vec32_chacha20_encrypt_32(
+      test_case.msg.size(), got_ct.data(), msg, key, iv, 1);
+
+    ASSERT_EQ(test_case.ct, got_ct);
+
+    bytes got_msg = bytes(test_case.msg.size());
+    Hacl_Chacha20_Vec32_chacha20_decrypt_32(
+      test_case.msg.size(), got_msg.data(), ct, key, iv, 1);
+
+    ASSERT_EQ(test_case.msg, got_msg);
+  }
 
 // XXX: do less c&p
 #ifdef HACL_CAN_COMPILE_VEC128
