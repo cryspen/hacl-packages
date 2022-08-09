@@ -375,6 +375,9 @@
         "hkdf": [
             "hkdf.cc"
         ],
+        "poly1305": [
+            "poly1305.cc"
+        ],
         "hmac": [
             "hmac.cc"
         ],
