@@ -8,6 +8,7 @@
 
 #include <fstream>
 
+#include "EverCrypt_AutoConfig2.h"
 #include "hacl-cpu-features.h"
 
 #include <gtest/gtest.h>
@@ -30,6 +31,10 @@
 
 TEST(x25519Test, HaclTest)
 {
+  // Initialize CPU feature detection
+  hacl_init_cpu_features();
+  EverCrypt_AutoConfig2_init();
+
   for (int i = 0; i < sizeof(vectors) / sizeof(curve25519_test_vector); ++i) {
     uint8_t comp[32] = { 0 };
     Hacl_Curve25519_51_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
