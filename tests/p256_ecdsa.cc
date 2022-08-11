@@ -96,6 +96,7 @@ testImplementationHacl()
     Hacl_P256_ecdsa_sign_p256_without_hash(result, 32, digest, prKey, nonce);
   bool s0 = compare_and_print(32, result, siggen_vectors_low5);
   bool s1 = compare_and_print(32, result + 32, siggen_vectors_low6);
+  free(result);
   return s0 && s1 && flag;
 }
 

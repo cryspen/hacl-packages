@@ -84,6 +84,7 @@ sign(bytes e,
                                           msg.size(),
                                           msg.data(),
                                           sgnt_twin.data());
+  free(skey);
 
   bool got = Hacl_RSAPSS_rsapss_skey_sign(alg,
                                           n.size() * 8,
@@ -187,6 +188,7 @@ verify(bytes e,
                                         sgnt.data(),
                                         msg.size(),
                                         msg.data());
+  free(pkey);
 
   bool got2 = Hacl_RSAPSS_rsapss_pkey_verify(alg,
                                              n.size() * 8,
@@ -353,7 +355,7 @@ TEST(BadSecretKey, RsaPssLoadKey)
     uint64_t* skey = Hacl_RSAPSS_new_rsapss_load_skey(
       n.size() * 8, e.size() * 8, d.size() * 8, n.data(), e.data(), d.data());
 
-      ASSERT_TRUE(skey == NULL);
+    ASSERT_TRUE(skey == NULL);
   }
 }
 
