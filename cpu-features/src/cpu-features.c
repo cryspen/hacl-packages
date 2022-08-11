@@ -47,10 +47,8 @@ cpuid(unsigned long leaf,
       unsigned long* edx)
 {
   __asm__("xor %%ecx, %%ecx\n\t"
-          "mov %%ebx,%%edi\n\t"
           "cpuid\n\t"
-          "xchgl %%ebx,%%edi\n\t"
-          : "=a"(*eax), "=D"(*ebx), "=c"(*ecx), "=d"(*edx)
+          : "=a"(*eax), "=b"(*ebx), "=c"(*ecx), "=d"(*edx)
           : "0"(leaf));
 }
 
