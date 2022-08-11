@@ -635,6 +635,8 @@ uint64_t
   {
     return pkey2;
   }
+  // FIXME: See https://github.com/project-everest/hacl-star/issues/588
+  KRML_HOST_FREE(pkey2);
   return NULL;
 }
 
@@ -722,9 +724,8 @@ uint64_t
   {
     return skey2;
   }
-  // FIXME: This must be fixed upstream. An issue will be opened and linked once
-  //        we assessed it's ok to do.
-  free(skey2);
+  // FIXME: See https://github.com/project-everest/hacl-star/issues/588
+  KRML_HOST_FREE(skey2);
   return NULL;
 }
 
