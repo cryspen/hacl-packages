@@ -381,6 +381,9 @@
         "hmac": [
             "hmac.cc"
         ],
+        "drbg": [
+            "drbg.cc"
+        ],
         "md5": [
             "md5.cc"
         ],
