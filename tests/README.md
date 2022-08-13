@@ -60,6 +60,10 @@ The test vectors are from [Cryptographic Algorithm Validation Program].
 
 The test vectors are from [Project Wycheproof].
 
+## NaCl
+
+The test vectors are generated with [crypto_box] and [sodiumoxide] (see `tools/generate_test_vectors/nacl`).
+
 [Reference source code package of BLAKE2]: https://github.com/BLAKE2/BLAKE2/tree/master/testvectors
 [emilbayes/blake2b]: https://github.com/emilbayes/blake2b/blob/master/test-vectors.json
 [NIST's Cryptographic Algorithm Validation Program]: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing
@@ -68,3 +72,6 @@ The test vectors are from [Project Wycheproof].
 [RFC5869]: https://datatracker.ietf.org/doc/html/rfc5869
 [RFC8439]: https://datatracker.ietf.org/doc/html/rfc8439#appendix-A.3
 [pyca/cryptography]: https://cryptography.io/en/3.4.2/development/custom-vectors/hkdf.html#creation 
+[crypto_box]: https://crates.io/crates/crypto_box
+[sodiumoxide]: https://crates.io/crates/sodiumoxide
+
