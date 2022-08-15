@@ -30,7 +30,6 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         compiler: [ gcc, clang ]
         version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
@@ -96,7 +95,6 @@ jobs:
   macos:
     runs-on: macos-latest
     strategy:
-      fail-fast: false
       matrix:
         compiler: [ gcc, clang ]
         version: [ 9, 10, 11, 12, 13, 14 ]
@@ -159,7 +157,6 @@ jobs:
   windows:
     runs-on: windows-latest
     strategy:
-      fail-fast: false
       matrix:
         bits: [ 32, 64 ]
         args: [ "", "--msvc" ]
@@ -204,7 +201,6 @@ jobs:
   android:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         target: [ "aarch64-linux-android" ]
     steps:
