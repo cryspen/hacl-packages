@@ -65,6 +65,39 @@ read_json(char* test_dir, size_t full_size)
   return tests_out;
 }
 
+std::vector<TestCase>
+read_cavp_json(char* test_dir)
+{
+  std::ifstream file(test_dir);
+  json tests_raw;
+  file >> tests_raw;
+
+  std::vector<TestCase> tests;
+
+  for (auto test_raw : tests_raw.items()) {
+    auto test = test_raw.value();
+
+    bytes key = from_hex(test["Key"]);
+    size_t key_size = test["Klen"];
+    bytes msg = from_hex(test["Msg"]);
+    bytes tag = from_hex(test["Mac"]);
+    size_t tag_size = test["Tlen"];
+    size_t full_size = test["L"];
+
+    tests.push_back(TestCase{
+      .key = key,
+      .key_size = key_size * 8,
+      .msg = msg,
+      .tag = tag,
+      .tag_size = tag_size * 8,
+      .full_size = full_size,
+      .valid = true,
+    });
+  }
+
+  return tests;
+}
+
 class HmacKAT : public ::testing::TestWithParam<TestCase>
 {};
 
@@ -83,6 +116,10 @@ TEST_P(HmacKAT, TryKAT)
   if (test_case.full_size == 20) {
     Hacl_HMAC_legacy_compute_sha1(
       tag.data(), key, test_case.key.size(), msg, test_case.msg.size());
+  } else if (test_case.full_size == 28) {
+    std::cout << "Skipping \"full_size=" << test_case.full_size << "\""
+              << std::endl;
+    return;
   } else if (test_case.full_size == 32) {
     Hacl_HMAC_compute_sha2_256(
       tag.data(), key, test_case.key.size(), msg, test_case.msg.size());
@@ -92,9 +129,15 @@ TEST_P(HmacKAT, TryKAT)
   } else if (test_case.full_size == 64) {
     Hacl_HMAC_compute_sha2_512(
       tag.data(), key, test_case.key.size(), msg, test_case.msg.size());
+  } else {
+    FAIL() << "Unsupported \"full_size\" (" << test_case.full_size << ")";
   }
+
   // XXX: Manually truncate the tag ...
   tag.resize(test_case.tag.size());
+
+  std::cout << "Test: " << test_case.key_size << std::endl;
+
   if (test_case.valid) {
     EXPECT_EQ(tag, test_case.tag) << bytes_to_hex(tag) << std::endl
                                   << bytes_to_hex(test_case.tag) << std::endl;
@@ -109,6 +152,7 @@ INSTANTIATE_TEST_SUITE_P(
   HmacSha1Kat,
   HmacKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("hmac_sha1_test.json"), 20)));
+
 INSTANTIATE_TEST_SUITE_P(
   HmacSha256Kat,
   HmacKAT,
@@ -124,3 +168,8 @@ INSTANTIATE_TEST_SUITE_P(
   HmacKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("hmac_sha512_test.json"),
                                 64)));
+
+INSTANTIATE_TEST_SUITE_P(
+  CAVP,
+  HmacKAT,
+  ::testing::ValuesIn(read_cavp_json(const_cast<char*>("CAVP_HMAC.json"))));
