@@ -1,9 +1,7 @@
-name: build
+name: build_pull_request
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
     paths-ignore:
       - .gitignore
       - CLA.md
@@ -17,26 +15,12 @@ on:
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         compiler: [ gcc, clang ]
-        version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
         bits: [ 32, 64 ]
         edition: [ c89, "" ]
-        exclude:
-          - compiler: gcc
-            version: 12
-          - compiler: gcc
-            version: 13
-          - compiler: gcc
-            version: 14
-          # Not available
-          - compiler: clang
-            version: 13
-          # Not available
-          - compiler: clang
-            version: 14
 
     steps:
       - name: Setup | Update
@@ -45,27 +29,21 @@ jobs:
       - name: Setup | Install Ninja
         run: sudo apt-get install ninja-build
 
-      - name: Setup | Install GCC
+      - name: Setup | Install multilib libraries
+        if: ${{ matrix.bits == 32 }}
+        run: sudo apt-get install gcc-multilib g++-multilib
+
+      - name: Setup GCC
         if: ${{ matrix.compiler == 'gcc' }}
         run: |
-          sudo apt-get install gcc-${{ matrix.version }} g++-${{ matrix.version }}
-          echo "CC=gcc-${{ matrix.version }}" >> $GITHUB_ENV
-          echo "CXX=g++-${{ matrix.version }}" >> $GITHUB_ENV
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
 
-      - name: Setup | Install GCC (multilib libraries)
-        if: ${{ matrix.compiler == 'gcc' && matrix.bits == 32 }}
-        run: sudo apt-get install gcc-${{ matrix.version }}-multilib g++-${{ matrix.version }}-multilib
-
-      - name: Setup | Install Clang
+      - name: Setup Clang
         if: ${{ matrix.compiler == 'clang' }}
         run: |
-          sudo apt-get install clang-${{ matrix.version }}
-          echo "CC=clang-${{ matrix.version }}" >> $GITHUB_ENV
-          echo "CXX=clang++-${{ matrix.version }}" >> $GITHUB_ENV
-
-      - name: Setup | Install Clang (multilib libraries)
-        if: ${{ matrix.compiler == 'clang' && matrix.bits == 32 }}
-        run: sudo apt-get install gcc-multilib g++-multilib
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -79,48 +57,31 @@ jobs:
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
         with:
-          name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
+          name: linux_${{ matrix.compiler }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
     runs-on: macos-latest
     strategy:
       matrix:
         compiler: [ gcc, clang ]
-        version: [ 9, 10, 11, 12, 13, 14 ]
         bits: [ 64 ]
         target: [ "", "aarch64-apple-ios", "aarch64-apple-darwin" ]
-        exclude:
-          - compiler: gcc
-            version: 13
-          - compiler: gcc
-            version: 14
-          - compiler: clang
-            version: 9
-          # Not available in brew
-          - compiler: clang
-            version: 10
 
     steps:
       - name: Setup | Install Ninja
         run: brew install ninja
 
-      - name: Setup | Install GCC
+      - name: Setup GCC
         if: ${{ matrix.compiler == 'gcc' }}
         run: |
-          brew install gcc@${{ matrix.version }}
-          echo "CC=gcc-${{ matrix.version }}" >> $GITHUB_ENV
-          echo "CXX=g++-${{ matrix.version }}" >> $GITHUB_ENV
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
 
-      - name: Setup | Install Clang
+      - name: Setup  Clang
         if: ${{ matrix.compiler == 'clang' }}
         run: |
-          brew install llvm@${{ matrix.version }}
-          echo "CC=$(brew --prefix llvm@${{ matrix.version }})/bin/clang" >> $GITHUB_ENV
-          echo "CXX=$(brew --prefix llvm@${{ matrix.version }})/bin/clang++" >> $GITHUB_ENV
-          ls /usr/local/opt/llvm@${{ matrix.version }}/bin
-          echo $CC
-          echo $CXX
-          clang++ --version
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -141,7 +102,7 @@ jobs:
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
         with:
-          name: macos_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.target }}
+          name: macos_${{ matrix.compiler }}_${{ matrix.bits }}_${{ matrix.target }}
 
   windows:
     runs-on: windows-latest
