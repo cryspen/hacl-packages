@@ -16,6 +16,7 @@ use hacl_rust_sys::*;
 use libc;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use std::fmt;
+use std::mem;
 
 // We need a feature flag for this
 type HaclBnWord = u64;
@@ -191,6 +192,11 @@ impl HaclBnHandle {
         let least_limb = unsafe { *(self.ptr.offset(0)) };
         least_limb % 2 == 1
     }
+
+    // lots of unsafe stuff
+    unsafe fn mut_ptr(&self) -> *mut HaclBnWord {
+        mem::transmute_copy(&self.ptr)
+    }
 }
 
 impl fmt::Debug for HaclBnHandle {
@@ -341,7 +347,7 @@ impl BigUInt {
 }
 
 /// HaclBnType is used in unsafe operations
-type HaclBnType = *mut HaclBnWord;
+type HaclBnType = *const HaclBnWord;
 
 const BN_BITSIZE: usize = 4096;
 
@@ -1237,11 +1243,13 @@ impl BigUInt {
         }
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
+        let a = self.0.handle.as_ref().ok_or(Error::NoHandle)?;
 
-        let a = self.0.handle.as_ref().ok_or(Error::NoHandle)?.ptr;
         let k = modulus.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
-            Hacl_Bignum4096_mod_precomp(k, a, handle.ptr);
+            let a = a.mut_ptr();
+            let res: *mut HaclBnWord = mem::transmute_copy(&handle.ptr);
+            Hacl_Bignum4096_mod_precomp(k, a, res);
         }
 
         self.0.zero_one_other = handle.zero_one_other()?;
