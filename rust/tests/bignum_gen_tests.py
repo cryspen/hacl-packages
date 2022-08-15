@@ -1,12 +1,13 @@
 # A place to generate some test data for bignum
 
+from ast import Or
 from random import randint
 
 from numpy import append
 
 BIT_SIZE: int = 4096
 
-top: int = pow(2, BIT_SIZE) - 1
+top: int = pow(2, BIT_SIZE) - 3
 
 
 def rand() -> int:
@@ -90,9 +91,49 @@ def create_mod_add(count: int) -> list[ModAddQuad]:
     return tests
 
 
+class OrdQuad:
+    def __init__(self, a: int, b: int, m1: int, m2: int):
+        self.numbers: dict[str, int] = {}
+        self.numbers["a"] = a
+        self.numbers["b"] = b
+
+        # moduli must be odd
+        self.numbers["m1"] = m1 if (m1 % 2 == 1) else m1 + 1
+        self.numbers["m2"] = m2 if (m1 % 2 == 1) else m2 + 1
+
+        self.ordering: list[str] = sorted(
+            self.numbers.keys(), key=self.numbers.get)
+
+    def __str__(self) -> str:
+        s = f'''\tTestVector{{
+            a: "{u_hex(self.numbers["a"])}",
+            b: "{u_hex(self.numbers["b"])}",
+            m1: "{u_hex(self.numbers["m1"])}",
+            m2: "{u_hex(self.numbers["m2"])}",
+            ordering: "{self.ordering}",
+        }},
+        '''
+
+        return s
+
+
+def create_order(count: int) -> list[OrdQuad]:
+    tests: list[OrdQuad] = []
+    for _ in range(count):
+        a = rand()
+        b = rand()
+        m1 = rand()
+        m2 = rand()
+        ord_q = OrdQuad(a, b, m1, m2)
+        tests.append(ord_q)
+
+    return tests
+
+
 def main():
     # r_list = create_rand_reductions(5)
-    r_list = create_mod_add(5)
+    # r_list = create_mod_add(5)
+    r_list = create_order(4)
     for r in r_list:
         print(r, end='')
 
