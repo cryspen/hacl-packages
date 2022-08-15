@@ -150,6 +150,104 @@ TEST_P(P256EcdsaWycheproof, TryWycheproof)
   }
 }
 
+class K256Ecdsa
+{};
+
+TEST(K256Ecdsa, SelfTest)
+{
+  bytes sk = from_hex(
+    "a32aa1699dcaf84c231dc805981942aa8793b4256d6a21de3e78c9036d39cc1f");
+  bytes pk_compressed = from_hex(
+    "029d2ad65c5ef50e1651d78825dae280499155f5053def90487fc0282de763a49d");
+  bytes pk_uncompressed = from_hex(
+    "049d2ad65c5ef50e1651d78825dae280499155f5053def90487fc0282de763a49"
+    "dad99718541ecbae69bcc43a74fb27462f5ed6e5a0d722f95cd8b685b7f8d26ea");
+
+  // Compressed-to-raw and vice versa.
+  {
+    bytes got_pk_raw(64);
+    bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(
+      got_pk_raw.data(), pk_compressed.data());
+    EXPECT_TRUE(res);
+
+    bytes got_pk_compressed = bytes(1 + 32);
+    Hacl_K256_ECDSA_public_key_compressed_from_raw(got_pk_compressed.data(),
+                                                   got_pk_raw.data());
+
+    ASSERT_EQ(pk_compressed, got_pk_compressed);
+  }
+
+  // Uncompressed-to-raw and vice versa.
+  {
+    bytes got_pk_raw(64);
+    bool res = Hacl_K256_ECDSA_public_key_uncompressed_to_raw(
+      got_pk_raw.data(), pk_uncompressed.data());
+    EXPECT_TRUE(res);
+
+    bytes got_pk_uncompressed = bytes(1 + 64);
+    Hacl_K256_ECDSA_public_key_uncompressed_from_raw(got_pk_uncompressed.data(),
+                                                     got_pk_raw.data());
+
+    ASSERT_EQ(pk_uncompressed, got_pk_uncompressed);
+  }
+
+  bytes pk(64);
+  bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(pk.data(),
+                                                          pk_compressed.data());
+  EXPECT_TRUE(res);
+
+  std::vector<bytes> msgs = {
+    from_hex(""),
+    from_hex("FF"),
+    from_hex("AA"),
+    from_hex("AAFF"),
+    from_hex("AAAA"),
+    from_hex("AAAAFF"),
+    from_hex("AAAAAAAA"),
+    from_hex("AAAAAAAAFF"),
+    from_hex("AAAAAAAAAAAAAAAA"),
+    from_hex("AAAAAAAAAAAAAAAAFF"),
+    from_hex("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+    from_hex("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFF"),
+    from_hex(
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+    from_hex(
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFF"),
+  };
+
+  typedef bool (*sign_fn)(uint8_t*, uint32_t, uint8_t*, uint8_t*, uint8_t*);
+  typedef bool (*verify_fn)(uint32_t, uint8_t*, uint8_t*, uint8_t*);
+
+  std::vector<std::tuple<std::string, sign_fn, verify_fn>> algs = {
+    std::make_tuple("secp256k1_sha256",
+                    Hacl_K256_ECDSA_secp256k1_ecdsa_sign_sha256,
+                    Hacl_K256_ECDSA_secp256k1_ecdsa_verify_sha256),
+    std::make_tuple("sha256",
+                    Hacl_K256_ECDSA_ecdsa_sign_sha256,
+                    Hacl_K256_ECDSA_ecdsa_verify_sha256)
+  };
+
+  // Note: 1 <= nonce < q
+  bytes nonce = bytes(32, 'A');
+
+  for (auto alg : algs) {
+    std::string name;
+    sign_fn sign;
+    verify_fn verify;
+    std::tie(name, sign, verify) = alg;
+
+    for (auto msg : msgs) {
+      bytes got_signature(64);
+      bool res = sign(
+        got_signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
+      ASSERT_TRUE(res);
+
+      res = verify(msg.size(), msg.data(), pk.data(), got_signature.data());
+      ASSERT_TRUE(res);
+    }
+  }
+}
+
 INSTANTIATE_TEST_SUITE_P(Wycheproof,
                          P256EcdsaWycheproof,
                          ::testing::ValuesIn(read_json()));
