@@ -11,10 +11,13 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
+#include "EverCrypt_Hash.h"
+#include "Hacl_Hash_Base.h"
 #include "Hacl_Hash_SHA2.h"
+#include "Hacl_Spec.h"
 #include "Hacl_Streaming_SHA2.h"
-
 #include "config.h"
+#include "evercrypt.h"
 #include "util.h"
 
 using json = nlohmann::json;
@@ -28,9 +31,8 @@ typedef struct
 } TestCase;
 
 std::vector<TestCase>
-read_json(char* test_file)
+read_json(string test_file)
 {
-
   // Read JSON test vector
   std::ifstream json_test_file(test_file);
   nlohmann::json test_vectors;
@@ -135,66 +137,244 @@ TEST_P(Sha2KAT, TryKAT)
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                     << bytes_to_hex(digest) << std::endl;
   }
-
-  // TODO: Evercrypt
 }
+
+// ----- EverCrypt -------------------------------------------------------------
+
+typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+
+TEST_P(EverCryptSuiteTestCase, HashTest)
+{
+  EverCryptConfig config;
+  Spec_Hash_Definitions_hash_alg alg;
+  TestCase test_case;
+  tie(config, test_case) = this->GetParam();
+
+  {
+    bytes got_digest(test_case.md.size(), 0);
+
+    if (test_case.md.size() == 224 / 8) {
+      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_224,
+                          got_digest.data(),
+                          test_case.msg.data(),
+                          test_case.msg.size());
+    } else if (test_case.md.size() == 256 / 8) {
+      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_256,
+                          got_digest.data(),
+                          test_case.msg.data(),
+                          test_case.msg.size());
+    } else if (test_case.md.size() == 384 / 8) {
+      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_384,
+                          got_digest.data(),
+                          test_case.msg.data(),
+                          test_case.msg.size());
+    } else if (test_case.md.size() == 512 / 8) {
+      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_512,
+                          got_digest.data(),
+                          test_case.msg.data(),
+                          test_case.msg.size());
+    } else {
+      FAIL();
+    }
+
+    EXPECT_EQ(test_case.md, got_digest);
+  }
+
+  // Streaming
+  {
+    bytes got_digest(test_case.md.size(), 0);
+
+    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state;
+    if (test_case.md.size() == 224 / 8) {
+      state =
+        EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_224);
+    } else if (test_case.md.size() == 256 / 8) {
+      state =
+        EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_256);
+    } else if (test_case.md.size() == 384 / 8) {
+      state =
+        EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_384);
+    } else if (test_case.md.size() == 512 / 8) {
+      state =
+        EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_512);
+    } else {
+      FAIL();
+    }
+
+    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_update(
+      state, test_case.msg.data(), test_case.msg.size());
+    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+    EverCrypt_Hash_Incremental_free(state);
+
+    EXPECT_EQ(test_case.md, got_digest);
+  }
+}
+
+// -----------------------------------------------------------------------------
 
 INSTANTIATE_TEST_SUITE_P(
   CryspenSha224,
   Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_sha2_224.json"))));
+  ::testing::ValuesIn(read_json("cryspen_sha2_224.json")));
 
 INSTANTIATE_TEST_SUITE_P(
   CryspenSha256,
   Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_sha2_256.json"))));
+  ::testing::ValuesIn(read_json("cryspen_sha2_256.json")));
 
 INSTANTIATE_TEST_SUITE_P(
   CryspenSha384,
   Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_sha2_384.json"))));
+  ::testing::ValuesIn(read_json("cryspen_sha2_384.json")));
 
 INSTANTIATE_TEST_SUITE_P(
   CryspenSha512,
   Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_sha2_512.json"))));
+  ::testing::ValuesIn(read_json("cryspen_sha2_512.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha224ShortKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha224-short.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha224LongKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha224-long.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha256ShortKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha256-short.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha256LongKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha256-long.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha384ShortKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha384-short.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha384LongKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha384-short.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha512ShortKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha512-short.json")));
+
+INSTANTIATE_TEST_SUITE_P(Sha512LongKAT,
+                         Sha2KAT,
+                         ::testing::ValuesIn(read_json("sha512-short.json")));
+
+// ----- EverCrypt -------------------------------------------------------------
+
+// SHA2-256 can use "Intel SHA extensions".
+// We test w/ and w/o SHAEXT enabled.
+vector<EverCryptConfig>
+generate_sha2_configs()
+{
+  vector<EverCryptConfig> configs;
+
+  // SHAEXT "enabled" (when supported).
+  configs.push_back(EverCryptConfig{
+    .disable_adx = false,
+    .disable_aesni = false,
+    .disable_avx = false,
+    .disable_avx2 = false,
+    .disable_avx512 = false,
+    .disable_bmi2 = false,
+    .disable_movbe = false,
+    .disable_pclmulqdq = false,
+    .disable_rdrand = false,
+    .disable_shaext = false,
+    .disable_sse = false,
+  });
+
+  // SHAEXT disabled.
+  configs.push_back(EverCryptConfig{
+    .disable_adx = false,
+    .disable_aesni = false,
+    .disable_avx = false,
+    .disable_avx2 = false,
+    .disable_avx512 = false,
+    .disable_bmi2 = false,
+    .disable_movbe = false,
+    .disable_pclmulqdq = false,
+    .disable_rdrand = false,
+    .disable_shaext = true,
+    .disable_sse = false,
+  });
+
+  return configs;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha2224,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("cryspen_sha2_224.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha2256,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("cryspen_sha2_256.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha2384,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("cryspen_sha2_384.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha2512,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("cryspen_sha2_512.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha224ShortKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha224-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha224-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha224LongKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha224-long.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha224-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha256ShortKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha256-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha256-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha256LongKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha256-long.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha256-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha384ShortKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha384-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha384-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha384LongKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha384-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha384-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha512ShortKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha512-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha512-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha512LongKAT,
-  Sha2KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha512-short.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_sha2_configs()),
+                     ::testing::ValuesIn(read_json("sha512-long.json"))));

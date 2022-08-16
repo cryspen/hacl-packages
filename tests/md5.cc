@@ -7,13 +7,14 @@
  */
 
 #include <fstream>
-
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
+#include "EverCrypt_Hash.h"
 #include "Hacl_Hash_Base.h"
 #include "Hacl_Hash_MD5.h"
 #include "Hacl_Spec.h"
+#include "evercrypt.h"
 #include "util.h"
 
 using json = nlohmann::json;
@@ -38,8 +39,47 @@ TEST_P(Md5Suite, TestCase)
   EXPECT_EQ(got_hash, test.hash);
 }
 
+// ----- EverCrypt -------------------------------------------------------------
+
+typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+
+TEST_P(EverCryptSuiteTestCase, HashTest)
+{
+  EverCryptConfig config;
+  TestCase test;
+  tie(config, test) = this->GetParam();
+
+  {
+    bytes got_digest(Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_MD5));
+
+    EverCrypt_Hash_hash(Spec_Hash_Definitions_MD5,
+                        got_digest.data(),
+                        test.message.data(),
+                        test.message.size());
+
+    ASSERT_EQ(test.hash, got_digest);
+  }
+
+  {
+    bytes got_digest(Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_MD5));
+
+    // Use a typedef?
+    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_MD5);
+    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_update(
+      state, test.message.data(), test.message.size());
+    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+    EverCrypt_Hash_Incremental_free(state);
+
+    ASSERT_EQ(test.hash, got_digest);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 std::vector<TestCase>
-read_json(char* path)
+read_json(std::string path)
 {
   json tests_raw;
   std::ifstream file(path);
@@ -63,12 +103,49 @@ read_json(char* path)
   return tests;
 }
 
+// -----------------------------------------------------------------------------
+
+INSTANTIATE_TEST_SUITE_P(Rfc1231,
+                         Md5Suite,
+                         ::testing::ValuesIn(read_json("rfc1321.json")));
+
+INSTANTIATE_TEST_SUITE_P(Cryspen,
+                         Md5Suite,
+                         ::testing::ValuesIn(read_json("cryspen_md5.json")));
+
+// ----- EverCrypt -------------------------------------------------------------
+
+// There is no hardware support for MD5.
+vector<EverCryptConfig>
+generate_md5_configs()
+{
+  vector<EverCryptConfig> configs;
+
+  configs.push_back(EverCryptConfig{
+    .disable_adx = false,
+    .disable_aesni = false,
+    .disable_avx = false,
+    .disable_avx2 = false,
+    .disable_avx512 = false,
+    .disable_bmi2 = false,
+    .disable_movbe = false,
+    .disable_pclmulqdq = false,
+    .disable_rdrand = false,
+    .disable_shaext = false,
+    .disable_sse = false,
+  });
+
+  return configs;
+}
+
 INSTANTIATE_TEST_SUITE_P(
   Rfc1231,
-  Md5Suite,
-  ::testing::ValuesIn(read_json(const_cast<char*>("rfc1321.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_md5_configs()),
+                     ::testing::ValuesIn(read_json("rfc1321.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Cryspen,
-  Md5Suite,
-  ::testing::ValuesIn(read_json(const_cast<char*>("cryspen_md5.json"))));
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_md5_configs()),
+                     ::testing::ValuesIn(read_json("cryspen_md5.json"))));
