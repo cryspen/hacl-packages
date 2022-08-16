@@ -398,6 +398,9 @@
         ],
         "nacl": [
             "nacl.cc"
+        ],
+        "evercrypt": [
+            "evercrypt.cc"
         ]
     }
 }
