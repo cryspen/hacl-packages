@@ -7,33 +7,43 @@
  */
 
 #include <fstream>
-
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
-#include "hacl-cpu-features.h"
-
+#include "EverCrypt_Hash.h"
 #include "Hacl_Hash_Blake2.h"
 #include "Hacl_Streaming_Blake2.h"
+#include "evercrypt.h"
+#include "hacl-cpu-features.h"
+#include "util.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_128.h"
 #include "Hacl_Streaming_Blake2s_128.h"
 #endif
 
-#include "util.h"
-
-#include "EverCrypt_Hash.h"
-
 using json = nlohmann::json;
 
-typedef struct
+class TestCase
 {
+public:
   size_t out_len;
   bytes digest;
   bytes input;
   bytes key;
-} TestCase;
+};
+
+ostream&
+operator<<(ostream& os, const TestCase& test)
+{
+  os << "TestCase {" << endl
+     << "\t.out_len = " << test.out_len << endl
+     << "\t.digest = " << bytes_to_hex(test.digest) << endl
+     << "\t.input = " << bytes_to_hex(test.input) << endl
+     << "\t.key = " << bytes_to_hex(test.key) << endl
+     << "}" << endl;
+  return os;
+}
 
 class Blake2s : public ::testing::TestWithParam<TestCase>
 {};
@@ -89,7 +99,8 @@ TEST_P(Blake2s, TryKAT)
     hacl_init_cpu_features();
 
     if (hacl_vec128_support()) {
-      // TODO: Enable this. See https://github.com/project-everest/hacl-star/issues/586
+      // TODO: Enable this. See
+      // https://github.com/project-everest/hacl-star/issues/586
       //
       //    Hacl_Blake2s_128_blake2s(expected_len, got_digest.data(), input_len,
       //    input, key_len, key); outcome = outcome &&
@@ -175,6 +186,50 @@ read_official_json(std::string path)
   return tests_out;
 }
 
+// ----- EverCrypt -------------------------------------------------------------
+
+typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+
+TEST_P(EverCryptSuiteTestCase, HashTest)
+{
+  EverCryptConfig config;
+  TestCase test;
+  tie(config, test) = this->GetParam();
+
+  if (test.key.size() != 0) {
+    return;
+  }
+
+  {
+    bytes got_digest(test.digest.size(), 0);
+
+    EverCrypt_Hash_hash(Spec_Hash_Definitions_Blake2S,
+                        got_digest.data(),
+                        test.input.data(),
+                        test.input.size());
+
+    EXPECT_EQ(test.digest, got_digest);
+  }
+
+  // Streaming
+  {
+    bytes got_digest(test.digest.size(), 0);
+
+    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2S);
+
+    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_update(
+      state, test.input.data(), test.input.size());
+    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+    EverCrypt_Hash_Incremental_free(state);
+
+    EXPECT_EQ(test.digest, got_digest);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 INSTANTIATE_TEST_SUITE_P(
   Official,
   Blake2s,
@@ -184,3 +239,44 @@ INSTANTIATE_TEST_SUITE_P(
   Vectors,
   Blake2s,
   ::testing::ValuesIn(read_official_json("vectors2s.json")));
+
+// ----- EverCrypt -------------------------------------------------------------
+
+// Blake2 can use HACL's VEC128 and VEC256 features.
+// These features translate to avx and avx2 on Intel machines.
+vector<EverCryptConfig>
+generate_blake2s_configs()
+{
+  vector<EverCryptConfig> configs;
+
+  for (uint32_t i = 0; i < 4; ++i) {
+    configs.push_back(EverCryptConfig{
+      .disable_adx = false,
+      .disable_aesni = false,
+      .disable_avx = (i & 1) != 0,
+      .disable_avx2 = (i & 2) != 0,
+      .disable_avx512 = false,
+      .disable_bmi2 = false,
+      .disable_movbe = false,
+      .disable_pclmulqdq = false,
+      .disable_rdrand = false,
+      .disable_shaext = false,
+      .disable_sse = false,
+    });
+  }
+
+  return configs;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+  Official,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(::testing::ValuesIn(generate_blake2s_configs()),
+                     ::testing::ValuesIn(read_official_json("official.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Vectors,
+  EverCryptSuiteTestCase,
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_blake2s_configs()),
+    ::testing::ValuesIn(read_official_json("vectors2s.json"))));
