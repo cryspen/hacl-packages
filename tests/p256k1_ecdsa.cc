@@ -8,9 +8,8 @@
 
 #include <fstream>
 #include <gtest/gtest.h>
-#include <nlohmann/json.hpp>
-
 #include <inttypes.h>
+#include <nlohmann/json.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,51 +19,30 @@
 #include "util.h"
 
 using json = nlohmann::json;
+using namespace std;
 
-#define bytes std::vector<uint8_t>
-
-typedef struct
+class TestCase
 {
+public:
   bytes public_key;
   bytes msg;
   bytes sig;
   bool valid;
-} TestCase;
+};
 
-std::vector<TestCase>
-read_json()
+ostream&
+operator<<(ostream& os, const TestCase& test)
 {
-
-  // Read JSON test vector
-  std::string test_dir = "ecdsa_secp256k1_sha256_test.json";
-  std::ifstream json_test_file(test_dir);
-  json test_vectors;
-  json_test_file >> test_vectors;
-
-  std::vector<TestCase> tests_out;
-
-  // Read test group
-  for (auto& test : test_vectors["testGroups"].items()) {
-    auto test_value = test.value();
-
-    // Read the key
-    auto key = test_value["key"];
-    auto public_key = from_hex(key["uncompressed"]);
-
-    auto tests = test_value["tests"];
-    for (auto& test_case : tests.items()) {
-      auto test_case_value = test_case.value();
-      auto msg = from_hex(test_case_value["msg"]);
-      auto sig = from_hex(test_case_value["sig"]);
-      auto result = test_case_value["result"];
-      bool valid = result == "valid" || result == "acceptable";
-
-      tests_out.push_back({ public_key, msg, sig, valid });
-    }
-  }
-
-  return tests_out;
+  os << "TestCase {" << endl
+     << "\t.public_key = " << bytes_to_hex(test.public_key) << endl
+     << "\t.msg = " << bytes_to_hex(test.msg) << endl
+     << "\t.sig = " << bytes_to_hex(test.sig) << endl
+     << "\t.valid = " << test.valid << endl
+     << "}" << endl;
+  return os;
 }
+
+// -----------------------------------------------------------------------------
 
 class P256EcdsaWycheproof : public ::testing::TestWithParam<TestCase>
 {};
@@ -246,6 +224,43 @@ TEST(K256Ecdsa, SelfTest)
       ASSERT_TRUE(res);
     }
   }
+}
+
+// -----------------------------------------------------------------------------
+
+std::vector<TestCase>
+read_json()
+{
+
+  // Read JSON test vector
+  std::string test_dir = "ecdsa_secp256k1_sha256_test.json";
+  std::ifstream json_test_file(test_dir);
+  json test_vectors;
+  json_test_file >> test_vectors;
+
+  std::vector<TestCase> tests_out;
+
+  // Read test group
+  for (auto& test : test_vectors["testGroups"].items()) {
+    auto test_value = test.value();
+
+    // Read the key
+    auto key = test_value["key"];
+    auto public_key = from_hex(key["uncompressed"]);
+
+    auto tests = test_value["tests"];
+    for (auto& test_case : tests.items()) {
+      auto test_case_value = test_case.value();
+      auto msg = from_hex(test_case_value["msg"]);
+      auto sig = from_hex(test_case_value["sig"]);
+      auto result = test_case_value["result"];
+      bool valid = result == "valid" || result == "acceptable";
+
+      tests_out.push_back({ public_key, msg, sig, valid });
+    }
+  }
+
+  return tests_out;
 }
 
 INSTANTIATE_TEST_SUITE_P(Wycheproof,
