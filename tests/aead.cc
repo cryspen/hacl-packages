@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 #include "EverCrypt_AEAD.h"
+#include "EverCrypt_AutoConfig2.h"
 #include "evercrypt.h"
 #include "util.h"
 #include "wycheproof.h"
@@ -117,9 +118,18 @@ TEST_P(AesGcmSuite, KAT)
     FAIL() << "Unexpected keySize.";
   }
 
-  if (res != EverCrypt_Error_Success) {
-    cout << "Skipping test due to EverCrypt error " << res << endl;
-    return;
+  if (res == EverCrypt_Error_UnsupportedAlgorithm) {
+    if (!EverCrypt_AutoConfig2_has_aesni() ||
+        !EverCrypt_AutoConfig2_has_pclmulqdq()) {
+      cout << "Skipping failed `EverCrypt_AEAD_create_in(...)` due to missing "
+              "`aesni` or `pclmulqdq` feature."
+           << endl;
+      return;
+    } else {
+      FAIL() << "`EverCrypt_AEAD_create_in(...)` failed unexpectedly with "
+                "error code \""
+             << res << "\".";
+    }
   }
 
   encrypt_decrypt(
@@ -128,7 +138,8 @@ TEST_P(AesGcmSuite, KAT)
 
 // ----- EverCrypt -------------------------------------------------------------
 
-// AEAD can use aesni, clmul, VEC128 (avx on Intel), and VEC256 (avx2 on Intel).
+// AEAD (ChaCha20Poly1305 + AES-GCM) can use aesni, clmul,
+// VEC128 (avx on Intel), and VEC256 (avx2 on Intel).
 vector<EverCryptConfig>
 generate_aead_configs()
 {
