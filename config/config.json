@@ -405,6 +405,9 @@
         ],
         "evercrypt": [
             "evercrypt.cc"
+        ],
+        "aead": [
+            "aead.cc"
         ]
     }
 }
