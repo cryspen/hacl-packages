@@ -120,9 +120,11 @@ TEST_P(AesGcmSuite, KAT)
 
   if (res == EverCrypt_Error_UnsupportedAlgorithm) {
     if (!EverCrypt_AutoConfig2_has_aesni() ||
-        !EverCrypt_AutoConfig2_has_pclmulqdq()) {
+        !EverCrypt_AutoConfig2_has_pclmulqdq() ||
+        !EverCrypt_AutoConfig2_has_avx() || !EverCrypt_AutoConfig2_has_sse() ||
+        !EverCrypt_AutoConfig2_has_movbe()) {
       cout << "Skipping failed `EverCrypt_AEAD_create_in(...)` due to missing "
-              "`aesni` or `pclmulqdq` feature."
+              "features."
            << endl;
       return;
     } else {
@@ -145,7 +147,7 @@ generate_aead_configs()
 {
   vector<EverCryptConfig> configs;
 
-  for (uint32_t i = 0; i < 16; ++i) {
+  for (uint32_t i = 0; i < 64; ++i) {
     configs.push_back(EverCryptConfig{
       .disable_adx = false,
       .disable_aesni = (i % 1) != 0,
@@ -153,11 +155,11 @@ generate_aead_configs()
       .disable_avx2 = (i & 4) != 0,
       .disable_avx512 = false,
       .disable_bmi2 = false,
-      .disable_movbe = false,
-      .disable_pclmulqdq = (i % 8) != 0,
+      .disable_movbe = (i % 8) != 0,
+      .disable_pclmulqdq = (i % 16) != 0,
       .disable_rdrand = false,
       .disable_shaext = false,
-      .disable_sse = false,
+      .disable_sse = (i % 32) != 0,
     });
   }
 
