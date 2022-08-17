@@ -71,17 +71,19 @@ encrypt_decrypt(EverCrypt_AEAD_state_s* state,
 
 // ----- ChaCha20Poly1305 ------------------------------------------------------
 
-typedef EverCryptSuite<WycheproofChacha20Poly1305> ChaCha20Suite;
+typedef EverCryptSuite<WycheproofAeadTest> ChaCha20Suite;
 
 TEST_P(ChaCha20Suite, KAT)
 {
   EverCryptConfig config;
-  WycheproofChacha20Poly1305 test;
+  WycheproofAeadTest test;
   tie(config, test) = this->GetParam();
 
   EverCrypt_AEAD_state_s* state;
-  EverCrypt_AEAD_create_in(
+  EverCrypt_Error_error_code res = EverCrypt_AEAD_create_in(
     Spec_Agile_AEAD_CHACHA20_POLY1305, &state, test.key.data());
+  // Should always work.
+  ASSERT_EQ(res, EverCrypt_Error_Success);
 
   encrypt_decrypt(
     state, test.iv, test.aad, test.msg, test.ct, test.tag, test.valid);
@@ -91,20 +93,15 @@ TEST_P(ChaCha20Suite, KAT)
 
 // ----- AES GCM -------------------------------------------------------------
 
-typedef EverCryptSuite<WycheproofAesGcm> AesGcmSuite;
+typedef EverCryptSuite<WycheproofAeadTest> AesGcmSuite;
 
 TEST_P(AesGcmSuite, KAT)
 {
   EverCryptConfig config;
-  WycheproofAesGcm test;
+  WycheproofAeadTest test;
   tie(config, test) = this->GetParam();
 
   EverCrypt_AEAD_state_s* state;
-
-  if (test.iv.size() != 12) {
-    cout << "Skipping ivSize != 96" << endl;
-    return;
-  }
 
   EverCrypt_Error_error_code res;
   if (test.keySize == 128) {
@@ -121,7 +118,7 @@ TEST_P(AesGcmSuite, KAT)
   }
 
   if (res != EverCrypt_Error_Success) {
-    cout << "Skipping test due to EverCrypt error" << res << endl;
+    cout << "Skipping test due to EverCrypt error " << res << endl;
     return;
   }
 
@@ -156,11 +153,13 @@ generate_aead_configs()
   return configs;
 }
 
+// -----------------------------------------------------------------------------
+
 INSTANTIATE_TEST_SUITE_P(
   Wycheproof,
   ChaCha20Suite,
   ::testing::Combine(::testing::ValuesIn(generate_aead_configs()),
-                     ::testing::ValuesIn(read_wycheproof_chacha20_poly1305_json(
+                     ::testing::ValuesIn(read_wycheproof_aead_json(
                        "chacha20_poly1305_test.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
@@ -168,4 +167,4 @@ INSTANTIATE_TEST_SUITE_P(
   AesGcmSuite,
   ::testing::Combine(
     ::testing::ValuesIn(generate_aead_configs()),
-    ::testing::ValuesIn(read_aes_gcm_json("aes_gcm_test.json"))));
+    ::testing::ValuesIn(read_wycheproof_aead_json("aes_gcm_test.json"))));
