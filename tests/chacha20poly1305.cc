@@ -6,19 +6,19 @@
  *    - http://opensource.org/licenses/MIT
  */
 
-#include <fstream>
-
 #include <gtest/gtest.h>
-#include <nlohmann/json.hpp>
-
-#include "hacl-cpu-features.h"
-#include "util.h"
 
 #include "Hacl_Chacha20Poly1305_32.h"
 #include "Hacl_Chacha20_Vec32.h"
+#include "chacha20poly1305_vectors.h"
+#include "hacl-cpu-features.h"
+#include "util.h"
+#include "wycheproof.h"
+
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Chacha20Poly1305_128.h"
 #endif
+
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Chacha20Poly1305_256.h"
 #endif
@@ -31,10 +31,6 @@
 #include "Vale.h"
 #endif
 
-#include "chacha20poly1305_vectors.h"
-
-using json = nlohmann::json;
-
 // Function pointer to multiplex between the different implementations.
 typedef void (*test_encrypt)(uint8_t*,
                              uint8_t*,
@@ -44,6 +40,7 @@ typedef void (*test_encrypt)(uint8_t*,
                              uint8_t*,
                              uint8_t*,
                              uint8_t*);
+
 typedef uint32_t (*test_decrypt)(uint8_t*,
                                  uint8_t*,
                                  uint32_t,
@@ -155,68 +152,15 @@ INSTANTIATE_TEST_SUITE_P(TestVectors,
 
 // === Wycheproof tests === //
 
-#define bytes std::vector<uint8_t>
-
-typedef struct
-{
-  bytes msg;
-  bytes key;
-  bytes iv;
-  bytes aad;
-  bytes ct;
-  bytes tag;
-  bool valid;
-} TestCase;
-
-std::vector<TestCase>
-read_json()
-{
-
-  // Read JSON test vector
-  std::string test_dir = "chacha20_poly1305_test.json";
-  std::ifstream json_test_file(test_dir);
-  json test_vectors;
-  json_test_file >> test_vectors;
-
-  std::vector<TestCase> tests_out;
-
-  // Read test group
-  for (auto& test : test_vectors["testGroups"].items()) {
-    auto test_value = test.value();
-    if (test_value["ivSize"] != 96) {
-      // HACL only support 12 byte IVs
-      continue;
-    }
-    EXPECT_EQ(test_value["keySize"], 256);
-    EXPECT_EQ(test_value["tagSize"], 128);
-
-    auto tests = test_value["tests"];
-    for (auto& test_case : tests.items()) {
-      auto test_case_value = test_case.value();
-      auto msg = from_hex(test_case_value["msg"]);
-      auto key = from_hex(test_case_value["key"]);
-      auto iv = from_hex(test_case_value["iv"]);
-      auto aad = from_hex(test_case_value["aad"]);
-      auto ct = from_hex(test_case_value["ct"]);
-      auto tag = from_hex(test_case_value["tag"]);
-      auto result = test_case_value["result"];
-      bool valid = result == "valid";
-
-      tests_out.push_back({ msg, key, iv, aad, ct, tag, valid });
-    }
-  }
-
-  return tests_out;
-}
-
-class Chacha20Poly1305Wycheproof : public ::testing::TestWithParam<TestCase>
+class Chacha20Poly1305Wycheproof
+  : public ::testing::TestWithParam<WycheproofChacha20Poly1305>
 {};
 
 TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
 {
   // Initialize CPU feature detection
   hacl_init_cpu_features();
-  const TestCase& test_case(GetParam());
+  const WycheproofChacha20Poly1305& test_case(GetParam());
 
   auto msg_size = test_case.msg.size();
   bytes plaintext(msg_size, 0);
@@ -312,6 +256,8 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
 #endif //  HACL_CAN_COMPILE_VEC256
 }
 
-INSTANTIATE_TEST_SUITE_P(Wycheproof,
-                         Chacha20Poly1305Wycheproof,
-                         ::testing::ValuesIn(read_json()));
+INSTANTIATE_TEST_SUITE_P(
+  Wycheproof,
+  Chacha20Poly1305Wycheproof,
+  ::testing::ValuesIn(
+    read_wycheproof_chacha20_poly1305_json("chacha20_poly1305_test.json")));
