@@ -7,24 +7,25 @@
  */
 
 #include <fstream>
-#include <tuple>
-
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
+#include <tuple>
 
 #include "EverCrypt_AutoConfig2.h"
+#include "EverCrypt_DRBG.h"
 #include "Hacl_HMAC_DRBG.h"
 #include "Hacl_Spec.h"
+#include "evercrypt.h"
 #include "hacl-cpu-features.h"
 
 #include "util.h"
 
 using namespace std;
-
 using json = nlohmann::json;
 
-typedef struct
+class CAVPTestCase
 {
+public:
   string hash;
   vector<bytes> AdditionalInput;
   bool PredictionResistance;
@@ -36,7 +37,36 @@ typedef struct
   bytes EntropyInputReseed;
   bytes AdditionalInputReseed;
   bytes ReturnedBits;
-} CAVPTestCase;
+};
+
+ostream&
+operator<<(ostream& os, const CAVPTestCase& test)
+{
+  os << "CAVPTestCase {" << endl
+     << "\t.hash = " << test.hash << "," << endl
+     << "\t.AdditionalInput = [" << endl;
+  for (auto ai : test.AdditionalInput) {
+    os << "\t\t" << bytes_to_hex(ai) << "," << endl;
+  }
+  os << "\t]," << endl
+     << "\t\t.PredictionResistance = " << test.PredictionResistance << ","
+     << endl
+     << "\t\t.EntropyInputPR = [" << endl;
+  for (auto ei : test.EntropyInputPR) {
+    os << "\t\t" << bytes_to_hex(ei) << "," << endl;
+  }
+  os << "\t]," << endl
+     << "\t.COUNT = " << test.COUNT << "," << endl
+     << "\t.PersonalizationString = "
+     << bytes_to_hex(test.PersonalizationString) << "," << endl
+     << "\t.EntropyInputReseed = " << bytes_to_hex(test.EntropyInputReseed)
+     << "," << endl
+     << "\t.AdditionalInputReseed = "
+     << bytes_to_hex(test.AdditionalInputReseed) << "," << endl
+     << "\t.ReturnedBits = " << bytes_to_hex(test.ReturnedBits) << "," << endl
+     << "}" << endl;
+  return os;
+}
 
 void
 cavp_to_hash(string value,
@@ -283,8 +313,132 @@ TEST_P(DrbgPRTrueSuite, KAT)
   // TODO: Does it provide predictive resistance?
 }
 
+// ----- EverCrypt -------------------------------------------------------------
+
+typedef EverCryptSuite<CAVPTestCase> DrbgNRSuiteEverCrypt;
+
+TEST_P(DrbgNRSuiteEverCrypt, KAT)
+{
+  EverCryptConfig config;
+  CAVPTestCase test;
+  tie(config, test) = this->GetParam();
+
+  bool skip = false;
+  Spec_Hash_Definitions_hash_alg hash;
+  cavp_to_hash(test.hash, skip, hash);
+  if (skip) {
+    cout << "Skipping \"" << test.hash << "\"" << endl;
+    return;
+  }
+
+  // Init
+  EverCrypt_DRBG_state_s* state = EverCrypt_DRBG_create(hash);
+  bool res = EverCrypt_DRBG_instantiate(state,
+                                        test.PersonalizationString.data(),
+                                        test.PersonalizationString.size());
+  ASSERT_TRUE(res);
+
+  // FIXME: EntropyInput?
+
+  // Generate
+  bytes got_ReturnedBits = bytes(test.ReturnedBits.size());
+  for (auto additional : test.AdditionalInput) {
+    bool res = EverCrypt_DRBG_generate(got_ReturnedBits.data(),
+                                       state,
+                                       got_ReturnedBits.size(),
+                                       additional.data(),
+                                       additional.size());
+
+    EXPECT_TRUE(res);
+  }
+
+  // Finish
+  EverCrypt_DRBG_uninstantiate(state);
+
+  ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
+}
+
+typedef EverCryptSuite<CAVPTestCase> DrbgPRFalseSuiteEverCrypt;
+
+TEST_P(DrbgPRFalseSuiteEverCrypt, KAT)
+{
+  EverCryptConfig config;
+  CAVPTestCase test;
+  tie(config, test) = this->GetParam();
+
+  bool skip = false;
+  Spec_Hash_Definitions_hash_alg hash;
+  cavp_to_hash(test.hash, skip, hash);
+  if (skip) {
+    cout << "Skipping \"" << test.hash << "\"" << endl;
+    return;
+  }
+
+  // Init
+  EverCrypt_DRBG_state_s* state = EverCrypt_DRBG_create(hash);
+  bool res = EverCrypt_DRBG_instantiate(state,
+                                        test.PersonalizationString.data(),
+                                        test.PersonalizationString.size());
+  EXPECT_TRUE(res);
+
+  // FIXME: EntropyInput?
+
+  // Reseed
+  res = EverCrypt_DRBG_reseed(state,
+                              test.AdditionalInputReseed.data(),
+                              test.AdditionalInputReseed.size());
+  EXPECT_TRUE(res);
+
+  // Generate
+  bytes got_ReturnedBits = bytes(test.ReturnedBits.size());
+  for (auto additional : test.AdditionalInput) {
+    res = EverCrypt_DRBG_generate(got_ReturnedBits.data(),
+                                  state,
+                                  got_ReturnedBits.size(),
+                                  additional.data(),
+                                  additional.size());
+    EXPECT_TRUE(res);
+  }
+
+  // Finish
+  EverCrypt_DRBG_uninstantiate(state);
+
+  ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
+}
+
+typedef EverCryptSuite<CAVPTestCase> DrbgPRTrueSuiteEverCrypt;
+
+TEST_P(DrbgPRTrueSuiteEverCrypt, KAT)
+{
+  EverCryptConfig config;
+  CAVPTestCase test;
+  tie(config, test) = this->GetParam();
+
+  bool skip = false;
+  Spec_Hash_Definitions_hash_alg hash;
+  cavp_to_hash(test.hash, skip, hash);
+  if (skip) {
+    cout << "Skipping \"" << test.hash << "\"" << endl;
+    return;
+  }
+
+  // Init
+  EverCrypt_DRBG_state_s* state = EverCrypt_DRBG_create(hash);
+  bool res = EverCrypt_DRBG_instantiate(state,
+                                        test.PersonalizationString.data(),
+                                        test.PersonalizationString.size());
+
+  // Generate
+  // TODO: Does it provide prediction resistance?
+
+  // Finish
+  EverCrypt_DRBG_uninstantiate(state);
+}
+
+// -----------------------------------------------------------------------------
+
 vector<CAVPTestCase>
-read_json_cavp(char* path)
+read_json_cavp(string path)
 {
   json tests_raw;
   ifstream file(path);
@@ -346,17 +500,64 @@ read_json_cavp(char* path)
   return tests;
 }
 
-INSTANTIATE_TEST_SUITE_P(CAVPNoReseed,
-                         DrbgNRSuite,
-                         ::testing::ValuesIn(read_json_cavp(
-                           const_cast<char*>("DRBG_CAVP_no_reseed.json"))));
+// -----------------------------------------------------------------------------
 
-INSTANTIATE_TEST_SUITE_P(CAVPPrFalse,
-                         DrbgPRFalseSuite,
-                         ::testing::ValuesIn(read_json_cavp(
-                           const_cast<char*>("DRBG_CAVP_pr_false.json"))));
+INSTANTIATE_TEST_SUITE_P(
+  CAVPNoReseed,
+  DrbgNRSuite,
+  ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_no_reseed.json")));
 
-INSTANTIATE_TEST_SUITE_P(CAVPPrTrue,
-                         DrbgPRTrueSuite,
-                         ::testing::ValuesIn(read_json_cavp(
-                           const_cast<char*>("DRBG_CAVP_pr_true.json"))));
+INSTANTIATE_TEST_SUITE_P(
+  CAVPPrFalse,
+  DrbgPRFalseSuite,
+  ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_pr_false.json")));
+
+INSTANTIATE_TEST_SUITE_P(
+  CAVPPrTrue,
+  DrbgPRTrueSuite,
+  ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_pr_true.json")));
+
+// ----- EverCrypt -------------------------------------------------------------
+
+vector<EverCryptConfig>
+generate_drbg_configs()
+{
+  vector<EverCryptConfig> configs;
+
+  configs.push_back(EverCryptConfig{
+    .disable_adx = false,
+    .disable_aesni = false,
+    .disable_avx = false,
+    .disable_avx2 = false,
+    .disable_avx512 = false,
+    .disable_bmi2 = false,
+    .disable_movbe = false,
+    .disable_pclmulqdq = false,
+    .disable_rdrand = false,
+    .disable_shaext = false,
+    .disable_sse = false,
+  });
+
+  return configs;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+  CAVPNoReseed,
+  DrbgNRSuiteEverCrypt,
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_drbg_configs()),
+    ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_no_reseed.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha1CAVPShort,
+  DrbgPRFalseSuiteEverCrypt,
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_drbg_configs()),
+    ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_pr_false.json"))));
+
+INSTANTIATE_TEST_SUITE_P(
+  Sha1CAVPLong,
+  DrbgPRTrueSuiteEverCrypt,
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_drbg_configs()),
+    ::testing::ValuesIn(read_json_cavp("DRBG_CAVP_pr_true.json"))));
