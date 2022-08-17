@@ -118,7 +118,7 @@ TEST_P(AesGcmSuite, KAT)
     FAIL() << "Unexpected keySize.";
   }
 
-  if (res == EverCrypt_Error_UnsupportedAlgorithm) {
+  if (res != EverCrypt_Error_Success) {
     if (!EverCrypt_AutoConfig2_has_aesni() ||
         !EverCrypt_AutoConfig2_has_pclmulqdq() ||
         !EverCrypt_AutoConfig2_has_avx() || !EverCrypt_AutoConfig2_has_sse() ||
