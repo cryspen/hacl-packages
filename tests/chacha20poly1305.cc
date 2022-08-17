@@ -153,14 +153,14 @@ INSTANTIATE_TEST_SUITE_P(TestVectors,
 // === Wycheproof tests === //
 
 class Chacha20Poly1305Wycheproof
-  : public ::testing::TestWithParam<WycheproofChacha20Poly1305>
+  : public ::testing::TestWithParam<WycheproofAeadTest>
 {};
 
 TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
 {
   // Initialize CPU feature detection
   hacl_init_cpu_features();
-  const WycheproofChacha20Poly1305& test_case(GetParam());
+  const WycheproofAeadTest& test_case(GetParam());
 
   auto msg_size = test_case.msg.size();
   bytes plaintext(msg_size, 0);
@@ -256,8 +256,7 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
 #endif //  HACL_CAN_COMPILE_VEC256
 }
 
-INSTANTIATE_TEST_SUITE_P(
-  Wycheproof,
-  Chacha20Poly1305Wycheproof,
-  ::testing::ValuesIn(
-    read_wycheproof_chacha20_poly1305_json("chacha20_poly1305_test.json")));
+INSTANTIATE_TEST_SUITE_P(Wycheproof,
+                         Chacha20Poly1305Wycheproof,
+                         ::testing::ValuesIn(read_wycheproof_aead_json(
+                           "chacha20_poly1305_test.json")));
