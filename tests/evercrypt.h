@@ -40,7 +40,7 @@ operator<<(ostream& os, const EverCryptConfig& config)
      << "\t.disable_avx512 = " << config.disable_avx512 << endl
      << "\t.disable_bmi2 = " << config.disable_bmi2 << endl
      << "\t.disable_movbe = " << config.disable_movbe << endl
-     << "\t.disable_pclmulqdq =" << config.disable_pclmulqdq << endl
+     << "\t.disable_pclmulqdq = " << config.disable_pclmulqdq << endl
      << "\t.disable_rdrand = " << config.disable_rdrand << endl
      << "\t.disable_shaext = " << config.disable_shaext << endl
      << "\t.disable_sse = " << config.disable_sse << endl
