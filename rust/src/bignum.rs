@@ -242,6 +242,16 @@ impl MontgomeryContext {
     }
 }
 
+// Montgomery context is never mutated after creation.
+
+unsafe impl Sync for MontgomeryContext {}
+
+// BigUInt and Modulus won't ever be mutated after creation,
+// but I need to tell this as a lie so that I can create the statics
+// that allow me to do away with the mutation.
+unsafe impl Sync for BigUInt {}
+unsafe impl Sync for Bui {}
+
 impl fmt::Debug for MontgomeryContext {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = match self.0.is_null() {
@@ -448,20 +458,23 @@ struct Bui {
     zero_one_other: ZeroOneOther,
 }
 
-impl Bui {
-    /// A BigUint representing the value 1
-    const ONE: Bui = Bui {
-        zero_one_other: ZeroOneOther::One,
-        handle: None,
-        mont_ctx: None,
-    };
+lazy_static! {
+    /// A static bigUInt with the value 1
+    pub static ref ONE: BigUInt =
+        BigUInt::from_bytes_be(&[1_u8]).expect("static creation of ONE failed");
 
-    /// A BigUint representing the value 0
-    const ZERO: Bui = Bui {
-        zero_one_other: ZeroOneOther::Zero,
-        handle: None,
-        mont_ctx: None,
-    };
+   /// A static bigUInt with value 0
+    pub static ref ZERO: BigUInt =
+        BigUInt::from_bytes_be(&[0_u8]).expect("static creation of ZERO failed");
+}
+
+impl Bui {
+    fn is_one(&self) -> bool {
+        self.eq(&ONE.0)
+    }
+    fn is_zero(&self) -> bool {
+        self.eq(&ZERO.0)
+    }
 
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
         self.handle.as_ref().expect("shouldn't happen").to_vec8()
@@ -471,19 +484,15 @@ impl Bui {
         if be_bytes.len() > BigUInt::BN_BYTE_LENGTH {
             return Err(Error::BadInputLength);
         }
-        match one_zero_other(be_bytes) {
-            ZeroOneOther::One => Ok(Bui::ONE),
-            ZeroOneOther::Zero => Ok(Bui::ZERO),
-            ZeroOneOther::Other => {
-                let handle = HaclBnHandle::from_vec8(be_bytes)?;
-                Ok(Bui {
-                    zero_one_other: ZeroOneOther::Other,
-                    handle: Some(handle),
-                    mont_ctx: None,
-                })
-            }
-        }
+
+        let handle = HaclBnHandle::from_vec8(be_bytes)?;
+        Ok(Bui {
+            zero_one_other: ZeroOneOther::Other,
+            handle: Some(handle),
+            mont_ctx: None,
+        })
     }
+
     fn to_hex(&self) -> String {
         if self.zero_one_other == ZeroOneOther::One {
             return "01".to_string();
@@ -559,14 +568,6 @@ impl Bui {
         Ok(())
     }
 
-    fn is_one(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::One
-    }
-
-    fn is_zero(&self) -> bool {
-        self.zero_one_other == ZeroOneOther::Zero
-    }
-
     fn bitsize(&self) -> usize {
         if self.zero_one_other != ZeroOneOther::Other {
             8_usize
@@ -588,31 +589,6 @@ impl PartialEq for Bui {
     /// If self or other is malformed (doesn't successfully have a numerical value)
     /// return false. (This shouldn't ever happen.)
     fn eq(&self, other: &Bui) -> bool {
-        // first we cover all of the 1 and zero case
-        // (the following code makes it look like I would have failed fizzbuzz)
-        // The ones
-        if self.is_one() && other.is_one() {
-            return true;
-        }
-        if self.is_one() && !other.is_one() {
-            return false;
-        }
-        if !self.is_one() && other.is_one() {
-            return false;
-        }
-        // The zeros
-        if self.is_zero() && other.is_zero() {
-            return true;
-        }
-        if self.is_zero() && !other.is_zero() {
-            return false;
-        }
-        if !self.is_zero() && other.is_zero() {
-            return false;
-        }
-
-        // Now that we've dealt with all of the ones and zero cases
-        // we treat comparison of anything without a handle to be false
         let a_handle = match &self.handle {
             None => return false,
             Some(x) => x,
@@ -1059,7 +1035,7 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 1. False otherwise.
     pub fn is_one(&self) -> bool {
-        self.0.is_one()
+        self.0.eq(&ONE.0)
     }
     /// returns a BigUInt representing the value 1.
     pub fn one() -> Self {
@@ -1071,9 +1047,10 @@ impl BigUInt {
 impl BigUInt {
     /// Returns true if our BigUInt is 0. False otherwise.
     pub fn is_zero(&self) -> bool {
-        self.0.is_zero()
+        self.0.eq(&ZERO.0)
     }
-    /// returns a BigUInt representing the value 0.
+
+    /// Returns true if self is 1. False otherwise.
     pub fn zero() -> Self {
         BigUInt::ZERO
     }

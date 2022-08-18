@@ -11,6 +11,8 @@ pub mod rsa_pss;
 pub mod signature;
 pub mod x25519;
 
+#[macro_use]
+extern crate lazy_static;
 pub mod bignum;
 
 mod util;
