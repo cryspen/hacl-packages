@@ -267,21 +267,19 @@ generate_eddsa_configs()
 {
   vector<EverCryptConfig> configs;
 
-  for (uint32_t i = 0; i < 4; ++i) {
-    configs.push_back(EverCryptConfig{
-      .disable_adx = false,
-      .disable_aesni = false,
-      .disable_avx = (i & 1) != 0,
-      .disable_avx2 = (i & 2) != 0,
-      .disable_avx512 = false,
-      .disable_bmi2 = false,
-      .disable_movbe = false,
-      .disable_pclmulqdq = false,
-      .disable_rdrand = false,
-      .disable_shaext = false,
-      .disable_sse = false,
-    });
-  }
+  configs.push_back(EverCryptConfig{
+    .disable_adx = false,
+    .disable_aesni = false,
+    .disable_avx = false,
+    .disable_avx2 = false,
+    .disable_avx512 = false,
+    .disable_bmi2 = false,
+    .disable_movbe = false,
+    .disable_pclmulqdq = false,
+    .disable_rdrand = false,
+    .disable_shaext = false,
+    .disable_sse = false,
+  });
 
   return configs;
 }
