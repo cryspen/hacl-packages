@@ -1,5 +1,6 @@
 mod test_util;
 
+use hacl_rust::prelude::Modulus;
 use regex::Regex;
 use std::fmt;
 
@@ -411,10 +412,10 @@ fn test_modpow_big() {
 
     let base = BigUInt::from_hex(&base_hex).unwrap();
     let exp = BigUInt::from_hex(&exp_hex).unwrap();
-    let mut modulus = BigUInt::from_hex(&mod_hex).unwrap();
+    let modulus = Modulus::from_hex(&mod_hex).unwrap();
     let expected = BigUInt::from_hex(&expected_hex).unwrap();
 
-    let result = base.modpow(&exp, &mut modulus).unwrap();
+    let result = base.modpow(&exp, &modulus).unwrap();
 
     assert!(result == expected);
 }
@@ -428,11 +429,10 @@ fn test_mont_modpow_big() {
 
     let base = BigUInt::from_hex(&base_hex).unwrap();
     let exp = BigUInt::from_hex(&exp_hex).unwrap();
-    let mut modulus = BigUInt::from_hex(&mod_hex).unwrap();
-    modulus.precomp_mont_ctx().unwrap();
+    let modulus = Modulus::from_hex(&mod_hex).unwrap();
     let expected = BigUInt::from_hex(&expected_hex).unwrap();
 
-    let result = base.modpow(&exp, &mut modulus).unwrap();
+    let result = base.modpow(&exp, &modulus).unwrap();
 
     assert!(result == expected);
 }

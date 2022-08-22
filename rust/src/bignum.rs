@@ -346,8 +346,8 @@ impl BigUInt {
         }
     }
 
-    fn supersize(&mut self) -> Result<Self, Error> {
-        self.ensure_handle()?;
+    fn supersize(&self) -> Result<Self, Error> {
+        // TODO: handle cases where self is 0 or 1 and has not handle
         let handle = self
             .0
             .handle
@@ -559,7 +559,7 @@ impl Bui {
             // cool, this has already be set up
             return Ok(());
         }
-        if self.zero_one_other != ZeroOneOther::Other {
+        if self.is_one() || self.is_zero() {
             return Err(Error::BadModulus(ModulusError::LessThanTwo));
         }
         if self.is_even()? {
@@ -744,7 +744,8 @@ impl BigUnsigned for Modulus {
     /// complying with [data_encoding::HEXUPPER_PERMISSIVE]
     /// which represents a big-endian sequence of bytes.
     fn from_hex(s: &str) -> Result<Self, Error> {
-        let bui = Bui::from_hex(s)?;
+        let mut bui = Bui::from_hex(s)?;
+        bui.precomp_mont_ctx()?;
         Ok(Self(bui))
     }
 }
@@ -771,10 +772,15 @@ impl BigUnsigned for BigUInt {
 
 impl Modulus {
     /// `number % self`
-    pub fn reduce(&self, number: &mut BigUInt) -> Result<BigUInt, Error> {
-        if number.0.handle.is_none() {
-            number.ensure_handle()?;
+    pub fn reduce(&self, number: &BigUInt) -> Result<BigUInt, Error> {
+        if number.is_one() {
+            return Ok(BigUInt::ONE);
         }
+        if number.is_zero() {
+            return Ok(BigUInt::ONE);
+        }
+        number.0.handle.as_ref().ok_or(Error::NoHandle)?;
+
         let a = &number.supersize()?;
 
         let handle = HaclBnHandle::new(BN_BITSIZE)?;
@@ -824,7 +830,7 @@ impl Modulus {
     }
 
     /// (a + b) % self
-    pub fn add(self, a: &mut BigUInt, b: &mut BigUInt) -> Result<BigUInt, Error> {
+    pub fn add(self, a: &BigUInt, b: &BigUInt) -> Result<BigUInt, Error> {
         if a.is_zero() {
             return b.try_clone();
         }
@@ -1150,7 +1156,7 @@ impl BigUInt {
         }))
     }
 
-    pub fn modpow(&self, exponent: &Self, modulus: &mut Self) -> Result<Self, Error> {
+    pub fn modpow(&self, exponent: &Self, modulus: &Modulus) -> Result<Self, Error> {
         //! `(self ^ exponent) % modulus`
         //!
         //! `modulus` must be [mutable](#mutability) to allow for some precomputation on itself.
@@ -1174,9 +1180,6 @@ impl BigUInt {
 
         if self.is_zero() && exponent.is_zero() {
             return Err(Error::ZeroToZero);
-        }
-        if modulus.is_zero() || modulus.is_one() {
-            return Err(Error::BadModulus(ModulusError::Even));
         }
 
         if self.is_zero() {
@@ -1205,14 +1208,6 @@ impl BigUInt {
         let bBits = 8 * Self::BN_BYTE_LENGTH;
 
         let result_handle = HaclBnHandle::new(BN_BITSIZE)?;
-
-        // The computation to create the Montgomery form of the modulus is
-        // going to be done even if we use Hacl_Bignum4096_mod_exp_consttime
-        // but we won't get to keep that around unless we explicitly compute it.
-        //
-        if modulus.0.mont_ctx.is_none() {
-            modulus.precomp_mont_ctx()?;
-        }
 
         let k = modulus.0.mont_ctx.as_ref().ok_or(Error::ShouldNotHappen)?.0;
         unsafe {
