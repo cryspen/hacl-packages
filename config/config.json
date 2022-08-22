@@ -361,6 +361,7 @@
             "p256_ecdsa.cc"
         ],
         "k256": [
+            "k256_ecdh.cc",
             "k256_ecdsa.cc"
         ],
         "chacha20poly1305": [
