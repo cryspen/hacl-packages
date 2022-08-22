@@ -589,6 +589,10 @@ impl PartialEq for Bui {
     /// If self or other is malformed (doesn't successfully have a numerical value)
     /// return false. (This shouldn't ever happen.)
     fn eq(&self, other: &Bui) -> bool {
+        if self.zero_one_other != ZeroOneOther::Other && other.zero_one_other != ZeroOneOther::Other
+        {
+            return self.zero_one_other == other.zero_one_other;
+        }
         let a_handle = match &self.handle {
             None => return false,
             Some(x) => x,
