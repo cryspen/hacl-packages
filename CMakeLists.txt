@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0048 NEW)
 cmake_policy(SET CMP0012 NEW)
 cmake_policy(SET CMP0042 NEW)
-cmake_policy(SET CMP0135 NEW)
 
 if(WIN32)
     # Make sure we have visual studio enabled
@@ -369,6 +368,7 @@ if(ENABLE_TESTS)
     include(FetchContent)
     FetchContent_Declare(googletest
         URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     )
 
     # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -378,6 +378,7 @@ if(ENABLE_TESTS)
     # Get nlohmann json
     FetchContent_Declare(json
         URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     )
     FetchContent_MakeAvailable(json)
 
@@ -435,6 +436,7 @@ if(ENABLE_BENCHMARKS)
     # We need gtest as well
     FetchContent_Declare(googletest
         URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     )
 
     # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -443,6 +445,7 @@ if(ENABLE_BENCHMARKS)
 
     FetchContent_Declare(benchmark
         URL https://github.com/google/benchmark/archive/refs/tags/v1.6.1.zip
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     )
     FetchContent_MakeAvailable(benchmark)
 
