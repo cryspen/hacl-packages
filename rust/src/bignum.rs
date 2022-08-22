@@ -470,10 +470,18 @@ lazy_static! {
 
 impl Bui {
     fn is_one(&self) -> bool {
-        self.eq(&ONE.0)
+        match self.zero_one_other {
+            ZeroOneOther::One => true,
+            ZeroOneOther::Zero => false,
+            ZeroOneOther::Other => self.eq(&ONE.0),
+        }
     }
     fn is_zero(&self) -> bool {
-        self.eq(&ZERO.0)
+        match self.zero_one_other {
+            ZeroOneOther::One => false,
+            ZeroOneOther::Zero => true,
+            ZeroOneOther::Other => self.eq(&ZERO.0),
+        }
     }
 
     fn to_vec8(&self) -> Result<Vec<u8>, Error> {
@@ -589,10 +597,29 @@ impl PartialEq for Bui {
     /// If self or other is malformed (doesn't successfully have a numerical value)
     /// return false. (This shouldn't ever happen.)
     fn eq(&self, other: &Bui) -> bool {
-        if self.zero_one_other != ZeroOneOther::Other && other.zero_one_other != ZeroOneOther::Other
-        {
-            return self.zero_one_other == other.zero_one_other;
+        // The cases where either self or other announce themselves
+        // to be 1 or 0 gets tricky because a listing as Other may
+        // be incorrect.
+        let s_zoo = self.zero_one_other;
+        let o_zoo: ZeroOneOther = other.zero_one_other;
+        if s_zoo != ZeroOneOther::Other && o_zoo != ZeroOneOther::Other {
+            return s_zoo == o_zoo;
         }
+        if s_zoo == ZeroOneOther::One {
+            return other.is_one();
+        }
+        if s_zoo == ZeroOneOther::Zero {
+            return other.is_zero();
+        }
+        if o_zoo == ZeroOneOther::One {
+            return self.is_one();
+        }
+        if o_zoo == ZeroOneOther::Zero {
+            return self.is_zero();
+        }
+
+        // both list as Other (still may be zero or one), but they
+        // have handles for proper comparison
         let a_handle = match &self.handle {
             None => return false,
             Some(x) => x,
