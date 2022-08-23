@@ -367,8 +367,8 @@ if(ENABLE_TESTS)
     # Get gtests
     include(FetchContent)
     FetchContent_Declare(googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     )
 
     # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -377,8 +377,8 @@ if(ENABLE_TESTS)
 
     # Get nlohmann json
     FetchContent_Declare(json
-        URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
     )
     FetchContent_MakeAvailable(json)
 
@@ -435,8 +435,8 @@ if(ENABLE_BENCHMARKS)
 
     # We need gtest as well
     FetchContent_Declare(googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     )
 
     # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -444,8 +444,8 @@ if(ENABLE_BENCHMARKS)
     FetchContent_MakeAvailable(googletest)
 
     FetchContent_Declare(benchmark
-        URL https://github.com/google/benchmark/archive/refs/tags/v1.6.1.zip
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        URL https://github.com/google/benchmark/archive/refs/tags/v1.6.1.zip
     )
     FetchContent_MakeAvailable(benchmark)
 
