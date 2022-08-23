@@ -32,6 +32,7 @@
 #endif
 
 using json = nlohmann::json;
+using namespace std;
 
 class TestCase
 {
@@ -54,14 +55,14 @@ operator<<(ostream& os, const TestCase& test)
   return os;
 }
 
-std::vector<TestCase>
-read_blake2b_json(std::string path)
+vector<TestCase>
+read_blake2b_json(string path)
 {
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
@@ -77,21 +78,21 @@ read_blake2b_json(std::string path)
   return tests_out;
 }
 
-std::vector<TestCase>
-read_official_json(std::string path)
+vector<TestCase>
+read_official_json(string path)
 {
   // Read JSON test vector
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
     auto test_case = test.value();
     if (test_case["hash"] == "blake2b") {
-      std::string digest_str = test_case["out"];
+      string digest_str = test_case["out"];
       auto digest = from_hex(digest_str);
       auto out_len = digest_str.length() / 2;
       auto input = from_hex(test_case["in"]);
