@@ -23,6 +23,7 @@
 #endif
 
 using json = nlohmann::json;
+using namespace std;
 
 class TestCase
 {
@@ -146,21 +147,21 @@ TEST_P(Blake2s, TryKAT)
   }
 }
 
-std::vector<TestCase>
-read_official_json(std::string path)
+vector<TestCase>
+read_official_json(string path)
 {
   // Read JSON test vector
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
     auto test_case = test.value();
     if (test_case["hash"] == "blake2s") {
-      std::string digest_str = test_case["out"];
+      string digest_str = test_case["out"];
       auto digest = from_hex(digest_str);
       auto out_len = digest_str.length() / 2;
       auto input = from_hex(test_case["in"]);
@@ -178,7 +179,7 @@ read_official_json(std::string path)
     } else if (test_case["hash"] == "blake2xb") {
       // Skipping
     } else {
-      std::cout << test_case["hash"] << std::endl;
+      cout << test_case["hash"] << endl;
       throw "Unexpected hash value.";
     }
   }
