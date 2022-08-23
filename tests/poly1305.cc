@@ -29,13 +29,26 @@
 using json = nlohmann::json;
 using namespace std;
 
-typedef struct
+class TestCase
 {
+public:
   string comment;
   bytes key;
   bytes text;
   bytes tag;
-} TestCase;
+};
+
+ostream&
+operator<<(ostream& os, const TestCase& test)
+{
+  os << "TestCase {" << endl
+     << "\t.comment = " << test.comment << endl
+     << "\t.key = " << bytes_to_hex(test.key) << endl
+     << "\t.text = " << bytes_to_hex(test.text) << endl
+     << "\t.tag = " << bytes_to_hex(test.tag) << endl
+     << "}" << endl;
+  return os;
+}
 
 // -----------------------------------------------------------------------------
 
