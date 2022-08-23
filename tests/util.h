@@ -4,43 +4,45 @@
 #include <stdio.h>
 #include <vector>
 
-typedef std::vector<uint8_t> bytes;
+using namespace std;
 
-std::vector<uint8_t>
-from_hex(const std::string& hex)
+typedef vector<uint8_t> bytes;
+
+vector<uint8_t>
+from_hex(const string& hex)
 {
   if (hex.length() % 2 == 1) {
-    throw std::invalid_argument("Odd-length hex string");
+    throw invalid_argument("Odd-length hex string");
   }
 
   int len = static_cast<int>(hex.length()) / 2;
-  std::vector<uint8_t> out(len);
+  vector<uint8_t> out(len);
   for (int i = 0; i < len; i += 1) {
-    std::string byte = hex.substr(2 * i, 2);
+    string byte = hex.substr(2 * i, 2);
     out[i] = static_cast<uint8_t>(strtol(byte.c_str(), nullptr, 16));
   }
 
   return out;
 }
 
-std::string
-bytes_to_hex(const std::vector<uint8_t>& data)
+string
+bytes_to_hex(const vector<uint8_t>& data)
 {
-  std::stringstream hex(std::ios_base::out);
-  hex.flags(std::ios::hex);
+  stringstream hex(ios_base::out);
+  hex.flags(ios::hex);
   for (const auto& byte : data) {
-    hex << std::setw(2) << std::setfill('0') << int(byte);
+    hex << setw(2) << setfill('0') << int(byte);
   }
   return hex.str();
 }
 
-std::string
+string
 array_to_hex(const uint8_t* data, size_t len)
 {
-  std::stringstream hex(std::ios_base::out);
-  hex.flags(std::ios::hex);
+  stringstream hex(ios_base::out);
+  hex.flags(ios::hex);
   for (size_t i = 0; i < len; i++) {
-    hex << std::setw(2) << std::setfill('0') << int(data[i]);
+    hex << setw(2) << setfill('0') << int(data[i]);
   }
   return hex.str();
 }
@@ -57,21 +59,57 @@ compare_and_print(size_t len, uint8_t* comp, uint8_t* exp)
   return ok;
 }
 
-std::vector<bytes>
+vector<bytes>
 chunk(bytes data, size_t chunk_size)
 {
-  std::vector<bytes> out(data.size() / chunk_size);
+  vector<bytes> out(data.size() / chunk_size);
 
   auto start = data.begin();
   auto end = data.end();
 
   while (start != end) {
-    auto next =
-      std::distance(start, end) >= chunk_size ? start + chunk_size : end;
+    auto next = distance(start, end) >= chunk_size ? start + chunk_size : end;
 
     out.emplace_back(start, next);
     start = next;
   }
 
   return out;
+}
+
+// Split a vector of uint8_t (bytes) into slices according to lengths.
+//
+// Examples:
+//   "ABCDEF" x 0      --> "", "ABCDEF"
+//   "ABCDEF" x 1      --> "A", "BCDEF"
+//   "ABCDEF" x 0,1    --> "", "A", "BCDEF"
+//   "ABCDEF" x 1,1,0  --> "A", "B", "", "CDEF"
+//   "ABCDEF" x 3,3    --> "ABC", "DEF"
+//   "ABCDEF" x 6      --> "ABCDEF"
+vector<bytes>
+split_by_index_list(const bytes data, const vector<size_t> lenghts)
+{
+  vector<bytes> out;
+
+  bytes remaining = data;
+  for (size_t split : lenghts) {
+    if (remaining.size() >= split) {
+      bytes slice = bytes(remaining.begin(), remaining.begin() + split);
+      remaining = bytes(remaining.begin() + split, remaining.end());
+
+      out.push_back(slice);
+    }
+  }
+
+  if (!remaining.empty()) {
+    out.push_back(remaining);
+  }
+
+  return out;
+}
+
+vector<vector<size_t>>
+make_lengths()
+{
+  return { {}, { 0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 32, 33, 64, 65, 128, 129 } };
 }
