@@ -143,6 +143,24 @@ if(${TOOLCHAIN_CAN_COMPILE_VALE})
         APPEND)
 endif(${TOOLCHAIN_CAN_COMPILE_VALE})
 
+# Coverage
+if(ENABLE_COVERAGE)
+    message(STATUS "Coverage instrumentation enabled")
+    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
+endif()
+
+# Sanitizer
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
+
+if(ENABLE_UBSAN)
+    add_compile_options(-fsanitize=undefined)
+    add_link_options(-fsanitize=undefined)
+endif()
+
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
@@ -292,24 +310,6 @@ endif()
 
 # Write configuration
 configure_file(config/Config.h.in config.h)
-
-# Coverage
-if(ENABLE_COVERAGE)
-    message(STATUS "Coverage instrumentation enabled")
-    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
-    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-endif()
-
-# Sanitizer
-if(ENABLE_ASAN)
-    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
-    add_link_options(-fsanitize=address)
-endif()
-
-if(ENABLE_UBSAN)
-    add_compile_options(-fsanitize=undefined)
-    add_link_options(-fsanitize=undefined)
-endif()
 
 # Set library config and files
 # Now combine everything into the hacl library
