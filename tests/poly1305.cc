@@ -114,11 +114,11 @@ poly1305_mac(bytes key, bytes text, bytes& tag)
 }
 
 void
-poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
+poly1305_mac_streaming(bytes key,
+                       bytes text,
+                       bytes& tag,
+                       vector<size_t> lengths)
 {
-  // Update functions require a chunk size of 16.
-  auto chunks = chunk(text, 16);
-
   bytes base_tag;
 
   cout << "Poly1305.Mac (Streaming, Variant 1)" << endl;
@@ -130,7 +130,7 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
     Hacl_Poly1305_32_poly1305_init(ctx.data(), key.data());
 
     // Update
-    for (auto chunk : chunks) {
+    for (auto chunk : split_by_index_list(text, lengths)) {
       Hacl_Poly1305_32_poly1305_update(ctx.data(), chunk.size(), chunk.data());
     }
 
@@ -151,7 +151,7 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
     Hacl_Streaming_Poly1305_32_init(key.data(), state);
 
     // Update
-    for (auto chunk : chunks) {
+    for (auto chunk : split_by_index_list(text, lengths)) {
       Hacl_Streaming_Poly1305_32_update(state, chunk.data(), chunk.size());
     }
 
@@ -174,7 +174,7 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
       Hacl_Poly1305_128_poly1305_init(ctx, key.data());
 
       // Update
-      for (auto chunk : chunks) {
+      for (auto chunk : split_by_index_list(text, lengths)) {
         Hacl_Poly1305_128_poly1305_update(ctx, chunk.size(), chunk.data());
       }
 
@@ -195,7 +195,7 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
       Hacl_Streaming_Poly1305_128_init(key.data(), state);
 
       // Update
-      for (auto chunk : chunks) {
+      for (auto chunk : split_by_index_list(text, lengths)) {
         Hacl_Streaming_Poly1305_128_update(state, chunk.data(), chunk.size());
       }
 
@@ -222,7 +222,7 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
       Hacl_Poly1305_256_poly1305_init(ctx, key.data());
 
       // Update
-      for (auto chunk : chunks) {
+      for (auto chunk : split_by_index_list(text, lengths)) {
         Hacl_Poly1305_256_poly1305_update(ctx, chunk.size(), chunk.data());
       }
 
@@ -265,7 +265,8 @@ poly1305_mac_streaming(bytes key, bytes text, bytes& tag)
   tag = base_tag;
 }
 
-class Poly1305Suite : public ::testing::TestWithParam<TestCase>
+class Poly1305Suite
+  : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 
 TEST_P(Poly1305Suite, KAT)
@@ -273,9 +274,9 @@ TEST_P(Poly1305Suite, KAT)
   // This must be called before `hacl_vec{128,256}_support()`.
   hacl_init_cpu_features();
 
-  TestCase test = GetParam();
-
-  cout << "Running " << test.comment << "..." << endl;
+  TestCase test;
+  vector<size_t> lengths;
+  tie(test, lengths) = GetParam();
 
   // Test API
   {
@@ -288,14 +289,14 @@ TEST_P(Poly1305Suite, KAT)
   // Test Streaming API
   {
     bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-    poly1305_mac_streaming(test.key, test.text, got_tag);
+    poly1305_mac_streaming(test.key, test.text, got_tag, lengths);
 
     EXPECT_EQ(test.tag, got_tag);
   }
 }
 
 vector<TestCase>
-read_json(char* path)
+read_json(string path)
 {
   json raw_tests;
   ifstream file(path);
@@ -342,4 +343,5 @@ read_json(char* path)
 INSTANTIATE_TEST_SUITE_P(
   Poly1305RFC8439,
   Poly1305Suite,
-  ::testing::ValuesIn(read_json(const_cast<char*>("poly1305_rfc8439.json"))));
+  ::testing::Combine(::testing::ValuesIn(read_json("poly1305_rfc8439.json")),
+                     ::testing::ValuesIn(make_lengths())));
