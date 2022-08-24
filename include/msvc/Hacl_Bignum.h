@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_Helpers_H
-#define __EverCrypt_Helpers_H
+#ifndef __Hacl_Bignum_H
+#define __Hacl_Bignum_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,27 +35,31 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-
+#include "Hacl_Krmllib.h"
+#include "Hacl_Bignum_Base.h"
 #include "evercrypt_targetconfig.h"
-typedef uint8_t EverCrypt_Helpers_uint8_t;
+#include "lib_intrinsics.h"
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32_s
+{
+  uint32_t len;
+  uint32_t *n;
+  uint32_t mu;
+  uint32_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32;
 
-typedef uint16_t EverCrypt_Helpers_uint16_t;
-
-typedef uint32_t EverCrypt_Helpers_uint32_t;
-
-typedef uint64_t EverCrypt_Helpers_uint64_t;
-
-typedef uint8_t *EverCrypt_Helpers_uint8_p;
-
-typedef uint16_t *EverCrypt_Helpers_uint16_p;
-
-typedef uint32_t *EverCrypt_Helpers_uint32_p;
-
-typedef uint64_t *EverCrypt_Helpers_uint64_p;
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s
+{
+  uint32_t len;
+  uint64_t *n;
+  uint64_t mu;
+  uint64_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_Helpers_H_DEFINED
+#define __Hacl_Bignum_H_DEFINED
 #endif

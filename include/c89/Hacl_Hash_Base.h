@@ -35,14 +35,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "Lib_Memzero0.h"
 #include "Hacl_Spec.h"
-#include "Hacl_Krmllib.h"
-#include "Hacl_Impl_Blake2_Constants.h"
-#include "Hacl_Blake2s_32.h"
-#include "Hacl_Blake2s_128.h"
-#include "Hacl_Blake2b_32.h"
-#include "Hacl_Blake2b_256.h"
 #include "evercrypt_targetconfig.h"
 uint32_t Hacl_Hash_Definitions_word_len(Spec_Hash_Definitions_hash_alg a);
 
@@ -51,6 +44,8 @@ uint32_t Hacl_Hash_Definitions_block_len(Spec_Hash_Definitions_hash_alg a);
 uint32_t Hacl_Hash_Definitions_hash_word_len(Spec_Hash_Definitions_hash_alg a);
 
 uint32_t Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_hash_alg a);
+
+typedef uint8_t *Hacl_Hash_Definitions_hash_t;
 
 #if defined(__cplusplus)
 }

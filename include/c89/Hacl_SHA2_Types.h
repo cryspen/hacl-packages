@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Blake2s_32_H
-#define __Hacl_Blake2s_32_H
+#ifndef __Hacl_SHA2_Types_H
+#define __Hacl_SHA2_Types_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,57 +35,13 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "Lib_Memzero0.h"
-#include "Hacl_Krmllib.h"
-#include "Hacl_Impl_Blake2_Constants.h"
+
 #include "evercrypt_targetconfig.h"
-#include "libintvector.h"
-void Hacl_Blake2s_32_blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn);
-
-void
-Hacl_Blake2s_32_blake2s_update_key(
-  uint32_t *wv,
-  uint32_t *hash,
-  uint32_t kk,
-  uint8_t *k,
-  uint32_t ll
-);
-
-void
-Hacl_Blake2s_32_blake2s_update_multi(
-  uint32_t len,
-  uint32_t *wv,
-  uint32_t *hash,
-  uint64_t prev,
-  uint8_t *blocks,
-  uint32_t nb
-);
-
-void
-Hacl_Blake2s_32_blake2s_update_last(
-  uint32_t len,
-  uint32_t *wv,
-  uint32_t *hash,
-  uint64_t prev,
-  uint32_t rem,
-  uint8_t *d
-);
-
-void Hacl_Blake2s_32_blake2s_finish(uint32_t nn, uint8_t *output, uint32_t *hash);
-
-void
-Hacl_Blake2s_32_blake2s(
-  uint32_t nn,
-  uint8_t *output,
-  uint32_t ll,
-  uint8_t *d,
-  uint32_t kk,
-  uint8_t *k
-);
+typedef uint8_t *Hacl_Impl_SHA2_Types_uint8_1p;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Blake2s_32_H_DEFINED
+#define __Hacl_SHA2_Types_H_DEFINED
 #endif

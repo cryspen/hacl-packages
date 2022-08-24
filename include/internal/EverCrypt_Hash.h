@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Blake2b_32_H
-#define __Hacl_Blake2b_32_H
+#ifndef __internal_EverCrypt_Hash_H
+#define __internal_EverCrypt_Hash_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,63 +35,37 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "Lib_Memzero0.h"
-#include "Hacl_Krmllib.h"
-#include "Hacl_Impl_Blake2_Constants.h"
+#include "internal/Vale.h"
+#include "internal/Hacl_Hash_SHA2.h"
+#include "internal/Hacl_Hash_SHA1.h"
+#include "internal/Hacl_Hash_MD5.h"
+#include "internal/Hacl_Hash_Blake2s_128.h"
+#include "internal/Hacl_Hash_Blake2b_256.h"
+#include "internal/Hacl_Hash_Blake2.h"
+#include "../EverCrypt_Hash.h"
 #include "evercrypt_targetconfig.h"
-#include "libintvector.h"
-#define Hacl_Impl_Blake2_Core_M32 0
-#define Hacl_Impl_Blake2_Core_M128 1
-#define Hacl_Impl_Blake2_Core_M256 2
-
-typedef uint8_t Hacl_Impl_Blake2_Core_m_spec;
-
-void Hacl_Blake2b_32_blake2b_init(uint64_t *hash, uint32_t kk, uint32_t nn);
-
-void
-Hacl_Blake2b_32_blake2b_update_key(
-  uint64_t *wv,
-  uint64_t *hash,
-  uint32_t kk,
-  uint8_t *k,
-  uint32_t ll
-);
-
-void
-Hacl_Blake2b_32_blake2b_update_multi(
-  uint32_t len,
-  uint64_t *wv,
-  uint64_t *hash,
-  FStar_UInt128_uint128 prev,
-  uint8_t *blocks,
-  uint32_t nb
-);
-
-void
-Hacl_Blake2b_32_blake2b_update_last(
-  uint32_t len,
-  uint64_t *wv,
-  uint64_t *hash,
-  FStar_UInt128_uint128 prev,
-  uint32_t rem,
-  uint8_t *d
-);
-
-void Hacl_Blake2b_32_blake2b_finish(uint32_t nn, uint8_t *output, uint64_t *hash);
-
-void
-Hacl_Blake2b_32_blake2b(
-  uint32_t nn,
-  uint8_t *output,
-  uint32_t ll,
-  uint8_t *d,
-  uint32_t kk,
-  uint8_t *k
-);
+typedef struct EverCrypt_Hash_state_s_s
+{
+  state_s_tags tag;
+  union {
+    uint32_t *case_MD5_s;
+    uint32_t *case_SHA1_s;
+    uint32_t *case_SHA2_224_s;
+    uint32_t *case_SHA2_256_s;
+    uint64_t *case_SHA2_384_s;
+    uint64_t *case_SHA2_512_s;
+    uint32_t *case_Blake2S_s;
+    Lib_IntVector_Intrinsics_vec128 *case_Blake2S_128_s;
+    uint64_t *case_Blake2B_s;
+    Lib_IntVector_Intrinsics_vec256 *case_Blake2B_256_s;
+  }
+  ;
+}
+EverCrypt_Hash_state_s;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Blake2b_32_H_DEFINED
+#define __internal_EverCrypt_Hash_H_DEFINED
 #endif

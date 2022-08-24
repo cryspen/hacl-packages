@@ -22,55 +22,87 @@
  */
 
 
-#ifndef __internal_Hacl_SHA2_Vec128_H
-#define __internal_Hacl_SHA2_Vec128_H
+#ifndef __internal_Hacl_SHA2_Types_H
+#define __internal_Hacl_SHA2_Types_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#include "evercrypt_targetconfig.h"
-#include "libintvector.h"
+#include <string.h>
 #include "krml/internal/types.h"
 #include "krml/lowstar_endianness.h"
-#include <string.h>
 #include "krml/internal/target.h"
 
 
-#include "../Hacl_SHA2_Vec128.h"
-
-typedef struct K____uint8_t___uint8_t__s
+#include "../Hacl_SHA2_Types.h"
+#include "evercrypt_targetconfig.h"
+typedef struct Hacl_Impl_SHA2_Types_uint8_2p_s
 {
   uint8_t *fst;
   uint8_t *snd;
 }
-K____uint8_t___uint8_t_;
+Hacl_Impl_SHA2_Types_uint8_2p;
 
-typedef struct K____uint8_t__K____uint8_t___uint8_t__s
+typedef struct Hacl_Impl_SHA2_Types_uint8_3p_s
 {
   uint8_t *fst;
-  K____uint8_t___uint8_t_ snd;
+  Hacl_Impl_SHA2_Types_uint8_2p snd;
 }
-K____uint8_t__K____uint8_t___uint8_t_;
+Hacl_Impl_SHA2_Types_uint8_3p;
 
-typedef struct K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__s
+typedef struct Hacl_Impl_SHA2_Types_uint8_4p_s
 {
   uint8_t *fst;
-  K____uint8_t__K____uint8_t___uint8_t_ snd;
+  Hacl_Impl_SHA2_Types_uint8_3p snd;
 }
-K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_;
+Hacl_Impl_SHA2_Types_uint8_4p;
 
-typedef struct
-K___K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__s
+typedef struct Hacl_Impl_SHA2_Types_uint8_5p_s
 {
-  K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_ fst;
-  K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_ snd;
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_4p snd;
 }
-K___K____uint8_t__K____uint8_t__K____uint8_t___uint8_t__K____uint8_t__K____uint8_t__K____uint8_t___uint8_t_;
+Hacl_Impl_SHA2_Types_uint8_5p;
+
+typedef struct Hacl_Impl_SHA2_Types_uint8_6p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_5p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_6p;
+
+typedef struct Hacl_Impl_SHA2_Types_uint8_7p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_6p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_7p;
+
+typedef struct Hacl_Impl_SHA2_Types_uint8_8p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_7p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_8p;
+
+typedef struct Hacl_Impl_SHA2_Types_uint8_2x4p_s
+{
+  Hacl_Impl_SHA2_Types_uint8_4p fst;
+  Hacl_Impl_SHA2_Types_uint8_4p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_2x4p;
+
+typedef struct Hacl_Impl_SHA2_Types_uint8_2x8p_s
+{
+  Hacl_Impl_SHA2_Types_uint8_8p fst;
+  Hacl_Impl_SHA2_Types_uint8_8p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_2x8p;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_SHA2_Vec128_H_DEFINED
+#define __internal_Hacl_SHA2_Types_H_DEFINED
 #endif

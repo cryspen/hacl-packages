@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_Hacl_H
-#define __EverCrypt_Hacl_H
+#ifndef __Hacl_Bignum_H
+#define __Hacl_Bignum_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,37 +35,31 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-
+#include "Hacl_Krmllib.h"
+#include "Hacl_Bignum_Base.h"
 #include "evercrypt_targetconfig.h"
-#define EverCrypt_Hacl_aes128_mk_sbox Crypto_Symmetric_AES128_mk_sbox
+#include "lib_intrinsics.h"
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32_s
+{
+  uint32_t len;
+  uint32_t *n;
+  uint32_t mu;
+  uint32_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32;
 
-extern void EverCrypt_Hacl_aes128_mk_sbox(uint8_t *sb);
-
-#define EverCrypt_Hacl_aes128_keyExpansion Crypto_Symmetric_AES128_keyExpansion
-
-extern void EverCrypt_Hacl_aes128_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes128_cipher Crypto_Symmetric_AES128_cipher
-
-extern void
-EverCrypt_Hacl_aes128_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_mk_sbox Crypto_Symmetric_AES_mk_sbox
-
-extern void EverCrypt_Hacl_aes256_mk_sbox(uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_keyExpansion Crypto_Symmetric_AES_keyExpansion
-
-extern void EverCrypt_Hacl_aes256_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_cipher Crypto_Symmetric_AES_cipher
-
-extern void
-EverCrypt_Hacl_aes256_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s
+{
+  uint32_t len;
+  uint64_t *n;
+  uint64_t mu;
+  uint64_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_Hacl_H_DEFINED
+#define __Hacl_Bignum_H_DEFINED
 #endif

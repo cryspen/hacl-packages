@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Blake2b_256_H
-#define __Hacl_Blake2b_256_H
+#ifndef __internal_EverCrypt_DRBG_H
+#define __internal_EverCrypt_DRBG_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,63 +35,48 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "Lib_Memzero0.h"
-#include "Hacl_Krmllib.h"
-#include "Hacl_Impl_Blake2_Constants.h"
+#include "../EverCrypt_DRBG.h"
 #include "evercrypt_targetconfig.h"
-#include "libintvector.h"
-void
-Hacl_Blake2b_256_blake2b_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk, uint32_t nn);
+typedef struct EverCrypt_DRBG_state_s_s
+{
+  state_s_tags tag;
+  union {
+    Hacl_HMAC_DRBG_state case_SHA1_s;
+    Hacl_HMAC_DRBG_state case_SHA2_256_s;
+    Hacl_HMAC_DRBG_state case_SHA2_384_s;
+    Hacl_HMAC_DRBG_state case_SHA2_512_s;
+  }
+  ;
+}
+EverCrypt_DRBG_state_s;
 
-void
-Hacl_Blake2b_256_blake2b_update_key(
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  uint32_t kk,
-  uint8_t *k,
-  uint32_t ll
+bool
+EverCrypt_DRBG_uu___is_SHA1_s(
+  Spec_Hash_Definitions_hash_alg uu___,
+  EverCrypt_DRBG_state_s projectee
 );
 
-void
-Hacl_Blake2b_256_blake2b_update_multi(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  FStar_UInt128_uint128 prev,
-  uint8_t *blocks,
-  uint32_t nb
+bool
+EverCrypt_DRBG_uu___is_SHA2_256_s(
+  Spec_Hash_Definitions_hash_alg uu___,
+  EverCrypt_DRBG_state_s projectee
 );
 
-void
-Hacl_Blake2b_256_blake2b_update_last(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  FStar_UInt128_uint128 prev,
-  uint32_t rem,
-  uint8_t *d
+bool
+EverCrypt_DRBG_uu___is_SHA2_384_s(
+  Spec_Hash_Definitions_hash_alg uu___,
+  EverCrypt_DRBG_state_s projectee
 );
 
-void
-Hacl_Blake2b_256_blake2b_finish(
-  uint32_t nn,
-  uint8_t *output,
-  Lib_IntVector_Intrinsics_vec256 *hash
-);
-
-void
-Hacl_Blake2b_256_blake2b(
-  uint32_t nn,
-  uint8_t *output,
-  uint32_t ll,
-  uint8_t *d,
-  uint32_t kk,
-  uint8_t *k
+bool
+EverCrypt_DRBG_uu___is_SHA2_512_s(
+  Spec_Hash_Definitions_hash_alg uu___,
+  EverCrypt_DRBG_state_s projectee
 );
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Blake2b_256_H_DEFINED
+#define __internal_EverCrypt_DRBG_H_DEFINED
 #endif

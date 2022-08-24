@@ -228,21 +228,22 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     EXPECT_EQ(test.digest, got_digest);
   }
 
-  // Streaming
-  {
-    bytes got_digest(test.digest.size(), 0);
+  // TODO: https://github.com/project-everest/hacl-star/issues/586
+  // // Streaming
+  // {
+  //   bytes got_digest(test.digest.size(), 0);
 
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
-      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
+  //   Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+  //     EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
 
-    EverCrypt_Hash_Incremental_init(state);
-    EverCrypt_Hash_Incremental_update(
-      state, test.input.data(), test.input.size());
-    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
-    EverCrypt_Hash_Incremental_free(state);
+  //   EverCrypt_Hash_Incremental_init(state);
+  //   EverCrypt_Hash_Incremental_update(
+  //     state, test.input.data(), test.input.size());
+  //   EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+  //   EverCrypt_Hash_Incremental_free(state);
 
-    EXPECT_EQ(test.digest, got_digest);
-  }
+  //   EXPECT_EQ(test.digest, got_digest);
+  // }
 }
 
 // -----------------------------------------------------------------------------

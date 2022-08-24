@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_StaticConfig_H
-#define __EverCrypt_StaticConfig_H
+#ifndef __Hacl_Bignum_H
+#define __Hacl_Bignum_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,19 +35,31 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-
+#include "Hacl_Krmllib.h"
+#include "Hacl_Bignum_Base.h"
 #include "evercrypt_targetconfig.h"
-extern bool EverCrypt_StaticConfig_hacl;
+#include "lib_intrinsics.h"
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32_s
+{
+  uint32_t len;
+  uint32_t *n;
+  uint32_t mu;
+  uint32_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32;
 
-extern bool EverCrypt_StaticConfig_vale;
-
-extern bool EverCrypt_StaticConfig_openssl;
-
-extern bool EverCrypt_StaticConfig_bcrypt;
+typedef struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s
+{
+  uint32_t len;
+  uint64_t *n;
+  uint64_t mu;
+  uint64_t *r2;
+}
+Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_StaticConfig_H_DEFINED
+#define __Hacl_Bignum_H_DEFINED
 #endif
