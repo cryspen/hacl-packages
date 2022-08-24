@@ -253,7 +253,7 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Select the files for the target OS/Compiler
     if(WIN32 AND NOT MSVC)
         # On Windows with clang-cl (our default) we take the Linux assembly
-        set(VALE_OBJECTS ${VALE_SOURCES_linux})
+        set(VALE_OBJECTS ${VALE_SOURCES_mingw})
     else()
         set(VALE_OBJECTS ${VALE_SOURCES_${HACL_TARGET_OS}})
     endif()
@@ -261,14 +261,17 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Add SOURCES_vale to SOURCES_std as we don't need any
     # special compiler flags for it.
     list(APPEND SOURCES_std ${SOURCES_vale})
+    message(STATUS "Detected vale support")
     set(HACL_CAN_COMPILE_VALE 1)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
+    message(STATUS "Detected inline assembly support")
     set(HACL_CAN_COMPILE_INLINE_ASM 1)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
+    message(STATUS "Detected intrinsics support")
     set(HACL_CAN_COMPILE_INTRINSICS 1)
 endif()
 
