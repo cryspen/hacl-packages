@@ -65,4 +65,5 @@ def clean_ocaml():
     '''Clean the OCaml build.
     '''
     make_cmd = ['make', '-C', 'ocaml', 'clean']
-    subprocess.run(make_cmd, check=True)
+    # This is noisy.
+    subprocess.run(make_cmd, check=True, stdout=subprocess.DEVNULL)
