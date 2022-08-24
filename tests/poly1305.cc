@@ -116,14 +116,12 @@ poly1305_mac(bytes key, bytes text, bytes& tag)
 void
 poly1305_mac_streaming(bytes key,
                        bytes text,
-                       bytes& tag,
-                       vector<size_t> lengths)
+                       vector<size_t> lengths,
+                       bytes expected_tag)
 {
-  bytes base_tag;
-
   cout << "Poly1305.Mac (Streaming, Variant 1)" << endl;
   {
-    bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+    bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
     // Init
     vector<uint64_t> ctx(32);
@@ -135,14 +133,14 @@ poly1305_mac_streaming(bytes key,
     }
 
     // Finish
-    Hacl_Poly1305_32_poly1305_finish(tag.data(), key.data(), ctx.data());
+    Hacl_Poly1305_32_poly1305_finish(got_tag.data(), key.data(), ctx.data());
 
-    base_tag = tag;
+    ASSERT_EQ(expected_tag, got_tag);
   }
 
   cout << "Poly1305.Mac (Streaming, Variant 2)" << endl;
   {
-    bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+    bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
     // Init
     uint8_t raw_state[32];
@@ -156,18 +154,17 @@ poly1305_mac_streaming(bytes key,
     }
 
     // Finish
-    Hacl_Streaming_Poly1305_32_finish(state, tag.data());
+    Hacl_Streaming_Poly1305_32_finish(state, got_tag.data());
     Hacl_Streaming_Poly1305_32_free(state);
 
-    EXPECT_EQ(base_tag, tag)
-      << "Detected difference between _32 and _32 (variant 2) version";
+    ASSERT_EQ(expected_tag, got_tag);
   }
 
 #ifdef HACL_CAN_COMPILE_VEC128
   if (hacl_vec128_support()) {
     cout << "Poly1305.Mac (VEC128, Streaming, Variant 1)" << endl;
     {
-      bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
       // Init
       Lib_IntVector_Intrinsics_vec128 ctx[32];
@@ -179,15 +176,14 @@ poly1305_mac_streaming(bytes key,
       }
 
       // Finish
-      Hacl_Poly1305_128_poly1305_finish(tag.data(), key.data(), ctx);
+      Hacl_Poly1305_128_poly1305_finish(got_tag.data(), key.data(), ctx);
 
-      EXPECT_EQ(base_tag, tag)
-        << "Detected difference between _32 and _128 version";
+      ASSERT_EQ(expected_tag, got_tag);
     }
 
     cout << "Poly1305.Mac (VEC128, Streaming, Variant 2)" << endl;
     {
-      bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
       // Init
       Hacl_Streaming_Poly1305_128_poly1305_128_state* state =
@@ -200,11 +196,10 @@ poly1305_mac_streaming(bytes key,
       }
 
       // Finish
-      Hacl_Streaming_Poly1305_128_finish(state, tag.data());
+      Hacl_Streaming_Poly1305_128_finish(state, got_tag.data());
       Hacl_Streaming_Poly1305_128_free(state);
 
-      EXPECT_EQ(base_tag, tag)
-        << "Detected difference between _32 and _128 version";
+      ASSERT_EQ(expected_tag, got_tag);
     }
   } else {
     cout << "No support for VEC128 on this CPU." << endl;
@@ -215,7 +210,7 @@ poly1305_mac_streaming(bytes key,
   if (hacl_vec256_support()) {
     cout << "Poly1305.Mac (VEC256, Streaming, Variant 1)" << endl;
     {
-      bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
       // Init
       Lib_IntVector_Intrinsics_vec256 ctx[32];
@@ -227,10 +222,9 @@ poly1305_mac_streaming(bytes key,
       }
 
       // Finish
-      Hacl_Poly1305_256_poly1305_finish(tag.data(), key.data(), ctx);
+      Hacl_Poly1305_256_poly1305_finish(got_tag.data(), key.data(), ctx);
 
-      EXPECT_EQ(base_tag, tag)
-        << "Detected difference between _32 and _128 version";
+      ASSERT_EQ(expected_tag, got_tag);
     }
 
     cout << "Poly1305.Mac (VEC256, Streaming, Variant 2)" << endl;
@@ -261,8 +255,6 @@ poly1305_mac_streaming(bytes key,
     cout << "No support for VEC256 on this CPU." << endl;
   }
 #endif
-
-  tag = base_tag;
 }
 
 class Poly1305Suite
@@ -288,10 +280,7 @@ TEST_P(Poly1305Suite, KAT)
 
   // Test Streaming API
   {
-    bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-    poly1305_mac_streaming(test.key, test.text, got_tag, lengths);
-
-    EXPECT_EQ(test.tag, got_tag);
+    poly1305_mac_streaming(test.key, test.text, lengths, test.tag);
   }
 }
 
