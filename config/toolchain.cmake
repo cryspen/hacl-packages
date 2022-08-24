@@ -96,11 +96,17 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF)
     # Only available on x64
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
-        execute_process(COMMAND
-            ${PROJECT_SOURCE_DIR}/config/osx_c.sh ${CMAKE_C_COMPILER}
-            RESULT_VARIABLE BAD_CC
-        )
-        if(${BAD_CC} EQUAL 1)
+        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+            execute_process(COMMAND
+                ${PROJECT_SOURCE_DIR}/config/osx_c.sh ${CMAKE_C_COMPILER}
+                RESULT_VARIABLE BAD_CC
+            )
+            # Only enable inline ASM when we don't have a bad compiler and are not
+            # on Windows.
+            if(${BAD_CC} EQUAL 0)
+                set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM TRUE)
+            endif()
+        elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
             set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM TRUE)
         endif()
     endif()
