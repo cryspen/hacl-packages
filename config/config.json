@@ -352,6 +352,9 @@
         "detection": [
             "detection.cc"
         ],
+        "bignum": [
+            "bignum.cc"
+        ],
         "blake2": [
             "blake2b.cc",
             "blake2s.cc"
