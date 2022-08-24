@@ -136,6 +136,8 @@ TEST_P(AesGcmSuite, KAT)
 
   encrypt_decrypt(
     state, test.iv, test.aad, test.msg, test.ct, test.tag, test.valid);
+
+  EverCrypt_AEAD_free(state);
 }
 
 // ----- EverCrypt -------------------------------------------------------------
