@@ -128,7 +128,8 @@ poly1305_mac_streaming(bytes key,
     Hacl_Poly1305_32_poly1305_init(ctx.data(), key.data());
 
     // Update
-    for (auto chunk : split_by_index_list(text, lengths)) {
+    // Note: This doesn't work with arbitrary chunks.
+    for (auto chunk : chunk(text, 16)) {
       Hacl_Poly1305_32_poly1305_update(ctx.data(), chunk.size(), chunk.data());
     }
 
@@ -171,7 +172,8 @@ poly1305_mac_streaming(bytes key,
       Hacl_Poly1305_128_poly1305_init(ctx, key.data());
 
       // Update
-      for (auto chunk : split_by_index_list(text, lengths)) {
+      // Note: This doesn't work with arbitrary chunks.
+      for (auto chunk : chunk(text, 16)) {
         Hacl_Poly1305_128_poly1305_update(ctx, chunk.size(), chunk.data());
       }
 
@@ -217,7 +219,8 @@ poly1305_mac_streaming(bytes key,
       Hacl_Poly1305_256_poly1305_init(ctx, key.data());
 
       // Update
-      for (auto chunk : split_by_index_list(text, lengths)) {
+      // Note: This doesn't work with arbitrary chunks.
+      for (auto chunk : chunk(text, 16)) {
         Hacl_Poly1305_256_poly1305_update(ctx, chunk.size(), chunk.data());
       }
 
