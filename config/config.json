@@ -349,6 +349,9 @@
         ]
     },
     "tests": {
+        "detection": [
+            "detection.cc"
+        ],
         "blake2": [
             "blake2b.cc",
             "blake2s.cc"
@@ -358,7 +361,8 @@
             "p256_ecdsa.cc"
         ],
         "k256": [
-            "p256k1_ecdsa.cc"
+            "k256_ecdh.cc",
+            "k256_ecdsa.cc"
         ],
         "chacha20poly1305": [
             "chacha20poly1305.cc"
@@ -372,14 +376,38 @@
         "rsapss": [
             "rsapss.cc"
         ],
+        "hkdf": [
+            "hkdf.cc"
+        ],
+        "poly1305": [
+            "poly1305.cc"
+        ],
         "hmac": [
             "hmac.cc"
+        ],
+        "drbg": [
+            "drbg.cc"
+        ],
+        "md5": [
+            "md5.cc"
+        ],
+        "sha1": [
+            "sha1.cc"
         ],
         "sha2": [
             "sha2.cc"
         ],
         "sha3": [
             "sha3.cc"
+        ],
+        "nacl": [
+            "nacl.cc"
+        ],
+        "evercrypt": [
+            "evercrypt.cc"
+        ],
+        "aead": [
+            "aead.cc"
         ]
     }
 }

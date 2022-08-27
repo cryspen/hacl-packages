@@ -143,6 +143,24 @@ if(${TOOLCHAIN_CAN_COMPILE_VALE})
         APPEND)
 endif(${TOOLCHAIN_CAN_COMPILE_VALE})
 
+# Coverage
+if(ENABLE_COVERAGE)
+    message(STATUS "Coverage instrumentation enabled")
+    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
+endif()
+
+# Sanitizer
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
+
+if(ENABLE_UBSAN)
+    add_compile_options(-fsanitize=undefined)
+    add_link_options(-fsanitize=undefined)
+endif()
+
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
@@ -235,7 +253,7 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Select the files for the target OS/Compiler
     if(WIN32 AND NOT MSVC)
         # On Windows with clang-cl (our default) we take the Linux assembly
-        set(VALE_OBJECTS ${VALE_SOURCES_linux})
+        set(VALE_OBJECTS ${VALE_SOURCES_mingw})
     else()
         set(VALE_OBJECTS ${VALE_SOURCES_${HACL_TARGET_OS}})
     endif()
@@ -243,14 +261,17 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Add SOURCES_vale to SOURCES_std as we don't need any
     # special compiler flags for it.
     list(APPEND SOURCES_std ${SOURCES_vale})
+    message(STATUS "Detected vale support")
     set(HACL_CAN_COMPILE_VALE 1)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
+    message(STATUS "Detected inline assembly support")
     set(HACL_CAN_COMPILE_INLINE_ASM 1)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
+    message(STATUS "Detected intrinsics support")
     set(HACL_CAN_COMPILE_INTRINSICS 1)
 endif()
 
@@ -292,24 +313,6 @@ endif()
 
 # Write configuration
 configure_file(config/Config.h.in config.h)
-
-# Coverage
-if(ENABLE_COVERAGE)
-    message(STATUS "Coverage instrumentation enabled")
-    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
-    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-endif()
-
-# Sanitizer
-if(ENABLE_ASAN)
-    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
-    add_link_options(-fsanitize=address)
-endif()
-
-if(ENABLE_UBSAN)
-    add_compile_options(-fsanitize=undefined)
-    add_link_options(-fsanitize=undefined)
-endif()
 
 # Set library config and files
 # Now combine everything into the hacl library
@@ -367,6 +370,7 @@ if(ENABLE_TESTS)
     # Get gtests
     include(FetchContent)
     FetchContent_Declare(googletest
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     )
 
@@ -376,6 +380,7 @@ if(ENABLE_TESTS)
 
     # Get nlohmann json
     FetchContent_Declare(json
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
     )
     FetchContent_MakeAvailable(json)
@@ -433,6 +438,7 @@ if(ENABLE_BENCHMARKS)
 
     # We need gtest as well
     FetchContent_Declare(googletest
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     )
 
@@ -441,6 +447,7 @@ if(ENABLE_BENCHMARKS)
     FetchContent_MakeAvailable(googletest)
 
     FetchContent_Declare(benchmark
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/google/benchmark/archive/refs/tags/v1.6.1.zip
     )
     FetchContent_MakeAvailable(benchmark)

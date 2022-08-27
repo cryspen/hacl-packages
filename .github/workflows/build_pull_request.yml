@@ -1,0 +1,234 @@
+name: build_pull_request
+
+on:
+  pull_request:
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        compiler: [ gcc, clang ]
+        bits: [ 32, 64 ]
+        edition: [ c89, "" ]
+
+    steps:
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | Install Ninja
+        run: sudo apt-get install ninja-build
+
+      - name: Setup | Install multilib libraries
+        if: ${{ matrix.bits == 32 }}
+        run: sudo apt-get install gcc-multilib g++-multilib
+
+      - name: Setup GCC
+        if: ${{ matrix.compiler == 'gcc' }}
+        run: |
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+
+      - name: Setup Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux_${{ matrix.compiler }}_${{ matrix.bits }}_${{ matrix.edition }}
+
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        compiler: [ gcc, clang ]
+        bits: [ 64 ]
+        target: [ "", "aarch64-apple-ios", "aarch64-apple-darwin" ]
+
+    steps:
+      - name: Setup | Install Ninja
+        run: brew install ninja
+
+      - name: Setup GCC
+        if: ${{ matrix.compiler == 'gcc' }}
+        run: |
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+
+      - name: Setup  Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+
+      - name: mach | Test (aarch64 is not tested)
+        if: ${{ matrix.target == '' }}
+        uses: ./.github/actions/mach_test
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: macos_${{ matrix.compiler }}_${{ matrix.bits }}_${{ matrix.target }}
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        bits: [ 32, 64 ]
+        args: [ "", "--msvc" ]
+        exclude:
+          # See issue #92.
+          - bits: 32
+            args: "--msvc"
+
+    steps:
+      - name: Setup | Developer Command Prompt (x86)
+        if: ${{ matrix.bits == 32 }}
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+
+      - name: Setup | Developer Command Prompt (x64)
+        if: ${{ matrix.bits == 64 }}
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Setup | Install Ninja
+        run: choco install ninja
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+          args: ${{ matrix.args }}
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: windows_${{ matrix.bits }}_v${{ matrix.edition }}_${{ matrix.args }}
+
+  # ----------------------------------------------------------------------------
+
+  android:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [ "aarch64-linux-android" ]
+    steps:
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Build
+        uses: ./.github/actions/mach_build
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+          args: --ndk $ANDROID_NDK_LATEST_HOME
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: ${{ matrix.target }}
+
+  s390x-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Output short_sha
+        uses: ./.github/actions/make_short_sha
+
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
+
+      - name: Debug Build
+        run: ./mach build --tests --target s390x -v
+
+      - name: Release Build
+        run: ./mach build --release --target s390x --tests -v
+
+      - name: Install
+        run: |
+          mkdir pkg-release
+          ./mach install -p $PWD/pkg-release -c Release
+          mkdir pkg-debug
+          ./mach install -p $PWD/pkg-debug
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux-s390x-gcc10
+
+  # ----------------------------------------------------------------------------
+
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Output short_sha
+        uses: ./.github/actions/make_short_sha
+
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+
+      - name: Build (Release)
+        run: ./_build.sh
+
+      - name: Build (Debug)
+        run: ninja -f build-Debug.ninja -C build
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux-default
