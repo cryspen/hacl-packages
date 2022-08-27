@@ -13,24 +13,12 @@ on:
       - LICENSE
       - LICENSE-APACHE
       - README.md
-  pull_request:
-    # Can't use an YAML anchor because "Anchors are not currently supported." (GitHub 12/07/2022)
-    paths-ignore:
-      - .gitignore
-      - CLA.md
-      - CODE_OF_CONDUCT.md
-      - CONTRIBUTING.md
-      - cpu-features.md
-      - LICENSE
-      - LICENSE-APACHE
-      - README.md
   workflow_dispatch:
 
 jobs:
   linux:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         compiler: [ gcc, clang ]
         version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
@@ -96,7 +84,6 @@ jobs:
   macos:
     runs-on: macos-latest
     strategy:
-      fail-fast: false
       matrix:
         compiler: [ gcc, clang ]
         version: [ 9, 10, 11, 12, 13, 14 ]
@@ -159,7 +146,6 @@ jobs:
   windows:
     runs-on: windows-latest
     strategy:
-      fail-fast: false
       matrix:
         bits: [ 32, 64 ]
         args: [ "", "--msvc" ]
@@ -204,7 +190,6 @@ jobs:
   android:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         target: [ "aarch64-linux-android" ]
     steps:

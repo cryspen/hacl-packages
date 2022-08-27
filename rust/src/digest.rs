@@ -238,14 +238,6 @@ impl From<Algorithm> for Spec_Hash_Definitions_hash_alg {
     }
 }
 
-#[deprecated(
-    since = "0.0.10",
-    note = "Please use digest_size instead. This alias will be removed with the first stable 0.1 release."
-)]
-pub fn get_digest_size(mode: Algorithm) -> usize {
-    digest_size(mode)
-}
-
 /// Returns the output size of a digest.
 pub const fn digest_size(mode: Algorithm) -> usize {
     match mode {
@@ -260,6 +252,12 @@ pub const fn digest_size(mode: Algorithm) -> usize {
         Algorithm::Sha3_256 => 32,
         Algorithm::Sha3_384 => 48,
         Algorithm::Sha3_512 => 64,
+    }
+}
+
+impl Algorithm {
+    pub fn size(self) -> usize {
+        digest_size(self)
     }
 }
 

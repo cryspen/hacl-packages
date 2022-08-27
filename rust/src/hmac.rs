@@ -33,14 +33,6 @@ pub enum Algorithm {
     Sha512 = Spec_Hash_Definitions_SHA2_512 as isize,
 }
 
-#[deprecated(
-    since = "0.0.10",
-    note = "Please use tag_size instead. This alias will be removed with the first stable 0.1 release."
-)]
-pub fn get_tag_size(mode: Algorithm) -> usize {
-    tag_size(mode)
-}
-
 /// Get the tag size for a given mode.
 pub const fn tag_size(mode: Algorithm) -> usize {
     match mode {
