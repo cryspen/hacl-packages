@@ -355,6 +355,9 @@
         "bignum": [
             "bignum.cc"
         ],
+        "generic_field": [
+            "generic_field.cc"
+        ],
         "blake2": [
             "blake2b.cc",
             "blake2s.cc"
