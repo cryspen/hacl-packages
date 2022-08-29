@@ -266,11 +266,11 @@ TEST_P(Bignum, KAT)
       free(got_res_bn);
     }
 
-    free(a_bn);
-    free(b_bn);
-    free(a_bn_double);
-    free(b_bn_double);
     free(n_bn);
+    free(b_bn_double);
+    free(a_bn_double);
+    free(b_bn);
+    free(a_bn);
   }
 
   // 64-Bit
@@ -467,11 +467,11 @@ TEST_P(Bignum, KAT)
       free(got_res_bn);
     }
 
-    free(a_bn);
-    free(b_bn);
-    free(a_bn_double);
-    free(b_bn_double);
     free(n_bn);
+    free(b_bn_double);
+    free(a_bn_double);
+    free(b_bn);
+    free(a_bn);
   } else {
     cout << "Skipping. No VEC128 support.";
   }
@@ -534,14 +534,15 @@ TEST_P(Bignum, ModExpKAT)
 
           ASSERT_EQ(test.exp_mod, got_res);
 
-          free(a_bn_double);
-          free(a_reduced_bn);
           free(got_res_bn);
+          free(a_reduced_bn);
+          free(a_bn_double);
         }
       }
 
-      free(a_bn);
+      free(n_bn);
       free(b_bn);
+      free(a_bn);
     }
 
     // 64-Bit
@@ -596,14 +597,15 @@ TEST_P(Bignum, ModExpKAT)
 
           ASSERT_EQ(test.exp_mod, got_res);
 
-          free(a_bn_double);
-          free(a_reduced_bn);
           free(got_res_bn);
+          free(a_reduced_bn);
+          free(a_bn_double);
         }
       }
 
-      free(a_bn);
+      free(n_bn);
       free(b_bn);
+      free(a_bn);
     } else {
       cout << "Skipping. No VEC128 support.";
     }
@@ -660,14 +662,15 @@ TEST_P(Bignum, ModExpKAT)
 
           ASSERT_EQ(test.exp_mod, got_res);
 
-          free(a_bn_double);
-          free(a_reduced_bn);
           free(got_res_bn);
+          free(a_reduced_bn);
+          free(a_bn_double);
         }
       }
 
-      free(a_bn);
+      free(n_bn);
       free(b_bn);
+      free(a_bn);
     }
 
     // 64-Bit
@@ -722,14 +725,15 @@ TEST_P(Bignum, ModExpKAT)
 
           ASSERT_EQ(test.exp_mod, got_res);
 
-          free(a_bn_double);
-          free(a_reduced_bn);
           free(got_res_bn);
+          free(a_reduced_bn);
+          free(a_bn_double);
         }
       }
 
-      free(a_bn);
+      free(n_bn);
       free(b_bn);
+      free(a_bn);
     } else {
       cout << "Skipping. No VEC128 support.";
     }
