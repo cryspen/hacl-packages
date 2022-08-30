@@ -160,6 +160,11 @@ def build(args):
         - disable
         - coverage
     """
+
+    # Create the build folder.
+    if not os.path.exists("build"):
+        os.mkdir("build")
+
     cmake_args = []
     # Verbosity
     verbose = False
@@ -421,14 +426,6 @@ def _clean():
     shutil.rmtree("build", ignore_errors=True)
     try:
         clean_ocaml()
-    except:
-        pass  # We don't really care
-    try:
-        os.remove(config_cache())
-    except:
-        pass  # We don't really care
-    try:
-        os.remove(cmake_config())
     except:
         pass  # We don't really care
 

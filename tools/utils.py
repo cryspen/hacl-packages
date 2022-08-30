@@ -21,7 +21,7 @@ def json_config():
 
 
 def cmake_config():
-    return os.path.join("config", "config.cmake")
+    return os.path.join("build", "config.cmake")
 
 
 def cmake_generated_config():
@@ -29,15 +29,16 @@ def cmake_generated_config():
 
 
 def dep_config():
-    return os.path.join("config", "dep_config.json")
+    return os.path.join("build", "dep_config.json")
 
 
 def config_check_file():
-    return join("config", ".dependency_check")
+    return join("build", ".dependency_check")
 
 
 def config_cache():
-    return os.path.join("config", ".cache")
+    return os.path.join("build", ".cache")
+
 
 
 # FIXME: #10 add config.type (Debug/Release)
@@ -111,6 +112,8 @@ def dependency_check():
     # XXX: check for a compiler
     # check_cmd("clang")
     print()
+    if not os.path.exists("build"):
+        os.mkdir("build")
     Path(config_check_file()).touch()
 
 

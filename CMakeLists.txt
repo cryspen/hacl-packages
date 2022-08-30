@@ -52,7 +52,7 @@ set(hacl_VERSION_TWEAK "alpha.1")
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
 # needed.
-include(config/config.cmake)
+include(build/config.cmake)
 
 # Constants used throughout hacl and the build.
 include(config/constants.cmake)
@@ -73,7 +73,7 @@ endif(NOT CMAKE_C_STANDARD)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Read config from file
-include(config/config.cmake)
+include(build/config.cmake)
 
 # Configure different targets
 # TODO: Set flags for MSVC
