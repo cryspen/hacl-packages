@@ -147,6 +147,8 @@ Local actions reused across the HACL Packages CI are in the <code>.github/action
 <p>There are multiple workflow files with the following tasks:</p>
 <ul>
 <li><code>build.yml</code> builds and tests HACL Packages on many systems (see below).</li>
+<li><code>build_pull_request.yml</code> builds and tests HACL Packages PRs on many systems (see below).</li>
+<li><code>sanitizer_builds.yml</code> builds and tests HACL Packages on Linux (x86/x64) with <a href="https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html">UBSAN</a> and <a href="https://clang.llvm.org/docs/AddressSanitizer.html">ASAN</a></li>
 <li><code>gh-pages.yml</code> builds and publishes new versions of this book.</li>
 <li><code>new_issue.yml</code> adds newly created issues to the <a href="https://github.com/orgs/cryspen/projects/1">HACL Packages project board</a>.</li>
 <li><code>ocaml.yml</code> builds the OCaml bindings for HACL packages.</li>
@@ -180,8 +182,7 @@ In HACL Packages, and especially in the <code>build</code> workflow, we use matr
 <tr><td>macOS (macos-latest)</td><td>gcc (9-12), clang (11-14)</td><td>aarch64</td></tr>
 <tr><td>Android (ubuntu-latest)</td><td>gcc (latest)</td><td>aarch64</td></tr>
 <tr><td>iOS (macos-latest)</td><td>gcc (9-12), clang (11-14)</td><td>aarch64</td></tr>
-<tr><td><strong>Tier 3</strong></td><td></td><td></td></tr>
-<tr><td>s390x (ubuntu-latest)</td><td>gcc (latest)</td><td>aarch64</td></tr>
+<tr><td>Linux (ubuntu-latest)</td><td>gcc (latest)</td><td>s390x</td></tr>
 </tbody></table>
 </div>
 <p>Furthermore, on Linux, we test different &quot;editions&quot; of the C programming language, i.e., &quot;c89&quot;.</p>
