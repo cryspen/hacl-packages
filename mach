@@ -9,22 +9,32 @@
 # The mach driver for HACL.
 
 
-import pathlib
-import subprocess
-import re
-import sys
 import os
+import pathlib
+import re
 import shutil
-from tools.configure import Config
+import subprocess
+import sys
 
-from tools.utils import config_cache, subcommand, argument, json_config, \
-    dep_config, cmake_config, cli, subparsers, mprint as print, check_cmd, \
-    coverage_dependency_check
-from tools.test import run_tests
+from tools.configure import Config
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
-from tools.update import update
 from tools.rust import rust
+from tools.test import run_tests
+from tools.update import update
+from tools.utils import (
+    argument,
+    check_cmd,
+    cli,
+    cmake_config,
+    config_cache,
+    coverage_dependency_check,
+    dep_config,
+    json_config,
+    mprint as print,
+    subcommand,
+    subparsers,
+)
 
 # === SUBCOMMANDS === #
 
@@ -33,51 +43,83 @@ def _install(prefix=None, config=None):
     configuration = "Debug"
     if config:
         configuration = config
-    cmake_cmd = ['cmake', '--install', 'build', '--config', configuration]
+    cmake_cmd = ["cmake", "--install", "build", "--config", configuration]
     if prefix:
-        cmake_cmd.extend(['--prefix', prefix])
+        cmake_cmd.extend(["--prefix", prefix])
     print(cmake_cmd)
     subprocess.run(cmake_cmd, check=True)
 
 
-@subcommand([argument("-p", "--prefix",
-                      help="The path prefix to install into.", type=str),
-             argument("-c", "--config",
-                      help="The config to install, i.e. Debug or Release.", type=str)])
+@subcommand(
+    [
+        argument("-p", "--prefix", help="The path prefix to install into.", type=str),
+        argument(
+            "-c",
+            "--config",
+            help="The config to install, i.e. Debug or Release.",
+            type=str,
+        ),
+    ]
+)
 def install(args):
     _install(prefix=args.prefix, config=args.config)
 
 
-@subcommand([argument("-c", "--clean", help="Clean before building.", action='store_true'),
-             argument("--tests", help="Build tests.", action='store_true'),
-             argument("--test", help="Build and run tests.",
-                      action='store_true'),
-             argument("--benchmarks", help="Build benchmarks.", action='store_true'),
-             argument("-r", "--release", help="Build in release mode.",
-                      action='store_true'),
-             argument("-a", "--algorithms",
-                      help="A list of algorithms to enable. Defaults to all.", type=str),
-             argument(
-                 "-p", "--target", help="Define compile target for cross compilation.", type=str),
-             argument(
-                 "-d", "--disable", help="Disable (hardware) features even if available.", type=str),
-             argument(
-                 "-s", "--sanitizer", help="Enable sanitizers.", type=str),
-             argument(
-                 "--ndk", help="Path to the Android NDK.", type=str),
-            argument(
-                "--msvc", help="Use MSVC on Windows (default is clang-cl).",  action='store_true'),
-             argument(
-                 "-e", "--edition", help="Choose a different HACL* edition.", type=str),
-             argument(
-                 "-l", "--language", help="Build language bindings for the given language.", type=str),
-             argument("-v", "--verbose", help="Make builds verbose.",
-                      action='store_true'),
-             argument(
-                 "-m32", help="Build for 32-bit (even when on 64-bit).", action='store_true'),
-             argument(
-                 "--no-build", help="Don't actually build (don't run ninja).", action='store_true'),
-             argument("--coverage", help="Build with coverage instrumentation.", action='store_true')])
+@subcommand(
+    [
+        argument("-c", "--clean", help="Clean before building.", action="store_true"),
+        argument("--tests", help="Build tests.", action="store_true"),
+        argument("--test", help="Build and run tests.", action="store_true"),
+        argument("--benchmarks", help="Build benchmarks.", action="store_true"),
+        argument("-r", "--release", help="Build in release mode.", action="store_true"),
+        argument(
+            "-a",
+            "--algorithms",
+            help="A list of algorithms to enable. Defaults to all.",
+            type=str,
+        ),
+        argument(
+            "-p",
+            "--target",
+            help="Define compile target for cross compilation.",
+            type=str,
+        ),
+        argument(
+            "-d",
+            "--disable",
+            help="Disable (hardware) features even if available.",
+            type=str,
+        ),
+        argument("-s", "--sanitizer", help="Enable sanitizers.", type=str),
+        argument("--ndk", help="Path to the Android NDK.", type=str),
+        argument(
+            "--msvc",
+            help="Use MSVC on Windows (default is clang-cl).",
+            action="store_true",
+        ),
+        argument("-e", "--edition", help="Choose a different HACL* edition.", type=str),
+        argument(
+            "-l",
+            "--language",
+            help="Build language bindings for the given language.",
+            type=str,
+        ),
+        argument("-v", "--verbose", help="Make builds verbose.", action="store_true"),
+        argument(
+            "-m32", help="Build for 32-bit (even when on 64-bit).", action="store_true"
+        ),
+        argument(
+            "--no-build",
+            help="Don't actually build (don't run ninja).",
+            action="store_true",
+        ),
+        argument(
+            "--coverage",
+            help="Build with coverage instrumentation.",
+            action="store_true",
+        ),
+    ]
+)
 def build(args):
     """Main entry point for building HACL
 
@@ -126,6 +168,7 @@ def build(args):
 
         def vprint(*args, **kwargs):
             print(args, kwargs)
+
     else:
         vprint = lambda *a, **k: None
     # Set config
@@ -148,7 +191,7 @@ def build(args):
         cache = True
 
     bindings = args.language is not None
-    if bindings and args.language == 'ocaml':
+    if bindings and args.language == "ocaml":
         # OCaml always gets release builds for now
         build_config = "Release"
 
@@ -163,7 +206,7 @@ def build(args):
         m32 = True
 
     # Our default compiler is clang.
-    compiler = os.getenv('CC', "clang")
+    compiler = os.getenv("CC", "clang")
 
     windows = False
 
@@ -180,10 +223,10 @@ def build(args):
         source_dir = os.path.join(source_dir, "msvc")
         include_dir = os.path.join(include_dir, "msvc")
         # get msvc in the path
-        vs_arch = '64'
+        vs_arch = "64"
         if m32:
-            vs_arch = '32'
-        vswhere_cmd = ['tools\\vcbuild.cmd', vs_arch]
+            vs_arch = "32"
+        vswhere_cmd = ["tools\\vcbuild.cmd", vs_arch]
         subprocess.run(vswhere_cmd, check=True)
 
     # We use the ninja multi config generator.
@@ -202,32 +245,33 @@ def build(args):
             print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
         if args.target == "x86_64-apple-darwin":
-            cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
         elif args.target == "s390x":
             cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake", "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10", "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10"])
-        elif args.target == "aarch64-apple-ios":
-            cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
-            cmake_args.extend(
-                ["-DCMAKE_OSX_SYSROOT="+ios_sysroot()]
+                [
+                    "-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake",
+                    "-DCMAKE_C_COMPILER=s390x-linux-gnu-gcc-10",
+                    "-DCMAKE_CXX_COMPILER=s390x-linux-gnu-g++-10",
+                ]
             )
+        elif args.target == "aarch64-apple-ios":
+            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
+            cmake_args.extend(["-DCMAKE_OSX_SYSROOT=" + ios_sysroot()])
         elif args.target == "aarch64-apple-darwin":
-            cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
+            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
         elif args.target == "aarch64-linux-android":
             if args.ndk:
-                cmake_args.append("-DANDROID_NDK_PATH="+args.ndk)
+                cmake_args.append("-DANDROID_NDK_PATH=" + args.ndk)
             else:
                 print(
-                    "! Compiling for \"%s\" requires an NDK. \n\t  Use --ndk to specify the path." % args.target)
+                    '! Compiling for "%s" requires an NDK. \n\t  Use --ndk to specify the path.'
+                    % args.target
+                )
                 print("  See help for more information.")
                 exit(1)
-            cmake_args.extend(
-                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
+            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
         else:
-            print("! Unknown cross-compilation target \"%s\"" % args.target)
+            print('! Unknown cross-compilation target "%s"' % args.target)
             print("  See help for available targets.")
             exit(1)
     if args.disable:
@@ -235,13 +279,19 @@ def build(args):
             print("! Disabling features is not supporte on Windows.")
             exit(1)
         features_to_disable = list(
-            map(lambda f: "-DDISABLE_"+f.upper()+"=ON", re.split(r"\W+", args.disable)))
+            map(
+                lambda f: "-DDISABLE_" + f.upper() + "=ON",
+                re.split(r"\W+", args.disable),
+            )
+        )
         cmake_args.extend(features_to_disable)
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
     if args.benchmarks:
         if args.tests or args.test:
-            print("! Benchmarks can't be built at the same time as tests for now. See #115")
+            print(
+                "! Benchmarks can't be built at the same time as tests for now. See #115"
+            )
             exit(1)
         cmake_args.append("-DENABLE_BENCHMARKS=ON")
     if args.sanitizer:
@@ -249,7 +299,11 @@ def build(args):
             print("! Sanitizers are not supporte on Windows.")
             exit(1)
         sanitizers = list(
-            map(lambda f: "-DENABLE_"+f.upper()+"=ON", re.split(r"\W+", args.sanitizer)))
+            map(
+                lambda f: "-DENABLE_" + f.upper() + "=ON",
+                re.split(r"\W+", args.sanitizer),
+            )
+        )
         cmake_args.extend(sanitizers)
 
     # if verbose:
@@ -267,9 +321,9 @@ def build(args):
         cmake_args.append("-DENABLE_COVERAGE=ON")
 
     if len(cflags) != 0:
-        cmake_args.append("-DCMAKE_C_FLAGS=" + ' '.join(cflags))
+        cmake_args.append("-DCMAKE_C_FLAGS=" + " ".join(cflags))
     if len(cxxflags) != 0:
-        cmake_args.append("-DCMAKE_CXX_FLAGS=" + ' '.join(cxxflags))
+        cmake_args.append("-DCMAKE_CXX_FLAGS=" + " ".join(cxxflags))
 
     # In order to perform correct dependency analysis we have to first get a
     # correct config.h. The config.h is generated by cmake, which requires the
@@ -285,12 +339,11 @@ def build(args):
     # '--debug-trycompile'
     if not cache:
         print("Running config to write config.cmake and config.h ...")
-        config = Config(json_config(), source_dir,
-                        include_dir, compiler=compiler)
+        config = Config(json_config(), source_dir, include_dir, compiler=compiler)
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())
 
-        cmake_cmd = ['cmake', '-B', 'build']
+        cmake_cmd = ["cmake", "-B", "build"]
         cmake_cmd.extend(cmake_args)
         vprint(str(cmake_cmd))
         subprocess.run(cmake_cmd, check=True)
@@ -301,12 +354,17 @@ def build(args):
         algorithms = []
         if args.algorithms and not bindings:
             algorithms = re.split(r"\W+", args.algorithms)
-        config = Config(json_config(), source_dir,
-                        include_dir, algorithms=algorithms, compiler=compiler)
+        config = Config(
+            json_config(),
+            source_dir,
+            include_dir,
+            algorithms=algorithms,
+            compiler=compiler,
+        )
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())
 
-    cmake_cmd = ['cmake', '-B', 'build']
+    cmake_cmd = ["cmake", "-B", "build"]
     cmake_cmd.extend(cmake_args)
     vprint(str(cmake_cmd))
     subprocess.run(cmake_cmd, check=True)
@@ -318,37 +376,36 @@ def build(args):
     # Set ninja arguments
     ninja_args = []
     if verbose:
-        ninja_args.append('-v')
+        ninja_args.append("-v")
 
     # build C library
-    ninja_cmd = ['ninja', '-f', 'build-%s.ninja' % build_config, '-C', 'build']
+    ninja_cmd = ["ninja", "-f", "build-%s.ninja" % build_config, "-C", "build"]
     ninja_cmd.extend(ninja_args)
     vprint(str(ninja_cmd))
     subprocess.run(ninja_cmd, check=True)
 
     # build bindings if requested
     if bindings:
-        if args.language == 'rust':
-            check_cmd('cargo')
-            _install(prefix='build/installed', config=build_config)
-            cargo_cmd = 'cargo build --manifest-path rust/Cargo.toml'
+        if args.language == "rust":
+            check_cmd("cargo")
+            _install(prefix="build/installed", config=build_config)
+            cargo_cmd = "cargo build --manifest-path rust/Cargo.toml"
             if verbose:
-                cargo_cmd += ' -v'
-            env = {
-                **os.environ,
-                "MACH_BUILD": "1"
-            }
+                cargo_cmd += " -v"
+            env = {**os.environ, "MACH_BUILD": "1"}
             if windows:
-                subprocess.Popen('setx MACH_BUILD 1', shell=True).wait()
+                subprocess.Popen("setx MACH_BUILD 1", shell=True).wait()
             subprocess.run(cargo_cmd, check=True, shell=True, env=env)
-        elif args.language == 'ocaml':
-            check_cmd('make')
-            check_cmd('ocaml')
+        elif args.language == "ocaml":
+            check_cmd("make")
+            check_cmd("ocaml")
             print()
             build_ocaml()
         else:
-            print("Unknown language binding %s. Please see --help for supported bindings" %
-                  (args.language))
+            print(
+                "Unknown language binding %s. Please see --help for supported bindings"
+                % (args.language)
+            )
             exit(1)
 
     print("Build finished.")
@@ -381,6 +438,7 @@ def clean(args):
     """Remove all build and config artifacts"""
     _clean()
 
+
 # === Boiler plate === #
 
 
@@ -392,5 +450,5 @@ def main():
         args.func(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
