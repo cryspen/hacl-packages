@@ -1,20 +1,29 @@
 /build
+
 /Testing
 /tmp
-/tools/__pycache__
-/rust/evercrypt-rs/target
-/rust/evercrypt-sys/target
-docs/source/__pycache__
 docs/build
 cpu-features/detect
 /pkg
-__pycache__/
-.DS_Store
-.vscode
+
+# Python
+__pycache__
+
+# Rust bindings
+/rust/evercrypt-rs/target
+/rust/evercrypt-sys/target
 rust/.c
+
+# OCaml bindings
 /opam
 
-cmake-build-debug
+# macOS
+.DS_Store
+
+# Visual Studio Code
+.vscode
 
 # CLion
 .idea
+cmake-build-debug
+
