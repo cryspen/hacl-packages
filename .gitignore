@@ -1,12 +1,7 @@
 /build
 /Testing
-/config/build
-/config/cached-config.txt
 /tmp
 /tools/__pycache__
-/config/config.cmake
-/config/dep_config.json
-config/.dependency_check
 /rust/evercrypt-rs/target
 /rust/evercrypt-sys/target
 docs/source/__pycache__
@@ -14,7 +9,6 @@ docs/build
 cpu-features/detect
 /pkg
 __pycache__/
-config/.cache
 .DS_Store
 .vscode
 rust/.c
