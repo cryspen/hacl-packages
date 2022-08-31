@@ -1,0 +1,6 @@
+myst-parser
+sphinx-multiversion
+pydata-sphinx-theme
+sphinx-book-theme
+sphinx-tabs
+
