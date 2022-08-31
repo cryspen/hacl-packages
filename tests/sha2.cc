@@ -60,6 +60,31 @@ read_json(string test_file)
   return tests_out;
 }
 
+TEST(ApiSuite, ApiTest)
+{
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // START OneShot
+    // This example uses SHA2-256.
+    //
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // 256 Bit / 8 = 32 Byte
+    uint8_t digest[256 / 8];
+
+    Hacl_Hash_SHA2_hash_256((uint8_t*)message, message_size, digest);
+    // END OneShot
+
+    bytes expected_digest = from_hex(
+      "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
+  }
+}
+
 class Sha2KAT : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 
