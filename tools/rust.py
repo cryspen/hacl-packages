@@ -32,9 +32,11 @@ def prepare():
     copy_tree("vale")
     copy_tree("karamel")
     copy_tree("include")
+    if not os.path.exists(join(package_path, "build")):
+        os.mkdir(join(package_path, "build"))
     shutil.copyfile(
         join(package_path, "config", "default_config.cmake"),
-        join(package_path, "config", "config.cmake"),
+        join(package_path, "build", "config.cmake"),
     )
     shutil.copyfile(join(root, "CMakeLists.txt"), join(package_path, "CMakeLists.txt"))
 
