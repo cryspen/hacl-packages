@@ -24,7 +24,6 @@
 
 #include "internal/Hacl_Bignum.h"
 
-#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Krmllib.h"
 
 void Hacl_Bignum_Convert_bn_from_bytes_be_uint64(uint32_t len, uint8_t *b, uint64_t *res)
@@ -1097,7 +1096,7 @@ Hacl_Bignum_bn_sub_mod_n_u64(
   }
 }
 
-static inline uint32_t mod_inv_uint32(uint32_t n0)
+uint32_t Hacl_Bignum_ModInvLimb_mod_inv_uint32(uint32_t n0)
 {
   uint32_t alpha = (uint32_t)2147483648U;
   uint32_t beta = n0;
@@ -1118,7 +1117,7 @@ static inline uint32_t mod_inv_uint32(uint32_t n0)
   return vb;
 }
 
-static inline uint64_t mod_inv_uint64(uint64_t n0)
+uint64_t Hacl_Bignum_ModInvLimb_mod_inv_uint64(uint64_t n0)
 {
   uint64_t alpha = (uint64_t)9223372036854775808U;
   uint64_t beta = n0;
@@ -1137,26 +1136,6 @@ static inline uint64_t mod_inv_uint64(uint64_t n0)
     vb = (vs >> (uint32_t)1U) + alpha_if_u_is_odd;
   }
   return vb;
-}
-
-void *(*Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_inttype t))(void *x0)
-{
-  switch (t)
-  {
-    case Lib_IntTypes_U32:
-      {
-        return (void *(*)(void *x0))(void *)mod_inv_uint32;
-      }
-    case Lib_IntTypes_U64:
-      {
-        return (void *(*)(void *x0))(void *)mod_inv_uint64;
-      }
-    default:
-      {
-        KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
-        KRML_HOST_EXIT(253U);
-      }
-  }
 }
 
 uint32_t Hacl_Bignum_Montgomery_bn_check_modulus_u32(uint32_t len, uint32_t *n)
@@ -2162,8 +2141,7 @@ Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_u32(
   uint32_t r2[len];
   memset(r2, 0U, len * sizeof (uint32_t));
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u32(len, nBits, n, r2);
-  uint32_t uu____0 = n[0U];
-  uint32_t mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+  uint32_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
   Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u32(len, n, mu, r2, a, bBits, b, res);
 }
 
@@ -2182,8 +2160,7 @@ Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_u32(
   uint32_t r2[len];
   memset(r2, 0U, len * sizeof (uint32_t));
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u32(len, nBits, n, r2);
-  uint32_t uu____0 = n[0U];
-  uint32_t mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+  uint32_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
   Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_precomp_u32(len, n, mu, r2, a, bBits, b, res);
 }
 
@@ -2604,8 +2581,7 @@ Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_u64(
   uint64_t r2[len];
   memset(r2, 0U, len * sizeof (uint64_t));
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64(len, nBits, n, r2);
-  uint64_t uu____0 = n[0U];
-  uint64_t mu = (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
+  uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
   Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u64(len, n, mu, r2, a, bBits, b, res);
 }
 
@@ -2624,8 +2600,7 @@ Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_u64(
   uint64_t r2[len];
   memset(r2, 0U, len * sizeof (uint64_t));
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64(len, nBits, n, r2);
-  uint64_t uu____0 = n[0U];
-  uint64_t mu = (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
+  uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
   Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_precomp_u64(len, n, mu, r2, a, bBits, b, res);
 }
 

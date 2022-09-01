@@ -24,7 +24,6 @@
 
 #include "Hacl_Bignum4096_32.h"
 
-#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Bignum.h"
 
 /*******************************************************************************
@@ -641,9 +640,7 @@ bool Hacl_Bignum4096_32_mod(uint32_t *n, uint32_t *a, uint32_t *res)
       uint32_t r2[128U] = { 0U };
       precompr2(nBits, n, r2);
       {
-        uint32_t uu____0 = n[0U];
-        uint32_t
-        mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+        uint32_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
         bn_slow_precomp(n, mu, r2, a, res);
       }
     }
@@ -1093,11 +1090,9 @@ exp_vartime(
 )
 {
   uint32_t r2[128U] = { 0U };
-  uint32_t uu____0;
   uint32_t mu;
   precompr2(nBits, n, r2);
-  uu____0 = n[0U];
-  mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+  mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
   exp_vartime_precomp(n, mu, r2, a, bBits, b, res);
 }
 
@@ -1112,11 +1107,9 @@ exp_consttime(
 )
 {
   uint32_t r2[128U] = { 0U };
-  uint32_t uu____0;
   uint32_t mu;
   precompr2(nBits, n, r2);
-  uu____0 = n[0U];
-  mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+  mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
   exp_consttime_precomp(n, mu, r2, a, bBits, b, res);
 }
 
@@ -1369,13 +1362,11 @@ Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32 *Hacl_Bignum4096_32_mont_ctx_init(uin
   uint32_t *r21 = r2;
   uint32_t *n11 = n1;
   uint32_t nBits;
-  uint32_t uu____0;
   uint32_t mu;
   memcpy(n11, n, (uint32_t)128U * sizeof (uint32_t));
   nBits = (uint32_t)32U * Hacl_Bignum_Lib_bn_get_top_index_u32((uint32_t)128U, n);
   precompr2(nBits, n, r21);
-  uu____0 = n[0U];
-  mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
+  mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
   {
     Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32 res;
     res.len = (uint32_t)128U;
