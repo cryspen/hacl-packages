@@ -24,6 +24,7 @@
 
 #include "Hacl_Bignum64.h"
 
+#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Krmllib.h"
 #include "internal/Hacl_Bignum.h"
 
@@ -232,7 +233,8 @@ bool Hacl_Bignum64_mod(uint32_t len, uint64_t *n, uint64_t *a, uint64_t *res)
     uint64_t *r2 = alloca(len * sizeof (uint64_t));
     memset(r2, 0U, len * sizeof (uint64_t));
     Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64(len, nBits, n, r2);
-    uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+    uint64_t uu____0 = n[0U];
+    uint64_t mu = (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
     bn_slow_precomp(len, n, mu, r2, a, res);
   }
   else
@@ -471,7 +473,8 @@ Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64
   memcpy(n11, n, len * sizeof (uint64_t));
   uint32_t nBits = (uint32_t)64U * (uint32_t)Hacl_Bignum_Lib_bn_get_top_index_u64(len, n);
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64(len, nBits, n, r21);
-  uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+  uint64_t uu____0 = n[0U];
+  uint64_t mu = (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
   Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64 res = { .len = len, .n = n11, .mu = mu, .r2 = r21 };
   KRML_CHECK_SIZE(sizeof (Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64), (uint32_t)1U);
   Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64

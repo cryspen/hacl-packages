@@ -24,6 +24,7 @@
 
 #include "Hacl_Bignum32.h"
 
+#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Bignum.h"
 
 /*******************************************************************************
@@ -283,7 +284,9 @@ bool Hacl_Bignum32_mod(uint32_t len, uint32_t *n, uint32_t *a, uint32_t *res)
             memset(r2, 0U, len * sizeof (uint32_t));
             Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u32(len, nBits, n, r2);
             {
-              uint32_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
+              uint32_t uu____0 = n[0U];
+              uint32_t
+              mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
               bn_slow_precomp(len, n, mu, r2, a, res);
             }
           }
@@ -591,11 +594,13 @@ Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32
       uint32_t *r21 = r2;
       uint32_t *n11 = n1;
       uint32_t nBits;
+      uint32_t uu____0;
       uint32_t mu;
       memcpy(n11, n, len * sizeof (uint32_t));
       nBits = (uint32_t)32U * Hacl_Bignum_Lib_bn_get_top_index_u32(len, n);
       Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u32(len, nBits, n, r21);
-      mu = Hacl_Bignum_ModInvLimb_mod_inv_uint32(n[0U]);
+      uu____0 = n[0U];
+      mu = (uint32_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U32)((void *)uu____0);
       {
         Hacl_Bignum_MontArithmetic_bn_mont_ctx_u32 res;
         res.len = len;

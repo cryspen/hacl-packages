@@ -35,6 +35,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
+#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Krmllib.h"
 #include "../Hacl_Bignum.h"
 #include "evercrypt_targetconfig.h"
@@ -129,9 +130,7 @@ Hacl_Bignum_bn_sub_mod_n_u64(
   uint64_t *res
 );
 
-uint32_t Hacl_Bignum_ModInvLimb_mod_inv_uint32(uint32_t n0);
-
-uint64_t Hacl_Bignum_ModInvLimb_mod_inv_uint64(uint64_t n0);
+void *(*Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_inttype t))(void *x0);
 
 uint32_t Hacl_Bignum_Montgomery_bn_check_modulus_u32(uint32_t len, uint32_t *n);
 

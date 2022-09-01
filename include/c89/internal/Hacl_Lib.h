@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_Hacl_H
-#define __EverCrypt_Hacl_H
+#ifndef __internal_Hacl_Lib_H
+#define __internal_Hacl_Lib_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,35 +37,23 @@ extern "C" {
 
 
 #include "evercrypt_targetconfig.h"
-#define EverCrypt_Hacl_aes128_mk_sbox Crypto_Symmetric_AES128_mk_sbox
+#define Lib_IntTypes_U1 0
+#define Lib_IntTypes_U8 1
+#define Lib_IntTypes_U16 2
+#define Lib_IntTypes_U32 3
+#define Lib_IntTypes_U64 4
+#define Lib_IntTypes_U128 5
+#define Lib_IntTypes_S8 6
+#define Lib_IntTypes_S16 7
+#define Lib_IntTypes_S32 8
+#define Lib_IntTypes_S64 9
+#define Lib_IntTypes_S128 10
 
-extern void EverCrypt_Hacl_aes128_mk_sbox(uint8_t *sb);
-
-#define EverCrypt_Hacl_aes128_keyExpansion Crypto_Symmetric_AES128_keyExpansion
-
-extern void EverCrypt_Hacl_aes128_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes128_cipher Crypto_Symmetric_AES128_cipher
-
-extern void
-EverCrypt_Hacl_aes128_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_mk_sbox Crypto_Symmetric_AES_mk_sbox
-
-extern void EverCrypt_Hacl_aes256_mk_sbox(uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_keyExpansion Crypto_Symmetric_AES_keyExpansion
-
-extern void EverCrypt_Hacl_aes256_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_cipher Crypto_Symmetric_AES_cipher
-
-extern void
-EverCrypt_Hacl_aes256_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
+typedef uint8_t Lib_IntTypes_inttype;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_Hacl_H_DEFINED
+#define __internal_Hacl_Lib_H_DEFINED
 #endif

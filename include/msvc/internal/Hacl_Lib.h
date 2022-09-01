@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_StaticConfig_H
-#define __EverCrypt_StaticConfig_H
+#ifndef __internal_Hacl_Lib_H
+#define __internal_Hacl_Lib_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,17 +37,23 @@ extern "C" {
 
 
 #include "evercrypt_targetconfig.h"
-extern bool EverCrypt_StaticConfig_hacl;
+#define Lib_IntTypes_U1 0
+#define Lib_IntTypes_U8 1
+#define Lib_IntTypes_U16 2
+#define Lib_IntTypes_U32 3
+#define Lib_IntTypes_U64 4
+#define Lib_IntTypes_U128 5
+#define Lib_IntTypes_S8 6
+#define Lib_IntTypes_S16 7
+#define Lib_IntTypes_S32 8
+#define Lib_IntTypes_S64 9
+#define Lib_IntTypes_S128 10
 
-extern bool EverCrypt_StaticConfig_vale;
-
-extern bool EverCrypt_StaticConfig_openssl;
-
-extern bool EverCrypt_StaticConfig_bcrypt;
+typedef uint8_t Lib_IntTypes_inttype;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_StaticConfig_H_DEFINED
+#define __internal_Hacl_Lib_H_DEFINED
 #endif

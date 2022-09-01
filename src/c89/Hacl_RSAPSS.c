@@ -24,6 +24,7 @@
 
 #include "Hacl_RSAPSS.h"
 
+#include "internal/Hacl_Lib.h"
 #include "internal/Hacl_Bignum.h"
 
 static inline uint32_t hash_len(Spec_Hash_Definitions_hash_alg a)
@@ -552,7 +553,10 @@ Hacl_RSAPSS_rsapss_sign(
                   uint64_t *r2 = skey + nLen2;
                   uint64_t *e = skey + nLen2 + nLen2;
                   uint64_t *d = skey + nLen2 + nLen2 + eLen;
-                  uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+                  uint64_t uu____0 = n[0U];
+                  uint64_t
+                  mu =
+                    (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
                   Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_precomp_u64((modBits
                     - (uint32_t)1U)
                     / (uint32_t)64U
@@ -565,7 +569,10 @@ Hacl_RSAPSS_rsapss_sign(
                     d,
                     s);
                   {
-                    uint64_t mu0 = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+                    uint64_t uu____1 = n[0U];
+                    uint64_t
+                    mu0 =
+                      (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____1);
                     Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u64((modBits
                       - (uint32_t)1U)
                       / (uint32_t)64U
@@ -583,8 +590,8 @@ Hacl_RSAPSS_rsapss_sign(
                         uint32_t i;
                         for (i = (uint32_t)0U; i < nLen2; i++)
                         {
-                          uint64_t uu____0 = FStar_UInt64_eq_mask(m[i], m_[i]);
-                          mask = uu____0 & mask;
+                          uint64_t uu____2 = FStar_UInt64_eq_mask(m[i], m_[i]);
+                          mask = uu____2 & mask;
                         }
                       }
                       {
@@ -678,7 +685,10 @@ Hacl_RSAPSS_rsapss_verify(
               bool res;
               if (mask == (uint64_t)0xFFFFFFFFFFFFFFFFU)
               {
-                uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+                uint64_t uu____0 = n[0U];
+                uint64_t
+                mu =
+                  (uint64_t)Hacl_Bignum_ModInvLimb_mod_inv_limb(Lib_IntTypes_U64)((void *)uu____0);
                 Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u64((modBits - (uint32_t)1U)
                   / (uint32_t)64U
                   + (uint32_t)1U,
@@ -808,6 +818,7 @@ uint64_t
           {
             return pkey2;
           }
+          KRML_HOST_FREE(pkey2);
           return NULL;
         }
       }
@@ -908,6 +919,7 @@ uint64_t
               {
                 return skey2;
               }
+              KRML_HOST_FREE(skey2);
               return NULL;
             }
           }
