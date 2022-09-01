@@ -15,7 +15,7 @@ The source code for MSVC can be found in `src/msvc`.
 <!-- The includes are found in the corresponding `include` directories (`include`,
 `include/c89`, and `include/msvc`). -->
 
-The includes can be found in the corresponding `include` directories (`include`, and `include/msvc`).
+The includes can be found in the corresponding `include` directories (`include` and `include/msvc`).
 
 Vale is considered an external dependency and therefore lives in its own
 directory `vale` --- sources in `vale/src` and headers in `vale/include`.
