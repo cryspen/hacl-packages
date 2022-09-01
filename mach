@@ -225,8 +225,9 @@ def build(args):
     # Set MSVC if detecting Windows.
     if sys.platform == "win32":
         windows = True
-        source_dir = os.path.join(source_dir, "msvc")
-        include_dir = os.path.join(include_dir, "msvc")
+        if args.msvc:
+            source_dir = os.path.join(source_dir, "msvc")
+            include_dir = os.path.join(include_dir, "msvc")
         # get msvc in the path
         vs_arch = "64"
         if m32:
