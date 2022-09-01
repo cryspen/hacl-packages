@@ -23,7 +23,8 @@ jobs:
         compiler: [ gcc, clang ]
         version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
         bits: [ 32, 64 ]
-        edition: [ c89, "" ]
+        edition: [ "" ] # ignore c89 for now
+        #edition: [ c89, "" ]
         exclude:
           - compiler: gcc
             version: 12
