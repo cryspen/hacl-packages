@@ -8,11 +8,14 @@ The top level holds the HACL C library that is based on the output of [HACL*].
 
 The C source code lives in the `src` directory for most platforms and the
 standard editions.
-The c89 edition can be found in `src/c89` and the source code for MSVC is found
-int `src/msvc`.
+<!-- The c89 edition can be found in `src/c89` and the source code for MSVC is found
+in `src/msvc`. -->
+The source code for MSVC can be found in `src/msvc`.
 
-The includes are found in the corresponding `include` directories (`include`,
-`include/c89`, and `include/msvc`).
+<!-- The includes are found in the corresponding `include` directories (`include`,
+`include/c89`, and `include/msvc`). -->
+
+The includes can be found in the corresponding `include` directories (`include`, and `include/msvc`).
 
 Vale is considered an external dependency and therefore lives in its own
 directory `vale` --- sources in `vale/src` and headers in `vale/include`.

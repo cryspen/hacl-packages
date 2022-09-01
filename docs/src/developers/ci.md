@@ -34,7 +34,7 @@ matrix:
   compiler: [ gcc, clang ]
   version: [ 7, 8, ..., 14 ]
   bits: [ 32, 64 ]
-  edition: [ c89, "" ]
+  edition: [ "" ]
   exclude:
     - compiler: gcc
       version: 12
@@ -59,7 +59,7 @@ matrix:
 | iOS (macos-latest)       | gcc (9-12), clang (11-14)        | aarch64           |
 | Linux (ubuntu-latest)    | gcc (latest)                     | s390x             |
 
-Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "c89".
+Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "msvc".
 
 [GitHub Actions]: https://docs.github.com/en/actions
 [HACL Packages project board]: https://github.com/orgs/cryspen/projects/1

@@ -115,8 +115,10 @@ there is no guarantee that they work.
 
 ## Compiler support
 
-When using the `c89` edition of HACL GCC 4.8 and up are supported.
-In any other case a modern C compiler is expected.
+<!-- When using the `c89` edition of HACL GCC 4.8 and up are supported.
+In any other case a modern C compiler is expected. -->
+
+A modern C compiler is expected.
 
 ## Algorithms
 
