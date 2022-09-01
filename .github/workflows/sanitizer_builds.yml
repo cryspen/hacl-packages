@@ -1,0 +1,59 @@
+name: Sanitizer Builds
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        compiler: [ clang ]
+        bits: [ 32, 64 ]
+        edition: [ "" ] # ignore c89 for now
+        #edition: [ c89, "" ]
+
+    steps:
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | Install Ninja
+        run: sudo apt-get install ninja-build
+
+      - name: Setup | Install multilib libraries
+        if: ${{ matrix.bits == 32 }}
+        run: sudo apt-get install gcc-multilib g++-multilib
+
+      - name: Setup Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: mach | Test
+        uses: ./.github/actions/mach_test
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+          args: -s ubsan,asan
+
+      - name: Upload artifacts
+        uses: ./.github/actions/upload_artifacts
+        with:
+          name: linux_${{ matrix.compiler }}_${{ matrix.bits }}_${{ matrix.edition }}

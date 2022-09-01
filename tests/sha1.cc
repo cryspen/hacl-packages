@@ -19,24 +19,34 @@
 #include "util.h"
 
 using json = nlohmann::json;
+using namespace std;
 
-#define bytes std::vector<uint8_t>
-
-typedef struct
+class TestCase
 {
+public:
   bytes msg;
   bytes md;
-} TestCase;
+};
 
-std::vector<TestCase>
+ostream&
+operator<<(ostream& os, const TestCase& test)
+{
+  os << "TestCase {" << endl
+     << "\t.msg = " << bytes_to_hex(test.msg) << endl
+     << "\t.md = " << bytes_to_hex(test.md) << endl
+     << "}" << endl;
+  return os;
+}
+
+vector<TestCase>
 read_json(string test_file)
 {
   // Read JSON test vector
-  std::ifstream json_test_file(test_file);
-  nlohmann::json test_vectors;
+  ifstream json_test_file(test_file);
+  json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read tests
   for (auto& test : test_vectors.items()) {
@@ -49,12 +59,14 @@ read_json(string test_file)
   return tests_out;
 }
 
-class Sha1 : public ::testing::TestWithParam<TestCase>
+class Sha1 : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 
 TEST_P(Sha1, KAT)
 {
-  auto test = GetParam();
+  TestCase test;
+  vector<size_t> lengths;
+  tie(test, lengths) = GetParam();
 
   bytes digest(test.md.size());
 
@@ -64,26 +76,30 @@ TEST_P(Sha1, KAT)
   Hacl_Streaming_SHA1_legacy_init_sha1(state);
 
   // Update
-  Hacl_Streaming_SHA1_legacy_update_sha1(
-    state, test.msg.data(), test.msg.size());
+  for (auto chunk : split_by_index_list(test.msg, lengths)) {
+    Hacl_Streaming_SHA1_legacy_update_sha1(state, chunk.data(), chunk.size());
+  }
 
   // Finish
   Hacl_Streaming_SHA1_legacy_finish_sha1(state, digest.data());
   Hacl_Streaming_SHA1_legacy_free_sha1(state);
 
-  EXPECT_EQ(test.md, digest) << bytes_to_hex(test.md) << std::endl
-                             << bytes_to_hex(digest) << std::endl;
+  EXPECT_EQ(test.md, digest) << bytes_to_hex(test.md) << endl
+                             << bytes_to_hex(digest) << endl;
 }
 
 // ----- EverCrypt -------------------------------------------------------------
 
-typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+typedef EverCryptSuite<tuple<TestCase, vector<size_t>>> EverCryptSuiteTestCase;
 
 TEST_P(EverCryptSuiteTestCase, HashTest)
 {
   EverCryptConfig config;
+  tuple<TestCase, vector<size_t>> test_tuple;
+  tie(config, test_tuple) = this->GetParam();
   TestCase test;
-  tie(config, test) = this->GetParam();
+  vector<size_t> lengths;
+  tie(test, lengths) = test_tuple;
 
   {
     bytes got_digest(
@@ -104,7 +120,11 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA1);
     EverCrypt_Hash_Incremental_init(state);
-    EverCrypt_Hash_Incremental_update(state, test.msg.data(), test.msg.size());
+
+    for (auto chunk : split_by_index_list(test.msg, lengths)) {
+      EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+    }
+
     EverCrypt_Hash_Incremental_finish(state, got_digest.data());
     EverCrypt_Hash_Incremental_free(state);
 
@@ -114,17 +134,23 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
 
 // -----------------------------------------------------------------------------
 
-INSTANTIATE_TEST_SUITE_P(Sha1Cryspen,
-                         Sha1,
-                         ::testing::ValuesIn(read_json("cryspen_sha1.json")));
+INSTANTIATE_TEST_SUITE_P(
+  Sha1Cryspen,
+  Sha1,
+  ::testing::Combine(::testing::ValuesIn(read_json("cryspen_sha1.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
-INSTANTIATE_TEST_SUITE_P(Sha1CAVPShort,
-                         Sha1,
-                         ::testing::ValuesIn(read_json("sha1-short.json")));
+INSTANTIATE_TEST_SUITE_P(
+  Sha1CAVPShort,
+  Sha1,
+  ::testing::Combine(::testing::ValuesIn(read_json("sha1-short.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
-INSTANTIATE_TEST_SUITE_P(Sha1CAVPLong,
-                         Sha1,
-                         ::testing::ValuesIn(read_json("sha1-long.json")));
+INSTANTIATE_TEST_SUITE_P(
+  Sha1CAVPLong,
+  Sha1,
+  ::testing::Combine(::testing::ValuesIn(read_json("sha1-long.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 // ----- EverCrypt -------------------------------------------------------------
 
@@ -155,17 +181,23 @@ generate_sha1_configs()
 INSTANTIATE_TEST_SUITE_P(
   Sha1Cryspen,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_sha1_configs()),
-                     ::testing::ValuesIn(read_json("cryspen_sha1.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_sha1_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_json("cryspen_sha1.json")),
+                       ::testing::ValuesIn(make_lengths()))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha1CAVPShort,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_sha1_configs()),
-                     ::testing::ValuesIn(read_json("sha1-short.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_sha1_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_json("sha1-short.json")),
+                       ::testing::ValuesIn(make_lengths()))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha1CAVPLong,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_sha1_configs()),
-                     ::testing::ValuesIn(read_json("sha1-long.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_sha1_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_json("sha1-long.json")),
+                       ::testing::ValuesIn(make_lengths()))));

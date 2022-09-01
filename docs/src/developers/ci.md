@@ -16,6 +16,8 @@ Local actions reused across the HACL Packages CI are in the `.github/actions` fo
 There are multiple workflow files with the following tasks:
 
 * `build.yml` builds and tests HACL Packages on many systems (see below).
+* `build_pull_request.yml` builds and tests HACL Packages PRs on many systems (see below).
+* `sanitizer_builds.yml` builds and tests HACL Packages on Linux (x86/x64) with [UBSAN] and [ASAN]
 * `gh-pages.yml` builds and publishes new versions of this book.
 * `new_issue.yml` adds newly created issues to the [HACL Packages project board].
 * `ocaml.yml` builds the OCaml bindings for HACL packages.
@@ -32,7 +34,7 @@ matrix:
   compiler: [ gcc, clang ]
   version: [ 7, 8, ..., 14 ]
   bits: [ 32, 64 ]
-  edition: [ c89, "" ]
+  edition: [ "" ]
   exclude:
     - compiler: gcc
       version: 12
@@ -55,12 +57,13 @@ matrix:
 | macOS (macos-latest)     | gcc (9-12), clang (11-14)        | aarch64           |
 | Android (ubuntu-latest)  | gcc (latest)                     | aarch64           |
 | iOS (macos-latest)       | gcc (9-12), clang (11-14)        | aarch64           |
-| **Tier 3**               |                                  |                   |
-| s390x (ubuntu-latest)    | gcc (latest)                     | aarch64           |
+| Linux (ubuntu-latest)    | gcc (latest)                     | s390x             |
 
-Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "c89".
+Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "msvc".
 
 [GitHub Actions]: https://docs.github.com/en/actions
 [HACL Packages project board]: https://github.com/orgs/cryspen/projects/1
 [Virtual Environment]: https://github.com/actions/virtual-environments
 [Skip pull request and push workflows]: https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
+[ubsan]: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+[asan]: https://clang.llvm.org/docs/AddressSanitizer.html

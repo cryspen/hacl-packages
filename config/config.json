@@ -68,6 +68,10 @@
                 "features": "std"
             },
             {
+                "file": "Hacl_Bignum256.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Bignum32.c",
                 "features": "std"
             },
@@ -352,6 +356,12 @@
         "detection": [
             "detection.cc"
         ],
+        "bignum": [
+            "bignum.cc"
+        ],
+        "generic_field": [
+            "generic_field.cc"
+        ],
         "blake2": [
             "blake2b.cc",
             "blake2s.cc"
@@ -405,6 +415,9 @@
         ],
         "evercrypt": [
             "evercrypt.cc"
+        ],
+        "aead": [
+            "aead.cc"
         ]
     }
 }

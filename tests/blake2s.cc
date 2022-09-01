@@ -23,6 +23,7 @@
 #endif
 
 using json = nlohmann::json;
+using namespace std;
 
 class TestCase
 {
@@ -45,12 +46,14 @@ operator<<(ostream& os, const TestCase& test)
   return os;
 }
 
-class Blake2s : public ::testing::TestWithParam<TestCase>
+class Blake2s : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 
 TEST_P(Blake2s, TryKAT)
 {
-  auto test = GetParam();
+  TestCase test;
+  vector<size_t> lengths;
+  tie(test, lengths) = GetParam();
 
   {
     bytes got_digest(test.out_len);
@@ -80,8 +83,10 @@ TEST_P(Blake2s, TryKAT)
       Hacl_Streaming_Blake2_blake2s_32_no_key_init(state);
 
       // Update
-      Hacl_Streaming_Blake2_blake2s_32_no_key_update(
-        state, test.input.data(), test.input.size());
+      for (auto chunk : split_by_index_list(test.input, lengths)) {
+        Hacl_Streaming_Blake2_blake2s_32_no_key_update(
+          state, chunk.data(), chunk.size());
+      }
 
       // Finish
       Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, got_digest.data());
@@ -146,21 +151,21 @@ TEST_P(Blake2s, TryKAT)
   }
 }
 
-std::vector<TestCase>
-read_official_json(std::string path)
+vector<TestCase>
+read_official_json(string path)
 {
   // Read JSON test vector
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
     auto test_case = test.value();
     if (test_case["hash"] == "blake2s") {
-      std::string digest_str = test_case["out"];
+      string digest_str = test_case["out"];
       auto digest = from_hex(digest_str);
       auto out_len = digest_str.length() / 2;
       auto input = from_hex(test_case["in"]);
@@ -178,7 +183,7 @@ read_official_json(std::string path)
     } else if (test_case["hash"] == "blake2xb") {
       // Skipping
     } else {
-      std::cout << test_case["hash"] << std::endl;
+      cout << test_case["hash"] << endl;
       throw "Unexpected hash value.";
     }
   }
@@ -188,13 +193,16 @@ read_official_json(std::string path)
 
 // ----- EverCrypt -------------------------------------------------------------
 
-typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+typedef EverCryptSuite<tuple<TestCase, vector<size_t>>> EverCryptSuiteTestCase;
 
 TEST_P(EverCryptSuiteTestCase, HashTest)
 {
   EverCryptConfig config;
+  tuple<TestCase, vector<size_t>> test_tuple;
+  tie(config, test_tuple) = this->GetParam();
   TestCase test;
-  tie(config, test) = this->GetParam();
+  vector<size_t> lengths;
+  tie(test, lengths) = test_tuple;
 
   if (test.key.size() != 0) {
     return;
@@ -219,8 +227,9 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2S);
 
     EverCrypt_Hash_Incremental_init(state);
-    EverCrypt_Hash_Incremental_update(
-      state, test.input.data(), test.input.size());
+    for (auto chunk : split_by_index_list(test.input, lengths)) {
+      EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+    }
     EverCrypt_Hash_Incremental_finish(state, got_digest.data());
     EverCrypt_Hash_Incremental_free(state);
 
@@ -233,12 +242,14 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
 INSTANTIATE_TEST_SUITE_P(
   Official,
   Blake2s,
-  ::testing::ValuesIn(read_official_json("official.json")));
+  ::testing::Combine(::testing::ValuesIn(read_official_json("official.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 INSTANTIATE_TEST_SUITE_P(
   Vectors,
   Blake2s,
-  ::testing::ValuesIn(read_official_json("vectors2s.json")));
+  ::testing::Combine(::testing::ValuesIn(read_official_json("vectors2s.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 // ----- EverCrypt -------------------------------------------------------------
 
@@ -271,12 +282,15 @@ generate_blake2s_configs()
 INSTANTIATE_TEST_SUITE_P(
   Official,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_blake2s_configs()),
-                     ::testing::ValuesIn(read_official_json("official.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_blake2s_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_official_json("official.json")),
+                       ::testing::ValuesIn(make_lengths()))));
 
 INSTANTIATE_TEST_SUITE_P(
   Vectors,
   EverCryptSuiteTestCase,
-  ::testing::Combine(
-    ::testing::ValuesIn(generate_blake2s_configs()),
-    ::testing::ValuesIn(read_official_json("vectors2s.json"))));
+  ::testing::Combine(::testing::ValuesIn(generate_blake2s_configs()),
+                     ::testing::Combine(::testing::ValuesIn(
+                                          read_official_json("vectors2s.json")),
+                                        ::testing::ValuesIn(make_lengths()))));

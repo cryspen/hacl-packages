@@ -73,6 +73,14 @@ class DrbgSuite : public ::testing::Test
   }
 };
 
+void
+free_state(Hacl_HMAC_DRBG_state* state)
+{
+  KRML_HOST_FREE(state->k);
+  KRML_HOST_FREE(state->reseed_counter);
+  KRML_HOST_FREE(state->v);
+}
+
 TEST(DrbgSuite, SmokeTest)
 {
   bytes entropy = from_hex("AA");
@@ -129,7 +137,7 @@ TEST(DrbgSuite, SmokeTest)
                                            count,
                                            additional.size(),
                                            additional.data());
-
+        free_state(&state);
         EXPECT_TRUE(res);
       }
     }
@@ -197,9 +205,9 @@ TEST_P(DrbgNRSuite, KAT)
                                        got_ReturnedBits.size(),
                                        additional.size(),
                                        additional.data());
-
     EXPECT_TRUE(res);
   }
+  free_state(&state);
 
   ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
 }
@@ -255,6 +263,7 @@ TEST_P(DrbgPRFalseSuite, KAT)
 
     EXPECT_TRUE(res);
   }
+  free_state(&state);
 
   ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
 }

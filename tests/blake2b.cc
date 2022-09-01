@@ -32,6 +32,7 @@
 #endif
 
 using json = nlohmann::json;
+using namespace std;
 
 class TestCase
 {
@@ -54,14 +55,14 @@ operator<<(ostream& os, const TestCase& test)
   return os;
 }
 
-std::vector<TestCase>
-read_blake2b_json(std::string path)
+vector<TestCase>
+read_blake2b_json(string path)
 {
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
@@ -77,21 +78,21 @@ read_blake2b_json(std::string path)
   return tests_out;
 }
 
-std::vector<TestCase>
-read_official_json(std::string path)
+vector<TestCase>
+read_official_json(string path)
 {
   // Read JSON test vector
-  std::ifstream json_test_file(path);
+  ifstream json_test_file(path);
   json test_vectors;
   json_test_file >> test_vectors;
 
-  std::vector<TestCase> tests_out;
+  vector<TestCase> tests_out;
 
   // Read test group
   for (auto& test : test_vectors.items()) {
     auto test_case = test.value();
     if (test_case["hash"] == "blake2b") {
-      std::string digest_str = test_case["out"];
+      string digest_str = test_case["out"];
       auto digest = from_hex(digest_str);
       auto out_len = digest_str.length() / 2;
       auto input = from_hex(test_case["in"]);
@@ -140,12 +141,15 @@ TEST_P(Blake2b, KAT)
   }
 }
 
-class Blake2bStreaming : public ::testing::TestWithParam<TestCase>
+class Blake2bStreaming
+  : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 
 TEST_P(Blake2bStreaming, KAT)
 {
-  auto test_case = GetParam();
+  TestCase test_case;
+  vector<size_t> lengths;
+  tie(test_case, lengths) = GetParam();
 
   {
     // Skip tests with key.
@@ -161,8 +165,10 @@ TEST_P(Blake2bStreaming, KAT)
     Hacl_Streaming_Blake2_blake2b_32_no_key_init(state);
 
     // Update
-    Hacl_Streaming_Blake2_blake2b_32_no_key_update(
-      state, test_case.input.data(), test_case.input.size());
+    for (auto chunk : split_by_index_list(test_case.input, lengths)) {
+      Hacl_Streaming_Blake2_blake2b_32_no_key_update(
+        state, chunk.data(), chunk.size());
+    }
 
     // Finish
     Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, got_digest.data());
@@ -205,13 +211,16 @@ TEST_P(Blake2bStreaming, KAT)
 
 // ----- EverCrypt -------------------------------------------------------------
 
-typedef EverCryptSuite<TestCase> EverCryptSuiteTestCase;
+typedef EverCryptSuite<tuple<TestCase, vector<size_t>>> EverCryptSuiteTestCase;
 
 TEST_P(EverCryptSuiteTestCase, HashTest)
 {
   EverCryptConfig config;
+  tuple<TestCase, vector<size_t>> test_tuple;
+  tie(config, test_tuple) = this->GetParam();
   TestCase test;
-  tie(config, test) = this->GetParam();
+  vector<size_t> lengths;
+  tie(test, lengths) = test_tuple;
 
   if (test.key.size() != 0) {
     return;
@@ -229,7 +238,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   }
 
   // TODO: https://github.com/project-everest/hacl-star/issues/586
-  // // Streaming
+  // Streaming
   // {
   //   bytes got_digest(test.digest.size(), 0);
 
@@ -237,8 +246,11 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   //     EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
 
   //   EverCrypt_Hash_Incremental_init(state);
-  //   EverCrypt_Hash_Incremental_update(
-  //     state, test.input.data(), test.input.size());
+
+  //   for (auto chunk : split_by_index_list(test.input, lengths)) {
+  //     EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+  //   }
+
   //   EverCrypt_Hash_Incremental_finish(state, got_digest.data());
   //   EverCrypt_Hash_Incremental_free(state);
 
@@ -266,17 +278,20 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
   Kat,
   Blake2bStreaming,
-  ::testing::ValuesIn(read_blake2b_json("blake2b.json")));
+  ::testing::Combine(::testing::ValuesIn(read_blake2b_json("blake2b.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 INSTANTIATE_TEST_SUITE_P(
   Official,
   Blake2bStreaming,
-  ::testing::ValuesIn(read_official_json("official.json")));
+  ::testing::Combine(::testing::ValuesIn(read_official_json("official.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 INSTANTIATE_TEST_SUITE_P(
   Vectors,
   Blake2bStreaming,
-  ::testing::ValuesIn(read_official_json("vectors2b.json")));
+  ::testing::Combine(::testing::ValuesIn(read_official_json("vectors2b.json")),
+                     ::testing::ValuesIn(make_lengths())));
 
 // ----- EverCrypt -------------------------------------------------------------
 
@@ -309,18 +324,23 @@ generate_blake2b_configs()
 INSTANTIATE_TEST_SUITE_P(
   ECBlake2b,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_blake2b_configs()),
-                     ::testing::ValuesIn(read_blake2b_json("blake2b.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_blake2b_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_blake2b_json("blake2b.json")),
+                       ::testing::ValuesIn(make_lengths()))));
 
 INSTANTIATE_TEST_SUITE_P(
   ECOfficial,
   EverCryptSuiteTestCase,
-  ::testing::Combine(::testing::ValuesIn(generate_blake2b_configs()),
-                     ::testing::ValuesIn(read_official_json("official.json"))));
+  ::testing::Combine(
+    ::testing::ValuesIn(generate_blake2b_configs()),
+    ::testing::Combine(::testing::ValuesIn(read_official_json("official.json")),
+                       ::testing::ValuesIn(make_lengths()))));
 
 INSTANTIATE_TEST_SUITE_P(
   ECVectors,
   EverCryptSuiteTestCase,
-  ::testing::Combine(
-    ::testing::ValuesIn(generate_blake2b_configs()),
-    ::testing::ValuesIn(read_official_json("vectors2b.json"))));
+  ::testing::Combine(::testing::ValuesIn(generate_blake2b_configs()),
+                     ::testing::Combine(::testing::ValuesIn(
+                                          read_official_json("vectors2b.json")),
+                                        ::testing::ValuesIn(make_lengths()))));
