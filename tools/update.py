@@ -171,6 +171,10 @@ def clean():
         rm(os.path.join("src", filename))
     for filename in os.listdir("include"):
         rm(os.path.join("include", filename))
+    # OCaml
+    rm(os.path.join("ocaml", "lib"))
+    rm(os.path.join("ocaml", "lib_gen"))
+    rm(os.path.join("ocaml", "ctypes.depend"))
 
 
 def update_hacl(files, includes, editions):
@@ -236,3 +240,17 @@ def update(args):
     config_file = join_path("config", "config.json")
     files, file_names, includes, include_names = all_files(config_file, editions)
     update_hacl(files, includes, editions)
+
+    # Update OCaml bindings
+    def copy_ocaml_dir(directory):
+        src = os.path.join(editions[0][1], directory)
+        dest = os.path.join("ocaml", directory)
+        shutil.copytree(src, dest)
+    def copy_ocaml_file(file):
+        src = os.path.join(editions[0][1], file)
+        dest = os.path.join("ocaml", file)
+        shutil.copyfile(src, dest)
+
+    copy_ocaml_dir("lib")
+    copy_ocaml_dir("lib_gen")
+    copy_ocaml_file("ctypes.depend")

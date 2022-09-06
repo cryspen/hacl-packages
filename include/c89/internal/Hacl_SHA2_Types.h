@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __EverCrypt_Hacl_H
-#define __EverCrypt_Hacl_H
+#ifndef __internal_Hacl_SHA2_Types_H
+#define __internal_Hacl_SHA2_Types_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,37 +35,74 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-
+#include "../Hacl_SHA2_Types.h"
 #include "evercrypt_targetconfig.h"
-#define EverCrypt_Hacl_aes128_mk_sbox Crypto_Symmetric_AES128_mk_sbox
+typedef struct Hacl_Impl_SHA2_Types_uint8_2p_s
+{
+  uint8_t *fst;
+  uint8_t *snd;
+}
+Hacl_Impl_SHA2_Types_uint8_2p;
 
-extern void EverCrypt_Hacl_aes128_mk_sbox(uint8_t *sb);
+typedef struct Hacl_Impl_SHA2_Types_uint8_3p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_2p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_3p;
 
-#define EverCrypt_Hacl_aes128_keyExpansion Crypto_Symmetric_AES128_keyExpansion
+typedef struct Hacl_Impl_SHA2_Types_uint8_4p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_3p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_4p;
 
-extern void EverCrypt_Hacl_aes128_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
+typedef struct Hacl_Impl_SHA2_Types_uint8_5p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_4p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_5p;
 
-#define EverCrypt_Hacl_aes128_cipher Crypto_Symmetric_AES128_cipher
+typedef struct Hacl_Impl_SHA2_Types_uint8_6p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_5p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_6p;
 
-extern void
-EverCrypt_Hacl_aes128_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
+typedef struct Hacl_Impl_SHA2_Types_uint8_7p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_6p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_7p;
 
-#define EverCrypt_Hacl_aes256_mk_sbox Crypto_Symmetric_AES_mk_sbox
+typedef struct Hacl_Impl_SHA2_Types_uint8_8p_s
+{
+  uint8_t *fst;
+  Hacl_Impl_SHA2_Types_uint8_7p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_8p;
 
-extern void EverCrypt_Hacl_aes256_mk_sbox(uint8_t *sb);
+typedef struct Hacl_Impl_SHA2_Types_uint8_2x4p_s
+{
+  Hacl_Impl_SHA2_Types_uint8_4p fst;
+  Hacl_Impl_SHA2_Types_uint8_4p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_2x4p;
 
-#define EverCrypt_Hacl_aes256_keyExpansion Crypto_Symmetric_AES_keyExpansion
-
-extern void EverCrypt_Hacl_aes256_keyExpansion(uint8_t *key, uint8_t *w, uint8_t *sb);
-
-#define EverCrypt_Hacl_aes256_cipher Crypto_Symmetric_AES_cipher
-
-extern void
-EverCrypt_Hacl_aes256_cipher(uint8_t *cipher, uint8_t *plain, uint8_t *w, uint8_t *sb);
+typedef struct Hacl_Impl_SHA2_Types_uint8_2x8p_s
+{
+  Hacl_Impl_SHA2_Types_uint8_8p fst;
+  Hacl_Impl_SHA2_Types_uint8_8p snd;
+}
+Hacl_Impl_SHA2_Types_uint8_2x8p;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __EverCrypt_Hacl_H_DEFINED
+#define __internal_Hacl_SHA2_Types_H_DEFINED
 #endif

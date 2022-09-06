@@ -68,6 +68,10 @@
                 "features": "std"
             },
             {
+                "file": "Hacl_Bignum256.c",
+                "features": "std"
+            },
+            {
                 "file": "Hacl_Bignum32.c",
                 "features": "std"
             },

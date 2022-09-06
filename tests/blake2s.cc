@@ -141,7 +141,7 @@ TEST_P(Blake2s, TryKAT)
     if (test.key.size() == 0) {
       bytes got_digest(test.out_len, 0);
 
-      EverCrypt_Hash_hash(EverCrypt_Hash_Blake2S_s,
+      EverCrypt_Hash_hash(Spec_Hash_Definitions_Blake2S,
                           got_digest.data(),
                           test.input.data(),
                           test.input.size());
