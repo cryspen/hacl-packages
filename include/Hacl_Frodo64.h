@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __TestLib_H
-#define __TestLib_H
+#ifndef __Hacl_Frodo64_H
+#define __Hacl_Frodo64_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,56 +35,33 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-
+#include "Lib_Memzero0.h"
+#include "Hacl_Spec.h"
+#include "Hacl_SHA3.h"
+#include "Hacl_Frodo_KEM.h"
 #include "evercrypt_targetconfig.h"
-extern void TestLib_touch(int32_t uu___);
+/*
+ this variant is used only for testing purposes!
+ */
 
-extern void TestLib_check(bool uu___);
 
-extern void TestLib_check8(int8_t uu___, int8_t uu___1);
+extern uint32_t Hacl_Frodo64_crypto_bytes;
 
-extern void TestLib_check16(int16_t uu___, int16_t uu___1);
+extern uint32_t Hacl_Frodo64_crypto_publickeybytes;
 
-extern void TestLib_check32(int32_t uu___, int32_t uu___1);
+extern uint32_t Hacl_Frodo64_crypto_secretkeybytes;
 
-extern void TestLib_check64(int64_t uu___, int64_t uu___1);
+extern uint32_t Hacl_Frodo64_crypto_ciphertextbytes;
 
-extern void TestLib_checku8(uint8_t uu___, uint8_t uu___1);
+uint32_t Hacl_Frodo64_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
 
-extern void TestLib_checku16(uint16_t uu___, uint16_t uu___1);
+uint32_t Hacl_Frodo64_crypto_kem_enc(uint8_t *ct, uint8_t *ss, uint8_t *pk);
 
-extern void TestLib_checku32(uint32_t uu___, uint32_t uu___1);
-
-extern void TestLib_checku64(uint64_t uu___, uint64_t uu___1);
-
-extern void TestLib_compare_and_print(C_String_t uu___, uint8_t *b1, uint8_t *b2, uint32_t l);
-
-extern uint8_t *TestLib_unsafe_malloc(uint32_t l);
-
-extern void TestLib_perr(uint32_t uu___);
-
-extern void TestLib_print_clock_diff(clock_t uu___, clock_t uu___1);
-
-KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
-
-extern uint8_t *TestLib_uint8_p_null;
-
-KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
-
-extern uint32_t *TestLib_uint32_p_null;
-
-KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
-
-extern uint64_t *TestLib_uint64_p_null;
-
-extern TestLib_cycles TestLib_cpucycles();
-
-extern void
-TestLib_print_cycles_per_round(TestLib_cycles uu___, TestLib_cycles uu___1, uint32_t uu___2);
+uint32_t Hacl_Frodo64_crypto_kem_dec(uint8_t *ss, uint8_t *ct, uint8_t *sk);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __TestLib_H_DEFINED
+#define __Hacl_Frodo64_H_DEFINED
 #endif

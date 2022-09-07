@@ -179,6 +179,10 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
 
     if(NOT SOURCES_VEC128_LEN EQUAL 0)
         set(HACL_VEC128_O ON)
+        if(TOOLCHAIN_CAN_COMPILE_VALE)
+            # HPKE requires vale and vec128
+            list (APPEND SOURCES_vec128 ${SOURCES_vec128_vale})
+        endif(TOOLCHAIN_CAN_COMPILE_VALE)
         add_library(hacl_vec128 OBJECT ${SOURCES_vec128})
         target_include_directories(hacl_vec128 PRIVATE)
 
@@ -229,6 +233,10 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
 
     if(NOT SOURCES_VEC256_LEN EQUAL 0)
         set(HACL_VEC256_O ON)
+        if(TOOLCHAIN_CAN_COMPILE_VALE)
+            # HPKE requires vale and vec256
+            list (APPEND SOURCES_vec256 ${SOURCES_vec256_vale})
+        endif(TOOLCHAIN_CAN_COMPILE_VALE)
         add_library(hacl_vec256 OBJECT ${SOURCES_vec256})
         target_include_directories(hacl_vec256 PRIVATE)
 
@@ -261,6 +269,7 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     # Add SOURCES_vale to SOURCES_std as we don't need any
     # special compiler flags for it.
     list(APPEND SOURCES_std ${SOURCES_vale})
+    list(APPEND SOURCES_std ${SOURCES_std_vale})
     message(STATUS "Detected vale support")
     set(HACL_CAN_COMPILE_VALE 1)
 endif()

@@ -30,6 +30,10 @@
             {
                 "file": "Hacl_Ed25519.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_EC_Ed25519.c",
+                "features": "std"
             }
         ],
         "blake2": [
@@ -139,11 +143,15 @@
         "curve25519": [
             {
                 "file": "Hacl_Curve25519_51.c",
-                "features": "std"
+                "features": "m32"
             },
             {
                 "file": "Hacl_Curve25519_64.c",
                 "features": "vale"
+            },
+            {
+                "file": "Hacl_Curve25519_64_Slow.c",
+                "features": "std"
             }
         ],
         "p256": [
@@ -162,6 +170,12 @@
                 "features": "std"
             }
         ],
+        "ffdh": [
+            {
+                "file": "Hacl_FFDHE.c",
+                "features": "std"
+            }
+        ],
         "sha3": [
             {
                 "file": "Hacl_SHA3.c",
@@ -175,6 +189,10 @@
             },
             {
                 "file": "Hacl_Hash_SHA2.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_SHA2_Scalar32.c",
                 "features": "std"
             },
             {
@@ -212,6 +230,10 @@
             {
                 "file": "Hacl_Hash_MD5.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_Streaming_MD5.c",
+                "features": "std"
             }
         ],
         "hmac": [
@@ -237,6 +259,98 @@
         "rsapss": [
             {
                 "file": "Hacl_RSAPSS.c",
+                "features": "std"
+            }
+        ],
+        "hpke": [
+            {
+                "file": "Hacl_HPKE_Curve64_CP128_SHA256.c",
+                "features": "vec128,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP128_SHA512.c",
+                "features": "vec128,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA256.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA512.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP32_SHA256.c",
+                "features": "std,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP32_SHA512.c",
+                "features": "std,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP256_SHA256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP256_SHA512.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA256.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA512.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP256_SHA256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP128_SHA256.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP128_SHA512.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP32_SHA256.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP32_SHA512.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP128_SHA256.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP32_SHA256.c",
+                "features": "std"
+            }
+        ],
+        "frodo": [
+            {
+                "file": "Hacl_Frodo1344.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo640.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo976.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo64.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo_KEM.c",
                 "features": "std"
             }
         ]

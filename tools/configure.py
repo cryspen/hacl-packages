@@ -164,7 +164,7 @@ class Config:
                 self.hacl_includes.extend(
                     includes if type(includes) == list else [includes]
                 )
-                feature = source_file["features"]
+                feature = source_file["features"].replace(",","_")
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(
                         files if type(files) == list else [files]
@@ -224,6 +224,12 @@ class Config:
             f for f in self.evercrypt_compile_files if "Hacl_" not in f
         ]
         self.hacl_compile_feature["std"].extend(self.evercrypt_compile_files)
+
+        # Remove duplicates across <feature>_vale and <feauture>
+        for f1 in self.hacl_compile_feature:
+            for f2 in self.hacl_compile_feature:
+                if f1 != f2 and f1.endswith("_vale"):
+                    self.hacl_compile_feature[f1] = [i for i in self.hacl_compile_feature[f1] if i not in self.hacl_compile_feature[f2]]
 
         # We don't want internal excludes to be installed.
         self.public_includes = [
