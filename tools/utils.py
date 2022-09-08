@@ -40,7 +40,6 @@ def config_cache():
     return os.path.join("build", ".cache")
 
 
-
 # FIXME: #10 add config.type (Debug/Release)
 
 

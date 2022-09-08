@@ -246,6 +246,7 @@ def update(args):
         src = os.path.join(editions[0][1], directory)
         dest = os.path.join("ocaml", directory)
         shutil.copytree(src, dest)
+
     def copy_ocaml_file(file):
         src = os.path.join(editions[0][1], file)
         dest = os.path.join("ocaml", file)
