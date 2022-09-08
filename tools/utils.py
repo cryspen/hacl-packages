@@ -84,11 +84,11 @@ def mprint(*args, **kwargs):
     print(" [mach] " + " ".join(map(str, args)), **kwargs)
 
 
-def check_cmd(cmd):
+def check_cmd(cmd, flag="--version"):
     mprint(f"Probing for {cmd}: ", end="")
     try:
         subprocess.check_call(
-            [cmd, "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            [cmd, flag], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
         print(f"Found")
     except:
@@ -118,9 +118,11 @@ def dependency_check():
 
 def coverage_dependency_check():
     """
-    Check that `lcov`, and `genhtml` are installed (and callable).
+    Check that `lcov` and friends are installed (and callable).
     """
 
     check_cmd("lcov")
+    check_cmd("llvm-profdata", flag="--help")
+    check_cmd("llvm-cov")
     check_cmd("genhtml")
     print()
