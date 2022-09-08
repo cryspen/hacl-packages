@@ -26,3 +26,5 @@ genhtml coverage/full/full.lcov -o coverage/full/html
 
 popd
 echo "[!] ... done"
+echo
+echo 'Full coverage report generated at `build/Debug/coverage/full/html/index.html`.'

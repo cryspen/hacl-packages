@@ -418,7 +418,7 @@ def build(args):
 
     # test if requested
     if args.test:
-        run_tests(config.tests, build_config)
+        run_tests(config.tests, build_config, coverage=args.coverage)
 
 
 def _clean():
