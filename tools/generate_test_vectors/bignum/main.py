@@ -24,8 +24,6 @@ def gen_candidates(length):
 
     x.append(0)
     x.append(1)
-    x.append(1337)
-    x.append(2 ** (length // 2) - 1)
     x.append(2 ** length - 1)
 
     return x
@@ -40,7 +38,7 @@ for length in lengths:
 
     for a in candidates:
         for b in candidates:
-            for n in [1337, 2 ** (length // 2) - 1, 2 ** length - 1]:
+            for n in [1337, 2 ** length - 1]:
                 tests.append({
                     "length": length,
                     "a": make_bytes(a, length // 8),
