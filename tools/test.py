@@ -30,6 +30,7 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[], coverage=False):
     if not os.path.exists(binary_path(bin_path)):
         print("! Nothing is built! Please build first. Aborting!")
         exit(1)
+    dir_backup = os.getcwd()
     os.chdir(binary_path(bin_path))
     my_env = dict(os.environ)
     my_env["TEST_DIR"] = join(os.getcwd(), "..", "..", "tests")
@@ -61,6 +62,10 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[], coverage=False):
 
                 if coverage:
                     generate_report(test_name, my_env)
+
+    if coverage:
+        os.chdir(dir_backup)
+        subprocess.call(["./tools/coverage.sh"])
 
 
 def generate_report(test, env):

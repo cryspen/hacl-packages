@@ -49,6 +49,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Add llvm-11 to PATH
+        run: |
+          echo "/usr/lib/llvm-11/bin" >> $GITHUB_PATH
+
       - name: mach | Build
         uses: ./.github/actions/mach_build
         with:
@@ -60,11 +64,6 @@ jobs:
         with:
           bits: 64
           args: --coverage
-
-      - name: Generate reports
-        run: |
-          export PATH=/usr/lib/llvm-11/bin:$PATH
-          ./tools/coverage.sh
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
