@@ -478,7 +478,10 @@ TEST_P(Bignum, KAT)
 #endif
 }
 
-TEST_P(Bignum, ModExpKAT)
+class BignumReduced : public ::testing::TestWithParam<TestCase>
+{};
+
+TEST_P(BignumReduced, ModExpKAT)
 {
   auto test = GetParam();
 
@@ -798,3 +801,7 @@ read_bignum_json(string path)
 INSTANTIATE_TEST_SUITE_P(Cryspen,
                          Bignum,
                          ::testing::ValuesIn(read_bignum_json("bignum.json")));
+
+INSTANTIATE_TEST_SUITE_P(Cryspen,
+  BignumReduced,
+  ::testing::ValuesIn(read_bignum_json("bignum_reduced.json")));
