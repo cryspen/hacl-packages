@@ -182,26 +182,23 @@ TEST_P(Blake2bStreaming, KAT)
     hacl_init_cpu_features();
 
     if (hacl_vec256_support()) {
-      // TODO: Enable this. See
-      // https://github.com/project-everest/hacl-star/issues/586
-      //
-      //    bytes got_hash(64);
-      //
-      //    // Init
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_state* state =
-      //      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(state);
-      //
-      //    // Update
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
-      //      state, test_case.input.data(), test_case.input.size());
-      //
-      //    // Finish
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(state,
-      //                                                         got_hash.data());
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
-      //
-      //    EXPECT_EQ(test_case.digest, got_hash);
+      bytes got_hash(64);
+
+      // Init
+      Hacl_Streaming_Blake2b_256_blake2b_256_state* state =
+        Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(state);
+
+      // Update
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
+        state, test_case.input.data(), test_case.input.size());
+
+      // Finish
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(state,
+                                                           got_hash.data());
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
+
+      EXPECT_EQ(test_case.digest, got_hash);
     } else {
       printf(" ! Vec256 was compiled but AVX2 is not available on this CPU.\n");
     }
@@ -237,25 +234,24 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     EXPECT_EQ(test.digest, got_digest);
   }
 
-  // TODO: https://github.com/project-everest/hacl-star/issues/586
   // Streaming
-  // {
-  //   bytes got_digest(test.digest.size(), 0);
+  {
+    bytes got_digest(test.digest.size(), 0);
 
-  //   Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
-  //     EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
+    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
 
-  //   EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_init(state);
 
-  //   for (auto chunk : split_by_index_list(test.input, lengths)) {
-  //     EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
-  //   }
+    for (auto chunk : split_by_index_list(test.input, lengths)) {
+      EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+    }
 
-  //   EverCrypt_Hash_Incremental_finish(state, got_digest.data());
-  //   EverCrypt_Hash_Incremental_free(state);
+    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+    EverCrypt_Hash_Incremental_free(state);
 
-  //   EXPECT_EQ(test.digest, got_digest);
-  // }
+    EXPECT_EQ(test.digest, got_digest);
+  }
 }
 
 // -----------------------------------------------------------------------------
