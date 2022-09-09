@@ -11,6 +11,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA2.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_EC_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Base.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2.c
 	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
@@ -25,14 +26,27 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec32.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_64_Slow.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_K256_ECDSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Scalar32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_MD5.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_MD5.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_RSAPSS.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP32_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP32_SHA512.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP32_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo1344.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo_KEM.c
+	${PROJECT_SOURCE_DIR}/src/Lib_RandomBuffer_System.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo640.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo976.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo64.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Lib_RandomBuffer_System.c
 	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
@@ -59,6 +73,9 @@ set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Vec256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF_Blake2b_256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_Blake2b_256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP256_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP256_SHA512.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP256_SHA256.c
 )
 set(SOURCES_vec128
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_128.c
@@ -73,9 +90,27 @@ set(SOURCES_vec128
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Vec128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF_Blake2s_128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_Blake2s_128.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP128_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP128_SHA512.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP128_SHA256.c
+)
+set(SOURCES_m32
+	
 )
 set(SOURCES_vale
 	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_64.c
+)
+set(SOURCES_vec128_vale
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP128_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP128_SHA512.c
+)
+set(SOURCES_vec256_vale
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP256_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP256_SHA512.c
+)
+set(SOURCES_std_vale
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP32_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP32_SHA512.c
 )
 set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_NaCl.h
@@ -110,6 +145,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
@@ -159,6 +195,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/internal/Vale.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64_Slow.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
@@ -167,17 +204,22 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_MD5.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_MD5.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF.h
@@ -186,11 +228,33 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP256_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP32_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP256_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP128_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP32_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo1344.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo_KEM.h
 	${PROJECT_SOURCE_DIR}/include/Lib_RandomBuffer_System.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Frodo_KEM.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Frodo_KEM.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AutoConfig2.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519.h
@@ -228,6 +292,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
@@ -269,19 +334,25 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Poly1305_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64_Slow.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_MD5.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_MD5.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2s_128.h
@@ -289,11 +360,32 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP256_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP32_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP256_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP256_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP128_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve51_CP32_SHA512.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP128_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP32_SHA256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo1344.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo_KEM.h
 	${PROJECT_SOURCE_DIR}/include/Lib_RandomBuffer_System.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Frodo_KEM.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AutoConfig2.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519.h
@@ -319,6 +411,7 @@ set(ALGORITHMS
 	curve25519
 	p256
 	k256
+	ffdh
 	sha3
 	sha2
 	sha1
@@ -326,6 +419,8 @@ set(ALGORITHMS
 	hmac
 	hkdf
 	rsapss
+	hpke
+	frodo
 )
 set(INCLUDE_PATHS
 	${PROJECT_SOURCE_DIR}/include
