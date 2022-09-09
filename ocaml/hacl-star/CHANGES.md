@@ -1,3 +1,8 @@
+## 0.5.0
+- New build system
+- Faster blake2b
+- Agile incremental APIs for blake2
+
 ## 0.4.5
 - Faster fallback implementations for certain intrinsics, leading to improved
   performance, notably on ARMv8
