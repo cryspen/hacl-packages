@@ -45,10 +45,10 @@ C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 # of build-bindings because it will also write Makefile.config, which is needed
 # by build-bindings.
 build-c:
-	cmake -B build -G"Ninja Multi-Config"
-	ninja -f build-Release.ninja -C build
-	cp build/Release/$(C_LIB) .
-	cp build/Release/$(C_DYN_LIB) .
+	cmake -B build -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+	make -C build
+	cp build/$(C_LIB) .
+	cp build/$(C_DYN_LIB) .
 
 -include build/Makefile.include
 
@@ -147,7 +147,8 @@ clean:
 # Install hacl-star-raw locally.
 install: dllocamlevercrypt.$(OCAML_SO)
 # We need to remove all comments from config.h because ccpo can't handle them
-	sed -i 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h
+	sed 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h > build/config-new.h
+	mv build/config-new.h build/config.h
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
 	ocamlfind install -add hacl-star-raw $(CTYPES_ML)
