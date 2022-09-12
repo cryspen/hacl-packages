@@ -21,7 +21,7 @@ depends: [
   "conf-cmake" {build}
 ]
 available: [
-  arch != "ppc64" & arch != "ppc32" &
+  arch != "ppc64" & arch != "ppc32" & arch != "arm32" &
   (os = "freebsd" | os-family != "bsd")
 ]
 x-ci-accept-failures: [
