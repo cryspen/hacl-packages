@@ -147,8 +147,8 @@ clean:
 # Install hacl-star-raw locally.
 install: dllocamlevercrypt.$(OCAML_SO)
 # We need to remove all comments from config.h because ccpo can't handle them
-	sed 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h > build/config-new.h
-	mv build/config-new.h build/config.h
+	sed 's/\(\/\/.*\)//g' build/config.h > build/config-new.h
+	sed 's/\(\/\*.*\*\/\)//g' build/config-new.h > build/config.h
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
 	ocamlfind install -add hacl-star-raw $(CTYPES_ML)

@@ -67,6 +67,12 @@ jobs:
 
   packaging:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -78,8 +84,12 @@ jobs:
           path: ~/.opam
           key: ${{ runner.os }}-ocaml-setup
 
-      - name: System Setup
+      - name: Setup Ubuntu
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build opam libgmp-dev
+      - name: Setup macOS
+        if: matrix.os == 'macos-latest'
+        run: brew install ninja opam libgmp
       - name: OCaml Setup
         if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
         run: |
