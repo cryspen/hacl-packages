@@ -89,7 +89,7 @@ jobs:
         run: sudo apt-get install ninja-build opam libgmp-dev
       - name: Setup macOS
         if: matrix.os == 'macos-latest'
-        run: brew install ninja opam libgmp
+        run: brew install ninja opam gmp
       - name: OCaml Setup
         if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
         run: |
