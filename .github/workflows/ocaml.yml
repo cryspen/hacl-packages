@@ -66,13 +66,13 @@ jobs:
   #         ./mach test -l ocaml -v
 
   packaging:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         os:
           - macos-latest
           - ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
