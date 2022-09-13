@@ -355,7 +355,7 @@ endif()
 set(CMAKE_INSTALL_LIBDIR lib)
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
-install(TARGETS hacl_static hacl)
+install(TARGETS hacl_static hacl ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # # Copy hacl headers
 install(FILES ${PUBLIC_INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
