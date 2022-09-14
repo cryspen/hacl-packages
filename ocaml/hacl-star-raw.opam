@@ -15,6 +15,7 @@ homepage: "https://hacl-star.github.io/"
 bug-reports: "https://github.com/project-everest/hacl-star/issues"
 depends: [
   "ocaml" { >= "4.08.0" }
+  "dune" {>= "1.2"}
   "ocamlfind" {build}
   "ctypes" { >= "0.18.0" }
   "conf-which" {build}
