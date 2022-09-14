@@ -44,8 +44,11 @@ C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 # Compiling the C library. This needs to be executed before and independently
 # of build-bindings because it will also write Makefile.config, which is needed
 # by build-bindings.
+#
+# Note that cmake 3.10 does not support -B to output build files to a different
+# directory. Hence the other way of calling it here.
 build-c:
-	cmake -B build -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+	cd build && cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../
 	make -C build
 	cp build/$(C_LIB) .
 	cp build/$(C_DYN_LIB) .
@@ -104,6 +107,10 @@ lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cm
 
 %.exe:
 
+uname_m=$(shell uname -m)
+OCAML_CFLAGS.s390x=-m64 -mzarch -mvx -mzvector -march=native -O3
+CFLAGS+=$(OCAML_CFLAGS.$(uname_m))
+
 lib_gen/%_gen.exe:
 	$(OCAMLOPT) $(filter-out %.a,$^) $(C_LIB) -o $@
 
@@ -147,8 +154,8 @@ clean:
 # Install hacl-star-raw locally.
 install: dllocamlevercrypt.$(OCAML_SO)
 # We need to remove all comments from config.h because ccpo can't handle them
-	sed 's/\(\/\/.*\)\|\(\/\*.*\*\/\)//g' build/config.h > build/config-new.h
-	mv build/config-new.h build/config.h
+	sed 's/\(\/\/.*\)//g' build/config.h > build/config-new.h
+	sed 's/\(\/\*.*\*\/\)//g' build/config-new.h > build/config.h
 	ocamlfind remove hacl-star-raw || true
 	ocamlfind install hacl-star-raw META
 	ocamlfind install -add hacl-star-raw $(CTYPES_ML)
