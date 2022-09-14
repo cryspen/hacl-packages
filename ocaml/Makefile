@@ -105,14 +105,14 @@ lib_gen/Lib_RandomBuffer_System_gen.exe: lib/Lib_RandomBuffer_System_bindings.cm
 %.exe:
 
 uname_m=$(shell uname -m)
-OCAML_CFLAGS.s390x=-mvx
-OCAML_CFLAGS+=$(OCAML_CFLAGS.$(uname_m))
+OCAML_CFLAGS.s390x=-m64 -mzarch -mvx -mzvector -march=native -O3
+CFLAGS+=$(OCAML_CFLAGS.$(uname_m))
 
 lib_gen/%_gen.exe:
 	$(OCAMLOPT) $(filter-out %.a,$^) $(C_LIB) -o $@
 
 %.cmx: %.ml
-	$(OCAMLOPT) $(OCAML_CFLAGS) -c $^ -o $@
+	$(OCAMLOPT) -c $^ -o $@
 
 %.cmo: %.ml
 	$(OCAMLC) -c $^ -o $@
