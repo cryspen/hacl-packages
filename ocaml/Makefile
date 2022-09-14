@@ -44,8 +44,11 @@ C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 # Compiling the C library. This needs to be executed before and independently
 # of build-bindings because it will also write Makefile.config, which is needed
 # by build-bindings.
+#
+# Note that cmake 3.10 does not support -B to output build files to a different
+# directory. Hence the other way of calling it here.
 build-c:
-	cmake -B build -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+	cd build && cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../
 	make -C build
 	cp build/$(C_LIB) .
 	cp build/$(C_DYN_LIB) .

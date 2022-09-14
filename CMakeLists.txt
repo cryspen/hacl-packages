@@ -35,7 +35,6 @@ endif()
 project(hacl
     VERSION 0.1.0
     DESCRIPTION "The High Assurance Crypto Library"
-    HOMEPAGE_URL "https://www.cryspen.com/hacl"
     LANGUAGES C CXX
 )
 
@@ -355,7 +354,9 @@ endif()
 set(CMAKE_INSTALL_LIBDIR lib)
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
-install(TARGETS hacl_static hacl ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS hacl_static hacl
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # # Copy hacl headers
 install(FILES ${PUBLIC_INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
