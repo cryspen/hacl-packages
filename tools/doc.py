@@ -39,16 +39,14 @@ def doc(args):
     print("    pip install -r docs/reference/requirements.txt")
     print("")
 
-    print("# Building book")
-    backup = os.getcwd()
-    os.chdir("docs/book")
-    subprocess.call(["mdbook", "build"])
-    os.chdir(backup)
-
     if not os.path.exists("build"):
         os.mkdir("build")
 
-    subprocess.call(["mv", "docs/book/book", "build/docs"])
+    print("# Building book")
+    backup = os.getcwd()
+    os.chdir("docs/book")
+    subprocess.call(["mdbook", "build", "--dest-dir", "../../build/docs"])
+    os.chdir(backup)
 
     print("Building C API Reference")
     subprocess.call(["sphinx-build", "docs/reference", "build/docs/c"])
