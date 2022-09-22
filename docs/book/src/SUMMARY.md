@@ -13,37 +13,13 @@
   - [build](./mach/build.md)
   - [test](./mach/test.md)
 
-# HACL C
+# Bindings
 
-- [Introduction](./hacl-c/readme.md)
-  - [HACL APIs](./hacl-c/hacl-apis.md)
-    - [AEAD](./hacl-c/hacl-aead.md)
-    - [Hasing](./hacl-c/hacl-hashing.md)
-    - [HMAC](./hacl-c/hacl-hmac.md)
-    - [HKDF](./hacl-c/hacl-hkdf.md)
-    - [ECDH](./hacl-c/hacl-ecdh.md)
-    - [Signatures](./hacl-c/hacl-signatures.md)
-    - [Crypto Box](./hacl-c/hacl-nacl.md)
-    - [Randomness](./hacl-c/hacl-randomness.md)
-  - [Evercrypt APIs](./hacl-c/evercrypt-apis.md)
-    - [AEAD](./hacl-c/evercrypt-aead.md)
-    - [Hasing](./hacl-c/evercrypt-hashing.md)
-    - [HMAC](./hacl-c/evercrypt-hmac.md)
-    - [HKDF](./hacl-c/evercrypt-hkdf.md)
-    - [Randomness](./hacl-c/evercrypt-randomness.md)
-
-# HACL Rust
-
-- [Introduction](./hacl-rust/readme.md)
+- [C](./hacl-c/readme.md)
+- [Rust](./hacl-rust/readme.md)
   - [AEADs](./hacl-rust/aead.md)
-
-# HACL OCaml
-
-- [Introduction](./hacl-ocaml/readme.md)
-
-# HACL JavaScript
-
-- [Introduction](./hacl-js/readme.md)
+- [OCaml](./hacl-ocaml/readme.md)
+- [JavaScript](./hacl-js/readme.md)
 
 # Developer Guide
 
