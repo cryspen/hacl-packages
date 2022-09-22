@@ -17,6 +17,7 @@ import subprocess
 import sys
 
 from tools.configure import Config
+from tools.doc import doc
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
 from tools.rust import rust
