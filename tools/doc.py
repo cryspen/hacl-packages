@@ -23,8 +23,7 @@ def doc(args):
     print("    pip install -r docs/reference/requirements.txt")
     print("")
 
-    if not os.path.exists("build"):
-        os.mkdir("build")
+    os.makedirs("build", exist_ok=True)
 
     print("# Building book")
     backup = os.getcwd()
@@ -32,8 +31,9 @@ def doc(args):
     subprocess.call(["mdbook", "build", "--dest-dir", "../../build/docs"])
     os.chdir(backup)
 
-    print("Building C API Reference")
-    subprocess.call(["sphinx-build", "docs/reference", "build/docs/c"])
+    print("# Building C API Reference")
+    os.makedirs("build/docs/c/main", exist_ok=True)
+    subprocess.call(["sphinx-build", "docs/reference", "build/docs/c/main"])
 
     print("Finished.")
     print("")
@@ -45,5 +45,5 @@ def doc(args):
     print("")
     print("The C API Reference is available at ...")
     print("")
-    print("    build/docs/c/index.html")
+    print("    build/docs/c/main/index.html")
     print("")
