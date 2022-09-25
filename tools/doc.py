@@ -4,26 +4,10 @@
 #    * http://www.apache.org/licenses/LICENSE-2.0
 #    * http://opensource.org/licenses/MIT
 
-import json
 import os
-import re
 import subprocess
-import sys
-from os.path import join
-from pathlib import Path
 
-from tools.configure import Config
-from tools.ocaml import test_ocaml
-from tools.utils import (
-    argument,
-    binary_path,
-    check_cmd,
-    cli,
-    json_config,
-    mprint as print,
-    subcommand,
-    subparsers,
-)
+from tools.utils import check_cmd, mprint as print, subcommand
 
 
 @subcommand([])
