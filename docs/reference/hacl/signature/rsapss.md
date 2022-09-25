@@ -28,10 +28,13 @@ TODO: Discuss API design.
 
 **Example**
 
+<!--
+TODO(Example):
+
 ```{literalinclude} ../../../../tests/rsapss.cc
 :language: C
 :dedent:
 :start-after: "// START"
 :end-before: "// END"
 ```
-
+-->
