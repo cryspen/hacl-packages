@@ -12,7 +12,7 @@
 ```{doxygenfunction} Hacl_HKDF_expand_blake2b_32
 ```
 
-```{doxygenfunction} Hacl_HKDF_expand_blake2b_32
+```{doxygenfunction} Hacl_HKDF_extract_blake2b_32
 ```
 
 ````
