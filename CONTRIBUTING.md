@@ -33,5 +33,3 @@ All examples should be written as unit tests in the `tests` folder and can be in
 	:end-before: "// END OneShot"
 	```
 In CI, we use sphinx-multiversion to generate multiple versions of the documentation.
-This may lead to broken links when reading the documentation locally.
-Try to remove the `main` path from the URL if you experience this problem.
