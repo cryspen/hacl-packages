@@ -25,8 +25,12 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 
 ### Streaming
 
+<!--
+TODO(API): Rename to "Context"?
+
 ```{doxygentypedef} Hacl_Impl_Blake2_Core_m_spec
 ```
+-->
 
 --------------------------------------------------------------------------------
 
