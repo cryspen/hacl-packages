@@ -165,6 +165,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
@@ -309,6 +311,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum32.h
