@@ -32,15 +32,17 @@ runs:
       shell: bash
       if: ${{ inputs.edition == '' }}
 
-    - run: echo "TARGET_FLAG=${{ inputs.target }}" > $GITHUB_ENV
+    - run: |
+        echo "TARGET_FLAG=--target ${{ inputs.target }}" > $GITHUB_ENV
+        echo "TEST_COMMAND=--tests" > $GITHUB_ENV
       shell: bash
       if: ${{ inputs.target != '' }}
-    - run: echo "TARGET_FLAG=" > $GITHUB_ENV
+    - run: echo "TEST_COMMAND=--test" > $GITHUB_ENV
       shell: bash
       if: ${{ inputs.target == '' }}
 
     - name: mach | Test (Debug + Release)
       shell: bash
       run: |
-        ./mach build -v --test $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
-        ./mach build -v --test --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
+        ./mach build -v $TEST_COMMAND $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
+        ./mach build -v $TEST_COMMAND --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG ${{ inputs.args }}
