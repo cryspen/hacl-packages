@@ -127,7 +127,7 @@ fn main() {
                 .status()
                 .expect("Failed to run ./mach rust.");
             if !cmake_status.success() {
-                panic!("Failed to run ./mac rust.")
+                panic!("Failed to run ./mach rust.")
             }
         }
         let c_path = home_dir.join("..").join(".c");

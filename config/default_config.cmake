@@ -165,6 +165,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
@@ -309,6 +311,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum32.h
@@ -454,6 +458,14 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/nacl.cc
 	${PROJECT_SOURCE_DIR}/tests/evercrypt.cc
 	${PROJECT_SOURCE_DIR}/tests/aead.cc
+)
+set(BENCHMARK_SOURCES
+	${PROJECT_SOURCE_DIR}/benchmarks/blake.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/chacha20.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/chacha20poly1305.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/x25519.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/p256.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/k256.cc
 )
 set(VALE_SOURCES_osx
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-darwin.S
