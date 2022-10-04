@@ -59,6 +59,28 @@ read_json(string test_file)
   return tests_out;
 }
 
+TEST(ApiSuite, ApiTest)
+{
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // START OneShot
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // 160 Bit / 8 = 20 Byte
+    uint8_t digest[160 / 8];
+
+    Hacl_Hash_SHA1_legacy_hash((uint8_t*)message, message_size, digest);
+    // END OneShot
+
+    bytes expected_digest =
+      from_hex("0a0a9f2a6772942557ab5355d76af442f8f65e01");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 20), 0);
+  }
+}
+
 class Sha1 : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};
 

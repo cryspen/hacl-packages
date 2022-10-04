@@ -7,9 +7,9 @@
  */
 
 #include <fstream>
-
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
+#include <string.h>
 
 #include "Hacl_SHA3.h"
 
@@ -45,6 +45,31 @@ read_json(char* test_file)
   }
 
   return tests_out;
+}
+
+TEST(ApiSuite, ApiTest)
+{
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // START OneShot
+    // This example uses SHA3-256.
+    //
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // 256 Bit / 8 = 32 Byte
+    uint8_t digest[256 / 8];
+
+    Hacl_SHA3_sha3_256(message_size, (uint8_t*)message, digest);
+    // END OneShot
+
+    bytes expected_digest = from_hex(
+      "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
+  }
 }
 
 class Sha3KAT : public ::testing::TestWithParam<TestCase>

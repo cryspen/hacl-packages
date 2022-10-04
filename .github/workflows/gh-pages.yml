@@ -1,29 +1,83 @@
-name: gh-pages
+name: Deploy static content to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: docs
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  documentation:
-    runs-on: ubuntu-latest
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
     steps:
-      - uses: hecrj/setup-rust-action@master
-      - uses: actions/checkout@master
-      - name: Setup mdBook
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # sphinx-multiversion uses tags to build
+      # the documentation in multiple versions.
+      - name: Checkout | Fetch tags
+        run: git fetch --tags origin
+
+      - name: Setup | mdBook | 1/2
+        uses: hecrj/setup-rust-action@master
+      
+      - name: Setup | mdBook | 2/2
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
-      - name: Build docs
-        run: mdbook build
-      - name: Deploy docs to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | Doxygen
+        run: sudo apt-get install doxygen
+
+      - name: Setup | Sphinx
+        run: sudo apt-get install python3-sphinx
+
+      - name: Setup | Sphinx
+        run: |
+          cd docs/reference
+          pip install -r requirements.txt
+
+      - name: Setup | Pages
+        uses: actions/configure-pages@v2
+
+      - name: Build | Book
+        run: |
+          # We `cd` into this directory first because the book
+          # uses references relative to this directory, i.e.,
+          # `../../../rust/src/aead.rs`.
+          pushd docs/book
+          mdbook build
+          popd
+          mv docs/book/book build
+
+      - name: Build | C API Reference
+        run: |
+          mkdir build/c
+          sphinx-multiversion docs/reference build/c
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/book
+          path: 'build'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

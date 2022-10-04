@@ -17,3 +17,33 @@ available.
 If OpenSSL is not in the default path the environment variable `OPENSSL_HOME`
 can be set.
 To disable OpenSSL benchmarks `--no-openssl` can be added to the command.
+
+## Documentation
+
+The `mach` script tries to detect the required dependencies.
+However, this is currently not done for `pip` packages.
+The packages required to build the C API reference via sphinx are listed in `docs/reference/requirements.txt`.
+
+You can install them via ...
+
+```sh
+pip install -r docs/reference/requirements.txt
+```
+
+You can then run ...
+
+```sh
+./mach doc
+```
+
+... to generate HACL Packages' documentation.
+
+All examples should be written as unit tests in the `tests` folder and can be included in the documentation with ...
+
+	```{literalinclude} ../../../../tests/sha2.cc
+	:language: C
+	:dedent:
+	:start-after: "// START OneShot"
+	:end-before: "// END OneShot"
+	```
+In CI, we use sphinx-multiversion to generate multiple versions of the documentation.
