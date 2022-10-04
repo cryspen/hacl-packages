@@ -7,7 +7,6 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/random.h>
 
 #include "Hacl_Chacha20Poly1305_32.h"
 #include "Hacl_Chacha20_Vec32.h"
