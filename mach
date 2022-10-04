@@ -298,9 +298,9 @@ def build(args):
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
     if args.benchmarks or args.benchmark:
-        if args.tests or args.test:
+        if not args.release:
             print(
-                "! Benchmarks can't be built at the same time as tests for now. See #115"
+                "! Benchmarks need to be run on release for now. Please add --release"
             )
             exit(1)
         cmake_args.append("-DENABLE_BENCHMARKS=ON")

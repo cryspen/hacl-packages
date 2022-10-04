@@ -45,7 +45,7 @@ def run_benchmarks(benchmarks, bin_path):
         ),
     ]
 )
-def benchmarks(args):
+def benchmark(args):
     """Benchmark HACL"""
 
     # read file
