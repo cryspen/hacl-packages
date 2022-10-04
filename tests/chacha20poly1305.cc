@@ -110,15 +110,28 @@ TEST(ApiSuite, ApiTest)
     const char* msg = "Hello, World!";
     const uint32_t msg_len = strlen(msg);
 
-    // We need to allocate the same amount of memory for the ciphertext as for
-    // the plaintext ...
+    // We need to allocate the same amount of memory for the ciphertext as for the plaintext ...
     uint8_t* cipher = (uint8_t*)malloc(msg_len);
-    // ... and need to provide additional memory for the mac.
+    // ... and also need to provide additional memory for the mac.
     uint8_t mac[16];
 
+    // Encryption.
     Hacl_Chacha20Poly1305_32_aead_encrypt(
       key, nonce, aad_len, (uint8_t*)aad, msg_len, (uint8_t*)msg, cipher, mac);
+    printf("Encryption successful.");
 
+    // Decryption.
+    // Allocate the same amount of memory for the recovered message as for the ciphertext.
+    uint8_t* recovered = (uint8_t*)malloc(msg_len);
+
+    uint32_t res = Hacl_Chacha20Poly1305_32_aead_decrypt(
+      key, nonce, aad_len, (uint8_t*)aad, msg_len, (uint8_t*)recovered, cipher, mac);
+
+    if (res == 0) {
+      printf("Decryption successful.");
+    }
+
+    free(recovered);
     free(cipher);
     // END OneShot
   }

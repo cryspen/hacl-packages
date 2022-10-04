@@ -22,9 +22,20 @@ Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/h
 ````
 
 ````{group-tab} 256
-Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+```{note}
+Support for VEC256 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+```
 ````
 `````
+
+## Example
+
+```{literalinclude} ../../../../tests/chacha20poly1305.cc
+:language: C
+:dedent:
+:start-after: "// START OneShot"
+:end-before: "// END OneShot"
+```
 
 ## API Reference
 
@@ -59,15 +70,6 @@ The first argument `k` is a pointer to the AEAD key (the length of this array MU
 the output ciphertext also has `mlen` bytes and is stored in `cipher`;
 the output tag has a length of 16 bytes and is stored in `mac`.
 
-**Example**
-
-```{literalinclude} ../../../../tests/chacha20poly1305.cc
-:language: C
-:dedent:
-:start-after: "// START OneShot"
-:end-before: "// END OneShot"
-```
-
 -------------------------------------------------------------------------------
 
 `````{tabs}
@@ -98,10 +100,5 @@ The arguments `k`, `n`, `aadlen`, and `aad` are the same as in encryption.
 The next argument `mlen` is the length of the input ciphertext cipher and `mac` holds the input tag.
 If decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.
 If decryption fails, the array `m` remains unchanged and the function returns the error code 1.
-
-**Example**
-
-```c
-```
 
 [rfc 8439]: https://www.rfc-editor.org/rfc/rfc8439.html

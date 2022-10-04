@@ -1,3 +1,4 @@
 # AES-GCM
 
-Please refer to the EverCrypt API.
+AES-GCM is only available via its [EverCrypt API](evercrypt/aead/aesgcm).
+

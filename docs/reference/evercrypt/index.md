@@ -4,5 +4,6 @@
 :maxdepth: 3
 :caption: "EverCrypt:"
 
+aead/index
 ```
 
