@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        compiler: [ gcc, clang ]
-        version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
-        bits: [ 32, 64 ]
-        edition: [ "" ] # ignore c89 for now
+        compiler: [gcc, clang]
+        version: [7, 8, 9, 10, 11, 12, 13, 14]
+        bits: [32, 64]
+        edition: [""] # ignore c89 for now
         #edition: [ c89, "" ]
         exclude:
           - compiler: gcc
@@ -77,6 +77,12 @@ jobs:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
 
+      - name: mach | Benchmark
+        uses: ./.github/actions/mach_benchmark
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
         with:
@@ -86,10 +92,10 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        compiler: [ gcc, clang ]
-        version: [ 9, 10, 11, 12, 13, 14 ]
-        bits: [ 64 ]
-        target: [ "", "aarch64-apple-ios", "aarch64-apple-darwin" ]
+        compiler: [gcc, clang]
+        version: [9, 10, 11, 12, 13, 14]
+        bits: [64]
+        target: ["", "aarch64-apple-ios", "aarch64-apple-darwin"]
         exclude:
           - compiler: gcc
             version: 13
@@ -123,6 +129,9 @@ jobs:
           echo $CXX
           clang++ --version
 
+      - name: Setup | Install OpenSSL3
+        run: brew install openssl@3
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -132,12 +141,19 @@ jobs:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
 
-      - name: mach | Test (aarch64 is not tested)
-        if: ${{ matrix.target == '' }}
+      - name: mach | Test
         uses: ./.github/actions/mach_test
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
+
+      - name: mach | Benchmark
+        uses: ./.github/actions/mach_benchmark
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+          args: "--no-openssl" # FIXME: #198 For some reason openssl isn't work
+          environment: OPENSSL_HOME=/usr/local/opt/openssl@3/
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -148,8 +164,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        bits: [ 32, 64 ]
-        args: [ "", "--msvc" ]
+        bits: [32, 64]
+        args: ["", "--msvc"]
         exclude:
           # See issue #92.
           - bits: 32
@@ -181,6 +197,14 @@ jobs:
           edition: ${{ matrix.edition }}
           args: ${{ matrix.args }}
 
+      # TODO: #197 Enable benchmarks on Windows
+      # - name: mach | Benchmark
+      #   uses: ./.github/actions/mach_benchmark
+      #   with:
+      #     bits: ${{ matrix.bits }}
+      #     target: ${{ matrix.target }}
+      #     args: "--no-openssl"
+
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
         with:
@@ -192,7 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [ "aarch64-linux-android" ]
+        target: ["aarch64-linux-android"]
     steps:
       - name: Setup
         run: |

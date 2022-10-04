@@ -459,6 +459,14 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/evercrypt.cc
 	${PROJECT_SOURCE_DIR}/tests/aead.cc
 )
+set(BENCHMARK_SOURCES
+	${PROJECT_SOURCE_DIR}/benchmarks/blake.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/chacha20.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/chacha20poly1305.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/x25519.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/p256.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/k256.cc
+)
 set(VALE_SOURCES_osx
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-darwin.S
 	${PROJECT_SOURCE_DIR}/vale/src/sha256-x86_64-darwin.S

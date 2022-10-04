@@ -9,12 +9,14 @@
 # The mach driver for HACL.
 
 
+from ast import arg
 import os
 import pathlib
 import re
 import shutil
 import subprocess
 import sys
+from tools.benchmark import run_benchmarks
 
 from tools.configure import Config
 from tools.doc import doc
@@ -72,6 +74,8 @@ def install(args):
         argument("--tests", help="Build tests.", action="store_true"),
         argument("--test", help="Build and run tests.", action="store_true"),
         argument("--benchmarks", help="Build benchmarks.", action="store_true"),
+        argument("--benchmark", help="Build and run benchmarks.", action="store_true"),
+        argument("--no-openssl", help="Don't build and run OpenSSL benchmarks.", action="store_true"),
         argument("-r", "--release", help="Build in release mode.", action="store_true"),
         argument(
             "-a",
@@ -294,13 +298,15 @@ def build(args):
         cmake_args.extend(features_to_disable)
     if args.tests or args.test:
         cmake_args.append("-DENABLE_TESTS=ON")
-    if args.benchmarks:
-        if args.tests or args.test:
+    if args.benchmarks or args.benchmark:
+        if not args.release:
             print(
-                "! Benchmarks can't be built at the same time as tests for now. See #115"
+                "! Benchmarks need to be run on release for now. Please add --release"
             )
             exit(1)
         cmake_args.append("-DENABLE_BENCHMARKS=ON")
+        if not args.no_openssl:
+            cmake_args.append("-DENABLE_OPENSSL_BENCHMARKS=ON")
     if args.sanitizer:
         if windows:
             print("! Sanitizers are not supporte on Windows.")
@@ -357,7 +363,7 @@ def build(args):
 
         pathlib.Path(config_cache()).touch()
 
-    if not cache or (args.algorithms and not bindings) or args.test:
+    if not cache or (args.algorithms and not bindings) or args.test or args.benchmark:
         algorithms = []
         if args.algorithms and not bindings:
             algorithms = re.split(r"\W+", args.algorithms)
@@ -420,6 +426,10 @@ def build(args):
     # test if requested
     if args.test:
         run_tests(config.tests, build_config, coverage=args.coverage)
+
+    # benchmark if requested
+    if args.benchmark:
+        run_benchmarks(config.benchmarks, build_config)
 
 
 def _clean():

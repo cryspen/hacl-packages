@@ -60,6 +60,7 @@ include(config/constants.cmake)
 # Note that this only works on intel for now.
 if(CMAKE_C_FLAGS MATCHES ".*-m32.*")
     set(CMAKE_SYSTEM_PROCESSOR "i686")
+    set(BENCHMARK_BUILD_32_BITS ON)
 endif()
 
 # Configure C globally
@@ -78,7 +79,6 @@ include(build/config.cmake)
 # TODO: Set flags for MSVC
 if(NOT MSVC)
     add_compile_options(
-
         # -Wall
         # -Wextra
         # -pedantic
@@ -88,6 +88,8 @@ if(NOT MSVC)
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
+        # $<$<CONFIG:RELEASE>:-g>
+        # $<$<CONFIG:RELEASE>:-Wno-deprecated-declarations>
     )
 endif()
 
@@ -374,6 +376,13 @@ install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
 # # Install config.h
 install(FILES build/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 
+# The CPU detection is used for testing and benchmarking
+if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+    # CPU feature detection for tests
+    add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
+    target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
+endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
 if(ENABLE_TESTS)
@@ -394,10 +403,6 @@ if(ENABLE_TESTS)
         URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
     )
     FetchContent_MakeAvailable(json)
-
-    # CPU feature detection for tests
-    add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
-    target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 
     foreach(TEST_FILE IN LISTS TEST_SOURCES)
         get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
@@ -421,10 +426,10 @@ if(ENABLE_TESTS)
         endif(NOT MSVC)
 
         add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
-        target_sources(${TEST_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
         target_link_libraries(${TEST_NAME} PRIVATE
             gtest_main
             hacl_static
+            hacl_cpu_features
             nlohmann_json::nlohmann_json
         )
         target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
@@ -456,40 +461,43 @@ if(ENABLE_BENCHMARKS)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
 
-    FetchContent_Declare(benchmark
-	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-        URL https://github.com/google/benchmark/archive/refs/tags/v1.6.1.zip
+    FetchContent_Populate(benchmark
+        GIT_REPOSITORY  https://github.com/google/benchmark
+        GIT_TAG         v1.7.0
     )
-    FetchContent_MakeAvailable(benchmark)
+    add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
 
-    # TODO: Read benchmarks from config.json like tests.
-    set(BENCH_SOURCE "benchmarks/blake.cc" "benchmarks/chacha20.cc")
-
-    # CPU feature detection for tests
-    add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
-    target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
-
-    foreach(BENCH_FILE IN LISTS BENCH_SOURCE)
+    foreach(BENCH_FILE IN LISTS BENCHMARK_SOURCES)
         get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WE)
+        set(BENCH_NAME ${BENCH_NAME}_benchmark)
         add_executable(${BENCH_NAME}
             ${BENCH_FILE}
         )
 
+        if(ENABLE_OPENSSL_BENCHMARKS)
+            if(DEFINED ENV{OPENSSL_HOME})
+                target_include_directories(${BENCH_NAME} PUBLIC $ENV{OPENSSL_HOME}/include/)
+                target_link_directories(${BENCH_NAME} PRIVATE $ENV{OPENSSL_HOME}/lib)
+            endif()
+            target_link_libraries(${BENCH_NAME} PRIVATE crypto)
+        else()
+            target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
+        endif(ENABLE_OPENSSL_BENCHMARKS)
+
         # Be nice to MSVC and make sure we don't have variable length arrays in
         # benchmarks
         if(NOT MSVC)
-            target_compile_options(${BENCH_NAME} PRIVATE -Werror=vla -std=c++11)
+            target_compile_options(${BENCH_NAME} PRIVATE -Werror=vla -std=c++20)
         else()
             # MSVC needs a modern C++ for designated initializers.
             target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
         endif(NOT MSVC)
 
-        add_dependencies(${BENCH_NAME} hacl)
+        add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
+            hacl_cpu_features
             benchmark::benchmark
         )
-        target_sources(${BENCH_NAME} PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
-        target_include_directories(${BENCH_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
     endforeach()
 endif(ENABLE_BENCHMARKS)
