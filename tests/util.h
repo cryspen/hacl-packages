@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <vector>
 
+#include "EverCrypt_DRBG.h"
+
 using namespace std;
 
 typedef vector<uint8_t> bytes;
@@ -112,4 +114,12 @@ vector<vector<size_t>>
 make_lengths()
 {
   return { {}, { 0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 32, 33, 64, 65, 128, 129 } };
+}
+
+// Only used in examples. Do not use otherwise.
+void generate_random(uint8_t* dst, size_t dst_len) {
+  EverCrypt_DRBG_state_s_s *state = EverCrypt_DRBG_create(Spec_Hash_Definitions_SHA2_256);
+  EverCrypt_DRBG_instantiate(state, (uint8_t*) "example", 7);
+  EverCrypt_DRBG_generate(dst, state, dst_len, (uint8_t*)"", 0);
+  EverCrypt_DRBG_uninstantiate(state);
 }
