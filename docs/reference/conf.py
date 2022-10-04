@@ -73,7 +73,7 @@ source_suffix = {
 smv_tag_whitelist = r"^.*$"
 
 # Whitelist pattern for branches (set to None to ignore all branches)
-smv_branch_whitelist = r'^(main|duesee/docs_doxygen_sphinx_breathe)$'
+smv_branch_whitelist = r'^(main)$'
 
 # Whitelist pattern for remotes (set to None to use local branches only)
 smv_remote_whitelist = r"^origin$"
