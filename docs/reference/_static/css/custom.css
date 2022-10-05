@@ -1,0 +1,18 @@
+.sig > .reference::before {
+    content: "\a\20\20\20\20";
+    white-space: pre;
+}
+
+.sig > .target + .reference::before {
+    content: "" !important
+}
+
+.sig > .target + .n::before {
+    content: "" !important
+}
+
+.sig > .n:not(.sig-param):not(:first-child)::before {
+    content: "\a\20\20\20\20";
+    white-space: pre;
+}
+
