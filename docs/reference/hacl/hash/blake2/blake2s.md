@@ -7,105 +7,112 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 ### One-Shot
 
 `````{tabs}
-
 ````{group-tab} 32
+```C
+#include "Hacl_Hash_Blake2.h"
+```
 
 ```{doxygenfunction} Hacl_Blake2s_32_blake2s
 ```
-
 ````
 
 ````{group-tab} 128
+```C
+#include "Hacl_Hash_Blake2s_128.h"
+```
 
 ```{doxygenfunction} Hacl_Blake2s_128_blake2s
 ```
-
 ````
 `````
 
-### Streaming
+Write the BLAKE2s digest of the message `d` using the key `k` into `output`.
 
-<!--
-TODO(API): Rename to "Context"?
+  `nn` Length of to-be-generated digest (1 < `nn` <= 32).
+  `output` Pointer to digest.
+  `ll` Length of the input message.
+  `d` Pointer to the input message.
+  `kk` Length of the key.
+  `k` Pointer to the key.
 
-```{doxygentypedef} Hacl_Impl_Blake2_Core_m_spec
-```
--->
-
---------------------------------------------------------------------------------
+### Streaming (without key)
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2s_32_blake2s_init
+```C
+#include "Hacl_Streaming_Blake2.h"
 ```
-
 ````
-
 ````{group-tab} 128
-
-```{doxygenfunction} Hacl_Blake2s_128_blake2s_init
+```C
+#include "Hacl_Streaming_Blake2s_128.h"
 ```
-
 ````
 `````
-
---------------------------------------------------------------------------------
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2s_32_blake2s_update_key
+```{doxygentypedef} Hacl_Streaming_Blake2_blake2s_32_state
 ```
-
-```{doxygenfunction} Hacl_Blake2s_32_blake2s_update_multi
-```
-
-```{doxygenfunction} Hacl_Blake2s_32_blake2s_update_last
-```
-
 ````
-
 ````{group-tab} 128
-
-```{doxygenfunction} Hacl_Blake2s_128_blake2s_update_key
+```{doxygentypedef} Hacl_Streaming_Blake2s_128_blake2s_128_state
 ```
-
-```{doxygenfunction} Hacl_Blake2s_128_blake2s_update_multi
-```
-
-```{doxygenfunction} Hacl_Blake2s_128_blake2s_update_last
-```
-
 ````
 `````
-
---------------------------------------------------------------------------------
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2s_32_blake2s_finish
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_create_in
 ```
-
 ````
-
 ````{group-tab} 128
-
-```{doxygenfunction} Hacl_Blake2s_128_blake2s_finish
+```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_create_in
 ```
-
 ````
 `````
 
-### Compatibility
-
-```{doxygenfunction} Hacl_Blake2s_128_store_state128s_to_state32
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_init
 ```
-
-```{doxygenfunction} Hacl_Blake2s_128_load_state128s_from_state32
+````
+````{group-tab} 128
+```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_init
 ```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_update
+```
+````
+````{group-tab} 128
+```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update
+```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_finish
+```
+````
+````{group-tab} 128
+```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish
+```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_free
+```
+````
+````{group-tab} 128
+```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free
+```
+````
+`````
 

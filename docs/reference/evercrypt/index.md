@@ -5,6 +5,7 @@
 :caption: "EverCrypt:"
 
 aead/index
+hash/index
 mac/index
 ```
 
