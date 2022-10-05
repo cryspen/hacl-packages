@@ -89,11 +89,7 @@ The latter is returned if and only if the `s` parameter is `NULL`.
 Verify the authenticity of `ad` || `cipher` and decrypt `cipher` into `dst`.
 
 `s` is the AEAD state created by `EverCrypt_AEAD_create_in` and already contains the decryption key.
-`iv` is the nonce required for decryption.
-Note:
-For ChaCha20Poly1305, the IV must be 12 bytes.
-For AES-GCM, the IV must be >0 bytes in size.
-However, the recommended size is 12 bytes for both ChaCha20Poly1305 and AES-GCM.
+`iv` is the nonce required for decryption and must be 12 bytes long.
 `ad` is the associated data that was authenticated (not encrypted) alongside the ciphertext.
 `cipher` is the to-be-decrypted ciphertext.
 `tag` is the tag/mac generated during encryption.
