@@ -9,101 +9,111 @@ It also has a build-in keying mechanism so that it can be used to replace HMAC-b
 
 
 `````{tabs}
-
 ````{group-tab} 32
+```C
+#include "Hacl_Hash_Blake2.h"
+```
 
 ```{doxygenfunction} Hacl_Blake2b_32_blake2b
 ```
-
 ````
-
 ````{group-tab} 256
-
+```C
+#include "Hacl_Hash_Blake2b_256.h"
+```
 ```{doxygenfunction} Hacl_Blake2b_256_blake2b
 ```
-
 ````
 `````
 
-### Streaming
+Write the BLAKE2b digest of the message `d` using the key `k` into `output`.
 
-```{doxygentypedef} Hacl_Impl_Blake2_Core_m_spec
-```
+  `nn` Length of to-be-generated digest (1 < `nn` <= 64).
+  `output` Pointer to digest.
+  `ll` Length of the input message.
+  `d` Pointer to the input message.
+  `kk` Length of the key.
+  `k` Pointer to the key.
 
---------------------------------------------------------------------------------
+### Streaming (without key)
+
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2b_32_blake2b_init
+```C
+#include "Hacl_Streaming_Blake2.h"
 ```
-
 ````
-
 ````{group-tab} 256
-
-```{doxygenfunction} Hacl_Blake2b_256_blake2b_init
+```C
+#include "Hacl_Streaming_Blake2b_256.h"
 ```
-
 ````
 `````
-
---------------------------------------------------------------------------------
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2b_32_blake2b_update_key
+```{doxygentypedef} Hacl_Streaming_Blake2_blake2b_32_state
 ```
-
-```{doxygenfunction} Hacl_Blake2b_32_blake2b_update_multi
-```
-
-```{doxygenfunction} Hacl_Blake2b_32_blake2b_update_last
-```
-
 ````
-
 ````{group-tab} 256
-
-```{doxygenfunction} Hacl_Blake2b_256_blake2b_update_key
+```{doxygentypedef} Hacl_Streaming_Blake2b_256_blake2b_256_state
 ```
-
-```{doxygenfunction} Hacl_Blake2b_256_blake2b_update_multi
-```
-
-```{doxygenfunction} Hacl_Blake2b_256_blake2b_update_last
-```
-
 ````
 `````
-
---------------------------------------------------------------------------------
 
 `````{tabs}
-
 ````{group-tab} 32
-
-```{doxygenfunction} Hacl_Blake2b_32_blake2b_finish
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_create_in
 ```
-
 ````
-
 ````{group-tab} 256
-
-```{doxygenfunction} Hacl_Blake2b_256_blake2b_finish
+```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in
 ```
-
 ````
 `````
 
-### Compatibility
-
-```{doxygenfunction} Hacl_Blake2b_256_load_state256b_from_state32
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_init
 ```
-
-```{doxygenfunction} Hacl_Blake2b_256_store_state256b_to_state32
+````
+````{group-tab} 256
+```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init
 ```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_update
+```
+````
+````{group-tab} 256
+```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update
+```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_finish
+```
+````
+````{group-tab} 256
+```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish
+```
+````
+`````
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_free
+```
+````
+````{group-tab} 256
+```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free
+```
+````
+`````
 

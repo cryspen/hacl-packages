@@ -28,31 +28,18 @@ Keys must be chosen using a cryptographically strong pseudo-random generator and
 ```{doxygentypedef} Spec_Hash_Definitions_hash_alg
 ```
 
-```{doxygendefine} Spec_Hash_Definitions_SHA2_224
-```
-
-```{doxygendefine} Spec_Hash_Definitions_SHA2_256
-```
-
-```{doxygendefine} Spec_Hash_Definitions_SHA2_384
-```
-
-```{doxygendefine} Spec_Hash_Definitions_SHA2_512
-```
-
-```{doxygendefine} Spec_Hash_Definitions_SHA1
-```
-
-```{doxygendefine} Spec_Hash_Definitions_MD5
-```
-
-```{doxygendefine} Spec_Hash_Definitions_Blake2S
-```
-
-```{doxygendefine} Spec_Hash_Definitions_Blake2B
-```
-
 The available hash functions.
+
+The allowed values are ...
+
+* `Spec_Hash_Definitions_SHA2_224`,
+* `Spec_Hash_Definitions_SHA2_256`,
+* `Spec_Hash_Definitions_SHA2_384`,
+* `Spec_Hash_Definitions_SHA2_512`,
+* `Spec_Hash_Definitions_SHA1`,
+* `Spec_Hash_Definitions_MD5`,
+* `Spec_Hash_Definitions_Blake2S`, and
+* `Spec_Hash_Definitions_Blake2B`.
 
 --------------------------------------------------------------------------------
 
