@@ -5,7 +5,7 @@ Authenticated Encryption (AE) with Associated Data (AD), i.e., AEAD, is provided
 * ChaCha20Poly1305, and
 * AES-GCM.
 
-AES-GCM is only supported via EverCrypt.
+AES-GCM is only supported [via EverCrypt](../../evercrypt/aead/index.md).
 
 ```{toctree}
 :caption: "Algorithms"

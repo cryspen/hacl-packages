@@ -1,13 +1,15 @@
 # Chacha20-Poly1305
 
-HACL implements the Chacha20-Poly1305 Authenticated Encryption with Associated Data (AEAD) construction specified in [rfc 8439].
+HACL implements the Chacha20-Poly1305 Authenticated Encryption with Associated Data (AEAD) construction specified in [RFC 8439].
 The library includes three implementations of this construction, all with the same API, for different platforms:
 
 * `Hacl_Chacha20Poly1305_32.h` contains the API for the portable C implementation that can be compiled and run on any platform that is 32-bit or higher.
-* `Hacl_Chacha20Poly1305_128.h` contains the API for the 128-bit vectorized C implementation that can be compiled and run on any platform that supports Vec128.
-* `Hacl_Chacha20Poly1305_256.h` contains the API for the 256-bit vectorized C implementation that can be compiled and run on any platform that supports Vec256.
+* `Hacl_Chacha20Poly1305_128.h` contains the API for the 128-bit vectorized C implementation that can be compiled and run on any platform that supports 128-bit SIMD instructions.
+* `Hacl_Chacha20Poly1305_256.h` contains the API for the 256-bit vectorized C implementation that can be compiled and run on any platform that supports 256-bit SIMD instructions.
 
 All memory for the output variables have to be allocated by the caller.
+
+## Available Implementations
 
 `````{tabs}
 
