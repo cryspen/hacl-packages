@@ -83,6 +83,62 @@ print_test(test_encrypt aead_encrypt,
   return ok;
 }
 
+// -----------------------------------------------------------------------------
+
+TEST(ApiSuite, ApiTest)
+{
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // START OneShot
+    // Note: This is only an example, and you must bring your own random.
+
+    // Create a key ...
+    uint8_t key[32];
+    generate_random(key, 32);
+
+    // ... and a nonce.
+    uint8_t nonce[12];
+    generate_random(nonce, 12);
+
+    // We don't authenticate additional data in this example.
+    const char* aad = "";
+    const uint32_t aad_len = strlen(aad);
+
+    // This is our message.
+    const char* msg = "Hello, World!";
+    const uint32_t msg_len = strlen(msg);
+
+    // We need to allocate the same amount of memory for the ciphertext as for the plaintext ...
+    uint8_t* cipher = (uint8_t*)malloc(msg_len);
+    // ... and also need to provide additional memory for the mac.
+    // Note that encyption and decryption can also be done in-place, i.e., cipher and plaintext can
+    // point to the same memory.
+    uint8_t mac[16];
+
+    // Encryption.
+    Hacl_Chacha20Poly1305_32_aead_encrypt(
+      key, nonce, aad_len, (uint8_t*)aad, msg_len, (uint8_t*)msg, cipher, mac);
+
+    // Decryption.
+    // Allocate the same amount of memory for the recovered message as for the ciphertext.
+    uint8_t* recovered = (uint8_t*)malloc(msg_len);
+
+    uint32_t res = Hacl_Chacha20Poly1305_32_aead_decrypt(
+      key, nonce, aad_len, (uint8_t*)aad, msg_len, (uint8_t*)recovered, cipher, mac);
+
+    if (res == 0) {
+      printf("Decryption successful.");
+    }
+
+    free(recovered);
+    free(cipher);
+    // END OneShot
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 class Chacha20Poly1305Testing
   : public ::testing::TestWithParam<chacha20poly1305_test_vector>
 {};
