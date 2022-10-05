@@ -117,7 +117,6 @@ TEST(ApiSuite, ApiTest)
     // Encryption.
     Hacl_Chacha20Poly1305_32_aead_encrypt(
       key, nonce, aad_len, (uint8_t*)aad, msg_len, (uint8_t*)msg, cipher, mac);
-    printf("Encryption successful.");
 
     // Decryption.
     // Allocate the same amount of memory for the recovered message as for the ciphertext.
