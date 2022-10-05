@@ -71,6 +71,7 @@ The first argument `k` is a pointer to the AEAD key (the length of this array MU
 `mlen` is the length of the input array `m`;
 the output ciphertext also has `mlen` bytes and is stored in `cipher`;
 the output tag has a length of 16 bytes and is stored in `mac`.
+Note that encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.
 
 -------------------------------------------------------------------------------
 
@@ -102,5 +103,6 @@ The arguments `k`, `n`, `aadlen`, and `aad` are the same as in encryption.
 The next argument `mlen` is the length of the input ciphertext cipher and `mac` holds the input tag.
 If decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.
 If decryption fails, the array `m` remains unchanged and the function returns the error code 1.
+Note that encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.
 
 [rfc 8439]: https://www.rfc-editor.org/rfc/rfc8439.html

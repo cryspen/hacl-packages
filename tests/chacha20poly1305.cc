@@ -112,6 +112,8 @@ TEST(ApiSuite, ApiTest)
     // We need to allocate the same amount of memory for the ciphertext as for the plaintext ...
     uint8_t* cipher = (uint8_t*)malloc(msg_len);
     // ... and also need to provide additional memory for the mac.
+    // Note that encyption and decryption can also be done in-place, i.e., cipher and plaintext can
+    // point to the same memory.
     uint8_t mac[16];
 
     // Encryption.
