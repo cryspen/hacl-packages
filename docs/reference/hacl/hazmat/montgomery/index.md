@@ -1,6 +1,6 @@
-# Generic Field
+# Montgomery Field Arithmetic
 
-A verified field arithmetic library.
+A verified Montgomery field arithmetic library.
 
 HACL Packages comes with two versions, a 32-bit optimized version, where bignums are represented as an array of `len` unsigned 32-bit integers, i.e., `uint32_t[len]` and a 64-bit optimized version.
 

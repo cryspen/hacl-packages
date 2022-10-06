@@ -4,6 +4,6 @@
 :caption: "Hazmat:"
 
 bignum/index
-genericfield/index
+montgomery/index
 ```
 
