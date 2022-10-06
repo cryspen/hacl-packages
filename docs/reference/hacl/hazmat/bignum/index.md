@@ -15,17 +15,17 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ```````{tabs}
 ``````{group-tab} 32
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```C
 #include "Hacl_Bignum32.h"
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```C
 #include "Hacl_Bignum256_32.h"
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```C
 #include "Hacl_Bignum4096_32.h"
 ```
@@ -34,17 +34,17 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ``````
 ``````{group-tab} 64
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```C
 #include "Hacl_Bignum64.h"
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```C
 #include "Hacl_Bignum256.h"
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```C
 #include "Hacl_Bignum4096.h"
 ```
@@ -58,21 +58,21 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ```````{tabs}
 ``````{group-tab} 32
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum32_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum32_new_bn_from_bytes_le
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_32_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum256_32_new_bn_from_bytes_le
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_32_new_bn_from_bytes_be
 ```
 
@@ -83,21 +83,21 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ``````
 ``````{group-tab} 64
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum64_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum64_new_bn_from_bytes_le
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum256_new_bn_from_bytes_le
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_new_bn_from_bytes_be
 ```
 
@@ -113,7 +113,7 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ```````{tabs}
 ``````{group-tab} 32
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum32_bn_to_bytes_be
 ```
 
@@ -153,7 +153,7 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 Note: There is no `mod_inv_prime_consttime` version.
 
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_32_bn_to_bytes_be
 ```
 
@@ -193,7 +193,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 Note: There is no `mod_inv_prime_consttime` version.
 
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_32_bn_to_bytes_be
 ```
 
@@ -237,7 +237,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ``````
 ``````{group-tab} 64
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum64_bn_to_bytes_be
 ```
 
@@ -276,7 +276,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 
 Note: There is no `mod_inv_prime_consttime` version.
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_bn_to_bytes_be
 ```
 
@@ -315,7 +315,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 
 Note: There is no `mod_inv_prime_consttime` version.
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_bn_to_bytes_be
 ```
 
@@ -363,21 +363,21 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```````{tabs}
 ``````{group-tab} 32
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum32_lt_mask
 ```
 
 ```{doxygenfunction} Hacl_Bignum32_eq_mask
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_32_lt_mask
 ```
 
 ```{doxygenfunction} Hacl_Bignum256_32_eq_mask
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_32_lt_mask
 ```
 
@@ -388,21 +388,21 @@ Note: There is no `mod_inv_prime_consttime` version.
 ``````
 ``````{group-tab} 64
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum64_lt_mask
 ```
 
 ```{doxygenfunction} Hacl_Bignum64_eq_mask
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_lt_mask
 ```
 
 ```{doxygenfunction} Hacl_Bignum256_eq_mask
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_lt_mask
 ```
 
@@ -425,7 +425,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygentypedef} Hacl_Bignum32_pbn_mont_ctx_u32
 ```
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 
 ```{doxygenfunction} Hacl_Bignum32_mont_ctx_init
 ```
@@ -445,7 +445,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygenfunction} Hacl_Bignum32_mod_inv_prime_vartime_precomp
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_32_mont_ctx_init
 ```
 
@@ -464,7 +464,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygenfunction} Hacl_Bignum256_32_mod_inv_prime_vartime_precomp
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_32_mont_ctx_init
 ```
 
@@ -489,7 +489,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygentypedef} Hacl_Bignum64_pbn_mont_ctx_u64
 ```
 `````{tabs}
-````{group-tab} Generic Integers
+````{group-tab} General-Purpose
 ```{doxygenfunction} Hacl_Bignum64_mont_ctx_init
 ```
 
@@ -508,7 +508,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygenfunction} Hacl_Bignum64_mod_inv_prime_vartime_precomp
 ```
 ````
-````{group-tab} 256-Bit Integers
+````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_mont_ctx_init
 ```
 
@@ -527,7 +527,7 @@ Note: There is no `mod_inv_prime_consttime` version.
 ```{doxygenfunction} Hacl_Bignum256_mod_inv_prime_vartime_precomp
 ```
 ````
-````{group-tab} 4096-Bit Integers
+````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_mont_ctx_init
 ```
 
