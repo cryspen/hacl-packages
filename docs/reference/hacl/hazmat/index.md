@@ -3,6 +3,7 @@
 ```{toctree}
 :caption: "Hazmat:"
 
-bignum
+bignum/index
+genericfield/index
 ```
 
