@@ -7,6 +7,7 @@
 aead/index
 hash/index
 dh/index
+kdf/index
 mac/index
 randomness/index
 ```
