@@ -8,5 +8,6 @@ aead/index
 hash/index
 dh/index
 mac/index
+randomness/index
 ```
 
