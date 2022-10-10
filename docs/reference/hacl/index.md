@@ -16,5 +16,6 @@ mac/index
 kdf/index
 randomness/index
 hazmat/index
+nacl/index
 ```
 
