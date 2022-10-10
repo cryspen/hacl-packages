@@ -1,9 +1,9 @@
 # Diffie-Hellman
 
 ```{toctree}
-:caption: "Contents:"
+:maxdepth: 3
+:caption: "EverCrypt:"
 
 ec/index
-ff/index
 ```
 

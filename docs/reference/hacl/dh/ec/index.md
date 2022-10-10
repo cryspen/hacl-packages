@@ -1,9 +1,9 @@
-# Diffie-Hellman
+# Elliptic-Curve
 
 ```{toctree}
 :caption: "Contents:"
 
-ec/index
-ff/index
+curve25519
+p256
 ```
 
