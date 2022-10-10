@@ -1,6 +1,6 @@
 # AEAD
 
-EverCrypt provides multiple Authenticated Encryption with Assosiated Data (AEAD) algorithms, i.e., ...
+EverCrypt provides multiple Authenticated Encryption with Associated Data (AEAD) algorithms, i.e., ...
 
 * ChaCha20Poly1305,
 * AES128-GCM, and
