@@ -15,5 +15,6 @@ dh/index
 mac/index
 kdf/index
 hazmat/index
+nacl/index
 ```
 
