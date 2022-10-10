@@ -17,9 +17,7 @@ HACL Packages supports the following ones:
 
 Keys must be chosen using a cryptographically strong pseudo-random generator and periodically refreshed.
 
-# HMAC
-
-## API Reference
+### API Reference
 
 ```C
 #include "Hacl_Spec.h"
@@ -59,7 +57,7 @@ The length of `dst` depends on the output length of the used hash algorithm (see
 
 --------------------------------------------------------------------------------
 
-# BLAKE2b
+#### BLAKE2b
 
 ```{doxygenfunction} EverCrypt_HMAC_compute_blake2b
 ```
@@ -69,7 +67,7 @@ The key can be any length and will be hashed if it is longer and padded if it is
 
 --------------------------------------------------------------------------------
 
-# BLAKE2s
+#### BLAKE2s
 
 
 ```{doxygenfunction} EverCrypt_HMAC_compute_blake2s
@@ -80,7 +78,7 @@ The key can be any length and will be hashed if it is longer and padded if it is
 
 --------------------------------------------------------------------------------
 
-# SHA-2
+#### SHA-2
 
 ```{doxygenfunction} EverCrypt_HMAC_compute_sha2_256
 ```
@@ -102,7 +100,7 @@ The key can be any length and will be hashed if it is longer and padded if it is
 
 --------------------------------------------------------------------------------
 
-# SHA-1
+#### SHA-1
 
 ```{doxygenfunction} EverCrypt_HMAC_compute_sha1
 ```
