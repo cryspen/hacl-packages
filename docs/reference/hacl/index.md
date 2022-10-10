@@ -14,6 +14,7 @@ signature/index
 dh/index
 mac/index
 kdf/index
+randomness/index
 hazmat/index
 ```
 
