@@ -2,7 +2,13 @@
 
 ## DRBG
 
+Deterministic Random Bit Generator (DRBG) (NIST, SP 800-90A).
+
 ### API Reference
+
+```C
+#include "EverCrypt_DRBG.h"
+```
 
 #### Variables
 
