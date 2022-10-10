@@ -6,7 +6,7 @@ Key derivation functions (KDFs) are used to derive cryptographically strong keys
 
 HMAC-based Extract-and-Expand Key Derivation Function (HKDF) [RFC 5869].
 
-Similar to [RFC 5869], the following descriptions use the term `HashLen` to denote the output length of the hash function of a concrete innstantiation of HKDF.
+Similar to [RFC 5869], the following descriptions uses the term `HashLen` to denote the output length of the hash function of a concrete instantiation of HKDF.
 
 The following instantiations are supported:
 

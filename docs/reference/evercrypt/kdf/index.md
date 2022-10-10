@@ -8,7 +8,7 @@ Key derivation functions (KDFs) are used to derive cryptographically strong keys
 
 HMAC-based Extract-and-Expand Key Derivation Function (HKDF) [RFC 5869].
 
-Similar to [RFC 5869], the following descriptions use the term `HashLen` to denote the output length of the hash function of a concrete innstantiation of HKDF.
+Similar to [RFC 5869], the following descriptions uses the term `HashLen` to denote the output length of the hash function of a concrete instantiation of HKDF.
 
 The following instantiations are supported:
 
@@ -44,7 +44,7 @@ Extract a fixed-length pseudorandom key from input keying material.
 
 Expand pseudorandom key to desired length.
 
-* `a`
+* `a` Hash function to use. Usually, the same as used in `EverCrypt_HKDF_extract`.
 * `okm` Pointer to `len` bytes of memory where output keying material is written to.
 * `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
 * `prklen` Length of pseudorandom key.
