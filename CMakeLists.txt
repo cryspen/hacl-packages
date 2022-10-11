@@ -487,7 +487,7 @@ if(ENABLE_BENCHMARKS)
         # Be nice to MSVC and make sure we don't have variable length arrays in
         # benchmarks
         if(NOT MSVC)
-            target_compile_options(${BENCH_NAME} PRIVATE -Werror=vla -std=c++20)
+            target_compile_options(${BENCH_NAME} PRIVATE -Werror=vla -std=c++17)
         else()
             # MSVC needs a modern C++ for designated initializers.
             target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
