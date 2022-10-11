@@ -82,6 +82,7 @@ jobs:
         with:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
+          args: "--no-openssl" # Ubuntu 20.04 doesn't have OpenSSL3
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
