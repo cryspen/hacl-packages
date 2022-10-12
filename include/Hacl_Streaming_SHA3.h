@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __internal_Hacl_K256_ECDSA_H
-#define __internal_Hacl_K256_ECDSA_H
+#ifndef __Hacl_Streaming_SHA3_H
+#define __Hacl_Streaming_SHA3_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,29 +35,30 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "internal/Hacl_Krmllib.h"
-#include "../Hacl_K256_ECDSA.h"
+#include "Lib_Memzero0.h"
+#include "Hacl_Streaming_SHA2.h"
+#include "Hacl_SHA3.h"
 #include "evercrypt_targetconfig.h"
-#include "lib_intrinsics.h"
-bool Hacl_Impl_K256_Point_aff_point_decompress_vartime(uint64_t *x, uint64_t *y, uint8_t *s);
+typedef Hacl_Streaming_SHA2_state_sha2_384 Hacl_Streaming_SHA3_state_sha3_256;
 
-void Hacl_Impl_K256_Point_aff_point_compress_vartime(uint8_t *s, uint64_t *x, uint64_t *y);
+Hacl_Streaming_SHA2_state_sha2_384 *Hacl_Streaming_SHA3_create_in_256();
 
-void Hacl_Impl_K256_Point_point_negate(uint64_t *out, uint64_t *p);
+void Hacl_Streaming_SHA3_init_256(Hacl_Streaming_SHA2_state_sha2_384 *s);
 
-bool Hacl_Impl_K256_Point_point_eq(uint64_t *p, uint64_t *q);
+void
+Hacl_Streaming_SHA3_update_256(
+  Hacl_Streaming_SHA2_state_sha2_384 *p,
+  uint8_t *data,
+  uint32_t len
+);
 
-void Hacl_Impl_K256_PointDouble_point_double(uint64_t *out, uint64_t *p);
+void Hacl_Streaming_SHA3_finish_256(Hacl_Streaming_SHA2_state_sha2_384 *p, uint8_t *dst);
 
-void Hacl_Impl_K256_PointAdd_point_add(uint64_t *out, uint64_t *p, uint64_t *q);
-
-void Hacl_Impl_K256_PointMul_make_point_at_inf(uint64_t *p);
-
-void Hacl_Impl_K256_PointMul_point_mul(uint64_t *out, uint64_t *scalar, uint64_t *q);
+void Hacl_Streaming_SHA3_free_256(Hacl_Streaming_SHA2_state_sha2_384 *s);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_K256_ECDSA_H_DEFINED
+#define __Hacl_Streaming_SHA3_H_DEFINED
 #endif
