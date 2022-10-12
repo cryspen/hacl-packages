@@ -180,6 +180,10 @@
             {
                 "file": "Hacl_SHA3.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_Streaming_SHA3.c",
+                "features": "std"
             }
         ],
         "sha2": [
