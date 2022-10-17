@@ -47,3 +47,24 @@ All examples should be written as unit tests in the `tests` folder and can be in
 	:end-before: "// END OneShot"
 	```
 In CI, we use sphinx-multiversion to generate multiple versions of the documentation.
+
+## Updating from upstream
+The C code in this repository is generated from [hacl-star/hacl-star] (or [the
+Cryspen fork]).
+
+```
+./mach update -s <hacl-star-root>
+```
+
+Follow the checklist below to finish the update
+- add new files that are needed to
+  - git
+  - `config.json`
+- remove unused files with `git clean -f`
+- re-create config `./mach build -c --no-build`
+- update default condif `cp build/config.cmake config/default_config.cmake`
+
+When #12 is fully implemented most of these manual steps should not be needed anymore.
+
+[hacl-star/hacl-star]: https://github.com/hacl-star/hacl-star
+[the Cryspen fork]: https://github.com/cryspen/hacl-star
