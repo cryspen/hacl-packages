@@ -52,7 +52,7 @@ In CI, we use sphinx-multiversion to generate multiple versions of the documenta
 The C code in this repository is generated from [hacl-star/hacl-star] (or [the
 Cryspen fork]).
 
-```
+```sh
 ./mach update -s <hacl-star-root>
 ```
 
@@ -63,7 +63,7 @@ Follow the checklist below to finish the update
 - make sure the c89 folders are not changed (also see #233)
 - remove unused files with `git clean -f`
 - re-create config `./mach build -c --no-build`
-- update default condif `cp build/config.cmake config/default_config.cmake`
+- update default config `cp build/config.cmake config/default_config.cmake`
 
 When #12 is fully implemented most of these manual steps should not be needed anymore.
 
