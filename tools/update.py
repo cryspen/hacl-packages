@@ -224,12 +224,13 @@ def update(args):
     """
     editions = [
         ("std", join_path(hacl_dist, "gcc-compatible"), src_path, include_path),
-        (
-            "c89",
-            join_path(hacl_dist, "c89-compatible"),
-            join_path(src_path, "c89"),
-            join_path(include_path, "c89"),
-        ),
+        # #233 Don't update c89 for now.
+        # (
+        #     "c89",
+        #     join_path(hacl_dist, "c89-compatible"),
+        #     join_path(src_path, "c89"),
+        #     join_path(include_path, "c89"),
+        # ),
         (
             "msvc",
             join_path(hacl_dist, "msvc-compatible"),
