@@ -28,6 +28,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Cache Setup
+        id: cache-ocaml-setup
+        uses: actions/cache@v3
+        with:
+          path: ~/.opam
+          key: ${{ runner.os }}-ocaml-setup
+
       # sphinx-multiversion uses tags to build
       # the documentation in multiple versions.
       - name: Checkout | Fetch tags
@@ -35,20 +42,25 @@ jobs:
 
       - name: Setup | mdBook | 1/2
         uses: hecrj/setup-rust-action@master
-      
+
       - name: Setup | mdBook | 2/2
         uses: peaceiris/actions-mdbook@v1
         with:
-          mdbook-version: 'latest'
+          mdbook-version: "latest"
 
       - name: Setup | Update
         run: sudo apt-get update
 
-      - name: Setup | Doxygen
-        run: sudo apt-get install doxygen
+      - name: Setup | Ubuntu
+        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev
 
-      - name: Setup | Sphinx
-        run: sudo apt-get install python3-sphinx
+      - name: OCaml Setup
+        if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
+        run: |
+          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
+          opam switch create 4.12.0 --yes
+          eval $(opam env)
+          opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Setup | Sphinx
         run: |
@@ -73,10 +85,17 @@ jobs:
           mkdir build/c
           sphinx-multiversion docs/reference build/c
 
+      - name: Build | OCaml API Reference
+        run: |
+          mkdir build/ocaml
+          ./opam.sh
+          cd opam
+          dune build @doc
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'build'
+          path: "build"
 
       - name: Deploy to GitHub Pages
         id: deployment
