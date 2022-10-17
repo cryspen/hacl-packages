@@ -60,6 +60,7 @@ Follow the checklist below to finish the update
 - add new files that are needed to
   - git
   - `config.json`
+- make sure the c89 folders are not changed (also see #233)
 - remove unused files with `git clean -f`
 - re-create config `./mach build -c --no-build`
 - update default condif `cp build/config.cmake config/default_config.cmake`
