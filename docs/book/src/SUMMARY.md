@@ -13,13 +13,13 @@
   - [build](./mach/build.md)
   - [test](./mach/test.md)
 
-# Bindings
+# Packages
 
 - [C](./hacl-c/readme.md)
 - [Rust](./hacl-rust/readme.md)
   - [AEADs](./hacl-rust/aead.md)
 - [OCaml](./hacl-ocaml/readme.md)
-- [JavaScript](./hacl-js/readme.md)
+<!-- - [JavaScript](./hacl-js/readme.md) -->
 
 # Developer Guide
 

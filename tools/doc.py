@@ -5,6 +5,7 @@
 #    * http://opensource.org/licenses/MIT
 
 import os
+import shutil
 import subprocess
 
 from tools.utils import check_cmd, mprint as print, subcommand
@@ -34,6 +35,16 @@ def doc(args):
     print("# Building C API Reference")
     os.makedirs("build/docs/c/main", exist_ok=True)
     subprocess.call(["sphinx-build", "docs/reference", "build/docs/c/main"])
+
+    print("# Building OCaml API Reference")
+    os.makedirs("build/docs/ocaml/main", exist_ok=True)
+    subprocess.call(["sh", "opam.sh"])
+    os.chdir("opam")
+    subprocess.call(["dune", "build", "@doc"])
+    os.chdir(backup)
+    shutil.copytree(
+        "opam/_build/default/_doc/_html", "build/docs/ocaml/main", dirs_exist_ok=True
+    )
 
     print("Finished.")
     print("")
