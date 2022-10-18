@@ -1,10 +1,11 @@
 {
-  "contributors": ["franziskuskiefer","karthikbhargavan","victor-dumitrescu","duesee"],
+  "contributors": ["franziskuskiefer","karthikbhargavan","victor-dumitrescu","duesee","pnmadelaine"],
   "message": "We require contributors to sign our Contributor License Agreement https://github.com/cryspen/hacl/blob/main/CLA.md ensuring that the contribution can be licensed under Apache 2.0 and MIT. In order for us to review and merge your code, please mention @cryspen/core in a comment below to get yourself added.",
   "hacl_affiliations": {
     "franziskuskiefer": "Cryspen",
     "karthikbhargavan": "Cryspen",
     "victor-dumitrescu": "Nomadic Labs SAS",
-    "duesee": "Cryspen"
+    "duesee": "Cryspen",
+    "pnmadelaine": "Inria - Prosecco"
   }
 }
