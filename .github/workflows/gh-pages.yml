@@ -51,10 +51,10 @@ jobs:
       - name: Setup | Update
         run: sudo apt-get update
 
-      - name: Setup | Ubuntu
+      - name: Setup | System
         run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev
 
-      - name: OCaml Setup
+      - name: Setup | OCaml
         if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
         run: |
           OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
