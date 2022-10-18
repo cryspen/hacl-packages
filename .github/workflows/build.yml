@@ -175,13 +175,13 @@ jobs:
     steps:
       - name: Setup | Developer Command Prompt (x86)
         if: ${{ matrix.bits == 32 }}
-        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
         with:
           arch: x86
 
       - name: Setup | Developer Command Prompt (x64)
         if: ${{ matrix.bits == 64 }}
-        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
         with:
           arch: x64
 
