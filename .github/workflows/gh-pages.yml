@@ -28,13 +28,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache Setup
-        id: cache-ocaml-setup-gh-pages
-        uses: actions/cache@v3
-        with:
-          path: ~/.opam
-          key: ${{ runner.os }}-ocaml-setup
-
       # sphinx-multiversion uses tags to build
       # the documentation in multiple versions.
       - name: Checkout | Fetch tags
@@ -55,7 +48,6 @@ jobs:
         run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev
 
       - name: Setup | OCaml
-        if: steps.cache-ocaml-setup-gh-pages.outputs.cache-hit != 'true'
         run: |
           OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
           opam switch create 4.12.0 --yes
