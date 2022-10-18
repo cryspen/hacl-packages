@@ -5,4 +5,4 @@ pydata-sphinx-theme
 sphinx-book-theme
 
 sphinx-tabs
-breathe
+breathe==4.33.1
