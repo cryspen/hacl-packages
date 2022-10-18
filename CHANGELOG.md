@@ -8,27 +8,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ### Added
 
-- ...
-
-### Changed
-
-- ...
-
-### Deprecated
-
-- ...
-
-### Removed
-
-- ...
-
-### Fixed
-
-- ...
-
-### Security
-
-- ...
+- Initial release of HACL Packages.
 
 [Unreleased]: https://github.com/cryspen/hacl-packages/compare/1ec5b559c8e4fb80da31528236e2d34e5d689e7f...HEAD
 
