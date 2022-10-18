@@ -39,7 +39,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
@@ -57,7 +57,7 @@ jobs:
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
@@ -91,7 +91,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         with:
@@ -110,7 +110,7 @@ jobs:
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
