@@ -57,7 +57,7 @@ jobs:
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
@@ -110,7 +110,7 @@ jobs:
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@674ff850cbd739c402260838fa45b7114f750570
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
