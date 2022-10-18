@@ -8,10 +8,18 @@ import os
 import shutil
 import subprocess
 
-from tools.utils import check_cmd, mprint as print, subcommand
+from tools.utils import argument, check_cmd, mprint as print, subcommand
 
 
-@subcommand([])
+@subcommand(
+    [
+        argument(
+            "--ocaml",
+            help="Build OCaml docs as well (requires dune).",
+            action="store_true",
+        )
+    ]
+)
 def doc(args):
     """Build the HACL Packages documentation"""
 
@@ -36,15 +44,19 @@ def doc(args):
     os.makedirs("build/docs/c/main", exist_ok=True)
     subprocess.call(["sphinx-build", "docs/reference", "build/docs/c/main"])
 
-    print("# Building OCaml API Reference")
-    os.makedirs("build/docs/ocaml/main", exist_ok=True)
-    subprocess.call(["sh", "opam.sh"])
-    os.chdir("opam")
-    subprocess.call(["dune", "build", "@doc"])
-    os.chdir(backup)
-    shutil.copytree(
-        "opam/_build/default/_doc/_html", "build/docs/ocaml/main", dirs_exist_ok=True
-    )
+    if args.ocaml:
+        check_cmd("dune", "--version")
+        print("# Building OCaml API Reference")
+        os.makedirs("build/docs/ocaml/main", exist_ok=True)
+        subprocess.call(["sh", "opam.sh"])
+        os.chdir("opam")
+        subprocess.call(["dune", "build", "@doc"])
+        os.chdir(backup)
+        shutil.copytree(
+            "opam/_build/default/_doc/_html",
+            "build/docs/ocaml/main",
+            dirs_exist_ok=True,
+        )
 
     print("Finished.")
     print("")
