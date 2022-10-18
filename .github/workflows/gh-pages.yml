@@ -45,7 +45,7 @@ jobs:
         run: sudo apt-get update
 
       - name: Setup | System
-        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev
+        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev ninja-build
 
       - name: Setup | OCaml
         run: |
@@ -79,10 +79,13 @@ jobs:
 
       - name: Build | OCaml API Reference
         run: |
-          mkdir build/ocaml
+          eval $(opam env)
+          mkdir -p build/ocaml/main
           ./opam.sh
           cd opam
+          opam install .  --yes
           dune build @doc
+          cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
