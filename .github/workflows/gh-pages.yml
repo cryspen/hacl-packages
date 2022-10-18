@@ -60,7 +60,7 @@ jobs:
           OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
           opam switch create 4.12.0 --yes
           eval $(opam env)
-          opam install --yes ocamlfind ctypes zarith cppo
+          opam install --yes ocamlfind odoc ctypes zarith cppo
 
       - name: Setup | Sphinx
         run: |
