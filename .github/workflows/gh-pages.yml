@@ -34,10 +34,10 @@ jobs:
         run: git fetch --tags origin
 
       - name: Setup | mdBook | 1/2
-        uses: hecrj/setup-rust-action@master
+        uses: hecrj/setup-rust-action@8708beccd22540a3f955ae10cc884af27ca81bf5
 
       - name: Setup | mdBook | 2/2
-        uses: peaceiris/actions-mdbook@v1
+        uses: peaceiris/actions-mdbook@95fa0b43bb4df9178b134e9e8276936599baa799
         with:
           mdbook-version: "latest"
 

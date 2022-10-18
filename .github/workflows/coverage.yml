@@ -66,7 +66,7 @@ jobs:
           args: --coverage
 
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@3284643be2c47fb6432518ecec17f1255e8a06a6
         with:
           path-to-lcov: build/Debug/coverage/full/full.lcov
           github-token: ${{ secrets.GITHUB_TOKEN }}
