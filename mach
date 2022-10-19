@@ -64,9 +64,6 @@ def _install(prefix=None, config="Release"):
     [
         argument("-p", "--prefix", help="The path prefix to install into.", type=str),
         argument("--debug", help="Install a debug build.", action="store_true"),
-        argument(
-            "--release", help="Install a release build. (default)", action="store_true"
-        ),
     ]
 )
 def install(args):
