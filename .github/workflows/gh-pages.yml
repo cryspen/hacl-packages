@@ -37,7 +37,7 @@ jobs:
         uses: hecrj/setup-rust-action@8708beccd22540a3f955ae10cc884af27ca81bf5
 
       - name: Setup | mdBook | 2/2
-        uses: peaceiris/actions-mdbook@95fa0b43bb4df9178b134e9e8276936599baa799
+        uses: peaceiris/actions-mdbook@4b5ef36b314c2599664ca107bb8c02412548d79d
         with:
           mdbook-version: "latest"
 
