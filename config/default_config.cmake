@@ -32,7 +32,6 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA3.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Scalar32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_MD5.c
@@ -139,21 +138,26 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Ed25519.h
+	${PROJECT_SOURCE_DIR}/include/internal/../evercrypt_targetconfig.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Lib_Memzero0.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Impl_Blake2_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2.h
+	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../libintvector.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
@@ -200,20 +204,23 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum_Base.h
+	${PROJECT_SOURCE_DIR}/include/internal/../lib_intrinsics.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA1.h
@@ -253,6 +260,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Lib_RandomBuffer_System.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
@@ -289,17 +298,22 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_Blake2_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA1.h
+	${PROJECT_SOURCE_DIR}/include/internal/../evercrypt_targetconfig.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Lib_Memzero0.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Impl_Blake2_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2.h
+	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../libintvector.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
@@ -338,18 +352,21 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64_Slow.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum_Base.h
+	${PROJECT_SOURCE_DIR}/include/internal/../lib_intrinsics.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_MD5.h
@@ -385,6 +402,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Lib_RandomBuffer_System.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
