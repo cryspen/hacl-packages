@@ -67,10 +67,6 @@ def _install(prefix=None, config="Release"):
     ]
 )
 def install(args):
-    if args.debug and args.release:
-        print("Can't use `--debug` and `--release` at the same time.")
-        exit(1)
-
     # "Release" is the default in `_install`.
     if args.debug:
         # Thus, we only pass a "Debug" config when asked for ...
