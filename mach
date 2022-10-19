@@ -9,13 +9,14 @@
 # The mach driver for HACL.
 
 
-from ast import arg
 import os
 import pathlib
 import re
 import shutil
 import subprocess
 import sys
+from ast import arg
+
 from tools.benchmark import run_benchmarks
 
 from tools.configure import Config
@@ -42,30 +43,38 @@ from tools.utils import (
 # === SUBCOMMANDS === #
 
 
-def _install(prefix=None, config=None):
-    configuration = "Debug"
-    if config:
-        configuration = config
-    cmake_cmd = ["cmake", "--install", "build", "--config", configuration]
+def _install(prefix=None, config="Release"):
+    cmake_cmd = ["cmake", "--install", "build", "--config", config]
     if prefix:
         cmake_cmd.extend(["--prefix", prefix])
     print(cmake_cmd)
-    subprocess.run(cmake_cmd, check=True)
+    if subprocess.call(cmake_cmd) == 1:
+        print("`cmake --install` returned with an error.")
+        if config == "Debug":
+            print(
+                "Please make sure to run `./mach build` before `./mach install --debug`."
+            )
+        else:
+            print(
+                "Please make sure to run `./mach build --release` before `./mach install`."
+            )
 
 
 @subcommand(
     [
         argument("-p", "--prefix", help="The path prefix to install into.", type=str),
-        argument(
-            "-c",
-            "--config",
-            help="The config to install, i.e. Debug or Release.",
-            type=str,
-        ),
+        argument("--debug", help="Install a debug build.", action="store_true"),
     ]
 )
 def install(args):
-    _install(prefix=args.prefix, config=args.config)
+    # "Release" is the default in `_install`.
+    if args.debug:
+        # Thus, we only pass a "Debug" config when asked for ...
+        print("Note: You are installing a debug build.")
+        _install(prefix=args.prefix, config="Debug")
+    else:
+        # ... and stick to the default when not.
+        _install(prefix=args.prefix)
 
 
 @subcommand(
@@ -75,7 +84,11 @@ def install(args):
         argument("--test", help="Build and run tests.", action="store_true"),
         argument("--benchmarks", help="Build benchmarks.", action="store_true"),
         argument("--benchmark", help="Build and run benchmarks.", action="store_true"),
-        argument("--no-openssl", help="Don't build and run OpenSSL benchmarks.", action="store_true"),
+        argument(
+            "--no-openssl",
+            help="Don't build and run OpenSSL benchmarks.",
+            action="store_true",
+        ),
         argument("-r", "--release", help="Build in release mode.", action="store_true"),
         argument(
             "-a",
