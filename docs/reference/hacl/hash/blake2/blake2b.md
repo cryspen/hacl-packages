@@ -3,10 +3,34 @@
 BLAKE2b is optimized for 64-bit platforms and produces digests of any size between 1 and 64 bytes.
 It also has a build-in keying mechanism so that it can be used to replace HMAC-based constructions.
 
+## Example
+
+The following example shows how to use the one-shot API with the base implementation (32) of BLAKE2b.
+
+```{literalinclude} ../../../../../tests/blake2b.cc
+:language: C
+:dedent:
+:start-after: "// API EXAMPLE INCLUDE START"
+:end-before: "// API EXAMPLE INCLUDE END"
+```
+
+```{literalinclude} ../../../../../tests/blake2b.cc
+:language: C
+:dedent:
+:start-after: "// API EXAMPLE HEX START"
+:end-before: "// API EXAMPLE HEX END"
+```
+
+```{literalinclude} ../../../../../tests/blake2b.cc
+:language: C
+:dedent:
+:start-after: "// API EXAMPLE CODE START"
+:end-before: "// API EXAMPLE CODE END"
+```
+
 ## API Reference
 
 ### One-Shot
-
 
 `````{tabs}
 ````{group-tab} 32
