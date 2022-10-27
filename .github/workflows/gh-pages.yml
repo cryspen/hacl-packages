@@ -83,7 +83,7 @@ jobs:
           ./opam.sh
           cd opam
           eval $(opam env)
-          opam install . --yes
+          opam install . --yes --assume-depexts
           dune build @doc
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
