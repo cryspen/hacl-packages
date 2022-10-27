@@ -4,13 +4,13 @@ version: "0.5.0"
 synopsis: "OCaml API for EverCrypt/HACL*"
 description: """
 Documentation for this library can be found
-[here](https://hacl-star.github.io/ocaml_doc/hacl-star/index.html).
+[here](https://tech.cryspen.com/hacl-packages/ocaml/main/index.html).
 """
 maintainer: "Victor Dumitrescu <victor.dumitrescu@nomadic-labs.com>"
 authors: [ "Project Everest" ]
 license: "Apache-2.0"
 homepage: "https://hacl-star.github.io/"
-doc: "https://hacl-star.github.io/ocaml_doc"
+doc: "https://tech.cryspen.com/hacl-packages/ocaml/main/index.html"
 bug-reports: "https://github.com/project-everest/hacl-star/issues"
 depends: [
   "ocaml" { >= "4.08.0" }

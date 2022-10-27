@@ -84,7 +84,7 @@ jobs:
           cd opam
           eval $(opam env)
           opam install . --yes --assume-depexts
-          dune build @doc
+          dune build @doc --only-packages=hacl-star
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
       - name: Upload artifact

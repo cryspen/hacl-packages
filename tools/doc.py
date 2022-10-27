@@ -50,7 +50,7 @@ def doc(args):
         os.makedirs("build/docs/ocaml/main", exist_ok=True)
         subprocess.call(["sh", "opam.sh"])
         os.chdir("opam")
-        subprocess.call(["dune", "build", "@doc"])
+        subprocess.call(["dune", "build", "@doc", "--only-packages=hacl-star"])
         os.chdir(backup)
         shutil.copytree(
             "opam/_build/default/_doc/_html",
