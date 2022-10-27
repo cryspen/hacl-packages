@@ -49,7 +49,7 @@ jobs:
 
       - name: Setup | OCaml
         run: |
-          OPAMYES=true opam init --auto-setup --disable-sandboxing --yes --bare
+          opam init --auto-setup --disable-sandboxing --yes --bare
           opam switch create 4.12.0 --yes
           eval $(opam env)
           opam install --yes ocamlfind odoc ctypes zarith cppo dune
@@ -79,11 +79,11 @@ jobs:
 
       - name: Build | OCaml API Reference
         run: |
-          eval $(opam env)
           mkdir -p build/ocaml/main
           ./opam.sh
           cd opam
-          opam install .  --yes
+          eval $(opam env)
+          opam install . --yes
           dune build @doc
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
