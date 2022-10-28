@@ -94,7 +94,7 @@ jobs:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
-    runs-on: macos-latest
+    runs-on: macos-11
     strategy:
       matrix:
         compiler: [gcc, clang]
