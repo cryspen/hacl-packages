@@ -50,13 +50,13 @@ matrix:
 |--------------------------|----------------------------------|-------------------|
 | **Tier 1**               |                                  |                   |
 | Linux (ubuntu-latest)    | gcc (7-11), clang (7-12)         | x86\_64, i686     |
-| macOS (macos-latest)     | gcc (9-12), clang (11-14)        | x86\_64           |
+| macOS (macos-11)     | gcc (9-12), clang (11-14)        | x86\_64           |
 | Windows (windows-latest) | clang-cl (latest), msvc (latest) | x86\_64, i686     |
 | **Tier 2**               |                                  |                   |
 | Linux (ubuntu-latest)    | gcc (9-12), clang (11-14)        | aarch64           |
-| macOS (macos-latest)     | gcc (9-12), clang (11-14)        | aarch64           |
+| macOS (macos-11)     | gcc (9-12), clang (11-14)        | aarch64           |
 | Android (ubuntu-latest)  | gcc (latest)                     | aarch64           |
-| iOS (macos-latest)       | gcc (9-12), clang (11-14)        | aarch64           |
+| iOS (macos-11)       | gcc (9-12), clang (11-14)        | aarch64           |
 | Linux (ubuntu-latest)    | gcc (latest)                     | s390x             |
 
 Furthermore, on Linux, we test different "editions" of the C programming language, i.e., "msvc".
