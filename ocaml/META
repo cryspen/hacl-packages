@@ -1,5 +1,5 @@
 name="hacl-star-raw"
-version="0.5.0"
+version="0.6.0"
 description="EverCrypt with Ctypes bindings"
 requires="ctypes"
 archive(native)="ocamlevercrypt.cmxa"

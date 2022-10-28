@@ -33,7 +33,7 @@ endif()
 
 # Library version and name
 project(hacl
-    VERSION 0.1.0
+    VERSION 0.6.0
     DESCRIPTION "The High Assurance Crypto Library"
     LANGUAGES C CXX
 )
@@ -45,7 +45,7 @@ else()
     enable_language(ASM)
 endif()
 
-set(hacl_VERSION_TWEAK "alpha.1")
+set(hacl_VERSION_TWEAK "")
 
 # Load global config from exteral file.
 # This file must be generated before running cmake with ./mach.py --configure
