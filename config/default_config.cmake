@@ -5,7 +5,6 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_51.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Spec.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA1.c
@@ -32,6 +31,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA3.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Scalar32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_MD5.c
@@ -55,8 +55,6 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AutoConfig2.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Curve25519.c
-	${PROJECT_SOURCE_DIR}/src/EverCrypt_CTR.c
-	${PROJECT_SOURCE_DIR}/src/EverCrypt_Error.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_HKDF.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Cipher.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Chacha20Poly1305.c
@@ -145,6 +143,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2.h
@@ -163,10 +162,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
@@ -204,11 +201,13 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_K256_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_SHA2_Types.h
@@ -257,12 +256,11 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
+	${PROJECT_SOURCE_DIR}/include/EverCrypt_Error.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AutoConfig2.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Curve25519.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_CTR.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_Error.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HKDF.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Cipher.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Chacha20Poly1305.h
@@ -294,6 +292,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
@@ -309,10 +308,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_Base.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_IntTypes_Intrinsics_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum32.h
@@ -342,11 +339,13 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_K256_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
@@ -390,12 +389,11 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Hash.h
+	${PROJECT_SOURCE_DIR}/include/EverCrypt_Error.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AutoConfig2.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Curve25519.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_CTR.h
-	${PROJECT_SOURCE_DIR}/include/EverCrypt_Error.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_HKDF.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Cipher.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Chacha20Poly1305.h

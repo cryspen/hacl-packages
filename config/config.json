@@ -180,6 +180,10 @@
             {
                 "file": "Hacl_SHA3.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_Streaming_SHA3.c",
+                "features": "std"
             }
         ],
         "sha2": [
@@ -440,9 +444,6 @@
         ],
         "curve25519": [
             "EverCrypt_Curve25519.c"
-        ],
-        "ctr": [
-            "EverCrypt_CTR.c"
         ],
         "hkdf": [
             "EverCrypt_HKDF.c"
