@@ -38,6 +38,7 @@ extern "C" {
 #include "Hacl_Spec.h"
 #include "Hacl_Krmllib.h"
 #include "Hacl_Hash_SHA2.h"
+#include "Hacl_Bignum_Base.h"
 #include "evercrypt_targetconfig.h"
 #include "lib_intrinsics.h"
 
@@ -59,7 +60,7 @@ between various point representations, and ECDH key agreement.
   using one of the three combined hash-and-sign variants.
 */
 
-/*
+/**
 Hash the message with SHA2-256, then sign the resulting digest with the P256 signature function.
 
 Input: result buffer: uint8[64], 
@@ -80,7 +81,7 @@ Hacl_P256_ecdsa_sign_p256_sha2(
   uint8_t *k
 );
 
-/*
+/**
 Hash the message with SHA2-384, then sign the resulting digest with the P256 signature function.
 
 Input: result buffer: uint8[64], 
@@ -101,7 +102,7 @@ Hacl_P256_ecdsa_sign_p256_sha384(
   uint8_t *k
 );
 
-/*
+/**
 Hash the message with SHA2-512, then sign the resulting digest with the P256 signature function.
 
 Input: result buffer: uint8[64], 
@@ -122,7 +123,7 @@ Hacl_P256_ecdsa_sign_p256_sha512(
   uint8_t *k
 );
 
-/*
+/**
 P256 signature WITHOUT hashing first.
 
 This function is intended to receive a hash of the input. For convenience, we
@@ -165,7 +166,7 @@ Hacl_P256_ecdsa_sign_p256_without_hash(
 */
 
 
-/*
+/**
  The input of the function is considered to be public, 
   thus this code is not secret independent with respect to the operations done over the input.
   
@@ -185,7 +186,7 @@ Hacl_P256_ecdsa_verif_p256_sha2(
   uint8_t *s
 );
 
-/*
+/**
   The input of the function is considered to be public, 
   thus this code is not secret independent with respect to the operations done over the input.
   
@@ -205,7 +206,7 @@ Hacl_P256_ecdsa_verif_p256_sha384(
   uint8_t *s
 );
 
-/*
+/**
   The input of the function is considered to be public, 
   thus this code is not secret independent with respect to the operations done over the input.
   
@@ -225,7 +226,7 @@ Hacl_P256_ecdsa_verif_p256_sha512(
   uint8_t *s
 );
 
-/*
+/**
  The input of the function is considered to be public, 
   thus this code is not secret independent with respect to the operations done over the input.
   
@@ -253,26 +254,19 @@ Hacl_P256_ecdsa_verif_without_hash(
 /******************/
 
 
-/*
+/**
 Validate a public key.
-
   
-  The input of the function is considered to be public, 
-  thus this code is not secret independent with respect to the operations done over the input.
-  
- Input: pub(lic)Key: uint8[64]. 
-  
- Output: bool, where 0 stands for the public key to be correct with respect to SP 800-56A:  
- Verify that the public key is not the “point at infinity”, represented as O. 
- Verify that the affine x and y coordinates of the point represented by the public key are in the range [0, p – 1] where p is the prime defining the finite field. 
- Verify that y2 = x3 + ax + b where a and b are the coefficients of the curve equation. 
- Verify that nQ = O (the point at infinity), where n is the order of the curve and Q is the public key point.
-  
- The last extract is taken from : https://neilmadden.blog/2017/05/17/so-how-do-you-validate-nist-ecdh-public-keys/
+  Input: pub(lic)Key: uint8[64].
+  Output: bool, where 0 stands for the public key to be correct with respect to SP 800-56A:
+    • Verify that the public key is not the “point at infinity”, represented as O.
+    • Verify that the affine x and y coordinates of the point represented by the public key are in the range [0, p – 1] where p is the prime defining the finite field.
+    • Verify that y^2 = x^3 + ax + b where a and b are the coefficients of the curve equation.
+  The last extract is taken from : https://neilmadden.blog/2017/05/17/so-how-do-you-validate-nist-ecdh-public-keys/
 */
 bool Hacl_P256_validate_public_key(uint8_t *pubKey);
 
-/*
+/**
 Validate a private key, e.g. prior to signing.
 
 Input: scalar: uint8[32].
@@ -297,7 +291,7 @@ bool Hacl_P256_validate_private_key(uint8_t *x);
 */
 
 
-/*
+/**
 Convert 65-byte uncompressed to raw.
 
 The function errors out if the first byte is incorrect, or if the resulting point is invalid.
@@ -312,7 +306,7 @@ The function errors out if the first byte is incorrect, or if the resulting poin
 */
 bool Hacl_P256_uncompressed_to_raw(uint8_t *b, uint8_t *result);
 
-/*
+/**
 Convert 33-byte compressed to raw.
 
 The function errors out if the first byte is incorrect, or if the resulting point is invalid.
@@ -325,7 +319,7 @@ Input: a point in compressed form (uint8[33]),
 */
 bool Hacl_P256_compressed_to_raw(uint8_t *b, uint8_t *result);
 
-/*
+/**
 Convert raw to 65-byte uncompressed.
 
 This function effectively prepends a 0x04 byte.
@@ -335,7 +329,7 @@ Input: a point buffer (internal representation: uint8[64]),
 */
 void Hacl_P256_raw_to_uncompressed(uint8_t *b, uint8_t *result);
 
-/*
+/**
 Convert raw to 33-byte compressed.
 
   Input: `b`, the pointer buffer in internal representation, of type `uint8[64]`
@@ -349,7 +343,7 @@ void Hacl_P256_raw_to_compressed(uint8_t *b, uint8_t *result);
 /* ECDH agreement */
 /******************/
 
-/*
+/**
 Convert a private key into a raw public key.
 
 This function performs no key validation.
@@ -364,7 +358,7 @@ This function performs no key validation.
 */
 bool Hacl_P256_dh_initiator(uint8_t *result, uint8_t *scalar);
 
-/*
+/**
 ECDH key agreement.
 
 This function takes a 32-byte secret key, another party's 64-byte raw public

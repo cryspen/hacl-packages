@@ -36,6 +36,7 @@ extern "C" {
 
 
 #include "Hacl_Krmllib.h"
+#include "Hacl_K256_PrecompTable.h"
 #include "Hacl_Hash_SHA2.h"
 #include "Hacl_Bignum_K256.h"
 #include "Hacl_Bignum_Base.h"
@@ -54,7 +55,7 @@ extern "C" {
 *******************************************************************************/
 
 
-/*
+/**
 Create an ECDSA signature.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
@@ -76,7 +77,7 @@ Hacl_K256_ECDSA_ecdsa_sign_hashed_msg(
   uint8_t *nonce
 );
 
-/*
+/**
 Create an ECDSA signature.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
@@ -98,7 +99,7 @@ Hacl_K256_ECDSA_ecdsa_sign_sha256(
   uint8_t *nonce
 );
 
-/*
+/**
 Verify an ECDSA signature.
 
   The function returns `true` if the signature is valid and `false` otherwise.
@@ -116,7 +117,7 @@ Verify an ECDSA signature.
 bool
 Hacl_K256_ECDSA_ecdsa_verify_hashed_msg(uint8_t *m, uint8_t *public_key, uint8_t *signature);
 
-/*
+/**
 Verify an ECDSA signature.
 
   The function returns `true` if the signature is valid and `false` otherwise.
@@ -136,7 +137,7 @@ Hacl_K256_ECDSA_ecdsa_verify_sha256(
   uint8_t *signature
 );
 
-/*
+/**
 Compute canonical lowest S value for `signature` (R || S).
 
   The function returns `true` for successful normalization of S and `false` otherwise.
@@ -145,7 +146,7 @@ Compute canonical lowest S value for `signature` (R || S).
 */
 bool Hacl_K256_ECDSA_secp256k1_ecdsa_signature_normalize(uint8_t *signature);
 
-/*
+/**
 Check whether `signature` (R || S) is in canonical form.
 
   The function returns `true` if S is low-S normalized and `false` otherwise.
@@ -154,7 +155,7 @@ Check whether `signature` (R || S) is in canonical form.
 */
 bool Hacl_K256_ECDSA_secp256k1_ecdsa_is_signature_normalized(uint8_t *signature);
 
-/*
+/**
 Create an ECDSA signature.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
@@ -176,7 +177,7 @@ Hacl_K256_ECDSA_secp256k1_ecdsa_sign_hashed_msg(
   uint8_t *nonce
 );
 
-/*
+/**
 Create an ECDSA signature.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
@@ -198,7 +199,7 @@ Hacl_K256_ECDSA_secp256k1_ecdsa_sign_sha256(
   uint8_t *nonce
 );
 
-/*
+/**
 Verify an ECDSA signature.
 
   The function returns `true` if the signature is valid and `false` otherwise.
@@ -220,7 +221,7 @@ Hacl_K256_ECDSA_secp256k1_ecdsa_verify_hashed_msg(
   uint8_t *signature
 );
 
-/*
+/**
 Verify an ECDSA signature.
 
   The function returns `true` if the signature is valid and `false` otherwise.
@@ -253,7 +254,7 @@ Hacl_K256_ECDSA_secp256k1_ecdsa_verify_sha256(
 *******************************************************************************/
 
 
-/*
+/**
 Convert a public key from uncompressed to its raw form.
 
   The function returns `true` for successful conversion of a public key and `false` otherwise.
@@ -265,7 +266,7 @@ Convert a public key from uncompressed to its raw form.
 */
 bool Hacl_K256_ECDSA_public_key_uncompressed_to_raw(uint8_t *pk_raw, uint8_t *pk);
 
-/*
+/**
 Convert a public key from raw to its uncompressed form.
 
   The outparam `pk` points to 65 bytes of valid memory, i.e., uint8_t[65].
@@ -275,7 +276,7 @@ Convert a public key from raw to its uncompressed form.
 */
 void Hacl_K256_ECDSA_public_key_uncompressed_from_raw(uint8_t *pk, uint8_t *pk_raw);
 
-/*
+/**
 Convert a public key from compressed to its raw form.
 
   The function returns `true` for successful conversion of a public key and `false` otherwise.
@@ -287,7 +288,7 @@ Convert a public key from compressed to its raw form.
 */
 bool Hacl_K256_ECDSA_public_key_compressed_to_raw(uint8_t *pk_raw, uint8_t *pk);
 
-/*
+/**
 Convert a public key from raw to its compressed form.
 
   The outparam `pk` points to 33 bytes of valid memory, i.e., uint8_t[33].
