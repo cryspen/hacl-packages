@@ -14,16 +14,28 @@ All memory for the output variables have to be allocated by the caller.
 `````{tabs}
 
 ````{group-tab} 32
+```c
+#include "Hacl_Chacha20Poly1305_32.h"
+```
+
 This implementation works on all CPUs.
 ````
 
 ````{group-tab} 128
+```c
+#include "Hacl_Chacha20Poly1305_128.h"
+```
+
 ```{note}
 Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
 ```
 ````
 
 ````{group-tab} 256
+```c
+#include "Hacl_Chacha20Poly1305_256.h"
+```
+
 ```{note}
 Support for VEC256 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
 ```
