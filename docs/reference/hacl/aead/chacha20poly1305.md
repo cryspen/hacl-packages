@@ -26,9 +26,7 @@ This implementation works on all CPUs.
 #include "Hacl_Chacha20Poly1305_128.h"
 ```
 
-```{note}
 Support for VEC128 is needed. Please see the [HACL Packages book].
-```
 ````
 
 ````{group-tab} 256
@@ -36,9 +34,7 @@ Support for VEC128 is needed. Please see the [HACL Packages book].
 #include "Hacl_Chacha20Poly1305_256.h"
 ```
 
-```{note}
 Support for VEC256 is needed. Please see the [HACL Packages book].
-```
 ````
 `````
 
