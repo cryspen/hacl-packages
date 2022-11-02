@@ -27,7 +27,7 @@ This implementation works on all CPUs.
 ```
 
 ```{note}
-Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+Support for VEC128 is needed. Please see the [HACL Packages book].
 ```
 ````
 
@@ -37,7 +37,7 @@ Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/h
 ```
 
 ```{note}
-Support for VEC256 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+Support for VEC256 is needed. Please see the [HACL Packages book].
 ```
 ````
 `````
@@ -117,4 +117,5 @@ If decryption succeeds, the resulting plaintext is stored in `m` and the functio
 If decryption fails, the array `m` remains unchanged and the function returns the error code 1.
 Note that encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.
 
+[hacl packages book]: https://tech.cryspen.com/hacl-packages/algorithms.html
 [rfc 8439]: https://www.rfc-editor.org/rfc/rfc8439.html
