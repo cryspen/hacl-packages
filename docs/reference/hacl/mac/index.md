@@ -27,15 +27,11 @@ This implementation works on any CPU.
 ````
 
 ````{group-tab} 128
-```{note}
 Support for VEC128 is needed. Please see the [HACL Packages book].
-```
 ````
 
 ````{group-tab} 256
-```{note}
 Support for VEC256 is needed. Please see the [HACL Packages book].
-```
 ````
 `````
 
