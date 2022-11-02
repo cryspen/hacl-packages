@@ -28,13 +28,13 @@ This implementation works on any CPU.
 
 ````{group-tab} 128
 ```{note}
-Support for VEC128 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+Support for VEC128 is needed. Please see the [HACL Packages book].
 ```
 ````
 
 ````{group-tab} 256
 ```{note}
-Support for VEC256 is needed. Please see the <a href="https://tech.cryspen.com/hacl-packages/algorithms.html">HACL Packages book</a>.
+Support for VEC256 is needed. Please see the [HACL Packages book].
 ```
 ````
 `````
@@ -120,4 +120,5 @@ Write the HMAC-SHA-1 MAC of a message (`data`) by using a key (`key`) into `dst`
 The key can be any length and will be hashed if it is longer and padded if it is shorter than 64 byte.
 `dst` must point to 20 bytes of memory.
 
+[hacl packages book]: https://tech.cryspen.com/hacl-packages/algorithms.html
 [rfc 2104]: https://www.ietf.org/rfc/rfc2104.txt
