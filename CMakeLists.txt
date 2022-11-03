@@ -487,6 +487,15 @@ if(ENABLE_BENCHMARKS)
             target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
         endif(ENABLE_OPENSSL_BENCHMARKS)
 
+        if(ENABLE_LIBTOMCRYPT_BENCHMARKS)
+            if(DEFINED ENV{LIBTOMCRYPT_HOME})
+                target_include_directories(${BENCH_NAME} PUBLIC $ENV{LIBTOMCRYPT_HOME}/include/)
+                target_link_directories(${BENCH_NAME} PRIVATE $ENV{LIBTOMCRYPT_HOME}/lib)
+            endif()
+            target_link_libraries(${BENCH_NAME} PRIVATE tomcrypt)
+            target_compile_definitions(${BENCH_NAME} PUBLIC LIBTOMCRYPT)
+        endif(ENABLE_LIBTOMCRYPT_BENCHMARKS)
+
         # Use modern C++
         if(NOT MSVC)
             target_compile_options(${BENCH_NAME} PRIVATE -std=c++17)

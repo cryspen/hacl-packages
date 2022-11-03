@@ -9,6 +9,7 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+#include <openssl/sha.h>
 #endif
 
 #include <iomanip>

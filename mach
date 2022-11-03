@@ -89,6 +89,11 @@ def install(args):
             help="Don't build and run OpenSSL benchmarks.",
             action="store_true",
         ),
+        argument(
+            "--libtomcrypt",
+            help="Build and run LibTomCrypt benchmarks.",
+            action="store_true",
+        ),
         argument("-r", "--release", help="Build in release mode.", action="store_true"),
         argument(
             "-a",
@@ -320,6 +325,8 @@ def build(args):
         cmake_args.append("-DENABLE_BENCHMARKS=ON")
         if not args.no_openssl:
             cmake_args.append("-DENABLE_OPENSSL_BENCHMARKS=ON")
+        if args.libtomcrypt:
+            cmake_args.append("-DENABLE_LIBTOMCRYPT_BENCHMARKS=ON")
     if args.sanitizer:
         if windows:
             print("! Sanitizers are not supported on Windows.")
