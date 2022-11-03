@@ -123,8 +123,6 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal/LowStar_Endianness.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Salsa20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Krmllib.h
-	${PROJECT_SOURCE_DIR}/include/evercrypt_targetconfig.h
-	${PROJECT_SOURCE_DIR}/build/config.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Poly1305_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum25519_51.h
@@ -154,6 +152,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
+	${PROJECT_SOURCE_DIR}/build/config.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s_128.h
@@ -276,8 +275,6 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal/LowStar_Endianness.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Salsa20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Krmllib.h
-	${PROJECT_SOURCE_DIR}/include/evercrypt_targetconfig.h
-	${PROJECT_SOURCE_DIR}/build/config.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Poly1305_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum25519_51.h
@@ -301,6 +298,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
+	${PROJECT_SOURCE_DIR}/build/config.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s_128.h
