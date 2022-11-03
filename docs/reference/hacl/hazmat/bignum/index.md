@@ -64,6 +64,12 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 
 ```{doxygenfunction} Hacl_Bignum32_new_bn_from_bytes_le
 ```
+
+```{doxygenfunction} Hacl_Bignum32_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum32_bn_to_bytes_le
+```
 ````
 ````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_32_new_bn_from_bytes_be
@@ -71,12 +77,24 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 
 ```{doxygenfunction} Hacl_Bignum256_32_new_bn_from_bytes_le
 ```
+
+```{doxygenfunction} Hacl_Bignum256_32_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum256_32_bn_to_bytes_le
+```
 ````
 ````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_32_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum4096_32_new_bn_from_bytes_le
+```
+
+```{doxygenfunction} Hacl_Bignum4096_32_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum4096_32_bn_to_bytes_le
 ```
 ````
 `````
@@ -89,6 +107,12 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 
 ```{doxygenfunction} Hacl_Bignum64_new_bn_from_bytes_le
 ```
+
+```{doxygenfunction} Hacl_Bignum64_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum64_bn_to_bytes_le
+```
 ````
 ````{group-tab} Specialized to 256-Bit Integers
 ```{doxygenfunction} Hacl_Bignum256_new_bn_from_bytes_be
@@ -96,12 +120,24 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 
 ```{doxygenfunction} Hacl_Bignum256_new_bn_from_bytes_le
 ```
+
+```{doxygenfunction} Hacl_Bignum256_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum256_bn_to_bytes_le
+```
 ````
 ````{group-tab} Specialized to 4096-Bit Integers
 ```{doxygenfunction} Hacl_Bignum4096_new_bn_from_bytes_be
 ```
 
 ```{doxygenfunction} Hacl_Bignum4096_new_bn_from_bytes_le
+```
+
+```{doxygenfunction} Hacl_Bignum4096_bn_to_bytes_be
+```
+
+```{doxygenfunction} Hacl_Bignum4096_bn_to_bytes_le
 ```
 ````
 `````
@@ -114,12 +150,6 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 ``````{group-tab} 32
 `````{tabs}
 ````{group-tab} General-Purpose
-```{doxygenfunction} Hacl_Bignum32_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum32_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum32_add
 ```
 
@@ -154,12 +184,6 @@ Note: There is no `mod_inv_prime_consttime` version.
 
 ````
 ````{group-tab} Specialized to 256-Bit Integers
-```{doxygenfunction} Hacl_Bignum256_32_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum256_32_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum256_32_add
 ```
 
@@ -194,12 +218,6 @@ Note: There is no `mod_inv_prime_consttime` version.
 
 ````
 ````{group-tab} Specialized to 4096-Bit Integers
-```{doxygenfunction} Hacl_Bignum4096_32_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum4096_32_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum4096_32_add
 ```
 
@@ -238,12 +256,6 @@ Note: There is no `mod_inv_prime_consttime` version.
 ``````{group-tab} 64
 `````{tabs}
 ````{group-tab} General-Purpose
-```{doxygenfunction} Hacl_Bignum64_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum64_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum64_add
 ```
 
@@ -277,12 +289,6 @@ Note: There is no `mod_inv_prime_consttime` version.
 Note: There is no `mod_inv_prime_consttime` version.
 ````
 ````{group-tab} Specialized to 256-Bit Integers
-```{doxygenfunction} Hacl_Bignum256_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum256_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum256_add
 ```
 
@@ -316,12 +322,6 @@ Note: There is no `mod_inv_prime_consttime` version.
 Note: There is no `mod_inv_prime_consttime` version.
 ````
 ````{group-tab} Specialized to 4096-Bit Integers
-```{doxygenfunction} Hacl_Bignum4096_bn_to_bytes_be
-```
-
-```{doxygenfunction} Hacl_Bignum4096_bn_to_bytes_le
-```
-
 ```{doxygenfunction} Hacl_Bignum4096_add
 ```
 
