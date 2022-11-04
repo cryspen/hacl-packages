@@ -26,15 +26,6 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 ````
 `````
 
-Write the BLAKE2s digest of the message `d` using the key `k` into `output`.
-
-  `nn` Length of to-be-generated digest (1 < `nn` <= 32).
-  `output` Pointer to digest.
-  `ll` Length of the input message.
-  `d` Pointer to the input message.
-  `kk` Length of the key.
-  `k` Pointer to the key.
-
 ### Streaming (without key)
 
 `````{tabs}

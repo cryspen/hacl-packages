@@ -40,7 +40,7 @@ extern "C" {
 #include "Hacl_Krmllib.h"
 #include "Hacl_Hash_Blake2b_256.h"
 #include "Hacl_Hash_Blake2.h"
-#include "evercrypt_targetconfig.h"
+
 typedef struct Hacl_Streaming_Blake2b_256_blake2b_256_block_state_s
 {
   Lib_IntVector_Intrinsics_vec256 *fst;
@@ -56,13 +56,13 @@ typedef struct Hacl_Streaming_Blake2b_256_blake2b_256_state_s
 }
 Hacl_Streaming_Blake2b_256_blake2b_256_state;
 
-/*
+/**
   State allocation function when there is no key
 */
 Hacl_Streaming_Blake2b_256_blake2b_256_state
 *Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
 
-/*
+/**
   (Re-)initialization function when there is no key
 */
 void
@@ -70,17 +70,17 @@ Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(
   Hacl_Streaming_Blake2b_256_blake2b_256_state *s
 );
 
-/*
-  Update function when there is no key
+/**
+  Update function when there is no key; 0 = success, 1 = max length exceeded
 */
-void
+uint32_t
 Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
   Hacl_Streaming_Blake2b_256_blake2b_256_state *p,
   uint8_t *data,
   uint32_t len
 );
 
-/*
+/**
   Finish function when there is no key
 */
 void
@@ -89,7 +89,7 @@ Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(
   uint8_t *dst
 );
 
-/*
+/**
   Free state function when there is no key
 */
 void

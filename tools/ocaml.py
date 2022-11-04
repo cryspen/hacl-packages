@@ -29,6 +29,9 @@ def read_config():
 
 def build_ocaml():
     """Build the OCaml bindings."""
+    print(" ! Under construction --- This is not currently working.\n")
+    exit(1)
+
     # XXX: Windows is not supported
     if sys.platform == "darwin":
         so = "dylib"

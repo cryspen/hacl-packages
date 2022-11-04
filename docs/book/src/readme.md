@@ -8,7 +8,7 @@ bindings for this library.
 
 ## Getting Started
 
-If you want to build from sources or run tests, [start here](./).
+If you want to build from sources or run tests, [get started on Github].
 
 Depending on the language you are looking for there are different entry points.
 
@@ -34,6 +34,8 @@ code from the [Vale] project, and an agile multiplexed cryptographic provider
 called [EverCrypt].
 As such, the full [HACL*] repository contains many software artifacts.
 
+_[Get in touch] for more information or support._
+
 [//]: # "links"
 [cmake]: https://cmake.org/
 [ninja]: https://ninja-build.org/
@@ -55,3 +57,5 @@ As such, the full [HACL*] repository contains many software artifacts.
 [github issue tracker]: https://github.com/cryspen/hacl-packages/issues
 [pull request]: https://github.com/cryspen/hacl-packages/pulls
 [contributing]: https://github.com/cryspen/hacl-packages/blob/main/CONTRIBUTING.md
+[get started on github]: https://github.com/cryspen/hacl-packages
+[get in touch]: mailto:info@cryspen.com

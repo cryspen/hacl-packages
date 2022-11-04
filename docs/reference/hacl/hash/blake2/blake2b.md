@@ -50,15 +50,6 @@ The following example shows how to use the one-shot API with the base implementa
 ````
 `````
 
-Write the BLAKE2b digest of the message `d` using the key `k` into `output`.
-
-  `nn` Length of to-be-generated digest (1 < `nn` <= 64).
-  `output` Pointer to digest.
-  `ll` Length of the input message.
-  `d` Pointer to the input message.
-  `kk` Length of the key.
-  `k` Pointer to the key.
-
 ### Streaming (without key)
 
 

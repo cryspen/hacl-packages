@@ -416,14 +416,10 @@ if(ENABLE_TESTS)
             target_link_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
         endif()
 
-        # Be nice to MSVC and make sure we don't have variable length arrays in
-        # tests
-        if(NOT MSVC)
-            target_compile_options(${TEST_NAME} PRIVATE -Werror=vla)
-        else()
+        if(MSVC)
             # MSVC needs a modern C++ for designated initializers.
             target_compile_options(${TEST_NAME} PRIVATE /std:c++20)
-        endif(NOT MSVC)
+        endif(MSVC)
 
         add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
         target_link_libraries(${TEST_NAME} PRIVATE
@@ -484,10 +480,9 @@ if(ENABLE_BENCHMARKS)
             target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
         endif(ENABLE_OPENSSL_BENCHMARKS)
 
-        # Be nice to MSVC and make sure we don't have variable length arrays in
-        # benchmarks
+        # Use modern C++
         if(NOT MSVC)
-            target_compile_options(${BENCH_NAME} PRIVATE -Werror=vla -std=c++17)
+            target_compile_options(${BENCH_NAME} PRIVATE -std=c++17)
         else()
             # MSVC needs a modern C++ for designated initializers.
             target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)

@@ -12,7 +12,7 @@ argument on `mach`.
 By default all algorithms are selected.
 The files used in the build are selected by running a dependency analysis on the
 requested algorithm files (see `configure.py`).
-The resulting configuration is written into `config/config.cmake`, which is used
+The resulting configuration is written into `build/config.cmake`, which is used
 as input into the main build process.
 This process is part of the `mach` script.
 
@@ -21,8 +21,6 @@ This process is part of the `mach` script.
 Depending on the used toolchain a different set of algorithms can be used.
 In order to define the feature set available in the toolchain CMake runs a set
 of tests.
-The resulting configuration is written into `config/cached-config.txt` for
-bindings to use.
 Note that the toolchain feature must not be the same as the platform feature
 set the build is running on (due to cross compilation or extended features in the
 toolchain compared to the actual hardware).

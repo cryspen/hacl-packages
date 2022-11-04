@@ -90,12 +90,4 @@ Expand pseudorandom key to desired length.
 ```{doxygenfunction} EverCrypt_HKDF_expand_sha1
 ```
 
-#### Deprecated
-
-```{doxygenfunction} EverCrypt_HKDF_hkdf_extract
-```
-
-```{doxygenfunction} EverCrypt_HKDF_hkdf_expand
-```
-
 [rfc 5869]: https://www.rfc-editor.org/rfc/rfc5869

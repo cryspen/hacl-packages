@@ -36,7 +36,7 @@ extern "C" {
 
 
 
-#include "evercrypt_targetconfig.h"
+
 extern uint64_t add_scalar_e(uint64_t *x0, uint64_t *x1, uint64_t x2);
 
 extern uint64_t fadd_e(uint64_t *x0, uint64_t *x1, uint64_t *x2);
@@ -184,28 +184,6 @@ extern uint64_t fmul2_e(uint64_t *x0, uint64_t *x1, uint64_t *x2, uint64_t *x3);
 extern uint64_t fmul_scalar_e(uint64_t *x0, uint64_t *x1, uint64_t x2);
 
 extern uint64_t fsub_e(uint64_t *x0, uint64_t *x1, uint64_t *x2);
-
-extern uint64_t
-gctr128_bytes(
-  uint8_t *x0,
-  uint64_t x1,
-  uint8_t *x2,
-  uint8_t *x3,
-  uint8_t *x4,
-  uint8_t *x5,
-  uint64_t x6
-);
-
-extern uint64_t
-gctr256_bytes(
-  uint8_t *x0,
-  uint64_t x1,
-  uint8_t *x2,
-  uint8_t *x3,
-  uint8_t *x4,
-  uint8_t *x5,
-  uint64_t x6
-);
 
 #if defined(__cplusplus)
 }
