@@ -1,10 +1,12 @@
 ## 0.6.0
-- 
+- Breaking: Finer-grained API for NaCl in-place functions
+- Performance improvements for P-256
+- Build fixes
 
 ## 0.5.0
 - New build system
-- Faster blake2b
-- Agile incremental APIs for blake2
+- Faster BLAKE2b
+- Agile incremental APIs for BLAKE2
 
 ## 0.4.5
 - Faster fallback implementations for certain intrinsics, leading to improved
