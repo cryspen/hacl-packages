@@ -50,8 +50,7 @@ TEST(ApiTestSuite, ApiTest)
     // ANCHOR(example)
     // Reserve memory for a 64 byte digest, i.e.,
     // for a BLAKE2b run with full 512-bit output.
-    uint32_t output_len = 64;
-    uint8_t output[64];
+    uint8_t output[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // The message we want to hash.
     const char* message = "Hello, HACL Packages!";
@@ -62,10 +61,14 @@ TEST(ApiTestSuite, ApiTest)
     uint32_t key_len = 0;
     uint8_t* key = 0;
 
-    Hacl_Blake2b_32_blake2b(
-      output_len, output, message_len, (uint8_t*)message, key_len, key);
+    Hacl_Blake2b_32_blake2b(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX,
+                            output,
+                            message_len,
+                            (uint8_t*)message,
+                            key_len,
+                            key);
 
-    print_hex_ln(output_len, output);
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, output);
     // ANCHOR_END(example)
 
     bytes expected_digest = from_hex(
