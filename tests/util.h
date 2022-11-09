@@ -123,3 +123,15 @@ void generate_random(uint8_t* dst, size_t dst_len) {
   EverCrypt_DRBG_generate(dst, state, dst_len, (uint8_t*)"", 0);
   EverCrypt_DRBG_uninstantiate(state);
 }
+
+// ANCHOR(print_hex_ln)
+void
+print_hex_ln(size_t bytes_len, uint8_t* bytes)
+{
+  for (int i = 0; i < bytes_len; ++i) {
+    printf("%02x", bytes[i]);
+  }
+
+  printf("\n");
+}
+// ANCHOR_END(print_hex_ln)
