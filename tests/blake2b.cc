@@ -38,18 +38,6 @@ using namespace std;
 
 // -----------------------------------------------------------------------------
 
-// API EXAMPLE HEX START
-void
-print_hex_ln(size_t bytes_len, uint8_t* bytes)
-{
-  for (int i = 0; i < bytes_len; ++i) {
-    printf("%02x", bytes[i]);
-  }
-
-  printf("\n");
-}
-// API EXAMPLE HEX END
-
 TEST(ApiTestSuite, ApiTest)
 {
   // ANCHOR(example)

@@ -14,11 +14,11 @@ The following example shows how to use the one-shot API with the base implementa
 :end-before: "// ANCHOR_END(example header)"
 ```
 
-```{literalinclude} ../../../../../tests/blake2b.cc
+```{literalinclude} ../../../../../tests/util.h
 :language: C
 :dedent:
-:start-after: "// API EXAMPLE HEX START"
-:end-before: "// API EXAMPLE HEX END"
+:start-after: "// ANCHOR(print_hex_ln)"
+:end-before: "// ANCHOR_END(print_hex_ln)"
 ```
 
 ```{literalinclude} ../../../../../tests/blake2b.cc
