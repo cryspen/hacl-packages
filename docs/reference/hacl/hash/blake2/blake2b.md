@@ -10,8 +10,8 @@ The following example shows how to use the one-shot API with the base implementa
 ```{literalinclude} ../../../../../tests/blake2b.cc
 :language: C
 :dedent:
-:start-after: "// API EXAMPLE INCLUDE START"
-:end-before: "// API EXAMPLE INCLUDE END"
+:start-after: "// ANCHOR(example header)"
+:end-before: "// ANCHOR_END(example header)"
 ```
 
 ```{literalinclude} ../../../../../tests/blake2b.cc
@@ -24,8 +24,8 @@ The following example shows how to use the one-shot API with the base implementa
 ```{literalinclude} ../../../../../tests/blake2b.cc
 :language: C
 :dedent:
-:start-after: "// API EXAMPLE CODE START"
-:end-before: "// API EXAMPLE CODE END"
+:start-after: "// ANCHOR(example)"
+:end-before: "// ANCHOR_END(example)"
 ```
 
 ## API Reference

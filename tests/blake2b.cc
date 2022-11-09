@@ -10,9 +10,9 @@
 #include <nlohmann/json.hpp>
 
 #include "EverCrypt_Hash.h"
-// API EXAMPLE INCLUDE START
+// ANCHOR(example header)
 #include "Hacl_Hash_Blake2.h"
-// API EXAMPLE INCLUDE END
+// ANCHOR_END(example header)
 #include "Hacl_Streaming_Blake2.h"
 #include "config.h"
 #include "evercrypt.h"
@@ -52,7 +52,7 @@ print_hex_ln(size_t bytes_len, uint8_t* bytes)
 
 TEST(ApiTestSuite, ApiTest)
 {
-  // API EXAMPLE CODE START
+  // ANCHOR(example)
   // Reserve memory for a 64 byte digest, i.e.,
   // for a BLAKE2B run with full 512-bit output.
   uint32_t output_len = 64;
@@ -71,7 +71,7 @@ TEST(ApiTestSuite, ApiTest)
     output_len, output, message_len, (uint8_t*)message, key_len, key);
 
   print_hex_ln(output_len, output);
-  // API EXAMPLE CODE END
+  // ANCHOR_END(example)
 }
 
 // -----------------------------------------------------------------------------
