@@ -83,6 +83,42 @@ TEST(ApiSuite, ApiTest)
 
     EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
   }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example streaming)
+    // This example uses SHA2-256.
+    //
+
+    // We demonstrate streamed hashing by providing "Hello, World!" in two chunks.
+    const char* chunk_1 = "Hello, ";
+    const char* chunk_2 = "World!";
+    uint32_t chunk_1_size = strlen(chunk_1);
+    uint32_t chunk_2_size = strlen(chunk_2);
+
+    // 256 Bit / 8 = 32 Byte
+    uint8_t digest[256 / 8];
+
+    // Init
+    Hacl_Streaming_SHA2_state_sha2_256* state =
+      Hacl_Streaming_SHA2_create_in_256();
+    Hacl_Streaming_SHA2_init_256(state);
+
+    // Update
+    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
+
+    // Finish
+    Hacl_Streaming_SHA2_finish_256(state, digest);
+    Hacl_Streaming_SHA2_free_256(state);
+    // ANCHOR_END(example streaming)
+
+    bytes expected_digest = from_hex(
+      "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
+  }
 }
 
 class Sha2KAT : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
