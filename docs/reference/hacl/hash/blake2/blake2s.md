@@ -2,6 +2,31 @@
 
 BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size between 1 and 32 bytes.
 
+## Example
+
+The following example shows how to use the one-shot API with the base implementation (32) of BLAKE2s.
+
+```{literalinclude} ../../../../../tests/blake2s.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example header)"
+:end-before: "// ANCHOR_END(example header)"
+```
+
+```{literalinclude} ../../../../../tests/util.h
+:language: C
+:dedent:
+:start-after: "// ANCHOR(print_hex_ln)"
+:end-before: "// ANCHOR_END(print_hex_ln)"
+```
+
+```{literalinclude} ../../../../../tests/blake2s.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example)"
+:end-before: "// ANCHOR_END(example)"
+```
+
 ## API Reference
 
 ### One-Shot
