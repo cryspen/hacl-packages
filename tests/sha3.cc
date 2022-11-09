@@ -70,6 +70,32 @@ TEST(ApiSuite, ApiTest)
 
     EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
   }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example shake128)
+    // This example uses SHAKE-128.
+    //
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // SHAKE will generate as many bytes as requested.
+    uint32_t digest_size = 42;
+    uint8_t digest[42];
+
+    Hacl_SHA3_shake128_hacl(
+      message_size, (uint8_t*)message, digest_size, digest);
+    // ANCHOR_END(example shake128)
+
+    bytes expected_digest =
+      from_hex("2bf5e6dee6079fad604f573194ba8426bd4d30eb13e8ba2edae70e529b570cb"
+               "dd588f2c5dd4e465dfbaf");
+
+    EXPECT_EQ(
+      strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
+  }
 }
 
 class Sha3KAT : public ::testing::TestWithParam<TestCase>
