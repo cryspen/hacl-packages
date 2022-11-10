@@ -19,16 +19,12 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 
 **Example**
 
-<!--
-TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
-
 ```{literalinclude} ../../../../tests/ed25519.cc
 :language: C
 :dedent:
-:start-after: "// START"
-:end-before: "// END"
+:start-after: "// ANCHOR(example)"
+:end-before: "// ANCHOR_END(example)"
 ```
--->
 
 ### Precomputed
 
@@ -40,13 +36,9 @@ TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
 
 **Example**
 
-<!--
-TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
-
 ```{literalinclude} ../../../../tests/ed25519.cc
 :language: C
 :dedent:
-:start-after: "// START"
-:end-before: "// END"
+:start-after: "// ANCHOR(example precomputed)"
+:end-before: "// ANCHOR_END(example precomputed)"
 ```
--->
