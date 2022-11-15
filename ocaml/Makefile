@@ -57,7 +57,37 @@ build-c:
 
 
 # Config
-BLOCKLIST=
+# Disabling all of HPKE.
+BLOCKLIST=Hacl_HPKE_Curve51_CP256_SHA512.c \
+			Hacl_HPKE_P256_CP128_SHA256.c \
+			Hacl_HPKE_Curve51_CP256_SHA512.c \
+			Hacl_HPKE_P256_CP128_SHA256.c \
+			Hacl_HPKE_Curve51_CP256_SHA256.c \
+			Hacl_HPKE_Curve51_CP32_SHA512.c \
+			Hacl_HPKE_Curve51_CP128_SHA512.c \
+			Hacl_HPKE_P256_CP256_SHA256.c \
+			Hacl_HPKE_Curve51_CP32_SHA256.c \
+			Hacl_HPKE_Curve51_CP128_SHA256.c \
+			Hacl_HPKE_P256_CP32_SHA256.c \
+			Hacl_HPKE_Curve64_CP128_SHA512.c \
+			Hacl_HPKE_Curve64_CP128_SHA256.c \
+			Hacl_HPKE_Curve64_CP256_SHA512.c \
+			Hacl_HPKE_Curve64_CP32_SHA256.c \
+			Hacl_HPKE_Curve64_CP256_SHA256.c \
+			Hacl_HPKE_Curve64_CP32_SHA512.c \
+			Hacl_HPKE_Curve51_CP256_SHA256.c \
+			Hacl_HPKE_Curve51_CP32_SHA512.c \
+			Hacl_HPKE_Curve51_CP128_SHA512.c \
+			Hacl_HPKE_P256_CP256_SHA256.c \
+			Hacl_HPKE_Curve51_CP32_SHA256.c \
+			Hacl_HPKE_Curve51_CP128_SHA256.c \
+			Hacl_HPKE_P256_CP32_SHA256.c \
+			Hacl_HPKE_Curve64_CP128_SHA512.c \
+			Hacl_HPKE_Curve64_CP128_SHA256.c \
+			Hacl_HPKE_Curve64_CP256_SHA512.c \
+			Hacl_HPKE_Curve64_CP32_SHA256.c \
+			Hacl_HPKE_Curve64_CP256_SHA256.c \
+			Hacl_HPKE_Curve64_CP32_SHA512.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
 BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
 			Hacl_Hash_Blake2s_128.c Hacl_Streaming_Blake2s_128.c
