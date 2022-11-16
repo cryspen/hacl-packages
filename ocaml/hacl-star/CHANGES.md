@@ -1,3 +1,6 @@
+## 0.6.1
+- Remove undefined symbols on arm64
+
 ## 0.6.0
 - Breaking: Finer-grained API for NaCl in-place functions
 - Performance improvements for P-256
