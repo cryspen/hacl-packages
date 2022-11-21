@@ -198,6 +198,13 @@ def update_hacl(files, includes, editions):
         shutil.copytree(internal_includes, dest_internal)
 
 
+def update_karamel(new_dist_dir):
+    rm("karamel/include")
+    rm("karamel/krmllib")
+    shutil.copytree(os.path.join(new_dist_dir, "karamel/include"), "karamel/include")
+    shutil.copytree(os.path.join(new_dist_dir, "karamel/krmllib"), "karamel/krmllib")
+
+
 @subcommand(
     [
         argument(
@@ -260,3 +267,5 @@ def update(args):
     copy_ocaml_dir("lib")
     copy_ocaml_dir("lib_gen")
     copy_ocaml_file("ctypes.depend")
+
+    update_karamel(hacl_dist)
