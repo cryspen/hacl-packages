@@ -119,22 +119,26 @@ def headers(editions):
 
 
 def all_files(config_file, editions):
-    required_files = read_config(config_file)
+    # required_files = read_config(config_file)
 
     files = {}
     file_names = {}
+    # for edition, new_dist_dir, _, _ in editions:
+    #     for file in required_files:
+    #         if file.endswith(".c"):
+    #             t_files, t_file_names = dependencies(new_dist_dir, file)
+    #             if edition in files:
+    #                 files[edition].extend(t_files)
+    #             else:
+    #                 files[edition] = t_files
+    #             if edition in file_names:
+    #                 file_names[edition].extend(t_file_names)
+    #             else:
+    #                 file_names[edition] = t_file_names
     for edition, new_dist_dir, _, _ in editions:
-        for file in required_files:
-            if file.endswith(".c"):
-                t_files, t_file_names = dependencies(new_dist_dir, file)
-                if edition in files:
-                    files[edition].extend(t_files)
-                else:
-                    files[edition] = t_files
-                if edition in file_names:
-                    file_names[edition].extend(t_file_names)
-                else:
-                    file_names[edition] = t_file_names
+        t_files, t_file_names = source_files(new_dist_dir)
+        files[edition] = t_files
+        file_names[edition] = t_file_names
 
     includes, include_names = headers(editions)
     # TODO: remove includes we don't care about. The includes list should get
