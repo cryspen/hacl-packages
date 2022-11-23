@@ -460,6 +460,7 @@ set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/chacha20.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/chacha20poly1305.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/x25519.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/ed25519.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/p256.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/k256.cc
 )
