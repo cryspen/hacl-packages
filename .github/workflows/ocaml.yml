@@ -107,4 +107,4 @@ jobs:
 
       - name: Package & Test
         working-directory: opam
-        run: opam install . --verbose --with-test --yes
+        run: opam install . --verbose --with-test --yes --assume-depexts
