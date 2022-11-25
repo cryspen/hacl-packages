@@ -106,7 +106,7 @@ jobs:
         run: ./opam.sh
 
       - name: Update OCaml
-        run: opam update && opam upgrade --yes
+        run: opam update && OPAMYES=1 opam upgrade --yes
 
       - name: Package & Test
         working-directory: opam
