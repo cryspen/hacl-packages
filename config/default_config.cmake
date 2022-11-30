@@ -31,7 +31,6 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA3.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Scalar32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_MD5.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_MD5.c
@@ -205,7 +204,6 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
@@ -341,7 +339,6 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Impl_FFDHE_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA3.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Scalar32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Generic.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_SHA2_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
