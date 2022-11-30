@@ -23,34 +23,8 @@ The following instantiations are supported:
 ```{doxygenfunction} EverCrypt_HKDF_extract
 ```
 
-Extract a fixed-length pseudorandom key from input keying material.
-
-* `a` Hash function to use. The allowed values are:
-  * `Spec_Hash_Definitions_Blake2B`, 
-  * `Spec_Hash_Definitions_Blake2S`, 
-  * `Spec_Hash_Definitions_SHA2_256`, 
-  * `Spec_Hash_Definitions_SHA2_384`, 
-  * `Spec_Hash_Definitions_SHA2_512`, and
-  * `Spec_Hash_Definitions_SHA1`.
-
-* `prk` Pointer to `HashLen` bytes of memory where pseudorandom key is written to.
-* `salt` Pointer to `saltlen` bytes of memory where salt value is read from.
-* `saltlen` Length of salt value.
-* `ikm` Pointer to `ikmlen` bytes of memory where input keying material is read from.
-* `ikmlen` Length of input keying material.
-
 ```{doxygenfunction} EverCrypt_HKDF_expand
 ```
-
-Expand pseudorandom key to desired length.
-
-* `a` Hash function to use. Usually, the same as used in `EverCrypt_HKDF_extract`.
-* `okm` Pointer to `len` bytes of memory where output keying material is written to.
-* `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
-* `prklen` Length of pseudorandom key.
-* `info` Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.
-* `infolen` Length of context and application specific information.
-* `len` Length of output keying material.
 
 --------------------------------------------------------------------------------
 
