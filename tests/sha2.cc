@@ -89,7 +89,6 @@ TEST(ApiSuite, ApiTest)
   {
     // ANCHOR(example streaming)
     // This example uses SHA2-256.
-    //
 
     // We demonstrate streamed hashing by providing "Hello, World!" in two chunks.
     const char* chunk_1 = "Hello, ";
