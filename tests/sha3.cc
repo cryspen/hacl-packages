@@ -76,7 +76,6 @@ TEST(ApiSuite, ApiTest)
   {
     // ANCHOR(example shake128)
     // This example uses SHAKE-128.
-    //
 
     const char* message = "Hello, World!";
     uint32_t message_size = strlen(message);
