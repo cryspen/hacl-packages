@@ -148,10 +148,6 @@
             {
                 "file": "Hacl_Curve25519_64.c",
                 "features": "vale"
-            },
-            {
-                "file": "Hacl_Curve25519_64_Slow.c",
-                "features": "std"
             }
         ],
         "p256": [

@@ -10,7 +10,6 @@
 
 #include "EverCrypt_Curve25519.h"
 #include "Hacl_Curve25519_51.h"
-#include "Hacl_Curve25519_64_Slow.h"
 
 #if HACL_CAN_COMPILE_VALE
 #include "Hacl_Curve25519_64.h"
@@ -56,40 +55,6 @@ x25519_51_base(benchmark::State& state)
   bytes res(32);
   while (state.KeepRunning()) {
     Hacl_Curve25519_51_secret_to_public(res.data(), x.data());
-    if (res != pk_x) {
-      state.SkipWithError("Error in x25519 secret to public");
-      break;
-    }
-  }
-}
-
-static void
-x25519_64_slow(benchmark::State& state)
-{
-  bytes x, y, pk_x, expected_res;
-  setup(x, y, pk_x, expected_res);
-  bytes pk(32);
-  Hacl_Curve25519_64_Slow_secret_to_public(pk.data(), x.data());
-
-  bytes res(32);
-  while (state.KeepRunning()) {
-    Hacl_Curve25519_64_Slow_ecdh(res.data(), y.data(), pk.data());
-    if (res != expected_res) {
-      state.SkipWithError("Error in x25519");
-      break;
-    }
-  }
-}
-
-static void
-x25519_64_slow_base(benchmark::State& state)
-{
-  bytes x, y, pk_x, expected_res;
-  setup(x, y, pk_x, expected_res);
-
-  bytes res(32);
-  while (state.KeepRunning()) {
-    Hacl_Curve25519_64_Slow_secret_to_public(res.data(), x.data());
     if (res != pk_x) {
       state.SkipWithError("Error in x25519 secret to public");
       break;
@@ -223,7 +188,6 @@ Openssl_x25519(benchmark::State& state)
 #endif
 
 BENCHMARK(x25519_51);
-BENCHMARK(x25519_64_slow);
 #if HACL_CAN_COMPILE_VALE
 BENCHMARK(x25519_64);
 #endif // HACL_CAN_COMPILE_VALE
@@ -233,7 +197,6 @@ BENCHMARK(Openssl_x25519);
 #endif
 
 BENCHMARK(x25519_51_base);
-BENCHMARK(x25519_64_slow_base);
 #if HACL_CAN_COMPILE_VALE
 BENCHMARK(x25519_64_base);
 #endif // HACL_CAN_COMPILE_VALE
