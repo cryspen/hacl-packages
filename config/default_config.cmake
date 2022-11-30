@@ -25,7 +25,6 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec32.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_64_Slow.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_K256_ECDSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
@@ -193,7 +192,6 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/internal/Vale.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64_Slow.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
@@ -333,7 +331,6 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Poly1305_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64_Slow.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
