@@ -42,7 +42,7 @@ TEST(ApiTestSuite, ApiTest)
 {
   // ANCHOR(example)
   // Reserve memory for a 64 byte digest, i.e.,
-  // for a BLAKE2B run with full 512-bit output.
+  // for a BLAKE2b run with full 512-bit output.
   uint32_t output_len = 64;
   uint8_t output[64];
 
@@ -50,7 +50,7 @@ TEST(ApiTestSuite, ApiTest)
   const char* message = "Hello, HACL Packages!";
   uint32_t message_len = strlen(message);
 
-  // BLAKE2B can be used as an HMAC, i.e., with a key.
+  // BLAKE2b can be used as an HMAC, i.e., with a key.
   // We don't want to use a key here and thus provide a zero-sized key.
   uint32_t key_len = 0;
   uint8_t* key = 0;
