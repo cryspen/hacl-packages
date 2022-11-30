@@ -6,7 +6,7 @@ HACL Packages comes with two versions, a 32-bit optimized version, where bignums
 
 All the arithmetic operations are performed in the Montgomery domain and preserve the invariant that `aM < n` for a bignum `aM` in Montgomery form.
 
-## API Reference
+## Available Implementations
 
 `````{tabs}
 ````{group-tab} 32
@@ -20,6 +20,8 @@ All the arithmetic operations are performed in the Montgomery domain and preserv
 ```
 ````
 `````
+
+## API Reference
 
 ### Typedefs
 

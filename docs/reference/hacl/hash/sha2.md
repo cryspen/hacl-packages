@@ -18,6 +18,15 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 
 ### One-Shot
 
+**Example**
+
+```{literalinclude} ../../../../tests/sha2.cc
+:language: C
+:dedent:
+:start-after: "// START OneShot"
+:end-before: "// END OneShot"
+```
+
 `````{tabs}
 ````{group-tab} 28 byte digest
 ```{doxygenfunction} Hacl_Hash_SHA2_hash_224
@@ -40,20 +49,16 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 ````
 `````
 
+### Streaming
+
 **Example**
-
-This is an example how to use the SHA-2 one-shot API to digest a complete message.
-
-The digest is written to the memory pointed to by digest and the caller is expected to allocate enough memory for the digest.
 
 ```{literalinclude} ../../../../tests/sha2.cc
 :language: C
 :dedent:
-:start-after: "// START OneShot"
-:end-before: "// END OneShot"
+:start-after: "// ANCHOR(example streaming)"
+:end-before: "// ANCHOR_END(example streaming)"
 ```
-
-### Streaming
 
 `````{tabs}
 ````{group-tab} 28 byte digest
@@ -165,14 +170,4 @@ The digest is written to the memory pointed to by digest and the caller is expec
 ```
 ````
 `````
-
-**Example**
-
-```{literalinclude} ../../../../tests/sha2.cc
-:language: C
-:dedent:
-:start-after: "// ANCHOR(example streaming)"
-:end-before: "// ANCHOR_END(example streaming)"
-```
-
 

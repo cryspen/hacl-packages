@@ -2,11 +2,13 @@
 
 Elliptic-curve Diffie-Hellman key agreement on Curve25519.
 
-## API Reference
+## Available Implementations
 
 ```C
 #include "EverCrypt_Curve25519.h"
 ```
+
+## API Reference
 
 ```{doxygenfunction} EverCrypt_Curve25519_scalarmult
 ```
