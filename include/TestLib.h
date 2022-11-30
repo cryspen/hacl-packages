@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __internal_Hacl_Ed25519_H
-#define __internal_Hacl_Ed25519_H
+#ifndef __TestLib_H
+#define __TestLib_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,38 +35,56 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "internal/Hacl_Streaming_SHA2.h"
-#include "internal/Hacl_Krmllib.h"
-#include "internal/Hacl_Curve25519_51.h"
-#include "../Hacl_Ed25519.h"
 
-void Hacl_Bignum25519_reduce_513(uint64_t *a);
 
-void Hacl_Bignum25519_inverse(uint64_t *out, uint64_t *a);
+extern void TestLib_touch(int32_t uu___);
 
-void Hacl_Bignum25519_load_51(uint64_t *output, uint8_t *input);
+extern void TestLib_check(bool uu___);
 
-void Hacl_Bignum25519_store_51(uint8_t *output, uint64_t *input);
+extern void TestLib_check8(int8_t uu___, int8_t uu___1);
 
-void Hacl_Impl_Ed25519_PointDouble_point_double(uint64_t *out, uint64_t *p);
+extern void TestLib_check16(int16_t uu___, int16_t uu___1);
 
-void Hacl_Impl_Ed25519_PointAdd_point_add(uint64_t *out, uint64_t *p, uint64_t *q);
+extern void TestLib_check32(int32_t uu___, int32_t uu___1);
 
-void Hacl_Impl_Ed25519_PointConstants_make_point_inf(uint64_t *b);
+extern void TestLib_check64(int64_t uu___, int64_t uu___1);
 
-bool Hacl_Impl_Ed25519_PointDecompress_point_decompress(uint64_t *out, uint8_t *s);
+extern void TestLib_checku8(uint8_t uu___, uint8_t uu___1);
 
-void Hacl_Impl_Ed25519_PointCompress_point_compress(uint8_t *z, uint64_t *p);
+extern void TestLib_checku16(uint16_t uu___, uint16_t uu___1);
 
-bool Hacl_Impl_Ed25519_PointEqual_point_equal(uint64_t *p, uint64_t *q);
+extern void TestLib_checku32(uint32_t uu___, uint32_t uu___1);
 
-void Hacl_Impl_Ed25519_PointNegate_point_negate(uint64_t *p, uint64_t *out);
+extern void TestLib_checku64(uint64_t uu___, uint64_t uu___1);
 
-void Hacl_Impl_Ed25519_Ladder_point_mul(uint64_t *out, uint8_t *scalar, uint64_t *q);
+extern void TestLib_compare_and_print(C_String_t uu___, uint8_t *b1, uint8_t *b2, uint32_t l);
+
+extern uint8_t *TestLib_unsafe_malloc(uint32_t l);
+
+extern void TestLib_perr(uint32_t uu___);
+
+extern void TestLib_print_clock_diff(clock_t uu___, clock_t uu___1);
+
+KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
+
+extern uint8_t *TestLib_uint8_p_null;
+
+KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
+
+extern uint32_t *TestLib_uint32_p_null;
+
+KRML_DEPRECATED("p_null from TestLib; use LowStar.Buffer.null instead")
+
+extern uint64_t *TestLib_uint64_p_null;
+
+extern TestLib_cycles TestLib_cpucycles();
+
+extern void
+TestLib_print_cycles_per_round(TestLib_cycles uu___, TestLib_cycles uu___1, uint32_t uu___2);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Ed25519_H_DEFINED
+#define __TestLib_H_DEFINED
 #endif

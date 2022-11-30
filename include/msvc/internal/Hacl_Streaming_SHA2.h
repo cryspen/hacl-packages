@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Spec_H
-#define __Hacl_Spec_H
+#ifndef __internal_Hacl_Streaming_SHA2_H
+#define __internal_Hacl_Streaming_SHA2_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,46 +35,14 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
+#include "internal/Hacl_SHA2_Types.h"
+#include "../Hacl_Streaming_SHA2.h"
 
-
-#define Spec_Hash_Definitions_SHA2_224 0
-#define Spec_Hash_Definitions_SHA2_256 1
-#define Spec_Hash_Definitions_SHA2_384 2
-#define Spec_Hash_Definitions_SHA2_512 3
-#define Spec_Hash_Definitions_SHA1 4
-#define Spec_Hash_Definitions_MD5 5
-#define Spec_Hash_Definitions_Blake2S 6
-#define Spec_Hash_Definitions_Blake2B 7
-#define Spec_Hash_Definitions_SHA3_256 8
-
-typedef uint8_t Spec_Hash_Definitions_hash_alg;
-
-#define Spec_FFDHE_FFDHE2048 0
-#define Spec_FFDHE_FFDHE3072 1
-#define Spec_FFDHE_FFDHE4096 2
-#define Spec_FFDHE_FFDHE6144 3
-#define Spec_FFDHE_FFDHE8192 4
-
-typedef uint8_t Spec_FFDHE_ffdhe_alg;
-
-#define Spec_Agile_AEAD_AES128_GCM 0
-#define Spec_Agile_AEAD_AES256_GCM 1
-#define Spec_Agile_AEAD_CHACHA20_POLY1305 2
-#define Spec_Agile_AEAD_AES128_CCM 3
-#define Spec_Agile_AEAD_AES256_CCM 4
-#define Spec_Agile_AEAD_AES128_CCM8 5
-#define Spec_Agile_AEAD_AES256_CCM8 6
-
-typedef uint8_t Spec_Agile_AEAD_alg;
-
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
-
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+void Hacl_SHA2_Scalar32_sha512_init(uint64_t *hash);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Spec_H_DEFINED
+#define __internal_Hacl_Streaming_SHA2_H_DEFINED
 #endif
