@@ -11,12 +11,6 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 
 ### One-Shot
 
-```{doxygenfunction} Hacl_Ed25519_sign
-```
-
-```{doxygenfunction} Hacl_Ed25519_verify
-```
-
 **Example**
 
 ```{literalinclude} ../../../../tests/ed25519.cc
@@ -26,13 +20,13 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 :end-before: "// ANCHOR_END(example)"
 ```
 
+```{doxygenfunction} Hacl_Ed25519_sign
+```
+
+```{doxygenfunction} Hacl_Ed25519_verify
+```
+
 ### Precomputed
-
-```{doxygenfunction} Hacl_Ed25519_expand_keys
-```
-
-```{doxygenfunction} Hacl_Ed25519_sign_expanded
-```
 
 **Example**
 
@@ -42,3 +36,10 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 :start-after: "// ANCHOR(example precomputed)"
 :end-before: "// ANCHOR_END(example precomputed)"
 ```
+
+```{doxygenfunction} Hacl_Ed25519_expand_keys
+```
+
+```{doxygenfunction} Hacl_Ed25519_sign_expanded
+```
+

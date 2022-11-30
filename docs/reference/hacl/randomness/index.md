@@ -4,11 +4,13 @@
 
 Deterministic Random Bit Generator (DRBG) (NIST, SP 800-90A).
 
-### API Reference
+### Available Implementations
 
 ```C
 #include "Hacl_HMAC_DRBG.h"
 ```
+
+### API Reference
 
 #### Variables
 

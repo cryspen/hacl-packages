@@ -3,10 +3,29 @@
 BLAKE2b is optimized for 64-bit platforms and produces digests of any size between 1 and 64 bytes.
 It also has a build-in keying mechanism so that it can be used to replace HMAC-based constructions.
 
-## Example
+## API Reference
 
-The following example shows how to use the one-shot API with the base implementation (32) of BLAKE2b.
+### One-Shot
 
+**Available Implementations**
+
+`````{tabs}
+````{group-tab} 32
+```C
+#include "Hacl_Hash_Blake2.h"
+```
+````
+````{group-tab} 256
+```C
+#include "Hacl_Hash_Blake2b_256.h"
+```
+````
+`````
+
+**Example**
+
+`````{tabs}
+````{group-tab} 32
 ```{literalinclude} ../../../../../tests/blake2b.cc
 :language: C
 :dedent:
@@ -27,24 +46,18 @@ The following example shows how to use the one-shot API with the base implementa
 :start-after: "// ANCHOR(example)"
 :end-before: "// ANCHOR_END(example)"
 ```
-
-## API Reference
-
-### One-Shot
+````
+````{group-tab} 256
+There is no example for now.
+````
+`````
 
 `````{tabs}
 ````{group-tab} 32
-```C
-#include "Hacl_Hash_Blake2.h"
-```
-
 ```{doxygenfunction} Hacl_Blake2b_32_blake2b
 ```
 ````
 ````{group-tab} 256
-```C
-#include "Hacl_Hash_Blake2b_256.h"
-```
 ```{doxygenfunction} Hacl_Blake2b_256_blake2b
 ```
 ````
@@ -52,6 +65,7 @@ The following example shows how to use the one-shot API with the base implementa
 
 ### Streaming (without key)
 
+**Available Implementations**
 
 `````{tabs}
 ````{group-tab} 32
@@ -66,69 +80,44 @@ The following example shows how to use the one-shot API with the base implementa
 ````
 `````
 
+**Example**
+
+`````{tabs}
+````{group-tab} 32
+There is no example for now.
+````
+````{group-tab} 256
+There is no example for now.
+````
+`````
+
 `````{tabs}
 ````{group-tab} 32
 ```{doxygentypedef} Hacl_Streaming_Blake2_blake2b_32_state
+```
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_create_in
+```
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_init
+```
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_update
+```
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_finish
+```
+```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_free
 ```
 ````
 ````{group-tab} 256
 ```{doxygentypedef} Hacl_Streaming_Blake2b_256_blake2b_256_state
 ```
-````
-`````
-
-`````{tabs}
-````{group-tab} 32
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_create_in
-```
-````
-````{group-tab} 256
 ```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in
 ```
-````
-`````
-
-`````{tabs}
-````{group-tab} 32
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_init
-```
-````
-````{group-tab} 256
 ```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init
 ```
-````
-`````
-
-`````{tabs}
-````{group-tab} 32
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_update
-```
-````
-````{group-tab} 256
 ```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update
 ```
-````
-`````
-
-`````{tabs}
-````{group-tab} 32
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_finish
-```
-````
-````{group-tab} 256
 ```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish
 ```
-````
-`````
-
-`````{tabs}
-````{group-tab} 32
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_free
-```
-````
-````{group-tab} 256
 ```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free
 ```
 ````
 `````
-

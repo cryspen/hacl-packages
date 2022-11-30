@@ -19,7 +19,7 @@ Keys must be chosen using a cryptographically strong pseudo-random generator and
 Note that the key can be of any length up to the specific block length of the used hash algorithm.
 This is also mentioned in the API reference below.
 
-## Implementations
+### Available Implementations
 
 `````{tabs}
 ````{group-tab} 32
@@ -51,8 +51,6 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 ````
 `````
 
---------------------------------------------------------------------------------
-
 #### BLAKE2s
 
 `````{tabs}
@@ -66,8 +64,6 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 ````
 `````
 
---------------------------------------------------------------------------------
-
 #### SHA-2
 
 ```{doxygenfunction} Hacl_HMAC_compute_sha2_256
@@ -78,8 +74,6 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 
 ```{doxygenfunction} Hacl_HMAC_compute_sha2_512
 ```
-
---------------------------------------------------------------------------------
 
 #### SHA-1
 

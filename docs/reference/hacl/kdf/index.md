@@ -15,17 +15,12 @@ The following instantiations are supported:
 * SHA2-256 (`HashLen` = 32)
 * SHA2-512 (`HashLen` = 64)
 
-### API Reference
-
-#### BLAKE2b
+### Available Implementations
 
 `````{tabs}
 ````{group-tab} 32
 ```C
 #include "Hacl_HKDF.h"
-```
-
-```{doxygenfunction} Hacl_HKDF_extract_blake2b_32
 ```
 ````
 
@@ -33,7 +28,20 @@ The following instantiations are supported:
 ```C
 #include "Hacl_HKDF_Blake2b_256.h"
 ```
+````
+`````
 
+### API Reference
+
+#### BLAKE2b
+
+`````{tabs}
+````{group-tab} 32
+```{doxygenfunction} Hacl_HKDF_extract_blake2b_32
+```
+````
+
+````{group-tab} 256
 ```{doxygenfunction} Hacl_HKDF_Blake2b_256_extract_blake2b_256
 ```
 ````

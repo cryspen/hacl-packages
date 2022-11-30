@@ -16,6 +16,15 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 ### One-Shot
 
+**Example**
+
+```{literalinclude} ../../../../tests/sha3.cc
+:language: C
+:dedent:
+:start-after: "// START OneShot"
+:end-before: "// END OneShot"
+```
+
 `````{tabs}
 ````{tab} 28 byte digest
 ```{doxygenfunction} Hacl_SHA3_sha3_224
@@ -38,15 +47,6 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 ````
 `````
 
-**Example**
-
-```{literalinclude} ../../../../tests/sha3.cc
-:language: C
-:dedent:
-:start-after: "// START OneShot"
-:end-before: "// END OneShot"
-```
-
 ### Streaming
 
 No streaming API available.
@@ -56,6 +56,15 @@ No streaming API available.
 ### API Reference
 
 #### One-Shot
+
+**Example**
+
+```{literalinclude} ../../../../tests/sha3.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example shake128)"
+:end-before: "// ANCHOR_END(example shake128)"
+```
 
 `````{tabs}
 ````{tab} 128-bit security strength
@@ -68,15 +77,6 @@ No streaming API available.
 ```
 ````
 `````
-
-**Example**
-
-```{literalinclude} ../../../../tests/sha3.cc
-:language: C
-:dedent:
-:start-after: "// ANCHOR(example shake128)"
-:end-before: "// ANCHOR_END(example shake128)"
-```
 
 #### Streaming
 

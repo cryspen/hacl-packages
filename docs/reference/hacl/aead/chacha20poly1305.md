@@ -1,12 +1,7 @@
 # Chacha20-Poly1305
 
 HACL implements the Chacha20-Poly1305 Authenticated Encryption with Associated Data (AEAD) construction specified in [RFC 8439].
-The library includes three implementations of this construction, all with the same API, for different platforms:
-
-* `Hacl_Chacha20Poly1305_32.h` contains the API for the portable C implementation that can be compiled and run on any platform that is 32-bit or higher.
-* `Hacl_Chacha20Poly1305_128.h` contains the API for the 128-bit vectorized C implementation that can be compiled and run on any platform that supports 128-bit SIMD instructions.
-* `Hacl_Chacha20Poly1305_256.h` contains the API for the 256-bit vectorized C implementation that can be compiled and run on any platform that supports 256-bit SIMD instructions.
-
+The library includes three implementations of this construction, all with the same API, for different platforms.
 All memory for the output variables have to be allocated by the caller.
 
 ## Available Implementations
@@ -18,6 +13,8 @@ All memory for the output variables have to be allocated by the caller.
 #include "Hacl_Chacha20Poly1305_32.h"
 ```
 
+A portable C implementation that can be compiled and run on any platform that is 32-bit or higher.
+
 This implementation works on all CPUs.
 ````
 
@@ -25,6 +22,8 @@ This implementation works on all CPUs.
 ```c
 #include "Hacl_Chacha20Poly1305_128.h"
 ```
+
+A 128-bit vectorized C implementation that can be compiled and run on any platform that supports 128-bit SIMD instructions.
 
 Support for VEC128 is needed. Please see the [HACL Packages book].
 ````
@@ -34,11 +33,17 @@ Support for VEC128 is needed. Please see the [HACL Packages book].
 #include "Hacl_Chacha20Poly1305_256.h"
 ```
 
+A 256-bit vectorized C implementation that can be compiled and run on any platform that supports 256-bit SIMD instructions.
+
 Support for VEC256 is needed. Please see the [HACL Packages book].
 ````
 `````
 
-## Example
+## API Reference
+
+`````{tabs}
+````{group-tab} 32
+**Example**
 
 ```{literalinclude} ../../../../tests/chacha20poly1305.cc
 :language: C
@@ -47,55 +52,30 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 :end-before: "// END OneShot"
 ```
 
-## API Reference
-
-`````{tabs}
-
-````{group-tab} 32
-
 ```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_encrypt
 ```
-
+```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_decrypt
+```
 ````
-
 ````{group-tab} 128
+**Example**
+
+There is no example for now.
 
 ```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_encrypt
 ```
-
+```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_decrypt
+```
 ````
-
 ````{group-tab} 256
+**Example**
+
+There is no example for now.
 
 ```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_encrypt
 ```
-
-````
-`````
-
--------------------------------------------------------------------------------
-
-`````{tabs}
-
-````{group-tab} 32
-
-```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_decrypt
-```
-
-````
-
-````{group-tab} 128
-
-```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_decrypt
-```
-
-````
-
-````{group-tab} 256
-
 ```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_decrypt
 ```
-
 ````
 `````
 

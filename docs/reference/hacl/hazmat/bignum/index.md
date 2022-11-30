@@ -10,7 +10,8 @@ HACL's bignum library comes in multiple variants and specializations.
 
 Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.h`, `Hacl_Bignum_K256.h`.
 
-## API Reference
+
+## Available Implementations
 
 ```````{tabs}
 ``````{group-tab} 32
@@ -52,6 +53,8 @@ Additional headers: `Hacl_Bignum_Base.h`, `Hacl_Bignum.h`, `Hacl_Bignum25519_51.
 `````
 ``````
 ```````
+
+## API Reference
 
 ### Loads and stores
 
