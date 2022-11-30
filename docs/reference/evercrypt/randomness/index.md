@@ -43,52 +43,19 @@ Deterministic Random Bit Generator (DRBG) (NIST, SP 800-90A).
 ```{doxygenfunction} EverCrypt_DRBG_create
 ```
 
-Create a DRBG state.
-
-* `a` Hash algorithm to use. The possible instantiations are ...
-
-* `Spec_Hash_Definitions_SHA2_256`,
-* `Spec_Hash_Definitions_SHA2_384`,
-* `Spec_Hash_Definitions_SHA2_512`, and
-* `Spec_Hash_Definitions_SHA1`.
-
 ```{doxygenfunction} EverCrypt_DRBG_instantiate
 ```
-
-Instantiate the DRBG.
-
-* `st` Pointer to DRBG state.
-* `personalization_string_len` length of personalization string.
-* `personalization_string` Pointer to `personalization_string_len` bytes of memory where personalization string is read from.
 
 <!-- Note: entropy_input is generated. No nonce? -->
 
 ```{doxygenfunction} EverCrypt_DRBG_reseed
 ```
 
-Reseed the DRBG.
-
-* `st` Pointer to DRBG state.
-* `additional_input_input_len` Length of additional input.
-* `additional_input_input` Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
-
 ```{doxygenfunction} EverCrypt_DRBG_generate
 ```
 
-Generate output.
-
-* `output` Pointer to `n` bytes of memory where random output is written to.
-* `st` Pointer to DRBG state.
-* `n` Length of desired output.
-* `additional_input_input_len` Length of additional input.
-* `additional_input_input` Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
-
 ```{doxygenfunction} EverCrypt_DRBG_uninstantiate
 ```
-
-Uninstantiate and free the DRBG.
-
-* `st` Pointer to DRBG state.
 
 ```{doxygenfunction} EverCrypt_DRBG_min_length
 ```
