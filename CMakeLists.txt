@@ -51,7 +51,14 @@ set(hacl_VERSION_TWEAK "")
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
 # needed.
-include(build/config.cmake)
+# If the file is not present, i.e. cmake was invoked directly, we copy the default
+# config from config/default_config.cmake
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/build/config.cmake)
+    configure_file(${PROJECT_SOURCE_DIR}/config/default_config.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+endif()
+
+# Now include the config.
+include(${PROJECT_SOURCE_DIR}/build/config.cmake)
 
 # Constants used throughout hacl and the build.
 include(config/constants.cmake)
