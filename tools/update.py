@@ -82,28 +82,29 @@ def dependencies(src_dir, c_file):
 
     return files, file_names
 
-
-def read_config(config_file_name):
-    # read file
-    with open(config_file_name, "r") as f:
-        data = f.read()
-
-    # parse file
-    config = json.loads(data)
-    hacl_files = config["hacl_sources"]
-    vale_files = config["vale_sources"]
-    evercrypt_files = config["evercrypt_sources"]
-
-    # flatten file lists
-    files = []
-    for algorithm in hacl_files:
-        files.extend(map(lambda e: e["file"], hacl_files[algorithm]))
-    for algorithm in vale_files:
-        for platform in vale_files[algorithm]:
-            files.extend(vale_files[algorithm][platform])
-    for algorithm in evercrypt_files:
-        files.extend(evercrypt_files[algorithm])
-    return files
+# Note: This is currently unused but will be used in the future.
+#
+# def read_config(config_file_name):
+#     # read file
+#     with open(config_file_name, "r") as f:
+#         data = f.read()
+#
+#     # parse file
+#     config = json.loads(data)
+#     hacl_files = config["hacl_sources"]
+#     vale_files = config["vale_sources"]
+#     evercrypt_files = config["evercrypt_sources"]
+#
+#     # flatten file lists
+#     files = []
+#     for algorithm in hacl_files:
+#         files.extend(map(lambda e: e["file"], hacl_files[algorithm]))
+#     for algorithm in vale_files:
+#         for platform in vale_files[algorithm]:
+#             files.extend(vale_files[algorithm][platform])
+#     for algorithm in evercrypt_files:
+#         files.extend(evercrypt_files[algorithm])
+#     return files
 
 
 def headers(editions):
