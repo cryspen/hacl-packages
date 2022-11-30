@@ -390,20 +390,16 @@
         },
         "aesgcm": {
             "osx": [
-                "aesgcm-x86_64-darwin.S",
-                "aes-x86_64-darwin.S"
+                "aesgcm-x86_64-darwin.S"
             ],
             "linux": [
-                "aesgcm-x86_64-linux.S",
-                "aes-x86_64-linux.S"
+                "aesgcm-x86_64-linux.S"
             ],
             "mingw": [
-                "aesgcm-x86_64-mingw.S",
-                "aes-x86_64-mingw.S"
+                "aesgcm-x86_64-mingw.S"
             ],
             "msvc": [
-                "aesgcm-x86_64-msvc.asm",
-                "aes-x86_64-msvc.asm"
+                "aesgcm-x86_64-msvc.asm"
             ]
         },
         "curve25519": {

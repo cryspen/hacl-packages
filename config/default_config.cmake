@@ -468,7 +468,6 @@ set(VALE_SOURCES_osx
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-darwin.S
 	${PROJECT_SOURCE_DIR}/vale/src/sha256-x86_64-darwin.S
 	${PROJECT_SOURCE_DIR}/vale/src/aesgcm-x86_64-darwin.S
-	${PROJECT_SOURCE_DIR}/vale/src/aes-x86_64-darwin.S
 	${PROJECT_SOURCE_DIR}/vale/src/curve25519-x86_64-darwin.S
 	${PROJECT_SOURCE_DIR}/vale/src/poly1305-x86_64-darwin.S
 )
@@ -476,7 +475,6 @@ set(VALE_SOURCES_linux
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-linux.S
 	${PROJECT_SOURCE_DIR}/vale/src/sha256-x86_64-linux.S
 	${PROJECT_SOURCE_DIR}/vale/src/aesgcm-x86_64-linux.S
-	${PROJECT_SOURCE_DIR}/vale/src/aes-x86_64-linux.S
 	${PROJECT_SOURCE_DIR}/vale/src/curve25519-x86_64-linux.S
 	${PROJECT_SOURCE_DIR}/vale/src/poly1305-x86_64-linux.S
 )
@@ -484,7 +482,6 @@ set(VALE_SOURCES_mingw
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-mingw.S
 	${PROJECT_SOURCE_DIR}/vale/src/sha256-x86_64-mingw.S
 	${PROJECT_SOURCE_DIR}/vale/src/aesgcm-x86_64-mingw.S
-	${PROJECT_SOURCE_DIR}/vale/src/aes-x86_64-mingw.S
 	${PROJECT_SOURCE_DIR}/vale/src/curve25519-x86_64-mingw.S
 	${PROJECT_SOURCE_DIR}/vale/src/poly1305-x86_64-mingw.S
 )
@@ -492,7 +489,6 @@ set(VALE_SOURCES_msvc
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-msvc.asm
 	${PROJECT_SOURCE_DIR}/vale/src/sha256-x86_64-msvc.asm
 	${PROJECT_SOURCE_DIR}/vale/src/aesgcm-x86_64-msvc.asm
-	${PROJECT_SOURCE_DIR}/vale/src/aes-x86_64-msvc.asm
 	${PROJECT_SOURCE_DIR}/vale/src/curve25519-x86_64-msvc.asm
 	${PROJECT_SOURCE_DIR}/vale/src/poly1305-x86_64-msvc.asm
 )
