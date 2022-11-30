@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 from os.path import join as join_path
+from pathlib import Path
 
 from tools.utils import argument, mprint as print, subcommand
 
@@ -206,6 +207,29 @@ def update_karamel(new_dist_dir):
     shutil.copytree(os.path.join(new_dist_dir, "karamel/krmllib"), "karamel/krmllib")
 
 
+def update_vale(new_dist_dir):
+    new_dist_dir = Path(new_dist_dir)
+
+    rm("vale/include")
+    os.mkdir("vale/include")
+
+    rm("vale/src")
+    os.mkdir("vale/src")
+
+    shutil.copy(
+        new_dist_dir.joinpath("gcc-compatible/internal/Vale.h"),
+        Path(abs_path("vale/include")).joinpath("Vale.h"),
+    )
+
+    shutil.copy(
+        new_dist_dir.joinpath("gcc-compatible/Vale.c"),
+        Path(abs_path("vale/src")).joinpath("Vale.c"),
+    )
+    for path in new_dist_dir.joinpath("vale").iterdir():
+        if path.is_file():
+            shutil.copy(path, Path(abs_path("vale/src")))
+
+
 @subcommand(
     [
         argument(
@@ -214,6 +238,7 @@ def update_karamel(new_dist_dir):
             help="The base directory of the HACL* repository.",
             type=str,
         ),
+        argument("--no-vale", help="Don't update Vale.", action="store_true"),
         argument("-v", "--verbose", help="Make it verbose.", action="store_true"),
     ]
 )
@@ -270,3 +295,5 @@ def update(args):
     copy_ocaml_file("ctypes.depend")
 
     update_karamel(hacl_dist)
+    if not args.no_vale:
+        update_vale(hacl_dist)
