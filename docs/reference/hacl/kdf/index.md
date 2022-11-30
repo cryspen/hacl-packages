@@ -47,14 +47,6 @@ The following instantiations are supported:
 ````
 `````
 
-Extract a fixed-length pseudorandom key from input keying material.
-
-* `prk` Pointer to `HashLen` bytes of memory where pseudorandom key is written to.
-* `salt` Pointer to `saltlen` bytes of memory where salt value is read from.
-* `saltlen` Length of salt value.
-* `ikm` Pointer to `ikmlen` bytes of memory where input keying material is read from.
-* `ikmlen` Length of input keying material.
-
 `````{tabs}
 ````{group-tab} 32
 ```C
@@ -74,15 +66,6 @@ Extract a fixed-length pseudorandom key from input keying material.
 ```
 ````
 `````
-
-Expand pseudorandom key to desired length.
-
-* `okm` Pointer to `len` bytes of memory where output keying material is written to.
-* `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
-* `prklen` Length of pseudorandom key.
-* `info` Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.
-* `infolen` Length of context and application specific information.
-* `len` Length of output keying material.
 
 #### BLAKE2s
 
@@ -106,14 +89,6 @@ Expand pseudorandom key to desired length.
 ````
 `````
 
-Extract a fixed-length pseudorandom key from input keying material.
-
-* `prk` Pointer to `HashLen` bytes of memory where pseudorandom key is written to.
-* `salt` Pointer to `saltlen` bytes of memory where salt value is read from.
-* `saltlen` Length of salt value.
-* `ikm` Pointer to `ikmlen` bytes of memory where input keying material is read from.
-* `ikmlen` Length of input keying material.
-
 `````{tabs}
 ````{group-tab} 32
 ```C
@@ -133,15 +108,6 @@ Extract a fixed-length pseudorandom key from input keying material.
 ```
 ````
 `````
-Expand pseudorandom key to desired length.
-
-* `okm` Pointer to `len` bytes of memory where output keying material is written to.
-* `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
-* `prklen` Length of pseudorandom key.
-* `info` Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.
-* `infolen` Length of context and application specific information.
-* `len` Length of output keying material.
-
 
 #### SHA2-256
 
@@ -152,25 +118,8 @@ Expand pseudorandom key to desired length.
 ```{doxygenfunction} Hacl_HKDF_extract_sha2_256
 ```
 
-Extract a fixed-length pseudorandom key from input keying material.
-
-* `prk` Pointer to `HashLen` bytes of memory where pseudorandom key is written to.
-* `salt` Pointer to `saltlen` bytes of memory where salt value is read from.
-* `saltlen` Length of salt value.
-* `ikm` Pointer to `ikmlen` bytes of memory where input keying material is read from.
-* `ikmlen` Length of input keying material.
-
 ```{doxygenfunction} Hacl_HKDF_expand_sha2_256
 ```
-
-Expand pseudorandom key to desired length.
-
-* `okm` Pointer to `len` bytes of memory where output keying material is written to.
-* `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
-* `prklen` Length of pseudorandom key.
-* `info` Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.
-* `infolen` Length of context and application specific information.
-* `len` Length of output keying material.
 
 #### SHA2-512
 
@@ -181,24 +130,7 @@ Expand pseudorandom key to desired length.
 ```{doxygenfunction} Hacl_HKDF_extract_sha2_512
 ```
 
-Extract a fixed-length pseudorandom key from input keying material.
-
-* `prk` Pointer to `HashLen` bytes of memory where pseudorandom key is written to.
-* `salt` Pointer to `saltlen` bytes of memory where salt value is read from.
-* `saltlen` Length of salt value.
-* `ikm` Pointer to `ikmlen` bytes of memory where input keying material is read from.
-* `ikmlen` Length of input keying material.
-
 ```{doxygenfunction} Hacl_HKDF_expand_sha2_512
 ```
-
-Expand pseudorandom key to desired length.
-
-* `okm` Pointer to `len` bytes of memory where output keying material is written to.
-* `prk` Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.
-* `prklen` Length of pseudorandom key.
-* `info` Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.
-* `infolen` Length of context and application specific information.
-* `len` Length of output keying material.
 
 [rfc 5869]: https://www.rfc-editor.org/rfc/rfc5869
