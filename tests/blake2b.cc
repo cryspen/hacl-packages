@@ -33,6 +33,12 @@
 #include "Vale.h"
 #endif
 
+// ANCHOR(example define)
+// Note: HACL Packages will provide this (or a similar) define in a later
+// version.
+#define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
+// ANCHOR_END(example define)
+
 using json = nlohmann::json;
 using namespace std;
 
@@ -40,26 +46,76 @@ using namespace std;
 
 TEST(ApiTestSuite, ApiTest)
 {
-  // ANCHOR(example)
-  // Reserve memory for a 64 byte digest, i.e.,
-  // for a BLAKE2b run with full 512-bit output.
-  uint32_t output_len = 64;
-  uint8_t output[64];
+  {
+    // ANCHOR(example)
+    // Reserve memory for a 64 byte digest, i.e.,
+    // for a BLAKE2b run with full 512-bit output.
+    uint32_t output_len = 64;
+    uint8_t output[64];
 
-  // The message we want to hash.
-  const char* message = "Hello, HACL Packages!";
-  uint32_t message_len = strlen(message);
+    // The message we want to hash.
+    const char* message = "Hello, HACL Packages!";
+    uint32_t message_len = strlen(message);
 
-  // BLAKE2b can be used as an HMAC, i.e., with a key.
-  // We don't want to use a key here and thus provide a zero-sized key.
-  uint32_t key_len = 0;
-  uint8_t* key = 0;
+    // BLAKE2b can be used as an HMAC, i.e., with a key.
+    // We don't want to use a key here and thus provide a zero-sized key.
+    uint32_t key_len = 0;
+    uint8_t* key = 0;
 
-  Hacl_Blake2b_32_blake2b(
-    output_len, output, message_len, (uint8_t*)message, key_len, key);
+    Hacl_Blake2b_32_blake2b(
+      output_len, output, message_len, (uint8_t*)message, key_len, key);
 
-  print_hex_ln(output_len, output);
-  // ANCHOR_END(example)
+    print_hex_ln(output_len, output);
+    // ANCHOR_END(example)
+
+    bytes expected_digest = from_hex(
+      "f99574aa3ba6cf78ad48e1f22a77e7aef1d7433c1cb3d424d14ae5ec51af8c6dc8bf41cb"
+      "0a10383274f256df0f7d0f145a043b7a77f4c17e47e535f72a4e1f43");
+
+    EXPECT_EQ(strncmp((char*)output,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+  }
+
+  {
+    // ANCHOR(example streaming)
+    // We demonstrate streamed hashing by providing "Hello, World!" in two
+    // chunks.
+    const char* chunk_1 = "Hello, ";
+    const char* chunk_2 = "World!";
+    uint32_t chunk_1_size = strlen(chunk_1);
+    uint32_t chunk_2_size = strlen(chunk_2);
+
+    uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+
+    // Init
+    Hacl_Streaming_Blake2_blake2b_32_state_s* state =
+      Hacl_Streaming_Blake2_blake2b_32_no_key_create_in();
+    Hacl_Streaming_Blake2_blake2b_32_no_key_init(state);
+
+    // Update
+    Hacl_Streaming_Blake2_blake2b_32_no_key_update(
+      state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_update(
+      state, (uint8_t*)chunk_2, chunk_2_size);
+
+    // Finish
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_free(state);
+
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest);
+    // ANCHOR_END(example streaming)
+
+    bytes expected_digest = from_hex(
+      "7dfdb888af71eae0e6a6b751e8e3413d767ef4fa52a7993daa9ef097f7aa3d949199c113"
+      "caa37c94f80cf3b22f7d9d6e4f5def4ff927830cffe4857c34be3d89");
+
+    EXPECT_EQ(strncmp((char*)digest,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+  }
 }
 
 // -----------------------------------------------------------------------------
