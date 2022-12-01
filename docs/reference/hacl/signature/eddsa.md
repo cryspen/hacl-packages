@@ -11,26 +11,31 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 
 ### One-Shot
 
+**Example**
+
+```{literalinclude} ../../../../tests/ed25519.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example)"
+:end-before: "// ANCHOR_END(example)"
+```
+
 ```{doxygenfunction} Hacl_Ed25519_sign
 ```
 
 ```{doxygenfunction} Hacl_Ed25519_verify
 ```
 
-**Example**
+### Precomputed
 
-<!--
-TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
+**Example**
 
 ```{literalinclude} ../../../../tests/ed25519.cc
 :language: C
 :dedent:
-:start-after: "// START"
-:end-before: "// END"
+:start-after: "// ANCHOR(example precomputed)"
+:end-before: "// ANCHOR_END(example precomputed)"
 ```
--->
-
-### Precomputed
 
 ```{doxygenfunction} Hacl_Ed25519_expand_keys
 ```
@@ -38,15 +43,3 @@ TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
 ```{doxygenfunction} Hacl_Ed25519_sign_expanded
 ```
 
-**Example**
-
-<!--
-TODO(Example): Provide fully working example. KeyGen, Sign, Verify.
-
-```{literalinclude} ../../../../tests/ed25519.cc
-:language: C
-:dedent:
-:start-after: "// START"
-:end-before: "// END"
-```
--->

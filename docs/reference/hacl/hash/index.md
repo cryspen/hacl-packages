@@ -7,6 +7,8 @@ When you are receiving a message chunk-by-chunk, it may be more efficient to use
 The streaming API has roughly three phases: init, update, and finish.
 You create a context element, call update as often as you need, and then finalize (and cleanup) to obtain a digest.
 
+Note: HACL Packages supports MD5 but does not document it here because it should not be used.
+
 ```{toctree}
 :caption: "Algorithms"
 
@@ -14,6 +16,5 @@ blake2/index
 sha3
 sha2
 sha1
-md5
 ```
 

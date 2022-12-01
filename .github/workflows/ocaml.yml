@@ -106,9 +106,6 @@ jobs:
       - name: Setup HACL opam
         run: ./opam.sh
 
-      - name: Update OCaml
-        run: opam update && opam upgrade --yes
-
       - name: Package & Test
         working-directory: opam
-        run: opam install . --verbose --with-test --yes
+        run: opam install . --verbose --with-test --yes --assume-depexts

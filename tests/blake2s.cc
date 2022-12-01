@@ -11,7 +11,9 @@
 #include <nlohmann/json.hpp>
 
 #include "EverCrypt_Hash.h"
+// ANCHOR(example header)
 #include "Hacl_Hash_Blake2.h"
+// ANCHOR_END(example header)
 #include "Hacl_Streaming_Blake2.h"
 #include "evercrypt.h"
 #include "hacl-cpu-features.h"
@@ -45,6 +47,34 @@ operator<<(ostream& os, const TestCase& test)
      << "}" << endl;
   return os;
 }
+
+// -----------------------------------------------------------------------------
+
+TEST(ApiTestSuite, ApiTest)
+{
+  // ANCHOR(example)
+  // Reserve memory for a 32 byte digest, i.e.,
+  // for a BLAKE2s run with full 256-bit output.
+  uint32_t output_len = 32;
+  uint8_t output[32];
+
+  // The message we want to hash.
+  const char* message = "Hello, HACL Packages!";
+  uint32_t message_len = strlen(message);
+
+  // BLAKE2s can be used as an HMAC, i.e., with a key.
+  // We don't want to use a key here and thus provide a zero-sized key.
+  uint32_t key_len = 0;
+  uint8_t* key = 0;
+
+  Hacl_Blake2s_32_blake2s(
+    output_len, output, message_len, (uint8_t*)message, key_len, key);
+
+  print_hex_ln(output_len, output);
+  // ANCHOR_END(example)
+}
+
+// -----------------------------------------------------------------------------
 
 class Blake2s : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>
 {};

@@ -300,7 +300,7 @@ def build(args):
             exit(1)
     if args.disable:
         if windows:
-            print("! Disabling features is not supporte on Windows.")
+            print("! Disabling features is not supported on Windows.")
             exit(1)
         features_to_disable = list(
             map(
@@ -322,7 +322,7 @@ def build(args):
             cmake_args.append("-DENABLE_OPENSSL_BENCHMARKS=ON")
     if args.sanitizer:
         if windows:
-            print("! Sanitizers are not supporte on Windows.")
+            print("! Sanitizers are not supported on Windows.")
             exit(1)
         sanitizers = list(
             map(

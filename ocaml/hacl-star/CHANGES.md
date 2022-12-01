@@ -1,3 +1,6 @@
+## 0.6.2
+- Updated Vale snapshot
+
 ## 0.6.1
 - Remove undefined symbols on arm64
 

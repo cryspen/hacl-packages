@@ -16,24 +16,6 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 ### One-Shot
 
-```{doxygenfunction} Hacl_SHA3_sha3_224
-```
-
-```{doxygenfunction} Hacl_SHA3_sha3_256
-```
-
-```{doxygenfunction} Hacl_SHA3_sha3_384
-```
-
-```{doxygenfunction} Hacl_SHA3_sha3_512
-```
-
-```{doxygenfunction} Hacl_SHA3_shake128_hacl
-```
-
-```{doxygenfunction} Hacl_SHA3_shake256_hacl
-```
-
 **Example**
 
 ```{literalinclude} ../../../../tests/sha3.cc
@@ -43,7 +25,60 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 :end-before: "// END OneShot"
 ```
 
+`````{tabs}
+````{tab} 28 byte digest
+```{doxygenfunction} Hacl_SHA3_sha3_224
+```
+````
+
+````{tab} 32 byte digest
+```{doxygenfunction} Hacl_SHA3_sha3_256
+```
+````
+
+````{tab} 48 byte digest
+```{doxygenfunction} Hacl_SHA3_sha3_384
+```
+````
+
+````{tab} 64 byte digest
+```{doxygenfunction} Hacl_SHA3_sha3_512
+```
+````
+`````
+
 ### Streaming
+
+No streaming API available.
+
+## SHAKE
+
+### API Reference
+
+#### One-Shot
+
+**Example**
+
+```{literalinclude} ../../../../tests/sha3.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example shake128)"
+:end-before: "// ANCHOR_END(example shake128)"
+```
+
+`````{tabs}
+````{tab} 128-bit security strength
+```{doxygenfunction} Hacl_SHA3_shake128_hacl
+```
+````
+
+````{tab} 256-bit security strength
+```{doxygenfunction} Hacl_SHA3_shake256_hacl
+```
+````
+`````
+
+#### Streaming
 
 No streaming API available.
 

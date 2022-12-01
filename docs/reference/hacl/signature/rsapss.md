@@ -2,10 +2,16 @@
 
 RSASSA-PSS as defined in [RFC 8017].
 
-<!--
-## Example
+## Available Implementations
 
-TODO(Example):
+```C
+#include "Hacl_RSAPSS.h"
+```
+
+## API Reference
+
+<!--
+**Example**
 
 ```{literalinclude} ../../../../tests/rsapss.cc
 :language: C
@@ -14,12 +20,6 @@ TODO(Example):
 :end-before: "// END"
 ```
 -->
-
-## API Reference
-
-```C
-#include "Hacl_RSAPSS.h"
-```
 
 ```{doxygenfunction} Hacl_RSAPSS_new_rsapss_load_skey
 ```

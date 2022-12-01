@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 from os.path import join as join_path
+from pathlib import Path
 
 from tools.utils import argument, mprint as print, subcommand
 
@@ -82,28 +83,29 @@ def dependencies(src_dir, c_file):
 
     return files, file_names
 
-
-def read_config(config_file_name):
-    # read file
-    with open(config_file_name, "r") as f:
-        data = f.read()
-
-    # parse file
-    config = json.loads(data)
-    hacl_files = config["hacl_sources"]
-    vale_files = config["vale_sources"]
-    evercrypt_files = config["evercrypt_sources"]
-
-    # flatten file lists
-    files = []
-    for algorithm in hacl_files:
-        files.extend(map(lambda e: e["file"], hacl_files[algorithm]))
-    for algorithm in vale_files:
-        for platform in vale_files[algorithm]:
-            files.extend(vale_files[algorithm][platform])
-    for algorithm in evercrypt_files:
-        files.extend(evercrypt_files[algorithm])
-    return files
+# Note: This is currently unused but will be used in the future.
+#
+# def read_config(config_file_name):
+#     # read file
+#     with open(config_file_name, "r") as f:
+#         data = f.read()
+#
+#     # parse file
+#     config = json.loads(data)
+#     hacl_files = config["hacl_sources"]
+#     vale_files = config["vale_sources"]
+#     evercrypt_files = config["evercrypt_sources"]
+#
+#     # flatten file lists
+#     files = []
+#     for algorithm in hacl_files:
+#         files.extend(map(lambda e: e["file"], hacl_files[algorithm]))
+#     for algorithm in vale_files:
+#         for platform in vale_files[algorithm]:
+#             files.extend(vale_files[algorithm][platform])
+#     for algorithm in evercrypt_files:
+#         files.extend(evercrypt_files[algorithm])
+#     return files
 
 
 def headers(editions):
@@ -119,22 +121,26 @@ def headers(editions):
 
 
 def all_files(config_file, editions):
-    required_files = read_config(config_file)
+    # required_files = read_config(config_file)
 
     files = {}
     file_names = {}
+    # for edition, new_dist_dir, _, _ in editions:
+    #     for file in required_files:
+    #         if file.endswith(".c"):
+    #             t_files, t_file_names = dependencies(new_dist_dir, file)
+    #             if edition in files:
+    #                 files[edition].extend(t_files)
+    #             else:
+    #                 files[edition] = t_files
+    #             if edition in file_names:
+    #                 file_names[edition].extend(t_file_names)
+    #             else:
+    #                 file_names[edition] = t_file_names
     for edition, new_dist_dir, _, _ in editions:
-        for file in required_files:
-            if file.endswith(".c"):
-                t_files, t_file_names = dependencies(new_dist_dir, file)
-                if edition in files:
-                    files[edition].extend(t_files)
-                else:
-                    files[edition] = t_files
-                if edition in file_names:
-                    file_names[edition].extend(t_file_names)
-                else:
-                    file_names[edition] = t_file_names
+        t_files, t_file_names = source_files(new_dist_dir)
+        files[edition] = t_files
+        file_names[edition] = t_file_names
 
     includes, include_names = headers(editions)
     # TODO: remove includes we don't care about. The includes list should get
@@ -194,6 +200,36 @@ def update_hacl(files, includes, editions):
         shutil.copytree(internal_includes, dest_internal)
 
 
+def update_karamel(new_dist_dir):
+    rm("karamel/include")
+    rm("karamel/krmllib")
+    shutil.copytree(os.path.join(new_dist_dir, "karamel/include"), "karamel/include")
+    shutil.copytree(os.path.join(new_dist_dir, "karamel/krmllib"), "karamel/krmllib")
+
+
+def update_vale(new_dist_dir):
+    new_dist_dir = Path(new_dist_dir)
+
+    rm("vale/include")
+    os.mkdir("vale/include")
+
+    rm("vale/src")
+    os.mkdir("vale/src")
+
+    shutil.copy(
+        new_dist_dir.joinpath("gcc-compatible/internal/Vale.h"),
+        Path(abs_path("vale/include")).joinpath("Vale.h"),
+    )
+
+    shutil.copy(
+        new_dist_dir.joinpath("gcc-compatible/Vale.c"),
+        Path(abs_path("vale/src")).joinpath("Vale.c"),
+    )
+    for path in new_dist_dir.joinpath("vale").iterdir():
+        if path.is_file():
+            shutil.copy(path, Path(abs_path("vale/src")))
+
+
 @subcommand(
     [
         argument(
@@ -202,6 +238,7 @@ def update_hacl(files, includes, editions):
             help="The base directory of the HACL* repository.",
             type=str,
         ),
+        argument("--no-vale", help="Don't update Vale.", action="store_true"),
         argument("-v", "--verbose", help="Make it verbose.", action="store_true"),
     ]
 )
@@ -256,3 +293,7 @@ def update(args):
     copy_ocaml_dir("lib")
     copy_ocaml_dir("lib_gen")
     copy_ocaml_file("ctypes.depend")
+
+    update_karamel(hacl_dist)
+    if not args.no_vale:
+        update_vale(hacl_dist)
