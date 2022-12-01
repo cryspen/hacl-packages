@@ -21,15 +21,13 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 ````
 `````
 
-**Example**
+**Example (32)**
 
-`````{tabs}
-````{group-tab} 32
 ```{literalinclude} ../../../../../tests/blake2s.cc
 :language: C
 :dedent:
-:start-after: "// ANCHOR(example header)"
-:end-before: "// ANCHOR_END(example header)"
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
 ```
 
 ```{literalinclude} ../../../../../tests/util.h
@@ -45,12 +43,6 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 :start-after: "// ANCHOR(example)"
 :end-before: "// ANCHOR_END(example)"
 ```
-
-````
-````{group-tab} 128
-There is no example for now.
-````
-`````
 
 `````{tabs}
 ````{group-tab} 32
@@ -80,16 +72,28 @@ There is no example for now.
 ````
 `````
 
-**Example**
+**Example (32)**
 
-`````{tabs}
-````{group-tab} 32
-There is no example for now.
-````
-````{group-tab} 128
-There is no example for now.
-````
-`````
+```{literalinclude} ../../../../../tests/blake2s.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
+```
+
+```{literalinclude} ../../../../../tests/util.h
+:language: C
+:dedent:
+:start-after: "// ANCHOR(print_hex_ln)"
+:end-before: "// ANCHOR_END(print_hex_ln)"
+```
+
+```{literalinclude} ../../../../../tests/blake2s.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example streaming)"
+:end-before: "// ANCHOR_END(example streaming)"
+```
 
 `````{tabs}
 ````{group-tab} 32
