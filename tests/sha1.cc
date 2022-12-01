@@ -83,7 +83,7 @@ TEST(ApiSuite, ApiTest)
   // Documentation.
   // Lines after START and before END are used in documentation.
   {
-    // START Streaming
+    // ANCHOR(streaming)
     // We demonstrate streamed hashing by providing "Hello, World!" in two
     // chunks.
     const char* chunk_1 = "Hello, ";
@@ -108,7 +108,7 @@ TEST(ApiSuite, ApiTest)
     // Finish
     Hacl_Streaming_SHA1_legacy_finish_sha1(state, digest);
     Hacl_Streaming_SHA1_legacy_free_sha1(state);
-    // END Streaming
+    // ANCHOR_END(streaming)
 
     bytes expected_digest =
       from_hex("0a0a9f2a6772942557ab5355d76af442f8f65e01");
