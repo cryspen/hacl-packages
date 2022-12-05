@@ -79,6 +79,42 @@ TEST(ApiSuite, ApiTest)
 
     EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 20), 0);
   }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(streaming)
+    // We demonstrate streamed hashing by providing "Hello, World!" in two
+    // chunks.
+    const char* chunk_1 = "Hello, ";
+    const char* chunk_2 = "World!";
+    uint32_t chunk_1_size = strlen(chunk_1);
+    uint32_t chunk_2_size = strlen(chunk_2);
+
+    // 160 Bit / 8 = 20 Byte
+    uint8_t digest[160 / 8];
+
+    // Init
+    Hacl_Streaming_SHA1_state_sha1* state =
+      Hacl_Streaming_SHA1_legacy_create_in_sha1();
+    Hacl_Streaming_SHA1_legacy_init_sha1(state);
+
+    // Update
+    Hacl_Streaming_SHA1_legacy_update_sha1(
+      state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Streaming_SHA1_legacy_update_sha1(
+      state, (uint8_t*)chunk_2, chunk_2_size);
+
+    // Finish
+    Hacl_Streaming_SHA1_legacy_finish_sha1(state, digest);
+    Hacl_Streaming_SHA1_legacy_free_sha1(state);
+    // ANCHOR_END(streaming)
+
+    bytes expected_digest =
+      from_hex("0a0a9f2a6772942557ab5355d76af442f8f65e01");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 20), 0);
+  }
 }
 
 class Sha1 : public ::testing::TestWithParam<tuple<TestCase, vector<size_t>>>

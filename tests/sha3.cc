@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include "Hacl_SHA3.h"
+#include "Hacl_Streaming_SHA3.h"
 
 #include "config.h"
 #include "util.h"
@@ -64,6 +65,42 @@ TEST(ApiSuite, ApiTest)
 
     Hacl_SHA3_sha3_256(message_size, (uint8_t*)message, digest);
     // END OneShot
+
+    bytes expected_digest = from_hex(
+      "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
+  }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(streaming)
+    // This example uses SHA3-256.
+
+    // We demonstrate streamed hashing by providing "Hello, World!" in two
+    // chunks.
+    const char* chunk_1 = "Hello, ";
+    const char* chunk_2 = "World!";
+    uint32_t chunk_1_size = strlen(chunk_1);
+    uint32_t chunk_2_size = strlen(chunk_2);
+
+    // 256 Bit / 8 = 32 Byte
+    uint8_t digest[256 / 8];
+
+    // Init
+    Hacl_Streaming_SHA3_state_sha3_256* state =
+      Hacl_Streaming_SHA3_create_in_256();
+    Hacl_Streaming_SHA3_init_256(state);
+
+    // Update
+    Hacl_Streaming_SHA3_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Streaming_SHA3_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
+
+    // Finish
+    Hacl_Streaming_SHA3_finish_256(state, digest);
+    Hacl_Streaming_SHA3_free_256(state);
+    // ANCHOR_END(streaming)
 
     bytes expected_digest = from_hex(
       "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");

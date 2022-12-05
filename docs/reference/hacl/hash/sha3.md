@@ -49,7 +49,32 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 ### Streaming
 
-No streaming API available.
+**Example**
+
+```{literalinclude} ../../../../tests/sha3.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(streaming)"
+:end-before: "// ANCHOR_END(streaming)"
+```
+
+```{doxygentypedef} Hacl_Streaming_SHA3_state_sha3_256
+```
+
+```{doxygenfunction} Hacl_Streaming_SHA3_create_in_256
+```
+
+```{doxygenfunction} Hacl_Streaming_SHA3_init_256
+```
+
+```{doxygenfunction} Hacl_Streaming_SHA3_update_256
+```
+
+```{doxygenfunction} Hacl_Streaming_SHA3_finish_256
+```
+
+```{doxygenfunction} Hacl_Streaming_SHA3_free_256
+```
 
 ## SHAKE
 

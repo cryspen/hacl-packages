@@ -1,6 +1,9 @@
 name: build_pull_request
 
 on:
+  push:
+    branches:
+      - 'hacl-star-*'
   pull_request:
     paths-ignore:
       - .gitignore

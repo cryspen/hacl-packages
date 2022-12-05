@@ -4,12 +4,11 @@ include(FetchContent)
 FetchContent_Declare(hacl
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     GIT_REPOSITORY https://github.com/cryspen/hacl-packages/
-    GIT_TAG 88560a8b5bae5db890e11f1ea71376adfa767baf
+    GIT_TAG main
 )
 FetchContent_MakeAvailable(hacl)
 
 project(hacl-blake-example)
-set(CMAKE_OSX_ARCHITECTURES arm64)
 
 add_executable(example blake-example.cc)
 
