@@ -8,7 +8,6 @@
 #include "util.h"
 
 #include "EverCrypt_Hash.h"
-#include "Hacl_SHA2_Scalar32.h"
 #include "Hacl_Streaming_SHA2.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
@@ -162,16 +161,7 @@ Sha2_256(benchmark::State& state)
   }
 }
 
-static void
-Sha2_MB_256(benchmark::State& state)
-{
-  while (state.KeepRunning()) {
-    Hacl_SHA2_Scalar32_sha256(digest256.data(), input.size(), input.data());
-  }
-}
-
 BENCHMARK(Sha2_256);
-BENCHMARK(Sha2_MB_256);
 
 typedef Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____
   EverCrypt_Streaming_Hash_state;
