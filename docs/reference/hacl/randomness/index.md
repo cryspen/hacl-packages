@@ -94,28 +94,10 @@ Generate output.
 * `additional_input_input_len` Length of additional input.
 * `additional_input_input` Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
 
-<!--
 ```{doxygenfunction} Hacl_HMAC_DRBG_free
 ```
--->
 
-````{warning}
-**Cleanup and free the DRBG state.**
-
-Currently, there is no free function available. You can use ...
-
-```C
-void free_state(Hacl_HMAC_DRBG_state* state)
-{
-  KRML_HOST_FREE(state->k);
-  KRML_HOST_FREE(state->reseed_counter);
-  KRML_HOST_FREE(state->v);
-}
-```
-
-... to cleanup the state.
-
-````
+Free the DRBG state.
 
 ```{doxygenfunction} Hacl_HMAC_DRBG_min_length
 ```
