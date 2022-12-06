@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __internal_Hacl_Krmllib_H
-#define __internal_Hacl_Krmllib_H
+#ifndef __internal_Hacl_Streaming_SHA2_H
+#define __internal_Hacl_Streaming_SHA2_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,13 +35,13 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "../Hacl_Krmllib.h"
+#include "../Hacl_Streaming_SHA2.h"
 
-uint32_t LowStar_Vector_new_capacity(uint32_t cap);
+void Hacl_SHA2_Scalar32_sha512_init(uint64_t *hash);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Krmllib_H_DEFINED
+#define __internal_Hacl_Streaming_SHA2_H_DEFINED
 #endif
