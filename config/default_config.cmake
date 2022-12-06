@@ -1,7 +1,6 @@
 set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_NaCl.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Salsa20.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Krmllib.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_51.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
