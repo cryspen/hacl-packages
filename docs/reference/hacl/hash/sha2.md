@@ -56,6 +56,20 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 ```{literalinclude} ../../../../tests/sha2.cc
 :language: C
 :dedent:
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
+```
+
+```{literalinclude} ../../../../tests/util.h
+:language: C
+:dedent:
+:start-after: "// ANCHOR(print_hex_ln)"
+:end-before: "// ANCHOR_END(print_hex_ln)"
+```
+
+```{literalinclude} ../../../../tests/sha2.cc
+:language: C
+:dedent:
 :start-after: "// ANCHOR(example streaming)"
 :end-before: "// ANCHOR_END(example streaming)"
 ```
