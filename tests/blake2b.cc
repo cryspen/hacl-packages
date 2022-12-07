@@ -83,39 +83,56 @@ TEST(ApiTestSuite, ApiTest)
 
   {
     // ANCHOR(example streaming)
-    // We demonstrate streamed hashing by providing "Hello, World!" in two
-    // chunks.
+    // This example shows how to hash the byte sequence "Hello, World!" in two
+    // chunks. As a bonus, it also shows how to obtain intermediate results by
+    // calling `finish` more than once.
+
     const char* chunk_1 = "Hello, ";
     const char* chunk_2 = "World!";
     uint32_t chunk_1_size = strlen(chunk_1);
     uint32_t chunk_2_size = strlen(chunk_2);
 
-    uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+    uint8_t digest_1[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+    uint8_t digest_2[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
     Hacl_Streaming_Blake2_blake2b_32_state_s* state =
       Hacl_Streaming_Blake2_blake2b_32_no_key_create_in();
     Hacl_Streaming_Blake2_blake2b_32_no_key_init(state);
 
-    // Update
+    // 1/2 Include `Hello, ` into the hash calculation and
+    // obtain the intermediate hash of "Hello, ".
     Hacl_Streaming_Blake2_blake2b_32_no_key_update(
       state, (uint8_t*)chunk_1, chunk_1_size);
+    // This is optional when no intermediate results are required.
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest_1);
+
+    // 2/2 Include `World!` into the hash calculation and
+    // obtain the final hash of "Hello, World!".
     Hacl_Streaming_Blake2_blake2b_32_no_key_update(
       state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest_2);
 
-    // Finish
-    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest);
+    // Cleanup
     Hacl_Streaming_Blake2_blake2b_32_no_key_free(state);
 
-    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest);
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest_1);
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest_2);
     // ANCHOR_END(example streaming)
 
-    bytes expected_digest = from_hex(
+    bytes expected_digest_1 = from_hex(
+      "17ec82285d5efd15c7f3cb6ceeea15dbb0588350729932fbdddc8c37e347999d7a125003"
+      "df087dd3a6f5983fa87ce2dfa162cc590005c7ff872732788cbf0626");
+    bytes expected_digest_2 = from_hex(
       "7dfdb888af71eae0e6a6b751e8e3413d767ef4fa52a7993daa9ef097f7aa3d949199c113"
       "caa37c94f80cf3b22f7d9d6e4f5def4ff927830cffe4857c34be3d89");
 
-    EXPECT_EQ(strncmp((char*)digest,
-                      (char*)expected_digest.data(),
+    EXPECT_EQ(strncmp((char*)digest_1,
+                      (char*)expected_digest_1.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+    EXPECT_EQ(strncmp((char*)digest_2,
+                      (char*)expected_digest_2.data(),
                       HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
               0);
   }

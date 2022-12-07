@@ -22,6 +22,12 @@
 using json = nlohmann::json;
 using namespace std;
 
+// ANCHOR(example define)
+// Note: HACL Packages will provide this (or a similar) define in a later
+// version.
+#define HACL_HASH_SHA2_256_DIGEST_LENGTH 32
+// ANCHOR_END(example define)
+
 class TestCase
 {
 public:
@@ -88,35 +94,54 @@ TEST(ApiSuite, ApiTest)
   // Lines after START and before END are used in documentation.
   {
     // ANCHOR(example streaming)
-    // This example uses SHA2-256.
+    // This example shows how to hash the byte sequence "Hello, World!" in two
+    // chunks. As a bonus, it also shows how to obtain intermediate results by
+    // calling `finish` more than once.
 
-    // We demonstrate streamed hashing by providing "Hello, World!" in two chunks.
     const char* chunk_1 = "Hello, ";
     const char* chunk_2 = "World!";
     uint32_t chunk_1_size = strlen(chunk_1);
     uint32_t chunk_2_size = strlen(chunk_2);
 
-    // 256 Bit / 8 = 32 Byte
-    uint8_t digest[256 / 8];
+    uint8_t digest_1[HACL_HASH_SHA2_256_DIGEST_LENGTH];
+    uint8_t digest_2[HACL_HASH_SHA2_256_DIGEST_LENGTH];
 
     // Init
     Hacl_Streaming_SHA2_state_sha2_256* state =
       Hacl_Streaming_SHA2_create_in_256();
     Hacl_Streaming_SHA2_init_256(state);
 
-    // Update
+    // 1/2 Include `Hello, ` into the hash calculation and
+    // obtain the intermediate hash of "Hello, ".
     Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
-    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
+    // This is optional when no intermediate results are required.
+    Hacl_Streaming_SHA2_finish_256(state, digest_1);
 
-    // Finish
-    Hacl_Streaming_SHA2_finish_256(state, digest);
+    // 2/2 Include `World!` into the hash calculation and
+    // obtain the final hash of "Hello, World!".
+    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Streaming_SHA2_finish_256(state, digest_2);
+
+    // Cleanup
     Hacl_Streaming_SHA2_free_256(state);
+
+    print_hex_ln(HACL_HASH_SHA2_256_DIGEST_LENGTH, digest_1);
+    print_hex_ln(HACL_HASH_SHA2_256_DIGEST_LENGTH, digest_2);
     // ANCHOR_END(example streaming)
 
-    bytes expected_digest = from_hex(
+    bytes expected_digest_1 = from_hex(
+      "23429bd9ba98dd5140309bb9b0094b3aad642430fff6fb3ca61f008ce644f34a");
+    bytes expected_digest_2 = from_hex(
       "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f");
 
-    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 32), 0);
+    EXPECT_EQ(strncmp((char*)digest_1,
+                      (char*)expected_digest_1.data(),
+                      HACL_HASH_SHA2_256_DIGEST_LENGTH),
+              0);
+    EXPECT_EQ(strncmp((char*)digest_2,
+                      (char*)expected_digest_2.data(),
+                      HACL_HASH_SHA2_256_DIGEST_LENGTH),
+              0);
   }
 }
 
