@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - 'hacl-star-*'
+      - 'hacl-star-**'
     paths-ignore:
       - .gitignore
       - CLA.md
