@@ -17,22 +17,22 @@ jobs:
           sudo apt-get install ninja-build
           sudo apt-get install python3 python3-scipy
 
-      - name: Checkout hacl-packages
+      - name: Checkout hacl-packages (${{ github.head_ref }})
         uses: actions/checkout@v3
         with:
           path: pr
 
-      - name: Build hacl-packages
+      - name: Build hacl-packages (${{ github.head_ref }})
         working-directory: pr
         run: ./mach build --release --benchmarks
 
-      - name: Checkout hacl-packages main
+      - name: Checkout hacl-packages (main)
         uses: actions/checkout@v3
         with:
           path: main
           ref: main
 
-      - name: Build hacl-packages main
+      - name: Build hacl-packages (main)
         working-directory: main
         run: ./mach build --release --benchmarks
 
@@ -52,11 +52,14 @@ jobs:
 
       - name: Display results
         run: |
+          # Display the results dumped by the previous step
+          # Then fail if one of the result is greater than the defined threshold
           ret=0
           threshold=0.2
           for f in ./*_benchmark.json
           do
             name=$(basename "$f" _benchmark.json)
+            # For a given benchmark, the result is the overall CPU-time evolution
             cpu=$(jq '.[-1].measurements[0].cpu' < "$f")
             printf "%-20s %+.2f\n" "$name" "$cpu"
             (( $(echo "$cpu > $threshold" | bc) )) && ret=1
