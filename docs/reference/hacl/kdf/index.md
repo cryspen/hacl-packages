@@ -33,6 +33,22 @@ The following instantiations are supported:
 
 ### API Reference
 
+**Example (SHA2-256)**
+
+```{literalinclude} ../../../../tests/hkdf.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE DEFINE)"
+:end-before: "// ANCHOR_END(EXAMPLE DEFINE)"
+```
+
+```{literalinclude} ../../../../tests/hkdf.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE)"
+:end-before: "// ANCHOR_END(EXAMPLE)"
+```
+
 #### BLAKE2b
 
 `````{tabs}
