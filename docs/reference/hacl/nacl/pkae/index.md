@@ -15,6 +15,29 @@ Thus, the message and ciphertext are allowed to overlap.
 In combined mode, the authentication tag and encrypted message are stored consecutively in memory.
 Thus, `c` must always point to memory with length 16 (tag length) + `mlen` (message length).
 
+**Example**
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example define box)"
+:end-before: "// ANCHOR_END(example define box)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE SETUP)"
+:end-before: "// ANCHOR_END(EXAMPLE SETUP)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE ONESHOT COMBINED)"
+:end-before: "// ANCHOR_END(EXAMPLE ONESHOT COMBINED)"
+```
+
 ```{doxygenfunction} Hacl_NaCl_crypto_box_easy
 ```
 
@@ -28,6 +51,29 @@ Thus, `c` must always point to `mlen` bytes of memory and `tag` must always poin
 
 Note: NaCl supports in-place encryption/decryption.
 Thus, the message and ciphertext are allowed to overlap.
+
+**Example**
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example define box)"
+:end-before: "// ANCHOR_END(example define box)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE SETUP)"
+:end-before: "// ANCHOR_END(EXAMPLE SETUP)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE ONESHOT DETACHED)"
+:end-before: "// ANCHOR_END(EXAMPLE ONESHOT DETACHED)"
+```
 
 ```{doxygenfunction} Hacl_NaCl_crypto_box_detached
 ```
@@ -44,6 +90,29 @@ Applications that send several messages to the same recipient or receive several
 
 #### Combined mode
 
+**Example**
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example define box)"
+:end-before: "// ANCHOR_END(example define box)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE SETUP)"
+:end-before: "// ANCHOR_END(EXAMPLE SETUP)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE PRECOMPUTED COMBINED)"
+:end-before: "// ANCHOR_END(EXAMPLE PRECOMPUTED COMBINED)"
+```
+
 ```{doxygenfunction} Hacl_NaCl_crypto_box_easy_afternm
 ```
 
@@ -51,6 +120,29 @@ Applications that send several messages to the same recipient or receive several
 ```
 
 #### Detached mode
+
+**Example**
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(example define box)"
+:end-before: "// ANCHOR_END(example define box)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE SETUP)"
+:end-before: "// ANCHOR_END(EXAMPLE SETUP)"
+```
+
+```{literalinclude} ../../../../../tests/nacl.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE PRECOMPUTED DETACHED)"
+:end-before: "// ANCHOR_END(EXAMPLE PRECOMPUTED DETACHED)"
+```
 
 ```{doxygenfunction} Hacl_NaCl_crypto_box_detached_afternm
 ```
