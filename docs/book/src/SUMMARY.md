@@ -29,3 +29,4 @@
     - [Rust](./developers/rust-build.md)
     - [OCaml](./developers/ocaml-build.md)
   - [Continuous Integration](./developers/ci.md)
+  - [Documentation](./developers/documentation.md)
