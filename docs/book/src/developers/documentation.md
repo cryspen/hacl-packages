@@ -18,7 +18,7 @@ The HACL Packages can be built with `mach` ...
 
 ### Contributing to the documentation
 
-The documentation system uses [Doxygen], [Sphinx], and [Breath] to document the [HACL\*] C API.
+The documentation system uses [Doxygen], [Sphinx], and [Breathe] to document the [HACL\*] C API.
 
 The build process is roughly as follows: First, `mach` runs Doxygen to generate an XML representation of the HACL\* library. Then, Sphinx uses the Breathe plugin to extract and create reference documentation in all places in the markdown files that reference HACL\* C functions or types.
 
