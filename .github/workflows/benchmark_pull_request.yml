@@ -1,0 +1,64 @@
+name: benchmark_pull_request
+
+on:
+  push:
+    branches:
+      - 'hacl-star-**'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+          sudo apt-get install python3 python3-scipy
+
+      - name: Checkout hacl-packages
+        uses: actions/checkout@v3
+        with:
+          path: pr
+
+      - name: Build hacl-packages
+        working-directory: pr
+        run: ./mach build --release --benchmarks
+
+      - name: Checkout hacl-packages main
+        uses: actions/checkout@v3
+        with:
+          path: main
+          ref: main
+
+      - name: Build hacl-packages main
+        working-directory: main
+        run: ./mach build --release --benchmarks
+
+      - name: Checkout google/benchmark
+        uses: actions/checkout@v3
+        with:
+          path: gbenchmark
+          repository: google/benchmark
+
+      - name: Run benchmarks
+        run: |
+          for f in main/build/Release/*_benchmark
+          do
+            benchmark=$(basename "$f")
+            gbenchmark/tools/compare.py -d "$benchmark.json" benchmarks "main/build/Release/$benchmark" "pr/build/Release/$benchmark"
+          done
+
+      - name: Display results
+        run: |
+          ret=0
+          threshold=0.2
+          for f in ./*_benchmark.json
+          do
+            name=$(basename "$f" _benchmark.json)
+            cpu=$(jq '.[-1].measurements[0].cpu' < "$f")
+            printf "%-20s %+.2f\n" "$name" "$cpu"
+            (( $(echo "$cpu > $threshold" | bc) )) && ret=1
+          done
+          exit $ret
