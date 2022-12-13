@@ -42,7 +42,9 @@ def compare_benchmarks(benchmarks, path_1, path_2):
     print("Comparing benchmarks ...")
 
     if not os.path.exists(path_1) or not os.path.exists(path_2):
-        print("! Nothing is built! Please build first. Aborting!")
+        print(
+            "! Build missing! Please build both revisions first: `./mach build --release --benchmarks`. Aborting!"
+        )
         exit(1)
     if not os.path.exists("build/benchmark-src"):
         print("! gbenchmark missing! Aborting!")
