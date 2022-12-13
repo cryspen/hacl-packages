@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "EverCrypt_DRBG.h"
+#include "Hacl_K256_ECDSA.h"
 
 using namespace std;
 
@@ -135,6 +136,25 @@ generate_sha2_256_hmac_key(uint8_t* key)
     from_hex("DEE30A3A53F4E25AB8BD47A90A05F4991794FA3C05CBD098F4E03CCB5401A4BD4"
              "71EF4396A5B36B3FCB0A448E82DDC23D8E48DF29DF945E3C0036311138F362B");
   std::copy(key_bytes.begin(), key_bytes.end(), key);
+}
+
+// Only used in examples. Do not use otherwise.
+void
+generate_k256_keypair(uint8_t* sk, uint8_t* pk)
+{
+  bytes sk_bytes = from_hex(
+    "e7e246fd665cb0a1827e09c0fc1204b8f4b3e6bb6dca52c91c0ffd7dc35e09ee");
+  std::copy(sk_bytes.begin(), sk_bytes.end(), sk);
+
+  bytes pk_compressed = from_hex(
+    "02bb1622feed26432b905f7ac1347c45c048e327abb58862333714c0a65625b14a");
+
+  bytes pk_bytes(64);
+  bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(pk_bytes.data(),
+                                                          pk_compressed.data());
+  EXPECT_TRUE(res);
+
+  std::copy(pk_bytes.begin(), pk_bytes.end(), pk);
 }
 
 // ANCHOR(print_hex_ln)
