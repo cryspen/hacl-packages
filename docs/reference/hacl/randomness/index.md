@@ -12,6 +12,15 @@ Deterministic Random Bit Generator (DRBG) (NIST, SP 800-90A).
 
 ### API Reference
 
+**Example**
+
+```{literalinclude} ../../../../tests/drbg.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE)"
+:end-before: "// ANCHOR_END(EXAMPLE)"
+```
+
 #### Variables
 
 ```{doxygenvariable} Hacl_HMAC_DRBG_reseed_interval
