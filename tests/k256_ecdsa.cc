@@ -18,8 +18,65 @@
 #include "Hacl_K256_ECDSA.h"
 #include "util.h"
 
+// ANCHOR(EXAMPLE DEFINE)
+// Note: HACL Packages will provide these in a later version.
+#define HACL_SIGNATURE_ECDSA_K256_SECRETKEY_LEN 32
+
+#define HACL_SIGNATURE_ECDSA_K256_PUBLICKEY_LEN 64
+#define HACL_SIGNATURE_ECDSA_K256_PUBLICKEY_COMPRESSED_LEN 33
+#define HACL_SIGNATURE_ECDSA_K256_PUBLICKEY_UNCOMPRESSED_LEN 65
+
+#define HACL_SIGNATURE_ECDSA_K256_NONCE_LEN 32
+
+#define HACL_SIGNATURE_ECDSA_K256_SIGNATURE_LEN 64
+// ANCHOR_END(EXAMPLE DEFINE)
+
 using json = nlohmann::json;
 using namespace std;
+
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // We want to sign and verify a message.
+
+  // Message
+  const char* message = "Hello, World!";
+  uint32_t message_size = strlen(message);
+
+  // Keys
+  uint8_t sk[HACL_SIGNATURE_ECDSA_K256_SECRETKEY_LEN];
+  uint8_t pk[HACL_SIGNATURE_ECDSA_K256_PUBLICKEY_LEN];
+
+  // Note: This function is not in HACL*.
+  //       You need to bring your own keys.
+  generate_k256_keypair(sk, pk);
+
+  // Nonce
+  uint8_t nonce[HACL_SIGNATURE_ECDSA_K256_NONCE_LEN];
+
+  // Signature
+  uint8_t signature[HACL_SIGNATURE_ECDSA_K256_SIGNATURE_LEN];
+
+  // Sign
+  bool res_sign = Hacl_K256_ECDSA_ecdsa_sign_sha256(
+    signature, message_size, (uint8_t*)message, sk, nonce);
+
+  if (!res_sign) {
+    // Error
+  }
+
+  // Verify
+  bool res_verify = Hacl_K256_ECDSA_ecdsa_verify_sha256(
+    message_size, (uint8_t*)message, pk, signature);
+
+  if (!res_verify) {
+    // Error
+  }
+  // ANCHOR_END(EXAMPLE)
+
+  EXPECT_TRUE(res_sign);
+  EXPECT_TRUE(res_verify);
+}
 
 class TestCase
 {

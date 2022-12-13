@@ -26,6 +26,12 @@
 #include "Vale.h"
 #endif
 
+// ANCHOR(DEFINE)
+#define HACL_DH_CURVE25519_SECRETKEY_LEN 32
+#define HACL_DH_CURVE25519_PUBLICKEY_LEN 32
+#define HACL_DH_CURVE25519_SHARED_LEN 32
+// ANCHOR_END(DEFINE)
+
 using json = nlohmann::json;
 using namespace std;
 
@@ -53,6 +59,51 @@ TEST(x25519Test, HaclTest)
     }
 #endif
   }
+}
+
+// -----------------------------------------------------------------------------
+
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // Alice and Bob want to agree on a shared secret via X25519.
+
+  // Thus, Alice needs a secret and public key ...
+  uint8_t alice_sk[HACL_DH_CURVE25519_SECRETKEY_LEN];
+  uint8_t alice_pk[HACL_DH_CURVE25519_PUBLICKEY_LEN];
+  // Note: This function is not in HACL*.
+  //       You need to bring your own random.
+  generate_random(alice_sk, HACL_DH_CURVE25519_SECRETKEY_LEN);
+  Hacl_Curve25519_51_secret_to_public(alice_pk, alice_sk);
+
+  // ... and Bob does as well.
+  uint8_t bob_sk[HACL_DH_CURVE25519_SECRETKEY_LEN];
+  uint8_t bob_pk[HACL_DH_CURVE25519_PUBLICKEY_LEN];
+  // Note: This function is not in HACL*.
+  //       You need to bring your own random.
+  generate_random(bob_sk, HACL_DH_CURVE25519_SECRETKEY_LEN);
+  Hacl_Curve25519_51_secret_to_public(bob_pk, bob_sk);
+
+  // Now, Alice and Bob exchange their public keys so that
+  // Alice can compute her shared secret as ...
+  uint8_t shared_alice[HACL_DH_CURVE25519_SHARED_LEN];
+  bool res_alice = Hacl_Curve25519_51_ecdh(shared_alice, alice_sk, bob_pk);
+
+  // ... and Bob can compute his shared secret as ...
+  uint8_t shared_bob[HACL_DH_CURVE25519_SHARED_LEN];
+  bool res_bob = Hacl_Curve25519_51_ecdh(shared_bob, bob_sk, alice_pk);
+
+  // Now, both Alice and Bob should share the same secret value, i.e.,
+  //
+  //     `shared_alice` == `shared_bob`
+  //
+  // ... and can use this to derive, e.g., an encryption key.
+  // ANCHOR_END(EXAMPLE)
+
+  EXPECT_TRUE(memcmp(shared_alice, shared_bob, HACL_DH_CURVE25519_SHARED_LEN) ==
+              0);
+  EXPECT_TRUE(res_alice);
+  EXPECT_TRUE(res_bob);
 }
 
 //=== Wycheproof tests ====
