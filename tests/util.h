@@ -6,6 +6,7 @@
 
 #include "EverCrypt_DRBG.h"
 #include "Hacl_K256_ECDSA.h"
+#include "Hacl_P256.h"
 
 using namespace std;
 
@@ -152,6 +153,24 @@ generate_k256_keypair(uint8_t* sk, uint8_t* pk)
   bytes pk_bytes(64);
   bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(pk_bytes.data(),
                                                           pk_compressed.data());
+  EXPECT_TRUE(res);
+
+  std::copy(pk_bytes.begin(), pk_bytes.end(), pk);
+}
+
+// Only used in examples. Do not use otherwise.
+void
+generate_p256_keypair(uint8_t* sk, uint8_t* pk)
+{
+  bytes sk_bytes = from_hex(
+    "202a6d0faacf15e8468ee8ce3b1e5a3a4395a28a10a5b03604980e584bcac386");
+  std::copy(sk_bytes.begin(), sk_bytes.end(), sk);
+
+  bytes pk_compressed = from_hex(
+    "03ed1a25d27f12a0a4d76963f1ebefe56b0fdeb06a68c31b83eb9810a66294808d");
+
+  bytes pk_bytes(64);
+  bool res = Hacl_P256_compressed_to_raw(pk_compressed.data(), pk_bytes.data());
   EXPECT_TRUE(res);
 
   std::copy(pk_bytes.begin(), pk_bytes.end(), pk);
