@@ -127,6 +127,16 @@ generate_random(uint8_t* output, uint32_t output_len)
   EverCrypt_DRBG_uninstantiate(state);
 }
 
+// Only used in examples. Do not use otherwise.
+void
+generate_sha2_256_hmac_key(uint8_t* key)
+{
+  bytes key_bytes =
+    from_hex("DEE30A3A53F4E25AB8BD47A90A05F4991794FA3C05CBD098F4E03CCB5401A4BD4"
+             "71EF4396A5B36B3FCB0A448E82DDC23D8E48DF29DF945E3C0036311138F362B");
+  std::copy(key_bytes.begin(), key_bytes.end(), key);
+}
+
 // ANCHOR(print_hex_ln)
 void
 print_hex_ln(size_t bytes_len, uint8_t* bytes)
