@@ -18,6 +18,82 @@
 
 using json = nlohmann::json;
 
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // We want to sign and verify a message.
+
+  // Keys
+  uint8_t* e;
+  uint32_t eBits;
+  uint8_t* d;
+  uint32_t dBits;
+  uint8_t* mod;
+  uint32_t modBits;
+  // Note: This is not in HACL*.
+  //       You need to bring your own keys.
+  generate_rsapss_key(&e, &eBits, &d, &dBits, &mod, &modBits);
+  uint64_t* skey =
+    Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
+  uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(modBits, eBits, mod, e);
+
+  // Message
+  const char* msg = "Hello, World!";
+  size_t msgLen = strlen(msg);
+
+  // Salt
+  uint32_t saltLen =
+    Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_SHA2_256);
+  uint8_t* salt = (uint8_t*)malloc(saltLen);
+  generate_random(salt, saltLen);
+
+  // Signature
+  uint32_t sgntLen = modBits / 8;
+  uint8_t* sgnt = (uint8_t*)malloc(sgntLen);
+
+  // Sign
+  bool res_sign = Hacl_RSAPSS_rsapss_sign(Spec_Hash_Definitions_SHA2_256,
+                                          modBits,
+                                          eBits,
+                                          dBits,
+                                          skey,
+                                          saltLen,
+                                          salt,
+                                          msgLen,
+                                          (uint8_t*)msg,
+                                          sgnt);
+
+  if (!res_sign) {
+    // Error
+  }
+
+  bool res_verify = Hacl_RSAPSS_rsapss_verify(Spec_Hash_Definitions_SHA2_256,
+                                              modBits,
+                                              eBits,
+                                              pkey,
+                                              saltLen,
+                                              sgntLen,
+                                              sgnt,
+                                              msgLen,
+                                              (uint8_t*)msg);
+
+  if (!res_verify) {
+    // Error
+  }
+
+  free(sgnt);
+  free(salt);
+  free(pkey);
+  free(skey);
+  free(mod);
+  free(d);
+  free(e);
+  // ANCHOR_END(EXAMPLE)
+
+  EXPECT_TRUE(res_sign);
+  EXPECT_TRUE(res_verify);
+}
+
 typedef struct
 {
   uint32_t tcId;

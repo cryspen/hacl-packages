@@ -37,6 +37,23 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 
 ### API Reference
 
+**Example**
+
+
+```{literalinclude} ../../../../tests/hmac.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(DEFINE)"
+:end-before: "// ANCHOR_END(DEFINE)"
+```
+
+```{literalinclude} ../../../../tests/hmac.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(EXAMPLE)"
+:end-before: "// ANCHOR_END(EXAMPLE)"
+```
+
 #### BLAKE2b
 
 `````{tabs}

@@ -17,6 +17,23 @@
 
 using json = nlohmann::json;
 
+// ANCHOR(DEFINE)
+// Note: HACL Packages will provide these in a later version.
+#define HACL_MAC_HMAC_BLAKE2B_KEY_LEN_MAX 128
+#define HACL_MAC_HMAC_BLAKE2S_KEY_LEN_MAX 64
+#define HACL_MAC_HMAC_SHA2_256_KEY_LEN_MAX 64
+#define HACL_MAC_HMAC_SHA2_384_KEY_LEN_MAX 128
+#define HACL_MAC_HMAC_SHA2_512_KEY_LEN_MAX 128
+#define HACL_MAC_HMAC_SHA1_KEY_LEN_MAX 64
+
+#define HACL_MAC_HMAC_BLAKE2B_TAG_LEN 64
+#define HACL_MAC_HMAC_BLAKE2S_TAG_LEN 32
+#define HACL_MAC_HMAC_SHA2_256_TAG_LEN 32
+#define HACL_MAC_HMAC_SHA2_384_TAG_LEN 48
+#define HACL_MAC_HMAC_SHA2_512_TAG_LEN 64
+#define HACL_MAC_HMAC_SHA1_TAG_LEN 20
+// ANCHOR_END(DEFINE)
+
 typedef struct
 {
   bytes key;
@@ -27,6 +44,36 @@ typedef struct
   size_t full_size;
   bool valid;
 } TestCase;
+
+TEST(ApiSuite, ApiTest)
+{
+  // Documentation.
+  // Lines after ANCHOR and before ANCHOR_END are used in documentation.
+  {
+    // ANCHOR(EXAMPLE)
+    const char* data = "Hello, World!";
+    uint32_t data_len = strlen(data);
+
+    uint8_t key[HACL_MAC_HMAC_SHA2_256_KEY_LEN_MAX];
+    // Note: This function is not from HACL*.
+    //       You need to bring your own random.
+    generate_sha2_256_hmac_key(key);
+
+    uint8_t dst[HACL_MAC_HMAC_SHA2_256_TAG_LEN];
+
+    Hacl_HMAC_compute_sha2_256(
+      dst, key, HACL_MAC_HMAC_SHA2_256_KEY_LEN_MAX, (uint8_t*)data, data_len);
+    // ANCHOR_END(EXAMPLE)
+
+    bytes expected_digest = from_hex(
+      "097015ddbdb0c43117c9b9df37858530f119069ce0418b7b12768a4dfe76ab90");
+
+    EXPECT_EQ(strncmp((char*)dst,
+                      (char*)expected_digest.data(),
+                      HACL_MAC_HMAC_SHA2_256_TAG_LEN),
+              0);
+  }
+}
 
 std::vector<TestCase>
 read_json(string path, size_t full_size)
