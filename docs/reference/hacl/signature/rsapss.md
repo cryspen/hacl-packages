@@ -10,16 +10,14 @@ RSASSA-PSS as defined in [RFC 8017].
 
 ## API Reference
 
-<!--
 **Example**
 
 ```{literalinclude} ../../../../tests/rsapss.cc
 :language: C
 :dedent:
-:start-after: "// START"
-:end-before: "// END"
+:start-after: "// ANCHOR(EXAMPLE)"
+:end-before: "// ANCHOR_END(EXAMPLE)"
 ```
--->
 
 ```{doxygenfunction} Hacl_RSAPSS_new_rsapss_load_skey
 ```
