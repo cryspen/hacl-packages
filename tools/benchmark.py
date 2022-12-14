@@ -107,7 +107,7 @@ def compare_benchmarks(benchmarks, path_1, path_2):
         argument(
             "-v", "--verbose", help="Make benchmarks verbose.", action="store_true"
         ),
-        argument("--compare", help="Compare against another revision.", type=str),
+        argument("--compare", help="Compare against an older revision.", type=str),
     ]
 )
 def benchmark(args):
