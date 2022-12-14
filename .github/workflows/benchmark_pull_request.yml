@@ -36,32 +36,6 @@ jobs:
         working-directory: main
         run: ./mach build --release --benchmarks
 
-      - name: Checkout google/benchmark
-        uses: actions/checkout@v3
-        with:
-          path: gbenchmark
-          repository: google/benchmark
-
       - name: Run benchmarks
-        run: |
-          for f in main/build/Release/*_benchmark
-          do
-            benchmark=$(basename "$f")
-            gbenchmark/tools/compare.py -d "$benchmark.json" benchmarks "main/build/Release/$benchmark" "pr/build/Release/$benchmark"
-          done
-
-      - name: Display results
-        # Display the results dumped by the previous step
-        # Then fail if one of the result is greater than the defined threshold
-        # For a given benchmark, the result is the overall CPU-time evolution
-        run: |
-          ret=0
-          threshold=0.2
-          for f in ./*_benchmark.json
-          do
-            name=$(basename "$f" _benchmark.json)
-            cpu=$(jq '.[-1].measurements[0].cpu' < "$f")
-            printf "%-20s %+.2f\n" "$name" "$cpu"
-            (( $(echo "$cpu > $threshold" | bc) )) && ret=1
-          done
-          exit $ret
+        working-directory: main
+        run: ./mach benchmark --compare ../pr
