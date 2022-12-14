@@ -77,8 +77,8 @@ def compare_benchmarks(benchmarks, path_1, path_2):
                 "-d",
                 os.path.join(".", out_path),
                 "benchmarks",
-                os.path.join(".", file_name_1),
                 file_name_2,
+                os.path.join(".", file_name_1),
             ]
             print(" ".join(benchmark_cmd))
             subprocess.run(benchmark_cmd)

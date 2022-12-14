@@ -37,5 +37,5 @@ jobs:
         run: ./mach build --release --benchmarks
 
       - name: Run benchmarks
-        working-directory: main
-        run: ./mach benchmark --compare ../pr
+        working-directory: pr
+        run: ./mach benchmark --compare ../main
