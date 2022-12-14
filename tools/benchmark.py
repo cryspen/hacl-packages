@@ -84,7 +84,7 @@ def compare_benchmarks(benchmarks, path_1, path_2):
             subprocess.run(benchmark_cmd)
 
     threshold = 0.2
-    fail = false
+    fail = False
     for algorithm in benchmarks:
         for benchmark in benchmarks[algorithm]:
             file_name = Path(benchmark).stem
@@ -96,7 +96,7 @@ def compare_benchmarks(benchmarks, path_1, path_2):
             print("{:20} {:+0.2f}".format(file_name, result))
             # If one result is greater than the threshold, the command fails
             if result > threshold:
-                fail = true
+                fail = True
     if fail:
         print("! Threshold exceeded!")
         exit(1)
