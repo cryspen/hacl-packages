@@ -71,7 +71,7 @@ source_suffix = {
 # -- Options for versioning (sphinx-multiversion) --
 
 # Whitelist pattern for tags (set to None to ignore all tags)
-smv_tag_whitelist = r"^.*$"
+smv_tag_whitelist = r"^c-.*$"
 
 # Whitelist pattern for branches (set to None to ignore all branches)
 smv_branch_whitelist = r'^(main)$'
