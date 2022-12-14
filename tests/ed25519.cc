@@ -94,6 +94,13 @@ read_wycheproof_eddsa_verify(string path)
 
 // -----------------------------------------------------------------------------
 
+// ANCHOR(DEFINE)
+#define HACL_SIGNATURE_ED25519_SECRETKEY_LEN 32
+#define HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN 96
+#define HACL_SIGNATURE_ED25519_PUBLICKEY_LEN 32
+#define HACL_SIGNATURE_ED25519_SIGNATURE_LEN 64
+// ANCHOR_END(DEFINE)
+
 TEST(ApiTestSuite, ApiTest)
 {
   {
@@ -109,18 +116,19 @@ TEST(ApiTestSuite, ApiTest)
     //       The `generate_random` function is only used as an
     //       example, and you must bring your own random.
     // 1) Create a secret key.
-    uint8_t sk[32];
-    generate_random(sk, 32);
+    uint8_t sk[HACL_SIGNATURE_ED25519_SECRETKEY_LEN];
+    generate_random(sk, HACL_SIGNATURE_ED25519_SECRETKEY_LEN);
 
     // 2) Derive a public key from the secret key.
-    uint8_t pk[32];
+    uint8_t pk[HACL_SIGNATURE_ED25519_PUBLICKEY_LEN];
     Hacl_Ed25519_secret_to_public(pk, sk);
 
     // Then, we can sign a message.
     // 1) Create a message and allocate memory for the signature.
     uint8_t msg[123];
     generate_random(msg, 123);
-    uint8_t signature[64];
+
+    uint8_t signature[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
 
     // 2) Sign the message with the private key.
     Hacl_Ed25519_sign(signature, sk, 123, msg);
@@ -151,11 +159,11 @@ TEST(ApiTestSuite, ApiTest)
     //
     //       The `generate_random` function is only used as an
     //       example, and you must bring your own random.
-    uint8_t sk[32];
-    generate_random(sk, 32);
+    uint8_t sk[HACL_SIGNATURE_ED25519_SECRETKEY_LEN];
+    generate_random(sk, HACL_SIGNATURE_ED25519_SECRETKEY_LEN);
 
     // Then, we precompute an intermediate key that will be used for signing.
-    uint8_t sk_exp[96];
+    uint8_t sk_exp[HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN];
     Hacl_Ed25519_expand_keys(sk_exp, sk);
 
     // Finally, we use the precomputed key to sign (multiple) messages.
@@ -164,14 +172,14 @@ TEST(ApiTestSuite, ApiTest)
     uint8_t msg_2[42];
     generate_random(msg_2, 42);
 
-    uint8_t signature_1[64];
-    uint8_t signature_2[64];
+    uint8_t signature_1[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
+    uint8_t signature_2[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
 
     Hacl_Ed25519_sign_expanded(signature_1, sk_exp, 1337, msg_1);
     Hacl_Ed25519_sign_expanded(signature_2, sk_exp, 42, msg_2);
     // ANCHOR_END(example precomputed)
 
-    uint8_t pk[32];
+    uint8_t pk[HACL_SIGNATURE_ED25519_PUBLICKEY_LEN];
     Hacl_Ed25519_secret_to_public(pk, sk);
 
     bool result_1 = Hacl_Ed25519_verify(pk, 1337, msg_1, signature_1);

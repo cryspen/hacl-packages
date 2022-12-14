@@ -23,6 +23,13 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 ```{literalinclude} ../../../../tests/sha2.cc
 :language: C
 :dedent:
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
+```
+
+```{literalinclude} ../../../../tests/sha2.cc
+:language: C
+:dedent:
 :start-after: "// START OneShot"
 :end-before: "// END OneShot"
 ```

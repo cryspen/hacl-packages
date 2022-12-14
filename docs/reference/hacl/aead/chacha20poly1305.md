@@ -41,9 +41,14 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 
 ## API Reference
 
-`````{tabs}
-````{group-tab} 32
-**Example**
+**Example (32)**
+
+```{literalinclude} ../../../../tests/chacha20poly1305.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(DEFINE)"
+:end-before: "// ANCHOR_END(DEFINE)"
+```
 
 ```{literalinclude} ../../../../tests/chacha20poly1305.cc
 :language: C
@@ -52,26 +57,20 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 :end-before: "// END OneShot"
 ```
 
+`````{tabs}
+````{group-tab} 32
 ```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_encrypt
 ```
 ```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_decrypt
 ```
 ````
 ````{group-tab} 128
-**Example**
-
-There is no example for now.
-
 ```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_encrypt
 ```
 ```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_decrypt
 ```
 ````
 ````{group-tab} 256
-**Example**
-
-There is no example for now.
-
 ```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_encrypt
 ```
 ```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_decrypt

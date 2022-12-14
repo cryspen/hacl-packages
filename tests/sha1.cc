@@ -74,8 +74,7 @@ TEST(ApiSuite, ApiTest)
     const char* message = "Hello, World!";
     uint32_t message_size = strlen(message);
 
-    // 160 Bit / 8 = 20 Byte
-    uint8_t digest[160 / 8];
+    uint8_t digest[HACL_HASH_SHA1_DIGEST_LENGTH];
 
     Hacl_Hash_SHA1_legacy_hash((uint8_t*)message, message_size, digest);
     // END OneShot
@@ -83,7 +82,7 @@ TEST(ApiSuite, ApiTest)
     bytes expected_digest =
       from_hex("0a0a9f2a6772942557ab5355d76af442f8f65e01");
 
-    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), 20), 0);
+    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), HACL_HASH_SHA1_DIGEST_LENGTH), 0);
   }
 
   // Documentation.

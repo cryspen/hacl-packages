@@ -13,6 +13,13 @@ SHA-1 is insecure. Please avoid or ask your cryptographer of trust for permissio
 ```{literalinclude} ../../../../tests/sha1.cc
 :language: C
 :dedent:
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
+```
+
+```{literalinclude} ../../../../tests/sha1.cc
+:language: C
+:dedent:
 :start-after: "// START OneShot"
 :end-before: "// END OneShot"
 ```
