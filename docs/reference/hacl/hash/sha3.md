@@ -21,6 +21,13 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 ```{literalinclude} ../../../../tests/sha3.cc
 :language: C
 :dedent:
+:start-after: "// ANCHOR(example define)"
+:end-before: "// ANCHOR_END(example define)"
+```
+
+```{literalinclude} ../../../../tests/sha3.cc
+:language: C
+:dedent:
 :start-after: "// START OneShot"
 :end-before: "// END OneShot"
 ```

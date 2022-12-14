@@ -16,6 +16,13 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 ```{literalinclude} ../../../../tests/ed25519.cc
 :language: C
 :dedent:
+:start-after: "// ANCHOR(DEFINE)"
+:end-before: "// ANCHOR_END(DEFINE)"
+```
+
+```{literalinclude} ../../../../tests/ed25519.cc
+:language: C
+:dedent:
 :start-after: "// ANCHOR(example)"
 :end-before: "// ANCHOR_END(example)"
 ```
@@ -29,6 +36,13 @@ Two APIs are exposed: A (simple) "One-Shot" API to sign/verify a single message 
 ### Precomputed
 
 **Example**
+
+```{literalinclude} ../../../../tests/ed25519.cc
+:language: C
+:dedent:
+:start-after: "// ANCHOR(DEFINE)"
+:end-before: "// ANCHOR_END(DEFINE)"
+```
 
 ```{literalinclude} ../../../../tests/ed25519.cc
 :language: C
