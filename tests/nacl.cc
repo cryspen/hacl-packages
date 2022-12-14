@@ -240,7 +240,6 @@ TEST(ApiSuite, ApiTest)
 
   {
     // ANCHOR(EXAMPLE SECRET EASY)
-    // Encrypt
     const char* plaintext = "Hello, World!";
     const size_t plaintext_size = strlen(plaintext);
 
@@ -273,7 +272,6 @@ TEST(ApiSuite, ApiTest)
 
   {
     // ANCHOR(EXAMPLE SECRET DETACHED)
-    // Encrypt
     const char* plaintext = "Hello, World!";
     const size_t plaintext_size = strlen(plaintext);
 
