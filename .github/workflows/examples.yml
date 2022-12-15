@@ -27,7 +27,7 @@ jobs:
         os:
           - macos-11
           - ubuntu-latest
-          - windows-latest
+          # - windows-latest
     runs-on: ${{ matrix.os }}
 
     steps:
