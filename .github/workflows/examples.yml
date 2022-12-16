@@ -1,0 +1,61 @@
+name: examples
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
+  workflow_dispatch:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cmake:
+    strategy:
+      matrix:
+        os:
+          - macos-11
+          - ubuntu-latest
+          # - windows-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install ninja-build
+
+      - name: Setup macOS
+        if: matrix.os == 'macos-11'
+        run: brew install ninja
+
+      - name: Setup Windows - MSVC
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
+        with:
+          arch: x64
+
+      - name: Setup Windows - Ninja
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: choco install ninja
+
+      - name: Blake2 Example
+        working-directory: examples/cmake
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build .
+          ./example

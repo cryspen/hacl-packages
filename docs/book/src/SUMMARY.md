@@ -16,6 +16,7 @@
 # Packages
 
 - [C](./hacl-c/readme.md)
+  - [CMake](./hacl-c/cmake.md)
 - [Rust](./hacl-rust/readme.md)
   <!-- - [AEADs](./hacl-rust/aead.md) -->
 - [OCaml](./hacl-ocaml/readme.md)
