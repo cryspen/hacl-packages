@@ -9,4 +9,4 @@ When creating a new release an `ocaml-` tag with the new version number is creat
 (1) After creating the tag the [gh-pages] job must be triggered to create the new, tagged ocaml documentation.
 (2) After creating the docs, a link to them must be added to the table in `hacl-ocaml/readme.md`.
 
-[ocaml-docs]: https://github.com/cryspen/hacl-packages/actions/workflows/gh-pages.yml
+[gh-pages]: https://github.com/cryspen/hacl-packages/actions/workflows/gh-pages.yml
