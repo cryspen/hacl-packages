@@ -87,6 +87,26 @@ jobs:
           dune build @doc --only-packages=hacl-star
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
+      - name: Build | OCaml API Reference for Tags
+        run: |
+          mkdir -p build/ocaml
+          for branch in $(git for-each-ref --format='%(refname)' refs/tags/); do
+            if [[ "$branch" == *"ocaml-"* ]]; then
+              rm -rf opam
+              tag=$(echo $branch | cut -d'/' -f 3)
+              git checkout $tag
+              echo "Building documentation for $tag"
+              mkdir -p build/ocaml/$tag
+              ./opam.sh
+              cd opam
+              eval $(opam env)
+              opam install . --yes --assume-depexts
+              dune build @doc --only-packages=hacl-star
+              cp -r _build/default/_doc/_html/* ../build/ocaml/$tag/
+              cd ../
+            fi
+          done
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
