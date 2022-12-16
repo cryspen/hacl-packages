@@ -24,6 +24,7 @@ from tools.doc import doc
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
 from tools.rust import rust
+from tools.js import build_js
 from tools.test import run_tests
 from tools.update import update
 from tools.utils import (
@@ -438,6 +439,11 @@ def build(args):
             check_cmd("ocaml")
             print()
             build_ocaml()
+        elif args.language == "js":
+            check_cmd("make")
+            check_cmd("node")
+            print()
+            build_js()
         else:
             print(
                 "Unknown language binding %s. Please see --help for supported bindings"
