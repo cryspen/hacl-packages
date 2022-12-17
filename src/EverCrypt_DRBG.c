@@ -136,16 +136,16 @@ EverCrypt_DRBG_uu___is_SHA2_512_s(
   return false;
 }
 
-EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
+EverCrypt_DRBG_state_s *EverCrypt_DRBG_create_in(Spec_Hash_Definitions_hash_alg a)
 {
   EverCrypt_DRBG_state_s st;
   switch (a)
   {
     case Spec_Hash_Definitions_SHA1:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -158,9 +158,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_256:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -173,9 +173,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_384:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -188,9 +188,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_512:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -207,10 +207,26 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
         KRML_HOST_EXIT(253U);
       }
   }
-  KRML_CHECK_SIZE(sizeof (EverCrypt_DRBG_state_s), (uint32_t)1U);
-  EverCrypt_DRBG_state_s *buf = KRML_HOST_MALLOC(sizeof (EverCrypt_DRBG_state_s));
+  EverCrypt_DRBG_state_s
+  *buf = (EverCrypt_DRBG_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_DRBG_state_s));
   buf[0U] = st;
   return buf;
+}
+
+/**
+Create a DRBG state.
+
+@param a Hash algorithm to use. The possible instantiations are ...
+  * `Spec_Hash_Definitions_SHA2_256`,
+  * `Spec_Hash_Definitions_SHA2_384`,
+  * `Spec_Hash_Definitions_SHA2_512`, and
+  * `Spec_Hash_Definitions_SHA1`.
+
+@return DRBG state. Needs to be freed via `EverCrypt_DRBG_uninstantiate`.
+*/
+EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
+{
+  return EverCrypt_DRBG_create_in(a);
 }
 
 bool
@@ -1877,6 +1893,15 @@ void EverCrypt_DRBG_uninstantiate_sha2_512(EverCrypt_DRBG_state_s *st)
   KRML_HOST_FREE(st);
 }
 
+/**
+Instantiate the DRBG.
+
+@param st Pointer to DRBG state.
+@param personalization_string Pointer to `personalization_string_len` bytes of memory where personalization string is read from.
+@param personalization_string_len Length of personalization string.
+
+@return True if and only if instantiation was successful.
+*/
 bool
 EverCrypt_DRBG_instantiate(
   EverCrypt_DRBG_state_s *st,
@@ -1917,6 +1942,15 @@ EverCrypt_DRBG_instantiate(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Reseed the DRBG.
+
+@param st Pointer to DRBG state.
+@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
+@param additional_input_input_len Length of additional input.
+
+@return True if and only if reseed was successful.
+*/
 bool
 EverCrypt_DRBG_reseed(
   EverCrypt_DRBG_state_s *st,
@@ -1948,6 +1982,17 @@ EverCrypt_DRBG_reseed(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Generate output.
+
+@param output Pointer to `n` bytes of memory where random output is written to.
+@param st Pointer to DRBG state.
+@param n Length of desired output.
+@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
+@param additional_input_input_len Length of additional input.
+
+@return True if and only if generate was successful.
+*/
 bool
 EverCrypt_DRBG_generate(
   uint8_t *output,
@@ -1981,6 +2026,11 @@ EverCrypt_DRBG_generate(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Uninstantiate and free the DRBG.
+
+@param st Pointer to DRBG state.
+*/
 void EverCrypt_DRBG_uninstantiate(EverCrypt_DRBG_state_s *st)
 {
   EverCrypt_DRBG_state_s scrut = *st;

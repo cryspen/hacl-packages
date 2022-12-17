@@ -25,69 +25,20 @@
 #include "EverCrypt_Poly1305.h"
 
 #include "internal/Vale.h"
-
+#include "config.h"
 static void poly1305_vale(uint8_t *dst, uint8_t *src, uint32_t len, uint8_t *key)
 {
   uint8_t ctx[192U] = { 0U };
   memcpy(ctx + (uint32_t)24U, key, (uint32_t)32U * sizeof (uint8_t));
   uint32_t n_blocks = len / (uint32_t)16U;
   uint32_t n_extra = len % (uint32_t)16U;
-  uint8_t tmp[16U];
+  uint8_t tmp[16U] = { 0U };
   if (n_extra == (uint32_t)0U)
   {
     uint64_t scrut = x64_poly1305(ctx, src, (uint64_t)len, (uint64_t)1U);
   }
   else
   {
-    uint8_t init = (uint8_t)0U;
-    {
-      tmp[0U] = init;
-    }
-    {
-      tmp[1U] = init;
-    }
-    {
-      tmp[2U] = init;
-    }
-    {
-      tmp[3U] = init;
-    }
-    {
-      tmp[4U] = init;
-    }
-    {
-      tmp[5U] = init;
-    }
-    {
-      tmp[6U] = init;
-    }
-    {
-      tmp[7U] = init;
-    }
-    {
-      tmp[8U] = init;
-    }
-    {
-      tmp[9U] = init;
-    }
-    {
-      tmp[10U] = init;
-    }
-    {
-      tmp[11U] = init;
-    }
-    {
-      tmp[12U] = init;
-    }
-    {
-      tmp[13U] = init;
-    }
-    {
-      tmp[14U] = init;
-    }
-    {
-      tmp[15U] = init;
-    }
     uint32_t len16 = n_blocks * (uint32_t)16U;
     uint8_t *src16 = src;
     memcpy(tmp, src + len16, n_extra * sizeof (uint8_t));
@@ -100,11 +51,8 @@ static void poly1305_vale(uint8_t *dst, uint8_t *src, uint32_t len, uint8_t *key
 
 void EverCrypt_Poly1305_poly1305(uint8_t *dst, uint8_t *src, uint32_t len, uint8_t *key)
 {
-  bool avx2 = EverCrypt_AutoConfig2_has_avx2();
-  bool avx = EverCrypt_AutoConfig2_has_avx();
   bool vec256 = EverCrypt_AutoConfig2_has_vec256();
   bool vec128 = EverCrypt_AutoConfig2_has_vec128();
-  bool vale = EverCrypt_AutoConfig2_wants_vale();
   #if HACL_CAN_COMPILE_VEC256
   if (vec256)
   {
@@ -120,12 +68,9 @@ void EverCrypt_Poly1305_poly1305(uint8_t *dst, uint8_t *src, uint32_t len, uint8
   }
   #endif
   #if HACL_CAN_COMPILE_VALE
-  if (vale)
-  {
-    poly1305_vale(dst, src, len, key);
-    return;
-  }
-  #endif
+  poly1305_vale(dst, src, len, key);
+  #else
   Hacl_Poly1305_32_poly1305_mac(dst, len, src, key);
+  #endif
 }
 

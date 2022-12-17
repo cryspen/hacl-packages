@@ -50,11 +50,11 @@ The test vectors are from [RFC1321].
 
 ## sha2
 
-The test vectors are from [Cryptographic Algorithm Validation Program].
+The test vectors are from [NIST's Cryptographic Algorithm Validation Program].
 
 ## sha3
 
-The test vectors are from [Cryptographic Algorithm Validation Program].
+The test vectors are from [NIST's Cryptographic Algorithm Validation Program].
 
 ## x25519
 

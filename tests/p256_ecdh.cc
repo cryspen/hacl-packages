@@ -15,6 +15,52 @@
 
 using json = nlohmann::json;
 
+// ANCHOR(DEFINE)
+#define HACL_DH_P256_SECRETKEY_LEN 32
+#define HACL_DH_P256_PUBLICKEY_LEN 64
+#define HACL_DH_P256_SHARED_LEN 64
+// ANCHOR_END(DEFINE)
+
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // Alice and Bob want to agree on a shared secret via X25519.
+
+  // Thus, Alice needs a secret and public key ...
+  uint8_t alice_sk[HACL_DH_P256_SECRETKEY_LEN];
+  uint8_t alice_pk[HACL_DH_P256_PUBLICKEY_LEN];
+  // Note: This function is not in HACL*.
+  //       You need to bring your own random.
+  generate_p256_keypair(alice_sk, alice_pk);
+
+  // ... and Bob does as well.
+  uint8_t bob_sk[HACL_DH_P256_SECRETKEY_LEN];
+  uint8_t bob_pk[HACL_DH_P256_PUBLICKEY_LEN];
+  // Note: This function is not in HACL*.
+  //       You need to bring your own random.
+  generate_p256_keypair(bob_sk, bob_pk);
+
+  // Now, Alice and Bob exchange their public keys so that
+  // Alice can compute her shared secret as ...
+  uint8_t shared_alice[HACL_DH_P256_SHARED_LEN];
+  bool res_alice = Hacl_P256_dh_responder(shared_alice, bob_pk, alice_sk);
+
+  // ... and Bob can compute his shared secret as ...
+  uint8_t shared_bob[HACL_DH_P256_SHARED_LEN];
+  bool res_bob = Hacl_P256_dh_responder(shared_bob, alice_pk, bob_sk);
+
+  // Now, both Alice and Bob should share the same secret value, i.e.,
+  //
+  //     `shared_alice` == `shared_bob`
+  //
+  // ... and can use this to derive, e.g., an encryption key.
+  // ANCHOR_END(EXAMPLE)
+
+  EXPECT_TRUE(memcmp(shared_alice, shared_bob, HACL_DH_P256_SHARED_LEN) == 0);
+  EXPECT_TRUE(res_alice);
+  EXPECT_TRUE(res_bob);
+}
+
 //=== Wycheproof tests ====
 
 #define bytes std::vector<uint8_t>

@@ -26,6 +26,10 @@ on:
       - README.md
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   coverage:
     runs-on: ubuntu-latest
@@ -49,6 +53,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Add llvm-11 to PATH
+        run: |
+          echo "/usr/lib/llvm-11/bin" >> $GITHUB_PATH
+
       - name: mach | Build
         uses: ./.github/actions/mach_build
         with:
@@ -61,13 +69,8 @@ jobs:
           bits: 64
           args: --coverage
 
-      - name: Generate reports
-        run: |
-          export PATH=/usr/lib/llvm-11/bin:$PATH
-          ./tools/coverage.sh
-
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@3284643be2c47fb6432518ecec17f1255e8a06a6
         with:
           path-to-lcov: build/Debug/coverage/full/full.lcov
           github-token: ${{ secrets.GITHUB_TOKEN }}

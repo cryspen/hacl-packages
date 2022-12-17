@@ -4,15 +4,14 @@ set -e
 
 rm -rf opam
 
-mkdir opam
-mkdir opam/hacl-star-raw
+mkdir -p opam/hacl-star-raw/build
 cp -r config opam/hacl-star-raw
-mv opam/hacl-star-raw/config/default_config.cmake opam/hacl-star-raw/config/config.cmake
+mv opam/hacl-star-raw/config/default_config.cmake opam/hacl-star-raw/build/config.cmake
 mkdir opam/hacl-star-raw/src
 cp src/* opam/hacl-star-raw/src/ | true
 mkdir opam/hacl-star-raw/include
 cp include/* opam/hacl-star-raw/include/ | true
-cp -r include/internal opam/hacl-star-raw/include/
+cp -r include/internal opam/hacl-star-raw/include/internal
 cp -r vale opam/hacl-star-raw
 cp -r karamel opam/hacl-star-raw
 

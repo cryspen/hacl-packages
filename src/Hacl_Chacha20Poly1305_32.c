@@ -24,7 +24,7 @@
 
 #include "Hacl_Chacha20Poly1305_32.h"
 
-#include "internal/Hacl_Krmllib.h"
+
 
 static inline void poly1305_padded_32(uint64_t *ctx, uint32_t len, uint8_t *text)
 {
@@ -548,6 +548,22 @@ poly1305_do_32(
   Hacl_Poly1305_32_poly1305_finish(out, k, ctx);
 }
 
+/**
+Encrypt a message `m` with key `k`.
+
+The arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.
+Note: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.
+
+@param k Pointer to 32 bytes of memory where the AEAD key is read from.
+@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.
+@param aadlen Length of the associated data.
+@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.
+
+@param mlen Length of the message.
+@param m Pointer to `mlen` bytes of memory where the message is read from.
+@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.
+@param mac Pointer to 16 bytes of memory where the mac is written to.
+*/
 void
 Hacl_Chacha20Poly1305_32_aead_encrypt(
   uint8_t *k,
@@ -567,6 +583,27 @@ Hacl_Chacha20Poly1305_32_aead_encrypt(
   poly1305_do_32(key, aadlen, aad, mlen, cipher, mac);
 }
 
+/**
+Decrypt a ciphertext `cipher` with key `k`.
+
+The arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.
+Note: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.
+
+If decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.
+If decryption fails, the array `m` remains unchanged and the function returns the error code 1.
+
+@param k Pointer to 32 bytes of memory where the AEAD key is read from.
+@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.
+@param aadlen Length of the associated data.
+@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.
+
+@param mlen Length of the ciphertext.
+@param m Pointer to `mlen` bytes of memory where the message is written to.
+@param cipher Pointer to `mlen` bytes of memory where the ciphertext is read from.
+@param mac Pointer to 16 bytes of memory where the mac is read from.
+
+@returns 0 on succeess; 1 on failure.
+*/
 uint32_t
 Hacl_Chacha20Poly1305_32_aead_decrypt(
   uint8_t *k,
@@ -585,70 +622,12 @@ Hacl_Chacha20Poly1305_32_aead_decrypt(
   uint8_t *key = tmp;
   poly1305_do_32(key, aadlen, aad, mlen, cipher, computed_mac);
   uint8_t res = (uint8_t)255U;
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[0U], mac[0U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[1U], mac[1U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[2U], mac[2U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[3U], mac[3U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[4U], mac[4U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[5U], mac[5U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[6U], mac[6U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[7U], mac[7U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[8U], mac[8U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[9U], mac[9U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[10U], mac[10U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[11U], mac[11U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[12U], mac[12U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[13U], mac[13U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[14U], mac[14U]);
-    res = uu____0 & res;
-  }
-  {
-    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[15U], mac[15U]);
-    res = uu____0 & res;
-  }
+  KRML_MAYBE_FOR16(i,
+    (uint32_t)0U,
+    (uint32_t)16U,
+    (uint32_t)1U,
+    uint8_t uu____0 = FStar_UInt8_eq_mask(computed_mac[i], mac[i]);
+    res = uu____0 & res;);
   uint8_t z = res;
   if (z == (uint8_t)255U)
   {

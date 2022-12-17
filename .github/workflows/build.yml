@@ -15,15 +15,20 @@ on:
       - README.md
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        compiler: [ gcc, clang ]
-        version: [ 7, 8, 9, 10, 11, 12, 13, 14 ]
-        bits: [ 32, 64 ]
-        edition: [ c89, "" ]
+        compiler: [gcc, clang]
+        version: [7, 8, 9, 10, 11, 12, 13, 14]
+        bits: [32, 64]
+        edition: [""] # ignore c89 for now
+        #edition: [ c89, "" ]
         exclude:
           - compiler: gcc
             version: 12
@@ -68,7 +73,7 @@ jobs:
         run: sudo apt-get install gcc-multilib g++-multilib
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: mach | Test
         uses: ./.github/actions/mach_test
@@ -76,19 +81,26 @@ jobs:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
 
+      - name: mach | Benchmark
+        uses: ./.github/actions/mach_benchmark
+        with:
+          bits: ${{ matrix.bits }}
+          edition: ${{ matrix.edition }}
+          args: "--no-openssl" # Ubuntu 20.04 doesn't have OpenSSL3
+
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
         with:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
-    runs-on: macos-latest
+    runs-on: macos-11
     strategy:
       matrix:
-        compiler: [ gcc, clang ]
-        version: [ 9, 10, 11, 12, 13, 14 ]
-        bits: [ 64 ]
-        target: [ "", "aarch64-apple-ios", "aarch64-apple-darwin" ]
+        compiler: [gcc, clang]
+        version: [9, 10, 11, 12, 13, 14]
+        bits: [64]
+        target: ["", "aarch64-apple-ios", "aarch64-apple-darwin"]
         exclude:
           - compiler: gcc
             version: 13
@@ -122,8 +134,11 @@ jobs:
           echo $CXX
           clang++ --version
 
+      - name: Setup | Install OpenSSL3
+        run: brew install openssl@3
+
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: mach | Build
         uses: ./.github/actions/mach_build
@@ -131,12 +146,19 @@ jobs:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
 
-      - name: mach | Test (aarch64 is not tested)
-        if: ${{ matrix.target == '' }}
+      - name: mach | Test
         uses: ./.github/actions/mach_test
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
+
+      - name: mach | Benchmark
+        uses: ./.github/actions/mach_benchmark
+        with:
+          bits: ${{ matrix.bits }}
+          target: ${{ matrix.target }}
+          args: "--no-openssl" # FIXME: #198 For some reason openssl isn't work
+          environment: OPENSSL_HOME=/usr/local/opt/openssl@3/
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -147,8 +169,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        bits: [ 32, 64 ]
-        args: [ "", "--msvc" ]
+        bits: [32, 64]
+        args: ["", "--msvc"]
         exclude:
           # See issue #92.
           - bits: 32
@@ -157,13 +179,13 @@ jobs:
     steps:
       - name: Setup | Developer Command Prompt (x86)
         if: ${{ matrix.bits == 32 }}
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
         with:
           arch: x86
 
       - name: Setup | Developer Command Prompt (x64)
         if: ${{ matrix.bits == 64 }}
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
         with:
           arch: x64
 
@@ -171,7 +193,7 @@ jobs:
         run: choco install ninja
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: mach | Test
         uses: ./.github/actions/mach_test
@@ -179,6 +201,14 @@ jobs:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
           args: ${{ matrix.args }}
+
+      # TODO: #197 Enable benchmarks on Windows
+      # - name: mach | Benchmark
+      #   uses: ./.github/actions/mach_benchmark
+      #   with:
+      #     bits: ${{ matrix.bits }}
+      #     target: ${{ matrix.target }}
+      #     args: "--no-openssl"
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -191,7 +221,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [ "aarch64-linux-android" ]
+        target: ["aarch64-linux-android"]
     steps:
       - name: Setup
         run: |
@@ -199,7 +229,7 @@ jobs:
           sudo apt-get install ninja-build
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: mach | Build
         uses: ./.github/actions/mach_build
@@ -217,7 +247,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Output short_sha
         uses: ./.github/actions/make_short_sha
@@ -236,9 +266,9 @@ jobs:
       - name: Install
         run: |
           mkdir pkg-release
-          ./mach install -p $PWD/pkg-release -c Release
+          ./mach install -p $PWD/pkg-release
           mkdir pkg-debug
-          ./mach install -p $PWD/pkg-debug
+          ./mach install -p $PWD/pkg-debug --debug
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -251,7 +281,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Output short_sha
         uses: ./.github/actions/make_short_sha

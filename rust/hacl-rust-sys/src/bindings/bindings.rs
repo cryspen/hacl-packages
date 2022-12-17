@@ -33,6 +33,9 @@ pub const EverCrypt_Error_InvalidKey: u32 = 2;
 pub const EverCrypt_Error_AuthenticationFailure: u32 = 3;
 pub const EverCrypt_Error_InvalidIVLength: u32 = 4;
 pub const EverCrypt_Error_DecodeError: u32 = 5;
+pub type __uint8_t = ::std::os::raw::c_uchar;
+pub type __uint32_t = ::std::os::raw::c_uint;
+pub type __uint64_t = ::std::os::raw::c_ulong;
 pub type C_String_t = *const ::std::os::raw::c_char;
 pub type Spec_Blake2_alg = u8;
 pub type Spec_Hash_Definitions_hash_alg = u8;
@@ -75,18 +78,6 @@ extern "C" {
     pub fn EverCrypt_AutoConfig2_has_avx512() -> bool;
 }
 extern "C" {
-    pub fn EverCrypt_AutoConfig2_wants_vale() -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_wants_hacl() -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_wants_openssl() -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_wants_bcrypt() -> bool;
-}
-extern "C" {
     pub fn EverCrypt_AutoConfig2_recall();
 }
 extern "C" {
@@ -124,18 +115,6 @@ extern "C" {
 }
 extern "C" {
     pub fn EverCrypt_AutoConfig2_disable_avx512();
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_disable_vale();
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_disable_hacl();
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_disable_openssl();
-}
-extern "C" {
-    pub fn EverCrypt_AutoConfig2_disable_bcrypt();
 }
 extern "C" {
     pub fn EverCrypt_AutoConfig2_has_vec128() -> bool;
@@ -389,24 +368,10 @@ extern "C" {
 extern "C" {
     pub fn EverCrypt_Hash_string_of_alg(uu___: Spec_Hash_Definitions_hash_alg) -> C_String_t;
 }
-pub type EverCrypt_Hash_state_s_tags = u8;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct EverCrypt_Hash_state_s_s {
-    pub tag: EverCrypt_Hash_state_s_tags,
-    pub __bindgen_anon_1: EverCrypt_Hash_state_s_s__bindgen_ty_1,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union EverCrypt_Hash_state_s_s__bindgen_ty_1 {
-    pub case_MD5_s: *mut u32,
-    pub case_SHA1_s: *mut u32,
-    pub case_SHA2_224_s: *mut u32,
-    pub case_SHA2_256_s: *mut u32,
-    pub case_SHA2_384_s: *mut u64,
-    pub case_SHA2_512_s: *mut u64,
-    pub case_Blake2S_s: *mut u32,
-    pub case_Blake2B_s: *mut u64,
+    _unused: [u8; 0],
 }
 pub type EverCrypt_Hash_state_s = EverCrypt_Hash_state_s_s;
 extern "C" {
@@ -452,7 +417,19 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
+    pub fn EverCrypt_Hash_uu___is_Blake2S_128_s(
+        uu___: Spec_Hash_Definitions_hash_alg,
+        projectee: EverCrypt_Hash_state_s,
+    ) -> bool;
+}
+extern "C" {
     pub fn EverCrypt_Hash_uu___is_Blake2B_s(
+        uu___: Spec_Hash_Definitions_hash_alg,
+        projectee: EverCrypt_Hash_state_s,
+    ) -> bool;
+}
+extern "C" {
+    pub fn EverCrypt_Hash_uu___is_Blake2B_256_s(
         uu___: Spec_Hash_Definitions_hash_alg,
         projectee: EverCrypt_Hash_state_s,
     ) -> bool;

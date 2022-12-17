@@ -23,6 +23,54 @@ using namespace std;
 
 using json = nlohmann::json;
 
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // First, we initialize the DRBG by feeding it ...
+
+  // ... entropy ...
+  uint8_t entropy_input[123];
+  uint32_t entropy_input_len = 123;
+  generate_random(entropy_input, entropy_input_len);
+
+  // ... a nonce ...
+  uint8_t nonce[123];
+  uint32_t nonce_len = 123;
+  generate_random(nonce, nonce_len);
+
+  // ... and a personalization string.
+  const char* personalization_string = "HACL Packages Example";
+  uint32_t personalization_string_len = strlen(personalization_string);
+
+  Hacl_HMAC_DRBG_state state =
+    Hacl_HMAC_DRBG_create_in(Spec_Hash_Definitions_SHA2_256);
+  Hacl_HMAC_DRBG_instantiate(Spec_Hash_Definitions_SHA2_256,
+                             state,
+                             entropy_input_len,
+                             entropy_input,
+                             nonce_len,
+                             nonce,
+                             personalization_string_len,
+                             (uint8_t*)personalization_string);
+
+  // Then, we can generate output.
+  const char* additional_input = "";
+  uint32_t additional_input_len = 0;
+
+  uint8_t output[1337];
+  bool res = Hacl_HMAC_DRBG_generate(Spec_Hash_Definitions_SHA2_256,
+                                     output,
+                                     state,
+                                     1337,
+                                     additional_input_len,
+                                     (uint8_t*)additional_input);
+
+  Hacl_HMAC_DRBG_free(Spec_Hash_Definitions_SHA2_256, state);
+  // ANCHOR_END(EXAMPLE)
+
+  EXPECT_TRUE(res);
+}
+
 typedef struct
 {
   string hash;
@@ -129,7 +177,7 @@ TEST(DrbgSuite, SmokeTest)
                                            count,
                                            additional.size(),
                                            additional.data());
-
+        Hacl_HMAC_DRBG_free(hash, state);
         EXPECT_TRUE(res);
       }
     }
@@ -197,9 +245,9 @@ TEST_P(DrbgNRSuite, KAT)
                                        got_ReturnedBits.size(),
                                        additional.size(),
                                        additional.data());
-
     EXPECT_TRUE(res);
   }
+  Hacl_HMAC_DRBG_free(hash, state);
 
   ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
 }
@@ -255,6 +303,7 @@ TEST_P(DrbgPRFalseSuite, KAT)
 
     EXPECT_TRUE(res);
   }
+  Hacl_HMAC_DRBG_free(hash, state);
 
   ASSERT_EQ(test.ReturnedBits, got_ReturnedBits);
 }

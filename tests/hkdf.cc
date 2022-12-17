@@ -17,7 +17,49 @@
 #include "evercrypt.h"
 #include "util.h"
 
+// ANCHOR(EXAMPLE DEFINE)
+#define HACL_KDF_HKDF_BLAKE2B_PRK_LEN 64
+#define HACL_KDF_HKDF_BLAKE2S_PRK_LEN 32
+#define HACL_KDF_HKDF_SHA2_256_PRK_LEN 32
+#define HACL_KDF_HKDF_SHA2_512_PRK_LEN 64
+// ANCHOR_END(EXAMPLE DEFINE)
+
 using json = nlohmann::json;
+
+TEST(ApiSuite, ApiTest)
+{
+  // ANCHOR(EXAMPLE)
+  // Example: We assume that we have some input keying material ...
+  uint8_t ikm[128];
+  uint32_t ikm_len = 128;
+  generate_random(ikm, 128);
+
+  // ... and a salt.
+  const char* salt = "example";
+  uint32_t salt_len = strlen(salt);
+
+  // Extract a fixed-length pseudo-random key from `ikm`.
+  uint8_t prk[HACL_KDF_HKDF_SHA2_256_PRK_LEN];
+
+  Hacl_HKDF_extract_sha2_256(prk, (uint8_t*)salt, salt_len, ikm, ikm_len);
+
+  // Expand pseudo-random key to desired length
+  // and write it to `okm` (output keying material).
+  uint8_t okm[1337];
+  uint32_t okm_len = 1337;
+
+  // We don't provide specific information here.
+  const char* info = "";
+  uint32_t info_len = 0;
+
+  Hacl_HKDF_expand_sha2_256(okm,
+                            prk,
+                            HACL_KDF_HKDF_SHA2_256_PRK_LEN,
+                            (uint8_t*)info,
+                            info_len,
+                            okm_len);
+  // ANCHOR_END(EXAMPLE)
+}
 
 typedef struct
 {

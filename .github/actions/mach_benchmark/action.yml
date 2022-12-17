@@ -1,0 +1,57 @@
+name: mach_benchmark
+description: mach | Benchmark
+inputs:
+  bits:
+    description: Bits (`32`, `64`)
+    required: true
+  edition:
+    description: Edition (`c89`, ``)
+    required: true
+  target:
+    description: Target
+    required: false
+    default: ""
+  args:
+    description: Any extra arguments
+    required: false
+    default: ""
+  environment:
+    description: Environment
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - run: |
+        echo "BITS_FLAG=-m32" >> $GITHUB_ENV
+        echo "OPENSSL_FLAG=--no-openssl" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.bits == '32' }}
+    - run: echo "BITS_FLAG=" > $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.bits == '64' }}
+
+    - run: echo "EDITION_FLAG=-ec89" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.edition == 'c89' }}
+    - run: echo "EDITION_FLAG=" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.edition == '' }}
+
+    - run: |
+        echo "TARGET_FLAG=--target ${{ inputs.target }}" >> $GITHUB_ENV
+        echo "BENCHMARK_COMMAND=--benchmarks" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.target != '' }}
+    - run: echo "BENCHMARK_COMMAND=--benchmark" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.target == '' }}
+
+    - run: echo "${{ inputs.environment }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: mach | Benchmarks
+      shell: bash
+      run: |
+        echo OPENSSL_HOME = $OPENSSL_HOME
+        ./mach build -v $BENCHMARK_COMMAND --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG $OPENSSL_FLAG ${{ inputs.args }}

@@ -147,86 +147,13 @@ chacha20_core_256(
   double_round_256(k);
   double_round_256(k);
   double_round_256(k);
-  {
+  KRML_MAYBE_FOR16(i,
+    (uint32_t)0U,
+    (uint32_t)16U,
+    (uint32_t)1U,
     Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[0U], ctx[0U]);
-    os[0U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[1U], ctx[1U]);
-    os[1U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[2U], ctx[2U]);
-    os[2U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[3U], ctx[3U]);
-    os[3U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[4U], ctx[4U]);
-    os[4U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[5U], ctx[5U]);
-    os[5U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[6U], ctx[6U]);
-    os[6U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[7U], ctx[7U]);
-    os[7U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[8U], ctx[8U]);
-    os[8U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[9U], ctx[9U]);
-    os[9U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[10U], ctx[10U]);
-    os[10U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[11U], ctx[11U]);
-    os[11U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[12U], ctx[12U]);
-    os[12U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[13U], ctx[13U]);
-    os[13U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[14U], ctx[14U]);
-    os[14U] = x;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = k;
-    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[15U], ctx[15U]);
-    os[15U] = x;
-  }
+    Lib_IntVector_Intrinsics_vec256 x = Lib_IntVector_Intrinsics_vec256_add32(k[i], ctx[i]);
+    os[i] = x;);
   k[12U] = Lib_IntVector_Intrinsics_vec256_add32(k[12U], cv);
 }
 
@@ -234,214 +161,42 @@ static inline void
 chacha20_init_256(Lib_IntVector_Intrinsics_vec256 *ctx, uint8_t *k, uint8_t *n, uint32_t ctr)
 {
   uint32_t ctx1[16U] = { 0U };
-  uint32_t *uu____0 = ctx1;
-  {
-    uint32_t *os = uu____0;
-    uint32_t x = Hacl_Impl_Chacha20_Vec_chacha20_constants[0U];
-    os[0U] = x;
-  }
-  {
-    uint32_t *os = uu____0;
-    uint32_t x = Hacl_Impl_Chacha20_Vec_chacha20_constants[1U];
-    os[1U] = x;
-  }
-  {
-    uint32_t *os = uu____0;
-    uint32_t x = Hacl_Impl_Chacha20_Vec_chacha20_constants[2U];
-    os[2U] = x;
-  }
-  {
-    uint32_t *os = uu____0;
-    uint32_t x = Hacl_Impl_Chacha20_Vec_chacha20_constants[3U];
-    os[3U] = x;
-  }
-  uint32_t *uu____1 = ctx1 + (uint32_t)4U;
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)0U * (uint32_t)4U;
+  KRML_MAYBE_FOR4(i,
+    (uint32_t)0U,
+    (uint32_t)4U,
+    (uint32_t)1U,
+    uint32_t *os = ctx1;
+    uint32_t x = Hacl_Impl_Chacha20_Vec_chacha20_constants[i];
+    os[i] = x;);
+  KRML_MAYBE_FOR8(i,
+    (uint32_t)0U,
+    (uint32_t)8U,
+    (uint32_t)1U,
+    uint32_t *os = ctx1 + (uint32_t)4U;
+    uint8_t *bj = k + i * (uint32_t)4U;
     uint32_t u = load32_le(bj);
     uint32_t r = u;
     uint32_t x = r;
-    os[0U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)1U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[1U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)2U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[2U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)3U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[3U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)4U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[4U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)5U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[5U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)6U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[6U] = x;
-  }
-  {
-    uint32_t *os = uu____1;
-    uint8_t *bj = k + (uint32_t)7U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[7U] = x;
-  }
+    os[i] = x;);
   ctx1[12U] = ctr;
-  uint32_t *uu____2 = ctx1 + (uint32_t)13U;
-  {
-    uint32_t *os = uu____2;
-    uint8_t *bj = n + (uint32_t)0U * (uint32_t)4U;
+  KRML_MAYBE_FOR3(i,
+    (uint32_t)0U,
+    (uint32_t)3U,
+    (uint32_t)1U,
+    uint32_t *os = ctx1 + (uint32_t)13U;
+    uint8_t *bj = n + i * (uint32_t)4U;
     uint32_t u = load32_le(bj);
     uint32_t r = u;
     uint32_t x = r;
-    os[0U] = x;
-  }
-  {
-    uint32_t *os = uu____2;
-    uint8_t *bj = n + (uint32_t)1U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[1U] = x;
-  }
-  {
-    uint32_t *os = uu____2;
-    uint8_t *bj = n + (uint32_t)2U * (uint32_t)4U;
-    uint32_t u = load32_le(bj);
-    uint32_t r = u;
-    uint32_t x = r;
-    os[2U] = x;
-  }
-  {
+    os[i] = x;);
+  KRML_MAYBE_FOR16(i,
+    (uint32_t)0U,
+    (uint32_t)16U,
+    (uint32_t)1U,
     Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[0U];
+    uint32_t x = ctx1[i];
     Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[0U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[1U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[1U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[2U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[2U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[3U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[3U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[4U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[4U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[5U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[5U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[6U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[6U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[7U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[7U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[8U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[8U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[9U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[9U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[10U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[10U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[11U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[11U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[12U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[12U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[13U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[13U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[14U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[14U] = x0;
-  }
-  {
-    Lib_IntVector_Intrinsics_vec256 *os = ctx;
-    uint32_t x = ctx1[15U];
-    Lib_IntVector_Intrinsics_vec256 x0 = Lib_IntVector_Intrinsics_vec256_load32(x);
-    os[15U] = x0;
-  }
+    os[i] = x0;);
   Lib_IntVector_Intrinsics_vec256
   ctr1 =
     Lib_IntVector_Intrinsics_vec256_load32s((uint32_t)0U,
@@ -466,9 +221,7 @@ Hacl_Chacha20_Vec256_chacha20_encrypt_256(
   uint32_t ctr
 )
 {
-  Lib_IntVector_Intrinsics_vec256 ctx[16U];
-  for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-    ctx[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+  KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 ctx[16U] KRML_POST_ALIGN(32) = { 0U };
   chacha20_init_256(ctx, key, n, ctr);
   uint32_t rem = len % (uint32_t)512U;
   uint32_t nb = len / (uint32_t)512U;
@@ -477,9 +230,7 @@ Hacl_Chacha20_Vec256_chacha20_encrypt_256(
   {
     uint8_t *uu____0 = out + i * (uint32_t)512U;
     uint8_t *uu____1 = text + i * (uint32_t)512U;
-    Lib_IntVector_Intrinsics_vec256 k[16U];
-    for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-      k[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+    KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 k[16U] KRML_POST_ALIGN(32) = { 0U };
     chacha20_core_256(k, ctx, i);
     Lib_IntVector_Intrinsics_vec256 st0 = k[0U];
     Lib_IntVector_Intrinsics_vec256 st1 = k[1U];
@@ -705,102 +456,14 @@ Hacl_Chacha20_Vec256_chacha20_encrypt_256(
     k[13U] = v14;
     k[14U] = v7;
     k[15U] = v15;
-    {
+    KRML_MAYBE_FOR16(i0,
+      (uint32_t)0U,
+      (uint32_t)16U,
+      (uint32_t)1U,
       Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)0U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[0U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)0U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)1U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[1U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)1U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)2U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[2U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)2U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)3U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[3U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)3U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)4U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[4U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)4U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)5U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[5U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)5U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)6U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[6U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)6U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)7U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[7U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)7U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)8U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[8U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)8U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)9U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[9U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)9U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)10U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[10U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)10U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)11U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[11U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)11U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)12U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[12U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)12U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)13U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[13U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)13U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)14U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[14U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)14U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)15U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[15U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)15U * (uint32_t)32U, y);
-    }
+      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + i0 * (uint32_t)32U);
+      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[i0]);
+      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + i0 * (uint32_t)32U, y););
   }
   if (rem1 > (uint32_t)0U)
   {
@@ -808,9 +471,7 @@ Hacl_Chacha20_Vec256_chacha20_encrypt_256(
     uint8_t *uu____3 = text + nb * (uint32_t)512U;
     uint8_t plain[512U] = { 0U };
     memcpy(plain, uu____3, rem * sizeof (uint8_t));
-    Lib_IntVector_Intrinsics_vec256 k[16U];
-    for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-      k[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+    KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 k[16U] KRML_POST_ALIGN(32) = { 0U };
     chacha20_core_256(k, ctx, nb);
     Lib_IntVector_Intrinsics_vec256 st0 = k[0U];
     Lib_IntVector_Intrinsics_vec256 st1 = k[1U];
@@ -1036,102 +697,14 @@ Hacl_Chacha20_Vec256_chacha20_encrypt_256(
     k[13U] = v14;
     k[14U] = v7;
     k[15U] = v15;
-    {
+    KRML_MAYBE_FOR16(i,
+      (uint32_t)0U,
+      (uint32_t)16U,
+      (uint32_t)1U,
       Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)0U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[0U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)0U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)1U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[1U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)1U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)2U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[2U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)2U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)3U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[3U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)3U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)4U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[4U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)4U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)5U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[5U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)5U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)6U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[6U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)6U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)7U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[7U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)7U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)8U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[8U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)8U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)9U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[9U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)9U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)10U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[10U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)10U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)11U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[11U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)11U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)12U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[12U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)12U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)13U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[13U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)13U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)14U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[14U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)14U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)15U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[15U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)15U * (uint32_t)32U, y);
-    }
+      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + i * (uint32_t)32U);
+      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[i]);
+      Lib_IntVector_Intrinsics_vec256_store32_le(plain + i * (uint32_t)32U, y););
     memcpy(uu____2, plain, rem * sizeof (uint8_t));
   }
 }
@@ -1146,9 +719,7 @@ Hacl_Chacha20_Vec256_chacha20_decrypt_256(
   uint32_t ctr
 )
 {
-  Lib_IntVector_Intrinsics_vec256 ctx[16U];
-  for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-    ctx[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+  KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 ctx[16U] KRML_POST_ALIGN(32) = { 0U };
   chacha20_init_256(ctx, key, n, ctr);
   uint32_t rem = len % (uint32_t)512U;
   uint32_t nb = len / (uint32_t)512U;
@@ -1157,9 +728,7 @@ Hacl_Chacha20_Vec256_chacha20_decrypt_256(
   {
     uint8_t *uu____0 = out + i * (uint32_t)512U;
     uint8_t *uu____1 = cipher + i * (uint32_t)512U;
-    Lib_IntVector_Intrinsics_vec256 k[16U];
-    for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-      k[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+    KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 k[16U] KRML_POST_ALIGN(32) = { 0U };
     chacha20_core_256(k, ctx, i);
     Lib_IntVector_Intrinsics_vec256 st0 = k[0U];
     Lib_IntVector_Intrinsics_vec256 st1 = k[1U];
@@ -1385,102 +954,14 @@ Hacl_Chacha20_Vec256_chacha20_decrypt_256(
     k[13U] = v14;
     k[14U] = v7;
     k[15U] = v15;
-    {
+    KRML_MAYBE_FOR16(i0,
+      (uint32_t)0U,
+      (uint32_t)16U,
+      (uint32_t)1U,
       Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)0U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[0U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)0U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)1U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[1U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)1U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)2U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[2U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)2U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)3U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[3U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)3U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)4U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[4U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)4U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)5U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[5U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)5U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)6U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[6U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)6U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)7U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[7U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)7U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)8U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[8U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)8U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)9U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[9U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)9U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)10U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[10U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)10U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)11U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[11U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)11U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)12U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[12U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)12U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)13U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[13U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)13U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)14U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[14U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)14U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + (uint32_t)15U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[15U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + (uint32_t)15U * (uint32_t)32U, y);
-    }
+      x = Lib_IntVector_Intrinsics_vec256_load32_le(uu____1 + i0 * (uint32_t)32U);
+      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[i0]);
+      Lib_IntVector_Intrinsics_vec256_store32_le(uu____0 + i0 * (uint32_t)32U, y););
   }
   if (rem1 > (uint32_t)0U)
   {
@@ -1488,9 +969,7 @@ Hacl_Chacha20_Vec256_chacha20_decrypt_256(
     uint8_t *uu____3 = cipher + nb * (uint32_t)512U;
     uint8_t plain[512U] = { 0U };
     memcpy(plain, uu____3, rem * sizeof (uint8_t));
-    Lib_IntVector_Intrinsics_vec256 k[16U];
-    for (uint32_t _i = 0U; _i < (uint32_t)16U; ++_i)
-      k[_i] = Lib_IntVector_Intrinsics_vec256_zero;
+    KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 k[16U] KRML_POST_ALIGN(32) = { 0U };
     chacha20_core_256(k, ctx, nb);
     Lib_IntVector_Intrinsics_vec256 st0 = k[0U];
     Lib_IntVector_Intrinsics_vec256 st1 = k[1U];
@@ -1716,102 +1195,14 @@ Hacl_Chacha20_Vec256_chacha20_decrypt_256(
     k[13U] = v14;
     k[14U] = v7;
     k[15U] = v15;
-    {
+    KRML_MAYBE_FOR16(i,
+      (uint32_t)0U,
+      (uint32_t)16U,
+      (uint32_t)1U,
       Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)0U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[0U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)0U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)1U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[1U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)1U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)2U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[2U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)2U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)3U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[3U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)3U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)4U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[4U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)4U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)5U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[5U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)5U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)6U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[6U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)6U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)7U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[7U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)7U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)8U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[8U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)8U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)9U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[9U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)9U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)10U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[10U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)10U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)11U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[11U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)11U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)12U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[12U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)12U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)13U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[13U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)13U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)14U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[14U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)14U * (uint32_t)32U, y);
-    }
-    {
-      Lib_IntVector_Intrinsics_vec256
-      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + (uint32_t)15U * (uint32_t)32U);
-      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[15U]);
-      Lib_IntVector_Intrinsics_vec256_store32_le(plain + (uint32_t)15U * (uint32_t)32U, y);
-    }
+      x = Lib_IntVector_Intrinsics_vec256_load32_le(plain + i * (uint32_t)32U);
+      Lib_IntVector_Intrinsics_vec256 y = Lib_IntVector_Intrinsics_vec256_xor(x, k[i]);
+      Lib_IntVector_Intrinsics_vec256_store32_le(plain + i * (uint32_t)32U, y););
     memcpy(uu____2, plain, rem * sizeof (uint8_t));
   }
 }

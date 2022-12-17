@@ -10,7 +10,9 @@
 #include <nlohmann/json.hpp>
 
 #include "EverCrypt_Hash.h"
+// ANCHOR(example header)
 #include "Hacl_Hash_Blake2.h"
+// ANCHOR_END(example header)
 #include "Hacl_Streaming_Blake2.h"
 #include "config.h"
 #include "evercrypt.h"
@@ -31,8 +33,112 @@
 #include "Vale.h"
 #endif
 
+// ANCHOR(example define)
+// Note: HACL Packages will provide this (or a similar) define in a later
+// version.
+#define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
+// ANCHOR_END(example define)
+
 using json = nlohmann::json;
 using namespace std;
+
+// -----------------------------------------------------------------------------
+
+TEST(ApiTestSuite, ApiTest)
+{
+  {
+    // ANCHOR(example)
+    // Reserve memory for a 64 byte digest, i.e.,
+    // for a BLAKE2b run with full 512-bit output.
+    uint8_t output[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+
+    // The message we want to hash.
+    const char* message = "Hello, HACL Packages!";
+    uint32_t message_len = strlen(message);
+
+    // BLAKE2b can be used as an HMAC, i.e., with a key.
+    // We don't want to use a key here and thus provide a zero-sized key.
+    uint32_t key_len = 0;
+    uint8_t* key = 0;
+
+    Hacl_Blake2b_32_blake2b(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX,
+                            output,
+                            message_len,
+                            (uint8_t*)message,
+                            key_len,
+                            key);
+
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, output);
+    // ANCHOR_END(example)
+
+    bytes expected_digest = from_hex(
+      "f99574aa3ba6cf78ad48e1f22a77e7aef1d7433c1cb3d424d14ae5ec51af8c6dc8bf41cb"
+      "0a10383274f256df0f7d0f145a043b7a77f4c17e47e535f72a4e1f43");
+
+    EXPECT_EQ(strncmp((char*)output,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+  }
+
+  {
+    // ANCHOR(example streaming)
+    // This example shows how to hash the byte sequence "Hello, World!" in two
+    // chunks. As a bonus, it also shows how to obtain intermediate results by
+    // calling `finish` more than once.
+
+    const char* chunk_1 = "Hello, ";
+    const char* chunk_2 = "World!";
+    uint32_t chunk_1_size = strlen(chunk_1);
+    uint32_t chunk_2_size = strlen(chunk_2);
+
+    uint8_t digest_1[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+    uint8_t digest_2[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
+
+    // Init
+    Hacl_Streaming_Blake2_blake2b_32_state_s* state =
+      Hacl_Streaming_Blake2_blake2b_32_no_key_create_in();
+    Hacl_Streaming_Blake2_blake2b_32_no_key_init(state);
+
+    // 1/2 Include `Hello, ` into the hash calculation and
+    // obtain the intermediate hash of "Hello, ".
+    Hacl_Streaming_Blake2_blake2b_32_no_key_update(
+      state, (uint8_t*)chunk_1, chunk_1_size);
+    // This is optional when no intermediate results are required.
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest_1);
+
+    // 2/2 Include `World!` into the hash calculation and
+    // obtain the final hash of "Hello, World!".
+    Hacl_Streaming_Blake2_blake2b_32_no_key_update(
+      state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest_2);
+
+    // Cleanup
+    Hacl_Streaming_Blake2_blake2b_32_no_key_free(state);
+
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest_1);
+    print_hex_ln(HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX, digest_2);
+    // ANCHOR_END(example streaming)
+
+    bytes expected_digest_1 = from_hex(
+      "17ec82285d5efd15c7f3cb6ceeea15dbb0588350729932fbdddc8c37e347999d7a125003"
+      "df087dd3a6f5983fa87ce2dfa162cc590005c7ff872732788cbf0626");
+    bytes expected_digest_2 = from_hex(
+      "7dfdb888af71eae0e6a6b751e8e3413d767ef4fa52a7993daa9ef097f7aa3d949199c113"
+      "caa37c94f80cf3b22f7d9d6e4f5def4ff927830cffe4857c34be3d89");
+
+    EXPECT_EQ(strncmp((char*)digest_1,
+                      (char*)expected_digest_1.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+    EXPECT_EQ(strncmp((char*)digest_2,
+                      (char*)expected_digest_2.data(),
+                      HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX),
+              0);
+  }
+}
+
+// -----------------------------------------------------------------------------
 
 class TestCase
 {
@@ -182,26 +288,23 @@ TEST_P(Blake2bStreaming, KAT)
     hacl_init_cpu_features();
 
     if (hacl_vec256_support()) {
-      // TODO: Enable this. See
-      // https://github.com/project-everest/hacl-star/issues/586
-      //
-      //    bytes got_hash(64);
-      //
-      //    // Init
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_state* state =
-      //      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(state);
-      //
-      //    // Update
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
-      //      state, test_case.input.data(), test_case.input.size());
-      //
-      //    // Finish
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(state,
-      //                                                         got_hash.data());
-      //    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
-      //
-      //    EXPECT_EQ(test_case.digest, got_hash);
+      bytes got_hash(64);
+
+      // Init
+      Hacl_Streaming_Blake2b_256_blake2b_256_state* state =
+        Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(state);
+
+      // Update
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
+        state, test_case.input.data(), test_case.input.size());
+
+      // Finish
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(state,
+                                                           got_hash.data());
+      Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
+
+      EXPECT_EQ(test_case.digest, got_hash);
     } else {
       printf(" ! Vec256 was compiled but AVX2 is not available on this CPU.\n");
     }
