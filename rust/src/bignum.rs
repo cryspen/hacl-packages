@@ -348,13 +348,13 @@ impl BigUInt {
 
     fn supersize(&self) -> Result<Self, Error> {
         // TODO: handle cases where self is 0 or 1 and has not handle
+        let zero_one_other = self.0.zero_one_other;
         let handle = self
             .0
             .handle
             .as_ref()
             .expect("supersize: cannot happen")
             .supersize()?;
-        let zero_one_other = self.0.zero_one_other;
 
         Ok(Self(Bui {
             zero_one_other,
