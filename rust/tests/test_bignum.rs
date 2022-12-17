@@ -694,13 +694,13 @@ fn test_add_mod() {
     ];
 
     for (i, t) in tests.iter().enumerate() {
-        let mut a = BigUInt::from_hex(t.a).unwrap();
-        let mut b = BigUInt::from_hex(t.b).unwrap();
+        let a = BigUInt::from_hex(t.a).unwrap();
+        let b = BigUInt::from_hex(t.b).unwrap();
         let m = BigUInt::from_hex(t.m).unwrap();
         let modulus = m.into_modulus().unwrap();
         let expected = BigUInt::from_hex(t.expected).unwrap();
 
-        let result = modulus.add(&mut a, &mut b).expect("add_mod() failed");
+        let result = modulus.add(&a, &b).expect("add_mod() failed");
 
         // we need to get the hex version of the result in case we need to report
         // it in a test failure.
