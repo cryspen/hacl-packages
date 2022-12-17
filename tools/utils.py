@@ -4,12 +4,12 @@
 #    * http://www.apache.org/licenses/LICENSE-2.0
 #    * http://opensource.org/licenses/MIT
 
-from argparse import ArgumentParser, RawTextHelpFormatter
 import os
-from os.path import join
 import subprocess
-from pathlib import Path
 import sys
+from argparse import ArgumentParser, RawTextHelpFormatter
+from os.path import join
+from pathlib import Path
 
 # The main parser to attach to with the decorator.
 cli = ArgumentParser()
@@ -21,7 +21,7 @@ def json_config():
 
 
 def cmake_config():
-    return os.path.join("config", "config.cmake")
+    return os.path.join("build", "config.cmake")
 
 
 def cmake_generated_config():
@@ -29,15 +29,16 @@ def cmake_generated_config():
 
 
 def dep_config():
-    return os.path.join("config", "dep_config.json")
+    return os.path.join("build", "dep_config.json")
 
 
 def config_check_file():
-    return join("config", ".dependency_check")
+    return join("build", ".dependency_check")
 
 
 def config_cache():
-    return os.path.join("config", ".cache")
+    return os.path.join("build", ".cache")
+
 
 # FIXME: #10 add config.type (Debug/Release)
 
@@ -62,10 +63,14 @@ def subcommand(args=[], parent=subparsers):
 
     def decorator(func):
         parser = parent.add_parser(
-            func.__name__, description=func.__doc__, formatter_class=RawTextHelpFormatter)
+            func.__name__,
+            description=func.__doc__,
+            formatter_class=RawTextHelpFormatter,
+        )
         for arg in args:
             parser.add_argument(*arg[0], **arg[1])
         parser.set_defaults(func=func)
+
     return decorator
 
 
@@ -76,19 +81,19 @@ def argument(*name_or_flags, **kwargs):
 
 def mprint(*args, **kwargs):
     """Print with mach indicators"""
-    print(" [mach] "+" ".join(map(str, args)), **kwargs)
+    print(" [mach] " + " ".join(map(str, args)), **kwargs)
 
 
-def check_cmd(cmd):
+def check_cmd(cmd, flag="--version"):
     mprint(f"Probing for {cmd}: ", end="")
     try:
         subprocess.check_call(
-            [cmd, '--version'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            [cmd, flag], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
         print(f"Found")
     except:
         print("Not found (!)")
-        mprint(
-            f'Error: Please make sure that "{cmd}" is installed and in your PATH.')
+        mprint(f'Error: Please make sure that "{cmd}" is installed and in your PATH.')
         exit(1)
 
 
@@ -101,19 +106,23 @@ def dependency_check():
 
     mprint("Dependency checks ...")
 
-    check_cmd('cmake')
+    check_cmd("cmake")
     check_cmd("ninja")
     # XXX: check for a compiler
     # check_cmd("clang")
     print()
+    if not os.path.exists("build"):
+        os.mkdir("build")
     Path(config_check_file()).touch()
 
 
 def coverage_dependency_check():
     """
-    Check that `lcov`, and `genhtml` are installed (and callable).
+    Check that `lcov` and friends are installed (and callable).
     """
 
     check_cmd("lcov")
+    check_cmd("llvm-profdata", flag="--help")
+    check_cmd("llvm-cov")
     check_cmd("genhtml")
     print()

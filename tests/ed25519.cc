@@ -94,6 +94,104 @@ read_wycheproof_eddsa_verify(string path)
 
 // -----------------------------------------------------------------------------
 
+// ANCHOR(DEFINE)
+#define HACL_SIGNATURE_ED25519_SECRETKEY_LEN 32
+#define HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN 96
+#define HACL_SIGNATURE_ED25519_PUBLICKEY_LEN 32
+#define HACL_SIGNATURE_ED25519_SIGNATURE_LEN 64
+// ANCHOR_END(DEFINE)
+
+TEST(ApiTestSuite, ApiTest)
+{
+  {
+    // ANCHOR(example)
+    // In this example, we create a signature key pair, sign a message, and
+    // verify the generated signature.
+
+    // First, we create a signature key pair.
+    // Note: HACL does not have a random number generator yet:
+    //
+    //         https://github.com/hacl-star/hacl-star/issues/26
+    //
+    //       The `generate_random` function is only used as an
+    //       example, and you must bring your own random.
+    // 1) Create a secret key.
+    uint8_t sk[HACL_SIGNATURE_ED25519_SECRETKEY_LEN];
+    generate_random(sk, HACL_SIGNATURE_ED25519_SECRETKEY_LEN);
+
+    // 2) Derive a public key from the secret key.
+    uint8_t pk[HACL_SIGNATURE_ED25519_PUBLICKEY_LEN];
+    Hacl_Ed25519_secret_to_public(pk, sk);
+
+    // Then, we can sign a message.
+    // 1) Create a message and allocate memory for the signature.
+    uint8_t msg[123];
+    generate_random(msg, 123);
+
+    uint8_t signature[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
+
+    // 2) Sign the message with the private key.
+    Hacl_Ed25519_sign(signature, sk, 123, msg);
+
+    // Finally, we can verify the signature we just created by using the public
+    // key.
+    bool result = Hacl_Ed25519_verify(pk, 123, msg, signature);
+
+    if (result) {
+      printf("Yay, signature was valid!");
+    } else {
+      printf("Naaay, that should not have happened with the code above.");
+    }
+    // ANCHOR_END(example)
+
+    ASSERT_EQ(result, true);
+  }
+
+  {
+    // ANCHOR(example precomputed)
+    // In this example, we use the precomputed API to create multiple signatures
+    // more efficiently.
+
+    // First, we create our signature private key.
+    // Note: HACL does not have a random number generator yet:
+    //
+    //         https://github.com/hacl-star/hacl-star/issues/26
+    //
+    //       The `generate_random` function is only used as an
+    //       example, and you must bring your own random.
+    uint8_t sk[HACL_SIGNATURE_ED25519_SECRETKEY_LEN];
+    generate_random(sk, HACL_SIGNATURE_ED25519_SECRETKEY_LEN);
+
+    // Then, we precompute an intermediate key that will be used for signing.
+    uint8_t sk_exp[HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN];
+    Hacl_Ed25519_expand_keys(sk_exp, sk);
+
+    // Finally, we use the precomputed key to sign (multiple) messages.
+    uint8_t msg_1[1337];
+    generate_random(msg_1, 1337);
+    uint8_t msg_2[42];
+    generate_random(msg_2, 42);
+
+    uint8_t signature_1[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
+    uint8_t signature_2[HACL_SIGNATURE_ED25519_SIGNATURE_LEN];
+
+    Hacl_Ed25519_sign_expanded(signature_1, sk_exp, 1337, msg_1);
+    Hacl_Ed25519_sign_expanded(signature_2, sk_exp, 42, msg_2);
+    // ANCHOR_END(example precomputed)
+
+    uint8_t pk[HACL_SIGNATURE_ED25519_PUBLICKEY_LEN];
+    Hacl_Ed25519_secret_to_public(pk, sk);
+
+    bool result_1 = Hacl_Ed25519_verify(pk, 1337, msg_1, signature_1);
+    bool result_2 = Hacl_Ed25519_verify(pk, 42, msg_2, signature_2);
+
+    ASSERT_EQ(result_1, true);
+    ASSERT_EQ(result_2, true);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 class Ed25519Suite : public ::testing::TestWithParam<WycheproofEdDsaVerify>
 {};
 

@@ -1,29 +1,117 @@
-name: gh-pages
+name: Deploy static content to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: docs
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  documentation:
-    runs-on: ubuntu-latest
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
     steps:
-      - uses: hecrj/setup-rust-action@master
-      - uses: actions/checkout@master
-      - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # sphinx-multiversion uses tags to build
+      # the documentation in multiple versions.
+      - name: Checkout | Fetch tags
+        run: git fetch --tags origin
+
+      - name: Setup | mdBook | 1/2
+        uses: hecrj/setup-rust-action@8708beccd22540a3f955ae10cc884af27ca81bf5
+
+      - name: Setup | mdBook | 2/2
+        uses: peaceiris/actions-mdbook@4b5ef36b314c2599664ca107bb8c02412548d79d
         with:
-          mdbook-version: 'latest'
-      - name: Build docs
-        run: mdbook build
-      - name: Deploy docs to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+          mdbook-version: "latest"
+
+      - name: Setup | Update
+        run: sudo apt-get update
+
+      - name: Setup | System
+        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev ninja-build
+
+      - name: Setup | OCaml
+        run: |
+          opam init --auto-setup --disable-sandboxing --yes --bare
+          opam switch create 4.12.0 --yes
+          eval $(opam env)
+          opam install --yes ocamlfind odoc ctypes zarith cppo dune
+
+      - name: Setup | Sphinx
+        run: |
+          cd docs/reference
+          pip install -r requirements.txt
+
+      - name: Setup | Pages
+        uses: actions/configure-pages@v2
+
+      - name: Build | Book
+        run: |
+          # We `cd` into this directory first because the book
+          # uses references relative to this directory, i.e.,
+          # `../../../rust/src/aead.rs`.
+          pushd docs/book
+          mdbook build
+          popd
+          mv docs/book/book build
+
+      - name: Build | C API Reference
+        run: |
+          mkdir build/c
+          sphinx-multiversion docs/reference build/c
+
+      - name: Build | OCaml API Reference
+        run: |
+          mkdir -p build/ocaml/main
+          ./opam.sh
+          cd opam
+          eval $(opam env)
+          opam install . --yes --assume-depexts
+          dune build @doc --only-packages=hacl-star
+          cp -r _build/default/_doc/_html/* ../build/ocaml/main/
+
+      - name: Build | OCaml API Reference for Tags
+        run: |
+          mkdir -p build/ocaml
+          for branch in $(git for-each-ref --format='%(refname)' refs/tags/); do
+            if [[ "$branch" == *"ocaml-"* ]]; then
+              rm -rf opam
+              tag=$(echo $branch | cut -d'/' -f 3)
+              git checkout $tag
+              echo "Building documentation for $tag"
+              mkdir -p build/ocaml/$tag
+              ./opam.sh
+              cd opam
+              eval $(opam env)
+              opam install . --yes --assume-depexts
+              dune build @doc --only-packages=hacl-star
+              cp -r _build/default/_doc/_html/* ../build/ocaml/$tag/
+              cd ../
+            fi
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/book
+          path: "build"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

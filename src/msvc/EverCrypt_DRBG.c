@@ -136,16 +136,16 @@ EverCrypt_DRBG_uu___is_SHA2_512_s(
   return false;
 }
 
-EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
+EverCrypt_DRBG_state_s *EverCrypt_DRBG_create_in(Spec_Hash_Definitions_hash_alg a)
 {
   EverCrypt_DRBG_state_s st;
   switch (a)
   {
     case Spec_Hash_Definitions_SHA1:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)20U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -158,9 +158,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_256:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)32U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -173,9 +173,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_384:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)48U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -188,9 +188,9 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
     case Spec_Hash_Definitions_SHA2_512:
       {
-        uint8_t *k = KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
-        uint8_t *v = KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
-        uint32_t *ctr = KRML_HOST_MALLOC(sizeof (uint32_t));
+        uint8_t *k = (uint8_t *)KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
+        uint8_t *v = (uint8_t *)KRML_HOST_CALLOC((uint32_t)64U, sizeof (uint8_t));
+        uint32_t *ctr = (uint32_t *)KRML_HOST_MALLOC(sizeof (uint32_t));
         ctr[0U] = (uint32_t)1U;
         st =
           (
@@ -208,9 +208,26 @@ EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
       }
   }
   KRML_CHECK_SIZE(sizeof (EverCrypt_DRBG_state_s), (uint32_t)1U);
-  EverCrypt_DRBG_state_s *buf = KRML_HOST_MALLOC(sizeof (EverCrypt_DRBG_state_s));
+  EverCrypt_DRBG_state_s
+  *buf = (EverCrypt_DRBG_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_DRBG_state_s));
   buf[0U] = st;
   return buf;
+}
+
+/**
+Create a DRBG state.
+
+@param a Hash algorithm to use. The possible instantiations are ...
+  * `Spec_Hash_Definitions_SHA2_256`,
+  * `Spec_Hash_Definitions_SHA2_384`,
+  * `Spec_Hash_Definitions_SHA2_512`, and
+  * `Spec_Hash_Definitions_SHA1`.
+
+@return DRBG state. Needs to be freed via `EverCrypt_DRBG_uninstantiate`.
+*/
+EverCrypt_DRBG_state_s *EverCrypt_DRBG_create(Spec_Hash_Definitions_hash_alg a)
+{
+  return EverCrypt_DRBG_create_in(a);
 }
 
 bool
@@ -228,7 +245,7 @@ EverCrypt_DRBG_instantiate_sha1(
   uint32_t nonce_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA1) / (uint32_t)2U;
   uint32_t min_entropy = entropy_input_len + nonce_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), min_entropy);
-  uint8_t *entropy = alloca(min_entropy * sizeof (uint8_t));
+  uint8_t *entropy = (uint8_t *)alloca(min_entropy * sizeof (uint8_t));
   memset(entropy, 0U, min_entropy * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy, min_entropy);
   if (!ok)
@@ -241,7 +258,8 @@ EverCrypt_DRBG_instantiate_sha1(
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + nonce_len + personalization_string_len);
   uint8_t
   *seed_material =
-    alloca((entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
+    (uint8_t *)alloca((entropy_input_len + nonce_len + personalization_string_len)
+      * sizeof (uint8_t));
   memset(seed_material,
     0U,
     (entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
@@ -268,7 +286,7 @@ EverCrypt_DRBG_instantiate_sha1(
   uint32_t
   input_len = (uint32_t)21U + entropy_input_len + nonce_len + personalization_string_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)20U * sizeof (uint8_t));
@@ -287,7 +305,7 @@ EverCrypt_DRBG_instantiate_sha1(
     uint32_t
     input_len0 = (uint32_t)21U + entropy_input_len + nonce_len + personalization_string_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)20U * sizeof (uint8_t));
@@ -320,7 +338,7 @@ EverCrypt_DRBG_instantiate_sha2_256(
   uint32_t nonce_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_256) / (uint32_t)2U;
   uint32_t min_entropy = entropy_input_len + nonce_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), min_entropy);
-  uint8_t *entropy = alloca(min_entropy * sizeof (uint8_t));
+  uint8_t *entropy = (uint8_t *)alloca(min_entropy * sizeof (uint8_t));
   memset(entropy, 0U, min_entropy * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy, min_entropy);
   if (!ok)
@@ -333,7 +351,8 @@ EverCrypt_DRBG_instantiate_sha2_256(
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + nonce_len + personalization_string_len);
   uint8_t
   *seed_material =
-    alloca((entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
+    (uint8_t *)alloca((entropy_input_len + nonce_len + personalization_string_len)
+      * sizeof (uint8_t));
   memset(seed_material,
     0U,
     (entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
@@ -360,7 +379,7 @@ EverCrypt_DRBG_instantiate_sha2_256(
   uint32_t
   input_len = (uint32_t)33U + entropy_input_len + nonce_len + personalization_string_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)32U * sizeof (uint8_t));
@@ -379,7 +398,7 @@ EverCrypt_DRBG_instantiate_sha2_256(
     uint32_t
     input_len0 = (uint32_t)33U + entropy_input_len + nonce_len + personalization_string_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)32U * sizeof (uint8_t));
@@ -412,7 +431,7 @@ EverCrypt_DRBG_instantiate_sha2_384(
   uint32_t nonce_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_384) / (uint32_t)2U;
   uint32_t min_entropy = entropy_input_len + nonce_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), min_entropy);
-  uint8_t *entropy = alloca(min_entropy * sizeof (uint8_t));
+  uint8_t *entropy = (uint8_t *)alloca(min_entropy * sizeof (uint8_t));
   memset(entropy, 0U, min_entropy * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy, min_entropy);
   if (!ok)
@@ -425,7 +444,8 @@ EverCrypt_DRBG_instantiate_sha2_384(
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + nonce_len + personalization_string_len);
   uint8_t
   *seed_material =
-    alloca((entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
+    (uint8_t *)alloca((entropy_input_len + nonce_len + personalization_string_len)
+      * sizeof (uint8_t));
   memset(seed_material,
     0U,
     (entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
@@ -452,7 +472,7 @@ EverCrypt_DRBG_instantiate_sha2_384(
   uint32_t
   input_len = (uint32_t)49U + entropy_input_len + nonce_len + personalization_string_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)48U * sizeof (uint8_t));
@@ -471,7 +491,7 @@ EverCrypt_DRBG_instantiate_sha2_384(
     uint32_t
     input_len0 = (uint32_t)49U + entropy_input_len + nonce_len + personalization_string_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)48U * sizeof (uint8_t));
@@ -504,7 +524,7 @@ EverCrypt_DRBG_instantiate_sha2_512(
   uint32_t nonce_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_512) / (uint32_t)2U;
   uint32_t min_entropy = entropy_input_len + nonce_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), min_entropy);
-  uint8_t *entropy = alloca(min_entropy * sizeof (uint8_t));
+  uint8_t *entropy = (uint8_t *)alloca(min_entropy * sizeof (uint8_t));
   memset(entropy, 0U, min_entropy * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy, min_entropy);
   if (!ok)
@@ -517,7 +537,8 @@ EverCrypt_DRBG_instantiate_sha2_512(
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + nonce_len + personalization_string_len);
   uint8_t
   *seed_material =
-    alloca((entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
+    (uint8_t *)alloca((entropy_input_len + nonce_len + personalization_string_len)
+      * sizeof (uint8_t));
   memset(seed_material,
     0U,
     (entropy_input_len + nonce_len + personalization_string_len) * sizeof (uint8_t));
@@ -544,7 +565,7 @@ EverCrypt_DRBG_instantiate_sha2_512(
   uint32_t
   input_len = (uint32_t)65U + entropy_input_len + nonce_len + personalization_string_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)64U * sizeof (uint8_t));
@@ -563,7 +584,7 @@ EverCrypt_DRBG_instantiate_sha2_512(
     uint32_t
     input_len0 = (uint32_t)65U + entropy_input_len + nonce_len + personalization_string_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)64U * sizeof (uint8_t));
@@ -594,7 +615,7 @@ EverCrypt_DRBG_reseed_sha1(
   }
   uint32_t entropy_input_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA1);
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len);
-  uint8_t *entropy_input = alloca(entropy_input_len * sizeof (uint8_t));
+  uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len * sizeof (uint8_t));
   memset(entropy_input, 0U, entropy_input_len * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len);
   if (!ok)
@@ -603,7 +624,9 @@ EverCrypt_DRBG_reseed_sha1(
   }
   EverCrypt_DRBG_state_s st_s = *st;
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + additional_input_len);
-  uint8_t *seed_material = alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
+  uint8_t
+  *seed_material =
+    (uint8_t *)alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memset(seed_material, 0U, (entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memcpy(seed_material, entropy_input, entropy_input_len * sizeof (uint8_t));
   memcpy(seed_material + entropy_input_len,
@@ -625,7 +648,7 @@ EverCrypt_DRBG_reseed_sha1(
   uint32_t *ctr = uu____0.reseed_counter;
   uint32_t input_len = (uint32_t)21U + entropy_input_len + additional_input_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)20U * sizeof (uint8_t));
@@ -643,7 +666,7 @@ EverCrypt_DRBG_reseed_sha1(
   {
     uint32_t input_len0 = (uint32_t)21U + entropy_input_len + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)20U * sizeof (uint8_t));
@@ -675,7 +698,7 @@ EverCrypt_DRBG_reseed_sha2_256(
   }
   uint32_t entropy_input_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_256);
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len);
-  uint8_t *entropy_input = alloca(entropy_input_len * sizeof (uint8_t));
+  uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len * sizeof (uint8_t));
   memset(entropy_input, 0U, entropy_input_len * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len);
   if (!ok)
@@ -684,7 +707,9 @@ EverCrypt_DRBG_reseed_sha2_256(
   }
   EverCrypt_DRBG_state_s st_s = *st;
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + additional_input_len);
-  uint8_t *seed_material = alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
+  uint8_t
+  *seed_material =
+    (uint8_t *)alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memset(seed_material, 0U, (entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memcpy(seed_material, entropy_input, entropy_input_len * sizeof (uint8_t));
   memcpy(seed_material + entropy_input_len,
@@ -706,7 +731,7 @@ EverCrypt_DRBG_reseed_sha2_256(
   uint32_t *ctr = uu____0.reseed_counter;
   uint32_t input_len = (uint32_t)33U + entropy_input_len + additional_input_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)32U * sizeof (uint8_t));
@@ -724,7 +749,7 @@ EverCrypt_DRBG_reseed_sha2_256(
   {
     uint32_t input_len0 = (uint32_t)33U + entropy_input_len + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)32U * sizeof (uint8_t));
@@ -756,7 +781,7 @@ EverCrypt_DRBG_reseed_sha2_384(
   }
   uint32_t entropy_input_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_384);
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len);
-  uint8_t *entropy_input = alloca(entropy_input_len * sizeof (uint8_t));
+  uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len * sizeof (uint8_t));
   memset(entropy_input, 0U, entropy_input_len * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len);
   if (!ok)
@@ -765,7 +790,9 @@ EverCrypt_DRBG_reseed_sha2_384(
   }
   EverCrypt_DRBG_state_s st_s = *st;
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + additional_input_len);
-  uint8_t *seed_material = alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
+  uint8_t
+  *seed_material =
+    (uint8_t *)alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memset(seed_material, 0U, (entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memcpy(seed_material, entropy_input, entropy_input_len * sizeof (uint8_t));
   memcpy(seed_material + entropy_input_len,
@@ -787,7 +814,7 @@ EverCrypt_DRBG_reseed_sha2_384(
   uint32_t *ctr = uu____0.reseed_counter;
   uint32_t input_len = (uint32_t)49U + entropy_input_len + additional_input_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)48U * sizeof (uint8_t));
@@ -805,7 +832,7 @@ EverCrypt_DRBG_reseed_sha2_384(
   {
     uint32_t input_len0 = (uint32_t)49U + entropy_input_len + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)48U * sizeof (uint8_t));
@@ -837,7 +864,7 @@ EverCrypt_DRBG_reseed_sha2_512(
   }
   uint32_t entropy_input_len = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_512);
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len);
-  uint8_t *entropy_input = alloca(entropy_input_len * sizeof (uint8_t));
+  uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len * sizeof (uint8_t));
   memset(entropy_input, 0U, entropy_input_len * sizeof (uint8_t));
   bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len);
   if (!ok)
@@ -846,7 +873,9 @@ EverCrypt_DRBG_reseed_sha2_512(
   }
   EverCrypt_DRBG_state_s st_s = *st;
   KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len + additional_input_len);
-  uint8_t *seed_material = alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
+  uint8_t
+  *seed_material =
+    (uint8_t *)alloca((entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memset(seed_material, 0U, (entropy_input_len + additional_input_len) * sizeof (uint8_t));
   memcpy(seed_material, entropy_input, entropy_input_len * sizeof (uint8_t));
   memcpy(seed_material + entropy_input_len,
@@ -868,7 +897,7 @@ EverCrypt_DRBG_reseed_sha2_512(
   uint32_t *ctr = uu____0.reseed_counter;
   uint32_t input_len = (uint32_t)65U + entropy_input_len + additional_input_len;
   KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-  uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+  uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
   memset(input0, 0U, input_len * sizeof (uint8_t));
   uint8_t *k_ = input0;
   memcpy(k_, v, (uint32_t)64U * sizeof (uint8_t));
@@ -886,7 +915,7 @@ EverCrypt_DRBG_reseed_sha2_512(
   {
     uint32_t input_len0 = (uint32_t)65U + entropy_input_len + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-    uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+    uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
     memset(input, 0U, input_len0 * sizeof (uint8_t));
     uint8_t *k_0 = input;
     memcpy(k_0, v, (uint32_t)64U * sizeof (uint8_t));
@@ -933,7 +962,7 @@ EverCrypt_DRBG_generate_sha1(
   {
     uint32_t entropy_input_len1 = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA1);
     KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1);
-    uint8_t *entropy_input = alloca(entropy_input_len1 * sizeof (uint8_t));
+    uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len1 * sizeof (uint8_t));
     memset(entropy_input, 0U, entropy_input_len1 * sizeof (uint8_t));
     bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len1);
     bool result;
@@ -946,7 +975,8 @@ EverCrypt_DRBG_generate_sha1(
       EverCrypt_DRBG_state_s st_s = *st;
       KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1 + additional_input_len);
       uint8_t
-      *seed_material = alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
+      *seed_material =
+        (uint8_t *)alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memset(seed_material, 0U, (entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memcpy(seed_material, entropy_input, entropy_input_len1 * sizeof (uint8_t));
       memcpy(seed_material + entropy_input_len1,
@@ -968,7 +998,7 @@ EverCrypt_DRBG_generate_sha1(
       uint32_t *ctr = uu____0.reseed_counter;
       uint32_t input_len = (uint32_t)21U + entropy_input_len1 + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)20U * sizeof (uint8_t));
@@ -986,7 +1016,7 @@ EverCrypt_DRBG_generate_sha1(
       {
         uint32_t input_len0 = (uint32_t)21U + entropy_input_len1 + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)20U * sizeof (uint8_t));
@@ -1045,7 +1075,7 @@ EverCrypt_DRBG_generate_sha1(
     {
       uint32_t input_len = (uint32_t)21U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)20U * sizeof (uint8_t));
@@ -1061,7 +1091,7 @@ EverCrypt_DRBG_generate_sha1(
       {
         uint32_t input_len0 = (uint32_t)21U + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)20U * sizeof (uint8_t));
@@ -1091,7 +1121,7 @@ EverCrypt_DRBG_generate_sha1(
     }
     uint32_t input_len = (uint32_t)21U + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-    uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+    uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
     memset(input0, 0U, input_len * sizeof (uint8_t));
     uint8_t *k_ = input0;
     memcpy(k_, v, (uint32_t)20U * sizeof (uint8_t));
@@ -1107,7 +1137,7 @@ EverCrypt_DRBG_generate_sha1(
     {
       uint32_t input_len0 = (uint32_t)21U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-      uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+      uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
       memset(input, 0U, input_len0 * sizeof (uint8_t));
       uint8_t *k_0 = input;
       memcpy(k_0, v, (uint32_t)20U * sizeof (uint8_t));
@@ -1155,7 +1185,7 @@ EverCrypt_DRBG_generate_sha2_256(
   {
     uint32_t entropy_input_len1 = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_256);
     KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1);
-    uint8_t *entropy_input = alloca(entropy_input_len1 * sizeof (uint8_t));
+    uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len1 * sizeof (uint8_t));
     memset(entropy_input, 0U, entropy_input_len1 * sizeof (uint8_t));
     bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len1);
     bool result;
@@ -1168,7 +1198,8 @@ EverCrypt_DRBG_generate_sha2_256(
       EverCrypt_DRBG_state_s st_s = *st;
       KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1 + additional_input_len);
       uint8_t
-      *seed_material = alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
+      *seed_material =
+        (uint8_t *)alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memset(seed_material, 0U, (entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memcpy(seed_material, entropy_input, entropy_input_len1 * sizeof (uint8_t));
       memcpy(seed_material + entropy_input_len1,
@@ -1190,7 +1221,7 @@ EverCrypt_DRBG_generate_sha2_256(
       uint32_t *ctr = uu____0.reseed_counter;
       uint32_t input_len = (uint32_t)33U + entropy_input_len1 + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1208,7 +1239,7 @@ EverCrypt_DRBG_generate_sha2_256(
       {
         uint32_t input_len0 = (uint32_t)33U + entropy_input_len1 + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1267,7 +1298,7 @@ EverCrypt_DRBG_generate_sha2_256(
     {
       uint32_t input_len = (uint32_t)33U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1283,7 +1314,7 @@ EverCrypt_DRBG_generate_sha2_256(
       {
         uint32_t input_len0 = (uint32_t)33U + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1313,7 +1344,7 @@ EverCrypt_DRBG_generate_sha2_256(
     }
     uint32_t input_len = (uint32_t)33U + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-    uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+    uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
     memset(input0, 0U, input_len * sizeof (uint8_t));
     uint8_t *k_ = input0;
     memcpy(k_, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1329,7 +1360,7 @@ EverCrypt_DRBG_generate_sha2_256(
     {
       uint32_t input_len0 = (uint32_t)33U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-      uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+      uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
       memset(input, 0U, input_len0 * sizeof (uint8_t));
       uint8_t *k_0 = input;
       memcpy(k_0, v, (uint32_t)32U * sizeof (uint8_t));
@@ -1377,7 +1408,7 @@ EverCrypt_DRBG_generate_sha2_384(
   {
     uint32_t entropy_input_len1 = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_384);
     KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1);
-    uint8_t *entropy_input = alloca(entropy_input_len1 * sizeof (uint8_t));
+    uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len1 * sizeof (uint8_t));
     memset(entropy_input, 0U, entropy_input_len1 * sizeof (uint8_t));
     bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len1);
     bool result;
@@ -1390,7 +1421,8 @@ EverCrypt_DRBG_generate_sha2_384(
       EverCrypt_DRBG_state_s st_s = *st;
       KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1 + additional_input_len);
       uint8_t
-      *seed_material = alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
+      *seed_material =
+        (uint8_t *)alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memset(seed_material, 0U, (entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memcpy(seed_material, entropy_input, entropy_input_len1 * sizeof (uint8_t));
       memcpy(seed_material + entropy_input_len1,
@@ -1412,7 +1444,7 @@ EverCrypt_DRBG_generate_sha2_384(
       uint32_t *ctr = uu____0.reseed_counter;
       uint32_t input_len = (uint32_t)49U + entropy_input_len1 + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1430,7 +1462,7 @@ EverCrypt_DRBG_generate_sha2_384(
       {
         uint32_t input_len0 = (uint32_t)49U + entropy_input_len1 + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1489,7 +1521,7 @@ EverCrypt_DRBG_generate_sha2_384(
     {
       uint32_t input_len = (uint32_t)49U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1505,7 +1537,7 @@ EverCrypt_DRBG_generate_sha2_384(
       {
         uint32_t input_len0 = (uint32_t)49U + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1535,7 +1567,7 @@ EverCrypt_DRBG_generate_sha2_384(
     }
     uint32_t input_len = (uint32_t)49U + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-    uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+    uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
     memset(input0, 0U, input_len * sizeof (uint8_t));
     uint8_t *k_ = input0;
     memcpy(k_, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1551,7 +1583,7 @@ EverCrypt_DRBG_generate_sha2_384(
     {
       uint32_t input_len0 = (uint32_t)49U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-      uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+      uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
       memset(input, 0U, input_len0 * sizeof (uint8_t));
       uint8_t *k_0 = input;
       memcpy(k_0, v, (uint32_t)48U * sizeof (uint8_t));
@@ -1599,7 +1631,7 @@ EverCrypt_DRBG_generate_sha2_512(
   {
     uint32_t entropy_input_len1 = Hacl_HMAC_DRBG_min_length(Spec_Hash_Definitions_SHA2_512);
     KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1);
-    uint8_t *entropy_input = alloca(entropy_input_len1 * sizeof (uint8_t));
+    uint8_t *entropy_input = (uint8_t *)alloca(entropy_input_len1 * sizeof (uint8_t));
     memset(entropy_input, 0U, entropy_input_len1 * sizeof (uint8_t));
     bool ok = Lib_RandomBuffer_System_randombytes(entropy_input, entropy_input_len1);
     bool result;
@@ -1612,7 +1644,8 @@ EverCrypt_DRBG_generate_sha2_512(
       EverCrypt_DRBG_state_s st_s = *st;
       KRML_CHECK_SIZE(sizeof (uint8_t), entropy_input_len1 + additional_input_len);
       uint8_t
-      *seed_material = alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
+      *seed_material =
+        (uint8_t *)alloca((entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memset(seed_material, 0U, (entropy_input_len1 + additional_input_len) * sizeof (uint8_t));
       memcpy(seed_material, entropy_input, entropy_input_len1 * sizeof (uint8_t));
       memcpy(seed_material + entropy_input_len1,
@@ -1634,7 +1667,7 @@ EverCrypt_DRBG_generate_sha2_512(
       uint32_t *ctr = uu____0.reseed_counter;
       uint32_t input_len = (uint32_t)65U + entropy_input_len1 + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1652,7 +1685,7 @@ EverCrypt_DRBG_generate_sha2_512(
       {
         uint32_t input_len0 = (uint32_t)65U + entropy_input_len1 + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1711,7 +1744,7 @@ EverCrypt_DRBG_generate_sha2_512(
     {
       uint32_t input_len = (uint32_t)65U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-      uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+      uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
       memset(input0, 0U, input_len * sizeof (uint8_t));
       uint8_t *k_ = input0;
       memcpy(k_, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1727,7 +1760,7 @@ EverCrypt_DRBG_generate_sha2_512(
       {
         uint32_t input_len0 = (uint32_t)65U + additional_input_len;
         KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-        uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+        uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
         memset(input, 0U, input_len0 * sizeof (uint8_t));
         uint8_t *k_0 = input;
         memcpy(k_0, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1757,7 +1790,7 @@ EverCrypt_DRBG_generate_sha2_512(
     }
     uint32_t input_len = (uint32_t)65U + additional_input_len;
     KRML_CHECK_SIZE(sizeof (uint8_t), input_len);
-    uint8_t *input0 = alloca(input_len * sizeof (uint8_t));
+    uint8_t *input0 = (uint8_t *)alloca(input_len * sizeof (uint8_t));
     memset(input0, 0U, input_len * sizeof (uint8_t));
     uint8_t *k_ = input0;
     memcpy(k_, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1773,7 +1806,7 @@ EverCrypt_DRBG_generate_sha2_512(
     {
       uint32_t input_len0 = (uint32_t)65U + additional_input_len;
       KRML_CHECK_SIZE(sizeof (uint8_t), input_len0);
-      uint8_t *input = alloca(input_len0 * sizeof (uint8_t));
+      uint8_t *input = (uint8_t *)alloca(input_len0 * sizeof (uint8_t));
       memset(input, 0U, input_len0 * sizeof (uint8_t));
       uint8_t *k_0 = input;
       memcpy(k_0, v, (uint32_t)64U * sizeof (uint8_t));
@@ -1889,6 +1922,15 @@ void EverCrypt_DRBG_uninstantiate_sha2_512(EverCrypt_DRBG_state_s *st)
   KRML_HOST_FREE(st);
 }
 
+/**
+Instantiate the DRBG.
+
+@param st Pointer to DRBG state.
+@param personalization_string Pointer to `personalization_string_len` bytes of memory where personalization string is read from.
+@param personalization_string_len Length of personalization string.
+
+@return True if and only if instantiation was successful.
+*/
 bool
 EverCrypt_DRBG_instantiate(
   EverCrypt_DRBG_state_s *st,
@@ -1929,6 +1971,15 @@ EverCrypt_DRBG_instantiate(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Reseed the DRBG.
+
+@param st Pointer to DRBG state.
+@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
+@param additional_input_input_len Length of additional input.
+
+@return True if and only if reseed was successful.
+*/
 bool
 EverCrypt_DRBG_reseed(
   EverCrypt_DRBG_state_s *st,
@@ -1960,6 +2011,17 @@ EverCrypt_DRBG_reseed(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Generate output.
+
+@param output Pointer to `n` bytes of memory where random output is written to.
+@param st Pointer to DRBG state.
+@param n Length of desired output.
+@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from.
+@param additional_input_input_len Length of additional input.
+
+@return True if and only if generate was successful.
+*/
 bool
 EverCrypt_DRBG_generate(
   uint8_t *output,
@@ -1993,6 +2055,11 @@ EverCrypt_DRBG_generate(
   KRML_HOST_EXIT(255U);
 }
 
+/**
+Uninstantiate and free the DRBG.
+
+@param st Pointer to DRBG state.
+*/
 void EverCrypt_DRBG_uninstantiate(EverCrypt_DRBG_state_s *st)
 {
   EverCrypt_DRBG_state_s scrut = *st;

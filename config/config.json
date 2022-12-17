@@ -30,6 +30,10 @@
             {
                 "file": "Hacl_Ed25519.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_EC_Ed25519.c",
+                "features": "std"
             }
         ],
         "blake2": [
@@ -65,6 +69,10 @@
         "bignum": [
             {
                 "file": "Hacl_Bignum256_32.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Bignum256.c",
                 "features": "std"
             },
             {
@@ -135,7 +143,7 @@
         "curve25519": [
             {
                 "file": "Hacl_Curve25519_51.c",
-                "features": "std"
+                "features": "m32"
             },
             {
                 "file": "Hacl_Curve25519_64.c",
@@ -158,9 +166,19 @@
                 "features": "std"
             }
         ],
+        "ffdh": [
+            {
+                "file": "Hacl_FFDHE.c",
+                "features": "std"
+            }
+        ],
         "sha3": [
             {
                 "file": "Hacl_SHA3.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Streaming_SHA3.c",
                 "features": "std"
             }
         ],
@@ -208,6 +226,10 @@
             {
                 "file": "Hacl_Hash_MD5.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_Streaming_MD5.c",
+                "features": "std"
             }
         ],
         "hmac": [
@@ -233,6 +255,98 @@
         "rsapss": [
             {
                 "file": "Hacl_RSAPSS.c",
+                "features": "std"
+            }
+        ],
+        "hpke": [
+            {
+                "file": "Hacl_HPKE_Curve64_CP128_SHA256.c",
+                "features": "vec128,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP128_SHA512.c",
+                "features": "vec128,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA256.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA512.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP32_SHA256.c",
+                "features": "std,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP32_SHA512.c",
+                "features": "std,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP256_SHA256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP256_SHA512.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA256.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_Curve64_CP256_SHA512.c",
+                "features": "vec256,vale"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP256_SHA256.c",
+                "features": "vec256"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP128_SHA256.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP128_SHA512.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP32_SHA256.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_HPKE_Curve51_CP32_SHA512.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP128_SHA256.c",
+                "features": "vec128"
+            },
+            {
+                "file": "Hacl_HPKE_P256_CP32_SHA256.c",
+                "features": "std"
+            }
+        ],
+        "frodo": [
+            {
+                "file": "Hacl_Frodo1344.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo640.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo976.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo64.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Frodo_KEM.c",
                 "features": "std"
             }
         ]
@@ -268,20 +382,16 @@
         },
         "aesgcm": {
             "osx": [
-                "aesgcm-x86_64-darwin.S",
-                "aes-x86_64-darwin.S"
+                "aesgcm-x86_64-darwin.S"
             ],
             "linux": [
-                "aesgcm-x86_64-linux.S",
-                "aes-x86_64-linux.S"
+                "aesgcm-x86_64-linux.S"
             ],
             "mingw": [
-                "aesgcm-x86_64-mingw.S",
-                "aes-x86_64-mingw.S"
+                "aesgcm-x86_64-mingw.S"
             ],
             "msvc": [
-                "aesgcm-x86_64-msvc.asm",
-                "aes-x86_64-msvc.asm"
+                "aesgcm-x86_64-msvc.asm"
             ]
         },
         "curve25519": {
@@ -323,9 +433,6 @@
         "curve25519": [
             "EverCrypt_Curve25519.c"
         ],
-        "ctr": [
-            "EverCrypt_CTR.c"
-        ],
         "hkdf": [
             "EverCrypt_HKDF.c"
         ],
@@ -351,6 +458,12 @@
     "tests": {
         "detection": [
             "detection.cc"
+        ],
+        "bignum": [
+            "bignum.cc"
+        ],
+        "generic_field": [
+            "generic_field.cc"
         ],
         "blake2": [
             "blake2b.cc",
@@ -408,6 +521,32 @@
         ],
         "aead": [
             "aead.cc"
+        ]
+    },
+    "benchmarks": {
+        "blake2": [
+            "blake.cc"
+        ],
+        "chacha20": [
+            "chacha20.cc"
+        ],
+        "chacha20poly1305": [
+            "chacha20poly1305.cc"
+        ],
+        "curve25519": [
+            "x25519.cc"
+        ],
+        "ed25519": [
+            "ed25519.cc"
+        ],
+        "p256": [
+            "p256.cc"
+        ],
+        "sha2": [
+            "sha2.cc"
+        ],
+        "k256": [
+            "k256.cc"
         ]
     }
 }

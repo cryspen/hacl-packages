@@ -4,8 +4,31 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
   pull_request:
+    # Can't use an YAML anchor because "Anchors are not currently supported." (GitHub 12/07/2022)
+    paths-ignore:
+      - .gitignore
+      - CLA.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - cpu-features.md
+      - LICENSE
+      - LICENSE-APACHE
+      - README.md
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   mach:
@@ -13,14 +36,14 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
+          - macos-11
           - ubuntu-latest
           - windows-latest
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
@@ -31,14 +54,14 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo
 
-      - if: matrix.os == 'macos-latest'
+      - if: matrix.os == 'macos-11'
         run: brew install ninja
 
       - if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
@@ -65,14 +88,14 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
+          - macos-11
           - ubuntu-latest
           # - windows-latest # FIXME
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         with:
@@ -84,14 +107,14 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo
 
-      - if: matrix.os == 'macos-latest'
+      - if: matrix.os == 'macos-11'
         run: brew install ninja
 
       - if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build
 
       - if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
 
       - if: matrix.os == 'windows-latest'
         run: choco install ninja

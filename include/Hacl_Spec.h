@@ -36,11 +36,6 @@ extern "C" {
 
 
 
-#include "evercrypt_targetconfig.h"
-#define Spec_Blake2_Blake2S 0
-#define Spec_Blake2_Blake2B 1
-
-typedef uint8_t Spec_Blake2_alg;
 
 #define Spec_Hash_Definitions_SHA2_224 0
 #define Spec_Hash_Definitions_SHA2_256 1
@@ -50,6 +45,7 @@ typedef uint8_t Spec_Blake2_alg;
 #define Spec_Hash_Definitions_MD5 5
 #define Spec_Hash_Definitions_Blake2S 6
 #define Spec_Hash_Definitions_Blake2B 7
+#define Spec_Hash_Definitions_SHA3_256 8
 
 typedef uint8_t Spec_Hash_Definitions_hash_alg;
 
@@ -60,12 +56,6 @@ typedef uint8_t Spec_Hash_Definitions_hash_alg;
 #define Spec_FFDHE_FFDHE8192 4
 
 typedef uint8_t Spec_FFDHE_ffdhe_alg;
-
-#define Spec_Agile_Cipher_AES128 0
-#define Spec_Agile_Cipher_AES256 1
-#define Spec_Agile_Cipher_CHACHA20 2
-
-typedef uint8_t Spec_Agile_Cipher_cipher_alg;
 
 #define Spec_Agile_AEAD_AES128_GCM 0
 #define Spec_Agile_AEAD_AES256_GCM 1

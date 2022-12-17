@@ -12,3 +12,7 @@ set(CMAKE_SYSTEM_PROCESSOR ${arch})
 set(CMAKE_ANDROID_ARCH_ABI arm64-v8a)
 set(CMAKE_ANDROID_NDK "${ANDROID_NDK_PATH}")
 set(HACL_TARGET_OS android)
+# aligned_alloc requires at least API 28
+# https://android.googlesource.com/platform/bionic/+/master/docs/status.md
+set(CMAKE_ANDROID_API 28)
+set(CMAKE_ANDROID_API_MIN 28)
