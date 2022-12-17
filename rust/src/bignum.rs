@@ -777,7 +777,7 @@ impl Modulus {
             return Ok(BigUInt::ONE);
         }
         if number.is_zero() {
-            return Ok(BigUInt::ONE);
+            return Ok(BigUInt::ZERO);
         }
         number.0.handle.as_ref().ok_or(Error::NoHandle)?;
 
