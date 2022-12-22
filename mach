@@ -150,7 +150,7 @@ def build(args):
 
     Supported cross compilation targets:
         - x86_64-apple-darwin (macOS aarch64 only)
-        - s390x
+        - s390x-linux-gnu
         - aarch64-apple-ios (macOS only)
         - aarch64-apple-darwin (macOS x64 only)
         - aarch64-linux-android
@@ -276,7 +276,7 @@ def build(args):
             exit(1)
         if args.target == "x86_64-apple-darwin":
             cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
-        elif args.target == "s390x":
+        elif args.target == "s390x-linux-gnu":
             cmake_args.extend(
                 [
                     "-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake",

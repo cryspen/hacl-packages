@@ -48,6 +48,7 @@ class Config:
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = "-I " + " -I ".join(self.include_paths)
+        # TODO: add self.target as -target here.
         result = subprocess.run(
             self.compiler
             + args
@@ -56,10 +57,7 @@ class Config:
             + " -I"
             + join(source_dir, "internal")
             + " -MM "
-            + join(source_dir, source_file)
-            + ""
-            if self.target is None
-            else " -target " + self.target,
+            + join(source_dir, source_file),
             stdout=subprocess.PIPE,
             shell=True,
             check=True,
