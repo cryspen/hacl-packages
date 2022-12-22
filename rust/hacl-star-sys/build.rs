@@ -52,10 +52,20 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 #[cfg(windows)]
 fn create_bindings(_: &Path, _: &Path) {}
 
-fn build_hacl_c(path: &Path) {
+fn build_hacl_c(path: &Path, cross_target: Option<String>) {
     println!(" >>> Building HACL C in {}", path.display());
     // cmake
     let mut cmake_cmd = Command::new("cmake");
+
+    // Map cross compile targets to cmake toolchain files
+    let toolchain_file = cross_target
+        .map(|s| match s.as_str() {
+            "x86_64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake",
+            "aarch64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake",
+            _ => "",
+        })
+        .unwrap_or_default();
+
     // We always build the release version here.
     // TODO: For debugging don't use this.
     let cmake_status = cmake_cmd
@@ -67,6 +77,7 @@ fn build_hacl_c(path: &Path) {
             "Ninja",
             "-D",
             "CMAKE_BUILD_TYPE=Release",
+            toolchain_file,
         ])
         .status()
         .expect("Failed to run cmake.");
@@ -107,10 +118,12 @@ fn main() {
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let home_dir = Path::new(&home_dir);
-    // let out_dir = env::var("OUT_DIR").unwrap();
-    // let out_path = Path::new(&out_dir);
     let mach_build = env::var("MACH_BUILD").ok().is_some();
+    let target = env::var("TARGET").unwrap();
+    let host = env::var("HOST").unwrap();
     println!("mach_build: {}", mach_build);
+
+    let cross_target = if target != host { Some(target) } else { None };
 
     // Get the C library and build it first.
     // This is the default behaviour. It can be disabled when working on this
@@ -121,17 +134,17 @@ fn main() {
             println!(" >>> Copying HACL C file");
             // ./mach rust
             let mut mach_cmd = Command::new("./mach");
-            let cmake_status = mach_cmd
+            let mach_status = mach_cmd
                 .current_dir(home_dir.join("..").join(".."))
                 .args(&["rust"])
                 .status()
                 .expect("Failed to run ./mach rust.");
-            if !cmake_status.success() {
+            if !mach_status.success() {
                 panic!("Failed to run ./mach rust.")
             }
         }
         let c_path = home_dir.join("..").join(".c");
-        build_hacl_c(&c_path);
+        build_hacl_c(&c_path, cross_target);
         c_path.join("build").join("installed")
     } else {
         // Use the higher level install directory.

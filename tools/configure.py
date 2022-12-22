@@ -56,7 +56,9 @@ class Config:
             + " -I"
             + join(source_dir, "internal")
             + " -MM "
-            + join(source_dir, source_file),
+            + join(source_dir, source_file)
+            + " -target "
+            + self.target,
             stdout=subprocess.PIPE,
             shell=True,
             check=True,
@@ -98,7 +100,13 @@ class Config:
         return deps, includes
 
     def __init__(
-        self, config_file, source_dir, include_dir, algorithms=[], compiler="clang"
+        self,
+        config_file,
+        source_dir,
+        include_dir,
+        algorithms=[],
+        compiler="clang",
+        target=None,
     ):
         """Read the build config from the json file"""
         print(" [mach] Using %s to configure ..." % (config_file))
@@ -110,6 +118,8 @@ class Config:
             data = f.read()
 
         self.compiler = compiler
+        if target:
+            self.target = target
 
         # parse file
         self.config = json.loads(data)
@@ -165,7 +175,7 @@ class Config:
                 self.hacl_includes.extend(
                     includes if type(includes) == list else [includes]
                 )
-                feature = source_file["features"].replace(",","_")
+                feature = source_file["features"].replace(",", "_")
                 if feature in self.hacl_compile_feature:
                     self.hacl_compile_feature[feature].extend(
                         files if type(files) == list else [files]
@@ -235,7 +245,11 @@ class Config:
         for f1 in self.hacl_compile_feature:
             for f2 in self.hacl_compile_feature:
                 if f1 != f2 and f1.endswith("_vale"):
-                    self.hacl_compile_feature[f1] = [i for i in self.hacl_compile_feature[f1] if i not in self.hacl_compile_feature[f2]]
+                    self.hacl_compile_feature[f1] = [
+                        i
+                        for i in self.hacl_compile_feature[f1]
+                        if i not in self.hacl_compile_feature[f2]
+                    ]
 
         # We don't want internal excludes to be installed.
         self.public_includes = [

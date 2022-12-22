@@ -1,4 +1,4 @@
-use hacl_rust_sys::*;
+use hacl_star_sys::*;
 
 use crate::digest::Algorithm as Digest;
 

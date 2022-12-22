@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::hmac::{hmac, Algorithm};
+use hacl_star::hmac::{hmac, Algorithm};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

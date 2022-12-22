@@ -1,7 +1,7 @@
 #![no_main]
 use libfuzzer_sys::fuzz_target;
 
-use hacl_rust_sys::prelude::*;
+use hacl_star_sys::prelude::*;
 
 fuzz_target!(|data: &[u8]| {
     if data.len() >= 32 {

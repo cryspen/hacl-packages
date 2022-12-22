@@ -1,8 +1,8 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::ed25519::{self, Point, Scalar};
-use hacl_rust::signature::{self, Mode};
+use hacl_star::ed25519::{self, Point, Scalar};
+use hacl_star::signature::{self, Mode};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

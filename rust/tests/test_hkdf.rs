@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::prelude::*;
+use hacl_star::prelude::*;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

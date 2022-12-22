@@ -1,4 +1,4 @@
-use hacl_rust::digest::{self, Algorithm, Digest};
+use hacl_star::digest::{self, Algorithm, Digest};
 
 #[test]
 fn test_sha2() {

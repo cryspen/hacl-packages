@@ -1,8 +1,8 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::ecdh::{self, Mode};
-use hacl_rust::p256::{self, Error};
+use hacl_star::ecdh::{self, Mode};
+use hacl_star::p256::{self, Error};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

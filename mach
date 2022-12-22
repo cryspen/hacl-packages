@@ -266,9 +266,10 @@ def build(args):
         cmake_args.append("-DUSE_MSVC=1")
 
     # Set target toolchain if cross compiling
+    target = args.target
     if args.target:
         if windows:
-            print("! Cross-compilation is not supporte on Windows.")
+            print("! Cross-compilation is not supported on Windows.")
             exit(1)
         if m32:
             print("! Cross-compilation is not supported when --m32 is set.")
@@ -372,7 +373,9 @@ def build(args):
     # '--debug-trycompile'
     if not cache:
         print("Running config to write config.cmake and config.h ...")
-        config = Config(json_config(), source_dir, include_dir, compiler=compiler)
+        config = Config(
+            json_config(), source_dir, include_dir, compiler=compiler, target=target
+        )
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())
 
@@ -393,6 +396,7 @@ def build(args):
             include_dir,
             algorithms=algorithms,
             compiler=compiler,
+            target=target,
         )
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())
