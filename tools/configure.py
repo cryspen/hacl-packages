@@ -57,8 +57,9 @@ class Config:
             + join(source_dir, "internal")
             + " -MM "
             + join(source_dir, source_file)
-            + " -target "
-            + self.target,
+            + ""
+            if self.target is None
+            else " -target " + self.target,
             stdout=subprocess.PIPE,
             shell=True,
             check=True,
@@ -118,8 +119,7 @@ class Config:
             data = f.read()
 
         self.compiler = compiler
-        if target:
-            self.target = target
+        self.target = target
 
         # parse file
         self.config = json.loads(data)
