@@ -1,4 +1,4 @@
-use hacl_rust::prelude::*;
+use hacl_star::prelude::*;
 
 #[test]
 fn test_p256_signature() {

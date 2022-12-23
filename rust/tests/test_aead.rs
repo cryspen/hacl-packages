@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::aead::{hacl_aes_available, Aead, Algorithm, Error};
+use hacl_star::aead::{hacl_aes_available, Aead, Algorithm, Error};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

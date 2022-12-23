@@ -1,9 +1,9 @@
 mod test_util;
 use test_util::*;
 
-use hacl_rust::digest::Algorithm;
-use hacl_rust::p256::{self, Error};
-use hacl_rust::signature::{self, Mode as SignatureMode};
+use hacl_star::digest::Algorithm;
+use hacl_star::p256::{self, Error};
+use hacl_star::signature::{self, Mode as SignatureMode};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

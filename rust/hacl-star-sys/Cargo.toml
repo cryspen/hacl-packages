@@ -1,13 +1,13 @@
 [package]
-name = "hacl-rust-sys"
-version = "0.0.0"
+name = "hacl-star-sys"
+version = "0.2.0"
 authors = ["Franziskus Kiefer <franziskuskiefer@gmail.com>"]
 edition = "2021"
 build = "build.rs"
 categories = ["cryptography", "api-bindings"]
-links = "evercrypt"
+links = "hacl"
 license = "GPLv3"
-documentation = "https://docs.rs/hacl-rust-sys/"
+documentation = "https://docs.rs/hacl-star-sys/"
 description = "FFI bindings for the HACL C package"
 readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages/rust"

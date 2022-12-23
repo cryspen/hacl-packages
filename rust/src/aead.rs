@@ -7,7 +7,7 @@
 //!
 //! ## Aead with key state
 //! ```rust
-//! use hacl_rust::aead::{Aead, Algorithm, Error};
+//! use hacl_star::aead::{Aead, Algorithm, Error};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
@@ -36,7 +36,7 @@
 //!
 //! ## Single-shot API
 //! ```rust
-//! use hacl_rust::aead::{self, Algorithm};
+//! use hacl_star::aead::{self, Algorithm};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
@@ -64,7 +64,7 @@ use std::convert::TryInto;
 #[cfg(feature = "serialization")]
 use serde::{Deserialize, Serialize};
 
-use hacl_rust_sys::*;
+use hacl_star_sys::*;
 
 /// The AEAD Algorithm Identifier.
 #[derive(Clone, Copy, PartialEq, Debug)]

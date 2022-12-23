@@ -258,10 +258,10 @@ jobs:
           sudo apt-get install ninja-build g++-10-s390x-linux-gnu gcc-10-s390x-linux-gnu
 
       - name: Debug Build
-        run: ./mach build --tests --target s390x -v
+        run: ./mach build --tests --target s390x-linux-gnu -v
 
       - name: Release Build
-        run: ./mach build --release --target s390x --tests -v
+        run: ./mach build --release --target s390x-linux-gnu --tests -v
 
       - name: Install
         run: |

@@ -14,7 +14,7 @@ fn duration(d: Duration) -> f64 {
 }
 
 fn aead_keys() {
-    use hacl_rust::aead::{self, Aead, Algorithm};
+    use hacl_star::aead::{self, Aead, Algorithm};
     const ONE_MB: usize = 0x100000;
 
     fn run(chunks: usize, payload_size: usize) {

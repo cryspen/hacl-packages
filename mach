@@ -150,7 +150,7 @@ def build(args):
 
     Supported cross compilation targets:
         - x86_64-apple-darwin (macOS aarch64 only)
-        - s390x
+        - s390x-linux-gnu
         - aarch64-apple-ios (macOS only)
         - aarch64-apple-darwin (macOS x64 only)
         - aarch64-linux-android
@@ -266,16 +266,17 @@ def build(args):
         cmake_args.append("-DUSE_MSVC=1")
 
     # Set target toolchain if cross compiling
+    target = args.target
     if args.target:
         if windows:
-            print("! Cross-compilation is not supporte on Windows.")
+            print("! Cross-compilation is not supported on Windows.")
             exit(1)
         if m32:
             print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
         if args.target == "x86_64-apple-darwin":
             cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
-        elif args.target == "s390x":
+        elif args.target == "s390x-linux-gnu":
             cmake_args.extend(
                 [
                     "-DCMAKE_TOOLCHAIN_FILE=config/s390x.cmake",
@@ -372,7 +373,9 @@ def build(args):
     # '--debug-trycompile'
     if not cache:
         print("Running config to write config.cmake and config.h ...")
-        config = Config(json_config(), source_dir, include_dir, compiler=compiler)
+        config = Config(
+            json_config(), source_dir, include_dir, compiler=compiler, target=target
+        )
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())
 
@@ -393,6 +396,7 @@ def build(args):
             include_dir,
             algorithms=algorithms,
             compiler=compiler,
+            target=target,
         )
         config.write_cmake_config(cmake_config())
         config.write_dep_config(dep_config())

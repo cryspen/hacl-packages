@@ -1,4 +1,4 @@
-use hacl_rust::digest::{self, Algorithm};
+use hacl_star::digest::{self, Algorithm};
 
 // Tests from https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2-kat.json
 
