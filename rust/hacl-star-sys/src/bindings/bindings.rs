@@ -21,8 +21,6 @@ pub const Spec_Agile_AEAD_AES128_CCM: u32 = 3;
 pub const Spec_Agile_AEAD_AES256_CCM: u32 = 4;
 pub const Spec_Agile_AEAD_AES128_CCM8: u32 = 5;
 pub const Spec_Agile_AEAD_AES256_CCM8: u32 = 6;
-pub const Spec_Frodo_Params_SHAKE128: u32 = 0;
-pub const Spec_Frodo_Params_AES128: u32 = 1;
 pub const EverCrypt_Error_Success: u32 = 0;
 pub const EverCrypt_Error_UnsupportedAlgorithm: u32 = 1;
 pub const EverCrypt_Error_InvalidKey: u32 = 2;
@@ -30,14 +28,10 @@ pub const EverCrypt_Error_AuthenticationFailure: u32 = 3;
 pub const EverCrypt_Error_InvalidIVLength: u32 = 4;
 pub const EverCrypt_Error_DecodeError: u32 = 5;
 pub const EverCrypt_Error_MaximumLengthExceeded: u32 = 6;
-pub type __uint8_t = ::std::os::raw::c_uchar;
-pub type __uint32_t = ::std::os::raw::c_uint;
-pub type __uint64_t = ::std::os::raw::c_ulong;
 pub type C_String_t = *const ::std::os::raw::c_char;
 pub type Spec_Hash_Definitions_hash_alg = u8;
 pub type Spec_FFDHE_ffdhe_alg = u8;
 pub type Spec_Agile_AEAD_alg = u8;
-pub type Spec_Frodo_Params_frodo_gen_a = u8;
 pub type EverCrypt_Error_error_code = u8;
 extern "C" {
     pub fn EverCrypt_AutoConfig2_has_shaext() -> bool;
@@ -591,9 +585,6 @@ extern "C" {
     pub fn EverCrypt_Hash_update_multi_256(s: *mut u32, blocks: *mut u8, n: u32);
 }
 extern "C" {
-    pub fn EverCrypt_Hash_update(s: *mut EverCrypt_Hash_state_s, prevlen: u64, block: *mut u8);
-}
-extern "C" {
     pub fn EverCrypt_Hash_update_multi(
         s: *mut EverCrypt_Hash_state_s,
         prevlen: u64,
@@ -604,9 +595,9 @@ extern "C" {
 extern "C" {
     pub fn EverCrypt_Hash_update_last_256(
         s: *mut u32,
-        input: u64,
-        input_len: *mut u8,
-        input_len1: u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
     );
 }
 extern "C" {
