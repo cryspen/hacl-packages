@@ -24,5 +24,9 @@ def build_js():
     shutil.copytree(bindings_path, dest_path, dirs_exist_ok=True)
 
     os.chdir(dest_path)
-    test_cmd = ["node", "api_test.js"]
-    subprocess.run(test_cmd, check=True)
+    test1_cmd = ["node", "api_test.js"]
+    test2_cmd = ["node", "test2.js"]
+    test3_cmd = ["node", "test3.js"]
+    subprocess.run(test1_cmd, check=True)
+    subprocess.run(test2_cmd, check=True)
+    subprocess.run(test3_cmd, check=True)
