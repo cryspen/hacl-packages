@@ -1,0 +1,27 @@
+name: js
+
+on:
+  push:
+    branches:
+      - main
+      - 'hacl-star-**'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+   default:
+     runs-on: ubuntu-latest
+
+     steps:
+       - uses: actions/checkout@v3
+
+       - name: Setup
+         run: sudo apt-get install ninja-build nodejs
+
+       - name: Build JS bindings
+         run: |
+           ./mach build -l js
+
+       - name: Test JS bindings
+         run: |
+           ./mach test -l js
