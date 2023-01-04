@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __internal_Hacl_Hash_Blake2s_128_H
-#define __internal_Hacl_Hash_Blake2s_128_H
+#ifndef __internal_Hacl_Krmllib_H
+#define __internal_Hacl_Krmllib_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,49 +35,34 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
-#include "internal/Hacl_Hash_Blake2.h"
-#include "../Hacl_Hash_Blake2s_128.h"
-#include "libintvector.h"
-uint64_t Hacl_Hash_Blake2s_128_init_blake2s_128(Lib_IntVector_Intrinsics_vec128 *s);
+#include "../Hacl_Krmllib.h"
 
-uint64_t
-Hacl_Hash_Blake2s_128_update_blake2s_128(
-  Lib_IntVector_Intrinsics_vec128 *s,
-  uint64_t totlen,
-  uint8_t *block
-);
+static inline uint32_t FStar_UInt32_eq_mask(uint32_t a, uint32_t b);
 
-void
-Hacl_Hash_Blake2s_128_finish_blake2s_128(
-  Lib_IntVector_Intrinsics_vec128 *s,
-  uint64_t ev,
-  uint8_t *dst
-);
+static inline uint32_t FStar_UInt32_gte_mask(uint32_t a, uint32_t b);
 
-uint64_t
-Hacl_Hash_Blake2s_128_update_multi_blake2s_128(
-  Lib_IntVector_Intrinsics_vec128 *s,
-  uint64_t ev,
-  uint8_t *blocks,
-  uint32_t n_blocks
-);
+static inline uint8_t FStar_UInt8_eq_mask(uint8_t a, uint8_t b);
 
-uint64_t
-Hacl_Hash_Blake2s_128_update_last_blake2s_128(
-  Lib_IntVector_Intrinsics_vec128 *s,
-  uint64_t ev,
-  uint64_t prev_len,
-  uint8_t *input,
-  uint32_t input_len
-);
+static inline uint16_t FStar_UInt16_eq_mask(uint16_t a, uint16_t b);
 
-void Hacl_Hash_Blake2s_128_hash_blake2s_128(uint8_t *input, uint32_t input_len, uint8_t *dst);
+static inline FStar_UInt128_uint128
+FStar_UInt128_add(FStar_UInt128_uint128 a, FStar_UInt128_uint128 b);
 
-Lib_IntVector_Intrinsics_vec128 *Hacl_Hash_Blake2s_128_malloc_blake2s_128();
+static inline FStar_UInt128_uint128
+FStar_UInt128_logor(FStar_UInt128_uint128 a, FStar_UInt128_uint128 b);
+
+static inline FStar_UInt128_uint128
+FStar_UInt128_shift_left(FStar_UInt128_uint128 a, uint32_t s);
+
+static inline FStar_UInt128_uint128 FStar_UInt128_mul_wide(uint64_t x, uint64_t y);
+
+static inline void store128_be(uint8_t *x0, FStar_UInt128_uint128 x1);
+
+static inline FStar_UInt128_uint128 load128_be(uint8_t *x0);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Hash_Blake2s_128_H_DEFINED
+#define __internal_Hacl_Krmllib_H_DEFINED
 #endif

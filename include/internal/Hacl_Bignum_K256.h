@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __Hacl_Bignum_K256_H
-#define __Hacl_Bignum_K256_H
+#ifndef __internal_Hacl_Bignum_K256_H
+#define __internal_Hacl_Bignum_K256_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,6 +35,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 
+#include "internal/Hacl_Krmllib.h"
 #include "Hacl_Krmllib.h"
 
 static inline bool Hacl_K256_Field_is_felem_zero_vartime(uint64_t *f)
@@ -136,7 +137,7 @@ static inline void Hacl_K256_Field_load_felem(uint64_t *f, uint8_t *b)
   f[4U] = f4;
 }
 
-static inline bool Hacl_K256_Field_load_felem_vartime(uint64_t *f, uint8_t *b)
+static inline bool Hacl_K256_Field_load_felem_lt_prime_vartime(uint64_t *f, uint8_t *b)
 {
   Hacl_K256_Field_load_felem(f, b);
   uint64_t f0 = f[0U];
@@ -152,7 +153,13 @@ static inline bool Hacl_K256_Field_load_felem_vartime(uint64_t *f, uint8_t *b)
     && f2 == (uint64_t)0xfffffffffffffU
     && f3 == (uint64_t)0xfffffffffffffU
     && f4 == (uint64_t)0xffffffffffffU;
-  if (is_ge_p)
+  return !is_ge_p;
+}
+
+static inline bool Hacl_K256_Field_load_felem_vartime(uint64_t *f, uint8_t *b)
+{
+  bool is_lt_p = Hacl_K256_Field_load_felem_lt_prime_vartime(f, b);
+  if (!is_lt_p)
   {
     return false;
   }
@@ -687,5 +694,5 @@ static inline void Hacl_Impl_K256_Finv_fsqrt(uint64_t *out, uint64_t *f)
 }
 #endif
 
-#define __Hacl_Bignum_K256_H_DEFINED
+#define __internal_Hacl_Bignum_K256_H_DEFINED
 #endif
