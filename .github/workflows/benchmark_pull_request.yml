@@ -17,12 +17,12 @@ jobs:
           sudo apt-get install ninja-build
           sudo apt-get install python3 python3-scipy python3-pandas
 
-      - name: Checkout hacl-packages (${{ github.head_ref }})
+      - name: Checkout hacl-packages (${{ github.ref }})
         uses: actions/checkout@v3
         with:
           path: pr
 
-      - name: Build hacl-packages (${{ github.head_ref }})
+      - name: Build hacl-packages (${{ github.ref }})
         working-directory: pr
         run: ./mach build --release --benchmarks
 
