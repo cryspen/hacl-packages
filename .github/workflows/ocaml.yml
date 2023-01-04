@@ -104,7 +104,7 @@ jobs:
           opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Setup HACL opam
-        run: opam upgrade && ./opam.sh
+        run: opam update && opam upgrade --yes && ./opam.sh
 
       - name: Package & Test
         working-directory: opam
