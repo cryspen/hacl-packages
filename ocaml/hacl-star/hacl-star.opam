@@ -19,7 +19,7 @@ depends: [
   "zarith"
   "cppo" {build}
   "alcotest" {with-test & >= "1.1.0"}
-  "qcheck-core" {with-test & >= "0.20.0"}
+  "qcheck-core" {with-test & >= "0.20"}
   "secp256k1-internal" {with-test}
   "cstruct" {with-test}
   "odoc" {with-doc}
