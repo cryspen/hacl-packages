@@ -9,6 +9,7 @@ import subprocess
 import sys
 import shutil
 from os.path import join as path_join
+from os.path import exists as path_exists
 
 
 def build_js():
@@ -28,9 +29,15 @@ def test_js():
     """Test the JS bindings."""
 
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), "..")
-    dest_path = path_join(cwd, "build/js")
+    path = path_join(cwd, "build/js")
 
-    os.chdir(dest_path)
+    if not path_exists(path):
+        print(
+            "! Build missing! Please build js bindings first: `./mach build -l js`. Aborting!"
+        )
+        exit(1)
+
+    os.chdir(path)
 
     test1_cmd = ["node", "api_test.js"]
     test2_cmd = ["node", "test2.js"]
