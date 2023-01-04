@@ -82,13 +82,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache Setup
-        id: cache-ocaml-setup
-        uses: actions/cache@v3
-        with:
-          path: ~/.opam
-          key: ${{ runner.os }}-ocaml-setup
-
       - name: Setup Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build opam libgmp-dev
@@ -96,7 +89,6 @@ jobs:
         if: matrix.os == 'macos-11'
         run: brew install ninja opam gmp
       - name: OCaml Setup
-        if: steps.cache-ocaml-setup.outputs.cache-hit != 'true'
         run: |
           opam init --auto-setup --disable-sandboxing --yes --bare
           opam switch create 4.12.0 --yes
@@ -104,7 +96,7 @@ jobs:
           opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Setup HACL opam
-        run: opam update && opam upgrade --yes && ./opam.sh
+        run: ./opam.sh
 
       - name: Package & Test
         working-directory: opam
