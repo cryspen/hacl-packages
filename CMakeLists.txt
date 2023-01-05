@@ -38,6 +38,8 @@ project(hacl
     LANGUAGES C CXX
 )
 
+set(PROJECT_EXPORT_NAME "hacl")
+
 # The assembly is different for MSVC ...
 if(MSVC)
     enable_language(ASM_MASM)
@@ -364,8 +366,22 @@ set(CMAKE_INSTALL_LIBDIR lib)
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_MESSAGE LAZY)
 install(TARGETS hacl_static hacl
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    EXPORT ${PROJECT_EXPORT_NAME}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# Export the cmake config for use in downstream libraries
+export(
+    EXPORT ${PROJECT_EXPORT_NAME}
+    FILE ${PROJECT_BINARY_DIR}/${PROJECT_EXPORT_NAME}Config.cmake
+)
+
+# install the cmake config for use in downsteam libraries
+install(
+    EXPORT ${PROJECT_EXPORT_NAME}
+    FILE ${PROJECT_EXPORT_NAME}Config.cmake
+    DESTINATION lib/cmake/${PROJECT_EXPORT_NAME}/${PROJECT_VERSION}
+)
 
 # # Copy hacl headers
 install(FILES ${PUBLIC_INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
