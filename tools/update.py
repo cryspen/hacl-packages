@@ -83,6 +83,7 @@ def dependencies(src_dir, c_file):
 
     return files, file_names
 
+
 # Note: This is currently unused but will be used in the future.
 #
 # def read_config(config_file_name):
@@ -297,3 +298,8 @@ def update(args):
     update_karamel(hacl_dist)
     if not args.no_vale:
         update_vale(hacl_dist)
+
+    # Update wasm files
+    src = join_path(hacl_dist, "wasm")
+    dest = join_path("src", "wasm")
+    shutil.copytree(src, dest)

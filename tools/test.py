@@ -14,6 +14,7 @@ from pathlib import Path
 
 from tools.configure import Config
 from tools.ocaml import test_ocaml
+from tools.js import test_js
 from tools.utils import (
     argument,
     binary_path,
@@ -131,6 +132,9 @@ def test(args):
                 subprocess.Popen("setx MACH_BUILD 1", shell=True).wait()
             cargo_cmd = "cargo test --manifest-path rust/Cargo.toml"
             subprocess.run(cargo_cmd, check=True, shell=True, env=env)
+            exit(0)
+        elif args.language == "js":
+            test_js()
             exit(0)
         else:
             print(
