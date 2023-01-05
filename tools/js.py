@@ -16,9 +16,9 @@ def build_js():
     """Build the JS bindings."""
 
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), "..")
-    src_path = path_join(cwd, "src/wasm")
+    src_path = path_join(cwd, "src", "wasm")
     bindings_path = path_join(cwd, "js")
-    dest_path = path_join(cwd, "build/js")
+    dest_path = path_join(cwd, "build", "js")
 
     shutil.rmtree(dest_path, ignore_errors=True)
     shutil.copytree(src_path, dest_path)
@@ -29,7 +29,7 @@ def test_js():
     """Test the JS bindings."""
 
     cwd = path_join(os.path.dirname(os.path.realpath(__file__)), "..")
-    path = path_join(cwd, "build/js")
+    path = path_join(cwd, "build", "js")
 
     if not path_exists(path):
         print(
