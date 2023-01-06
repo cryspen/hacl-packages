@@ -45,10 +45,16 @@ class Config:
             processor = platform.processor()
             if "x86" in processor:
                 args = " -march=native "
+        if "clang" in stdout and self.target:
+            # add self.target as -target but only when the compiler is clang
+            # and we don't do android
+            if not "android" in self.target:
+                args += " -target " + self.target
+            if "s390x" in self.target:
+                args += " -mzvector -march=z14"
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = "-I " + " -I ".join(self.include_paths)
-        # TODO: add self.target as -target here.
         result = subprocess.run(
             self.compiler
             + args
