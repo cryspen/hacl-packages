@@ -123,3 +123,21 @@ generate_random(uint8_t* output, uint32_t output_len)
   EverCrypt_DRBG_generate(output, state, output_len, (uint8_t*)"", 0);
   EverCrypt_DRBG_uninstantiate(state);
 }
+
+vector<bytes>
+chunk(bytes data, size_t chunk_size)
+{
+  vector<bytes> out(data.size() / chunk_size);
+
+  auto start = data.begin();
+  auto end = data.end();
+
+  while (start != end) {
+    auto next = distance(start, end) >= chunk_size ? start + chunk_size : end;
+
+    out.emplace_back(start, next);
+    start = next;
+  }
+
+  return out;
+}
