@@ -45,13 +45,13 @@ class Config:
             processor = platform.processor()
             if "x86" in processor:
                 args = " -march=native "
+        if "clang" in stdout:
+            # add self.target as -target bu only when the compiler is clang
+            if self.target:
+                args += " -target " + self.target
         # Build dependency graph
         # FIXME: read include paths and CC from config.json
         includes = "-I " + " -I ".join(self.include_paths)
-        # add self.target as -target
-        target = ""
-        if self.target:
-            target = " -target " + self.target
         result = subprocess.run(
             self.compiler
             + args
@@ -60,8 +60,7 @@ class Config:
             + " -I"
             + join(source_dir, "internal")
             + " -MM "
-            + join(source_dir, source_file)
-            + target,
+            + join(source_dir, source_file),
             stdout=subprocess.PIPE,
             shell=True,
             check=True,
