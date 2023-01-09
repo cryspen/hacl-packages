@@ -61,6 +61,10 @@ def compare_benchmarks(benchmarks, path_new, path_old):
             if sys.platform == "win32":
                 file_name_new += ".exe"
                 file_name_old += ".exe"
+
+            # Compare benchmarks that exist in both directories:
+            # - Fail if a benchmark is missing in the newer directory.
+            # - Ignore if a benchmark is missing in the older directory.
             if not os.path.exists(file_name_new):
                 print("! Benchmark '%s' doesn't exist. Aborting!" % (file_name_new))
                 print("   Running this benchmark requires a build first.")
