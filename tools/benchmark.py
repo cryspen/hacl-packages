@@ -89,18 +89,20 @@ def compare_benchmarks(benchmarks, path_new, path_old):
     fail = False
     for algorithm in benchmarks:
         for benchmark in benchmarks[algorithm]:
-            file_name = Path(benchmark).stem
-            out_path = os.path.join(path_new, file_name + "_benchmark.json")
+            benchmark_name = Path(benchmark).stem
+            out_path = os.path.join(path_new, benchmark_name + "_benchmark.json")
             if not os.path.exists(out_path):
                 continue
             f = open(out_path)
             data = json.load(f)
-            # For each benchmark, the result is the overall CPU-time evolution
-            result = data[-1]["measurements"][0]["cpu"]
-            print("{:20} {:+0.2f}".format(file_name, result))
-            # If one result is greater than the threshold, the command fails
-            if result > threshold:
-                fail = True
+            print(benchmark_name)
+            for x in data[:-1]:
+                # For each benchmark, the result is the CPU-time evolution
+                result = x["measurements"][0]["cpu"]
+                print("- {:30} {:+0.2f}".format(x["name"], result))
+                # If one result is greater than the threshold, the command fails
+                if result > threshold:
+                    fail = True
     if fail:
         print("! Threshold exceeded!")
         exit(1)
