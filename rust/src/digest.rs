@@ -123,8 +123,10 @@
 //!     0x8e, 0x08, 0x6a, 0x6f,
 //! ];
 //!
-//! assert_eq!(digest::shake128(data, 64)[..], expected_digest_128[..]);
-//! assert_eq!(digest::shake256(data, 64)[..], expected_digest_256[..]);
+//! let digest: [u8; 64] = digest::shake128(data);
+//! assert_eq!(digest, expected_digest_128.as_slice());
+//! let digest: [u8; 64] = digest::shake256(data);
+//! assert_eq!(&digest, expected_digest_256.as_slice());
 //! ```
 //!
 //! ## Blake2b
@@ -193,9 +195,9 @@ pub enum Algorithm {
     Sha512 = Spec_Hash_Definitions_SHA2_512 as isize,
     Blake2s = Spec_Hash_Definitions_Blake2S as isize,
     Blake2b = Spec_Hash_Definitions_Blake2B as isize,
+    Sha3_256 = Spec_Hash_Definitions_SHA3_256 as isize,
     // XXX: The following is not in evercrypt (agile API) so we define something here.
-    Sha3_224 = 8,
-    Sha3_256 = 9,
+    Sha3_224 = 9,
     Sha3_384 = 10,
     Sha3_512 = 11,
 }
@@ -211,8 +213,8 @@ impl From<u32> for Algorithm {
             Spec_Hash_Definitions_SHA2_512 => Algorithm::Sha512,
             Spec_Hash_Definitions_Blake2S => Algorithm::Blake2s,
             Spec_Hash_Definitions_Blake2B => Algorithm::Blake2b,
-            8 => Algorithm::Sha3_224,
-            9 => Algorithm::Sha3_256,
+            Spec_Hash_Definitions_SHA3_256 => Algorithm::Sha3_256,
+            9 => Algorithm::Sha3_224,
             10 => Algorithm::Sha3_384,
             11 => Algorithm::Sha3_512,
             _ => panic!("Unknown Digest mode {}", v),
@@ -230,8 +232,8 @@ impl From<Algorithm> for Spec_Hash_Definitions_hash_alg {
             Algorithm::Sha512 => Spec_Hash_Definitions_SHA2_512 as Spec_Hash_Definitions_hash_alg,
             Algorithm::Blake2s => Spec_Hash_Definitions_Blake2S as Spec_Hash_Definitions_hash_alg,
             Algorithm::Blake2b => Spec_Hash_Definitions_Blake2B as Spec_Hash_Definitions_hash_alg,
-            Algorithm::Sha3_224 => 8,
-            Algorithm::Sha3_256 => 9,
+            Algorithm::Sha3_256 => Spec_Hash_Definitions_SHA3_256 as Spec_Hash_Definitions_hash_alg,
+            Algorithm::Sha3_224 => 9,
             Algorithm::Sha3_384 => 10,
             Algorithm::Sha3_512 => 11,
         }
@@ -263,10 +265,11 @@ impl Algorithm {
 
 /// Check if we do SHA3, which is not in the agile API and hence has to be
 /// handled differently.
-const fn is_sha3(alg: Algorithm) -> bool {
+/// SHA3 256 is supported.
+const fn is_unsupported_sha3(alg: Algorithm) -> bool {
     matches!(
         alg,
-        Algorithm::Sha3_224 | Algorithm::Sha3_256 | Algorithm::Sha3_384 | Algorithm::Sha3_512
+        Algorithm::Sha3_224 | Algorithm::Sha3_384 | Algorithm::Sha3_512
     )
 }
 
@@ -280,7 +283,7 @@ pub struct Digest {
 impl Digest {
     /// Create a new digest for the given mode `alg`.
     pub fn new(alg: Algorithm) -> Result<Self, Error> {
-        if is_sha3(alg) {
+        if is_unsupported_sha3(alg) {
             return Err(Error::ModeUnsupportedForStreaming);
         }
 
@@ -404,13 +407,16 @@ pub fn hash(alg: Algorithm, data: &[u8]) -> Vec<u8> {
 // SHAKE messages from SHA 3
 
 /// SHAKE 128
-pub fn shake128(data: &[u8], out_len: usize) -> Vec<u8> {
-    let mut out = vec![0u8; out_len];
+///
+/// Note that the output length `BYTES` must fit into 32 bit. If it is longer,
+/// the output will only return `u32::MAX` bytes.
+pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
+    let mut out = [0u8; BYTES];
     unsafe {
         Hacl_SHA3_shake128_hacl(
             data.len() as u32,
             data.as_ptr() as _,
-            out_len as u32,
+            BYTES as u32,
             out.as_mut_ptr(),
         );
     }
@@ -418,13 +424,16 @@ pub fn shake128(data: &[u8], out_len: usize) -> Vec<u8> {
 }
 
 /// SHAKE 256
-pub fn shake256(data: &[u8], out_len: usize) -> Vec<u8> {
-    let mut out = vec![0u8; out_len];
+///
+/// Note that the output length `BYTES` must fit into 32 bit. If it is longer,
+/// the output will only return `u32::MAX` bytes.
+pub fn shake256<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
+    let mut out = [0u8; BYTES];
     unsafe {
         Hacl_SHA3_shake256_hacl(
             data.len() as u32,
             data.as_ptr() as _,
-            out_len as u32,
+            BYTES as u32,
             out.as_mut_ptr(),
         );
     }

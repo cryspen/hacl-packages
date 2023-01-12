@@ -123,7 +123,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::shake128(&data, 64);
+                let _d: [u8; 64] = digest::shake128(&data);
             },
             BatchSize::SmallInput,
         )
@@ -132,7 +132,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::shake256(&data, 64);
+                let _d: [u8; 64] = digest::shake256(&data);
             },
             BatchSize::SmallInput,
         )
