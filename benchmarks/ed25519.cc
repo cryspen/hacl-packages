@@ -6,6 +6,10 @@
  *    - http://opensource.org/licenses/MIT
  */
 
+#ifndef NO_OPENSSL
+#include <openssl/evp.h>
+#endif
+
 #include "util.h"
 
 #include "Hacl_Ed25519.h"
@@ -47,6 +51,30 @@ Ed25519_Sign(benchmark::State& state)
 }
 
 BENCHMARK(Ed25519_Sign);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_Ed25519_Sign(benchmark::State& state)
+{
+  EVP_PKEY* pkey =
+    EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL, sk.data(), sk.size());
+
+  EVP_MD_CTX* md_ctx = EVP_MD_CTX_new();
+  EVP_DigestSignInit(md_ctx, NULL, NULL, NULL, pkey);
+
+  bytes my_signature(64);
+  size_t siglen;
+  while (state.KeepRunning()) {
+    EVP_DigestSign(
+      md_ctx, my_signature.data(), &siglen, msg.data(), (size_t)msg.size());
+  }
+
+  EVP_MD_CTX_free(md_ctx);
+  EVP_PKEY_free(pkey);
+}
+
+BENCHMARK(OpenSSL_Ed25519_Sign);
+#endif
 
 static void
 Ed25519_Verify(benchmark::State& state)
