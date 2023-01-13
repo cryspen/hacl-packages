@@ -30,14 +30,14 @@ The available hash functions.
 
 The allowed values are ...
 
-* `Spec_Hash_Definitions_SHA2_224`,
-* `Spec_Hash_Definitions_SHA2_256`,
-* `Spec_Hash_Definitions_SHA2_384`,
-* `Spec_Hash_Definitions_SHA2_512`,
-* `Spec_Hash_Definitions_SHA1`,
-* `Spec_Hash_Definitions_MD5`,
-* `Spec_Hash_Definitions_Blake2S`, and
-* `Spec_Hash_Definitions_Blake2B`.
+* `Spec_Hash_Definitions_SHA2_224` (KEY_LEN=64, DIGEST_LEN=28),
+* `Spec_Hash_Definitions_SHA2_256` (KEY_LEN=64, DIGEST_LEN=32),
+* `Spec_Hash_Definitions_SHA2_384` (KEY_LEN=128, DIGEST_LEN=48),
+* `Spec_Hash_Definitions_SHA2_512` (KEY_LEN=128, DIGEST_LEN=64),
+* `Spec_Hash_Definitions_SHA1` (KEY_LEN=64, DIGEST_LEN=20),
+* `Spec_Hash_Definitions_MD5` (KEY_LEN=64, DIGEST_LEN=16),
+* `Spec_Hash_Definitions_Blake2S` (KEY_LEN=64, DIGEST_LEN=32), and
+* `Spec_Hash_Definitions_Blake2B` (KEY_LEN=128, DIGEST_LEN=64).
 
 --------------------------------------------------------------------------------
 
@@ -51,59 +51,7 @@ Check that a hash function is supported to be used in the HMAC construction.
 
 Write the MAC of a message (`data`) by using the hash algorithm `a` with a key (`key`) into `dst`.
  
-The recommended size for the `key` depends on the used hash algorithm (see below).
+The recommended size for the `key` depends on the used hash algorithm (see `KEY_LEN` above).
 However, the key can be any length and will be hashed if it is longer and padded if it is shorter.
-The length of `dst` depends on the output length of the used hash algorithm (see below).
+The length of `dst` depends on the output length of the used hash algorithm (see `DIGEST_LEN` above).
 
---------------------------------------------------------------------------------
-
-#### BLAKE2b
-
-```{doxygenfunction} EverCrypt_HMAC_compute_blake2b
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.
-`dst` must point to 64 bytes of memory.
-
---------------------------------------------------------------------------------
-
-#### BLAKE2s
-
-
-```{doxygenfunction} EverCrypt_HMAC_compute_blake2s
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 64 bytes.
-`dst` must point to 32 bytes of memory.
-
---------------------------------------------------------------------------------
-
-#### SHA-2
-
-```{doxygenfunction} EverCrypt_HMAC_compute_sha2_256
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 64 bytes.
-`dst` must point to 32 bytes of memory.
-
-```{doxygenfunction} EverCrypt_HMAC_compute_sha2_384
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.
-`dst` must point to 48 bytes of memory.
-
-```{doxygenfunction} EverCrypt_HMAC_compute_sha2_512
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.
-`dst` must point to 64 bytes of memory.
-
---------------------------------------------------------------------------------
-
-#### SHA-1
-
-```{doxygenfunction} EverCrypt_HMAC_compute_sha1
-```
-
-The key can be any length and will be hashed if it is longer and padded if it is shorter than 64 bytes.
-`dst` must point to 20 bytes of memory.
