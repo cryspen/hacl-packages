@@ -211,3 +211,38 @@ fn key_gen_self_test() {
     }
     run(Algorithm::Chacha20Poly1305);
 }
+
+#[test]
+fn raw_self_test() {
+    use hacl_star::raw::chacha20_poly1305;
+
+    let msg = b"HACL rules";
+    let aad = b"associated data";
+    let key = b"This key should never be used!!!" as &[u8; 32];
+    let iv = b"used more...";
+
+    let mut io = *msg;
+    let tag = chacha20_poly1305::encrypt(key, &mut io, *iv, aad);
+    assert!(chacha20_poly1305::decrypt(key, &mut io, *iv, aad, &tag));
+    assert_eq!(&io, msg);
+
+    #[cfg(simd128)]
+    {
+        let mut io = *msg;
+        let tag = chacha20_poly1305::simd128::encrypt(key, &mut io, *iv, aad);
+        assert!(chacha20_poly1305::simd128::decrypt(
+            key, &mut io, *iv, aad, &tag
+        ));
+        assert_eq!(&io, msg);
+    }
+
+    #[cfg(simd256)]
+    {
+        let mut io = *msg;
+        let tag = chacha20_poly1305::simd256::encrypt(key, &mut io, *iv, aad);
+        assert!(chacha20_poly1305::simd256::decrypt(
+            key, &mut io, *iv, aad, &tag
+        ));
+        assert_eq!(&io, msg);
+    }
+}

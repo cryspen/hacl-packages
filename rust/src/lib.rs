@@ -11,9 +11,12 @@ pub mod rsa_pss;
 pub mod signature;
 pub mod x25519;
 
+mod hacl;
+
 mod util;
 
 #[cfg(feature = "random")]
 pub mod rand_util;
 
 pub mod prelude;
+pub mod raw;
