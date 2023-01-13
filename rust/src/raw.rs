@@ -1,0 +1,6 @@
+//! # Low-level HACL API
+//!
+//! Include this module to get access to all low-level functions of HACL that
+//! require hardware checks before use.
+
+pub use crate::hacl::chacha20_poly1305;
