@@ -138,6 +138,9 @@ Openssl_Blake2b(benchmark::State& state)
   }
 }
 
+BENCHMARK(Openssl_Blake2b);
+#endif
+
 // Blake2b 32-bit | streaming
 static void
 Blake2b_32_streaming(benchmark::State& state)
@@ -221,9 +224,6 @@ BENCHMARK(Blake2b_vec256_streaming);
 BENCHMARK(Blake2b_EverCrypt_streaming);
 
 // -----------------------------------------------------------------------------
-
-BENCHMARK(Openssl_Blake2b);
-#endif
 
 // Blake2s 32-bit keyed
 static void
