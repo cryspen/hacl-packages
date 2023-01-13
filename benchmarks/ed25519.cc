@@ -6,10 +6,6 @@
  *    - http://opensource.org/licenses/MIT
  */
 
-#ifndef NO_OPENSSL
-#include <openssl/evp.h>
-#endif
-
 #include "util.h"
 
 #include "Hacl_Ed25519.h"
