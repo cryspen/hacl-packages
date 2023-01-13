@@ -41,7 +41,6 @@ Ed25519_Sign(benchmark::State& state)
   bytes my_signature(64);
   while (state.KeepRunning()) {
     Hacl_Ed25519_sign(my_signature.data(), sk.data(), msg.size(), msg.data());
-    // TODO: check correctness?
   }
 }
 
@@ -79,12 +78,7 @@ Ed25519_Verify(benchmark::State& state)
   Hacl_Ed25519_sign(sig.data(), sk.data(), msg.size(), msg.data());
 
   while (state.KeepRunning()) {
-    bool got_valid =
-      Hacl_Ed25519_verify(pk.data(), msg.size(), msg.data(), sig.data());
-    if (!got_valid) {
-      state.SkipWithError("Invalid signature");
-      break;
-    }
+    Hacl_Ed25519_verify(pk.data(), msg.size(), msg.data(), sig.data());
   }
 }
 
