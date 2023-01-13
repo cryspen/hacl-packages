@@ -28,7 +28,9 @@ pub const EverCrypt_Error_AuthenticationFailure: u32 = 3;
 pub const EverCrypt_Error_InvalidIVLength: u32 = 4;
 pub const EverCrypt_Error_DecodeError: u32 = 5;
 pub const EverCrypt_Error_MaximumLengthExceeded: u32 = 6;
-pub type C_String_t = *const ::std::os::raw::c_char;
+pub type __uint8_t = ::std::os::raw::c_uchar;
+pub type __uint32_t = ::std::os::raw::c_uint;
+pub type __uint64_t = ::std::os::raw::c_ulong;
 pub type Spec_Hash_Definitions_hash_alg = u8;
 pub type Spec_FFDHE_ffdhe_alg = u8;
 pub type Spec_Agile_AEAD_alg = u8;
@@ -463,452 +465,6 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
-    pub fn Hacl_SHA3_shake128_hacl(
-        inputByteLen: u32,
-        input: *mut u8,
-        outputByteLen: u32,
-        output: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_SHA3_shake256_hacl(
-        inputByteLen: u32,
-        input: *mut u8,
-        outputByteLen: u32,
-        output: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_SHA3_sha3_224(inputByteLen: u32, input: *mut u8, output: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_SHA3_sha3_256(inputByteLen: u32, input: *mut u8, output: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_SHA3_sha3_384(inputByteLen: u32, input: *mut u8, output: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_string_of_alg(uu___: Spec_Hash_Definitions_hash_alg) -> C_String_t;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct EverCrypt_Hash_state_s_s {
-    _unused: [u8; 0],
-}
-pub type EverCrypt_Hash_state_s = EverCrypt_Hash_state_s_s;
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_MD5_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA1_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_224_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_384_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_512_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA3_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2S_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2S_128_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2B_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2B_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_alg_of_state(
-        s: *mut EverCrypt_Hash_state_s,
-    ) -> Spec_Hash_Definitions_hash_alg;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_create_in(
-        a: Spec_Hash_Definitions_hash_alg,
-    ) -> *mut EverCrypt_Hash_state_s;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_create(a: Spec_Hash_Definitions_hash_alg) -> *mut EverCrypt_Hash_state_s;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_init(s: *mut EverCrypt_Hash_state_s);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_multi_256(s: *mut u32, blocks: *mut u8, n: u32);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_multi(
-        s: *mut EverCrypt_Hash_state_s,
-        prevlen: u64,
-        blocks: *mut u8,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_last_256(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_last(
-        s: *mut EverCrypt_Hash_state_s,
-        prev_len: u64,
-        last: *mut u8,
-        last_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_finish(s: *mut EverCrypt_Hash_state_s, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_free(s: *mut EverCrypt_Hash_state_s);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_copy(
-        s_src: *mut EverCrypt_Hash_state_s,
-        s_dst: *mut EverCrypt_Hash_state_s,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash(
-        a: Spec_Hash_Definitions_hash_alg,
-        dst: *mut u8,
-        input: *mut u8,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_hash_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_block_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_create_in(
-        a: Spec_Hash_Definitions_hash_alg,
-    ) -> *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_init(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_update(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        data: *mut u8,
-        len: u32,
-    ) -> EverCrypt_Error_error_code;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_md5(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha1(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha224(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha256(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha3_256(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha384(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha512(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_blake2s(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_blake2b(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_alg_of_state(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-    ) -> Spec_Hash_Definitions_hash_alg;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_free(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha1(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_256(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_384(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_512(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_blake2s(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_blake2b(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute(
-        a: Spec_Hash_Definitions_hash_alg,
-        mac: *mut u8,
-        key: *mut u8,
-        keylen: u32,
-        data: *mut u8,
-        datalen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha1(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha1(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_256(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_256(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_384(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_384(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_512(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_512(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_blake2s(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_blake2s(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_blake2b(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_blake2b(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
     #[doc = "Expand pseudorandom key to desired length."]
     #[doc = ""]
     #[doc = "@param a Hash function to use. Usually, the same as used in `EverCrypt_HKDF_extract`."]
@@ -951,6 +507,101 @@ extern "C" {
         saltlen: u32,
         ikm: *mut u8,
         ikmlen: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_SHA3_shake128_hacl(
+        inputByteLen: u32,
+        input: *mut u8,
+        outputByteLen: u32,
+        output: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_SHA3_shake256_hacl(
+        inputByteLen: u32,
+        input: *mut u8,
+        outputByteLen: u32,
+        output: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_SHA3_sha3_224(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_SHA3_sha3_256(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_SHA3_sha3_384(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct EverCrypt_Hash_state_s_s {
+    _unused: [u8; 0],
+}
+pub type EverCrypt_Hash_state_s = EverCrypt_Hash_state_s_s;
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_hash_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct EverCrypt_Hash_Incremental_hash_state_s {
+    pub block_state: *mut EverCrypt_Hash_state_s,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type EverCrypt_Hash_Incremental_hash_state = EverCrypt_Hash_Incremental_hash_state_s;
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_create_in(
+        a: Spec_Hash_Definitions_hash_alg,
+    ) -> *mut EverCrypt_Hash_Incremental_hash_state;
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_init(s: *mut EverCrypt_Hash_Incremental_hash_state);
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_update(
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
+        data: *mut u8,
+        len: u32,
+    ) -> EverCrypt_Error_error_code;
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_alg_of_state(
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
+    ) -> Spec_Hash_Definitions_hash_alg;
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_finish(
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
+        dst: *mut u8,
+    );
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_free(s: *mut EverCrypt_Hash_Incremental_hash_state);
+}
+extern "C" {
+    pub fn EverCrypt_Hash_Incremental_hash(
+        a: Spec_Hash_Definitions_hash_alg,
+        dst: *mut u8,
+        input: *mut u8,
+        len: u32,
+    );
+}
+extern "C" {
+    pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
+}
+extern "C" {
+    pub fn EverCrypt_HMAC_compute(
+        a: Spec_Hash_Definitions_hash_alg,
+        mac: *mut u8,
+        key: *mut u8,
+        keylen: u32,
+        data: *mut u8,
+        datalen: u32,
     );
 }
 extern "C" {
