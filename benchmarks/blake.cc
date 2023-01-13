@@ -196,6 +196,7 @@ Blake2b_vec256_streaming(benchmark::State& state)
 static void
 Blake2b_EverCrypt_streaming(benchmark::State& state)
 {
+  cpu_init();
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
@@ -394,6 +395,7 @@ Blake2s_vec128_streaming(benchmark::State& state)
 static void
 Blake2s_EverCrypt_streaming(benchmark::State& state)
 {
+  cpu_init();
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
