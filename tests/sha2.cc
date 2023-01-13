@@ -254,25 +254,25 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     bytes got_digest(test.md.size(), 0);
 
     if (test.md.size() == 224 / 8) {
-      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_224,
-                          got_digest.data(),
-                          test.msg.data(),
-                          test.msg.size());
+      EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_SHA2_224,
+                                      got_digest.data(),
+                                      test.msg.data(),
+                                      test.msg.size());
     } else if (test.md.size() == 256 / 8) {
-      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_256,
-                          got_digest.data(),
-                          test.msg.data(),
-                          test.msg.size());
+      EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_SHA2_256,
+                                      got_digest.data(),
+                                      test.msg.data(),
+                                      test.msg.size());
     } else if (test.md.size() == 384 / 8) {
-      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_384,
-                          got_digest.data(),
-                          test.msg.data(),
-                          test.msg.size());
+      EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_SHA2_384,
+                                      got_digest.data(),
+                                      test.msg.data(),
+                                      test.msg.size());
     } else if (test.md.size() == 512 / 8) {
-      EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA2_512,
-                          got_digest.data(),
-                          test.msg.data(),
-                          test.msg.size());
+      EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_SHA2_512,
+                                      got_digest.data(),
+                                      test.msg.data(),
+                                      test.msg.size());
     } else {
       FAIL();
     }
@@ -284,7 +284,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(test.md.size(), 0);
 
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state;
+    EverCrypt_Hash_Incremental_hash_state* state;
     if (test.md.size() == 224 / 8) {
       state =
         EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_224);
