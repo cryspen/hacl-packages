@@ -28,7 +28,7 @@ Keys must be chosen using a cryptographically strong pseudo-random generator and
 
 The available hash functions.
 
-The allowed values are ...
+The allowed values with recommended key length (`KEY_LEN`) and digest output length (`DIGEST_LEN`) are ...
 
 * `Spec_Hash_Definitions_SHA2_224` (KEY_LEN=64, DIGEST_LEN=28),
 * `Spec_Hash_Definitions_SHA2_256` (KEY_LEN=64, DIGEST_LEN=32),
