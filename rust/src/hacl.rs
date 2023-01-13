@@ -14,3 +14,6 @@
 //! | simd256     | -   | AVX, AVX2          | -     | -     | -     |
 
 pub mod chacha20_poly1305;
+pub mod sha2;
+pub mod sha3;
+pub mod blake2;

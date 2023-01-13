@@ -30,12 +30,22 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_function("Hacl_RSAPSS_.*")
         .allowlist_function("Hacl_SHA3_.*")
         .allowlist_function("Hacl_Chacha20Poly1305_.*")
+        .allowlist_function("Hacl_Hash_.*")
+        .allowlist_function("Hacl_Blake2.*")
         .allowlist_var("EverCrypt_Error_.*")
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
         // Block everything we don't need or define ourselves.
         .blocklist_type("Hacl_Streaming_.*")
         .blocklist_type("EverCrypt_AEAD_state_s.*")
+        // These functions currently use FFI-unsafe u128
+        .blocklist_type("FStar_UInt128_uint128")
+        .blocklist_function("Hacl_Hash_SHA2_update_last_384")
+        .blocklist_function("Hacl_Hash_SHA2_update_last_512")
+        .blocklist_function("Hacl_Blake2b_32_blake2b_update_multi")
+        .blocklist_function("Hacl_Blake2b_32_blake2b_update_last")
+        .blocklist_function("Hacl_Blake2b_256_blake2b_update_multi")
+        .blocklist_function("Hacl_Blake2b_256_blake2b_update_last")
         // Disable tests to avoid warnings and keep it portable
         .layout_tests(false)
         // Generate bindings

@@ -90,6 +90,8 @@ extern "C" {
         mac: *mut u8,
     ) -> u32;
 }
+pub type uint32x4_t = [u32; 4usize];
+pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
 extern "C" {
     #[doc = "Encrypt a message `m` with key `k`."]
     #[doc = ""]
@@ -604,6 +606,46 @@ extern "C" {
         -> bool;
 }
 extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_256(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_384(s: *mut u64, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_512(s: *mut u64, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_last_224(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_last_256(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
     pub fn EverCrypt_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
 }
 extern "C" {
@@ -634,6 +676,112 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_update_key(
+        wv: *mut u64,
+        hash: *mut u64,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`."]
+    #[doc = ""]
+    #[doc = "@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64."]
+    #[doc = "@param output Pointer to `nn` bytes of memory where the digest is written to."]
+    #[doc = "@param ll Length of the input message."]
+    #[doc = "@param d Pointer to `ll` bytes of memory where the input message is read from."]
+    #[doc = "@param kk Length of the key. Can be 0."]
+    #[doc = "@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_32_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_key(
+        wv: *mut u32,
+        hash: *mut u32,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_last(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`."]
+    #[doc = ""]
+    #[doc = "@param nn Length of to-be-generated digest with 1 <= `nn` <= 32."]
+    #[doc = "@param output Pointer to `nn` bytes of memory where the digest is written to."]
+    #[doc = "@param ll Length of the input message."]
+    #[doc = "@param d Pointer to `ll` bytes of memory where the input message is read from."]
+    #[doc = "@param kk Length of the key. Can be 0."]
+    #[doc = "@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_32_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
+}
+extern "C" {
     pub fn Hacl_SHA3_shake128_hacl(
         inputByteLen: u32,
         input: *mut u8,
@@ -660,6 +808,148 @@ extern "C" {
 }
 extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_init(
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        kk: u32,
+        nn: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_key(
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_multi(
+        len: u32,
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_last(
+        len: u32,
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_finish(
+        nn: u32,
+        output: *mut u8,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+    );
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`."]
+    #[doc = ""]
+    #[doc = "@param nn Length of to-be-generated digest with 1 <= `nn` <= 32."]
+    #[doc = "@param output Pointer to `nn` bytes of memory where the digest is written to."]
+    #[doc = "@param ll Length of the input message."]
+    #[doc = "@param d Pointer to `ll` bytes of memory where the input message is read from."]
+    #[doc = "@param kk Length of the key. Can be 0."]
+    #[doc = "@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_128_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_store_state128s_to_state32(
+        st32: *mut u32,
+        st: *mut Lib_IntVector_Intrinsics_vec128,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_load_state128s_from_state32(
+        st: *mut Lib_IntVector_Intrinsics_vec128,
+        st32: *mut u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_malloc() -> *mut Lib_IntVector_Intrinsics_vec128;
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_init(hash: *mut *mut ::std::os::raw::c_void, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_update_key(
+        wv: *mut *mut ::std::os::raw::c_void,
+        hash: *mut *mut ::std::os::raw::c_void,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_finish(
+        nn: u32,
+        output: *mut u8,
+        hash: *mut *mut ::std::os::raw::c_void,
+    );
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`."]
+    #[doc = ""]
+    #[doc = "@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64."]
+    #[doc = "@param output Pointer to `nn` bytes of memory where the digest is written to."]
+    #[doc = "@param ll Length of the input message."]
+    #[doc = "@param d Pointer to `ll` bytes of memory where the input message is read from."]
+    #[doc = "@param kk Length of the key. Can be 0."]
+    #[doc = "@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_256_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_load_state256b_from_state32(
+        st: *mut *mut ::std::os::raw::c_void,
+        st32: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_store_state256b_to_state32(
+        st32: *mut u64,
+        st: *mut *mut ::std::os::raw::c_void,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
 }
 extern "C" {
     pub fn EverCrypt_Hash_string_of_alg(uu___: Spec_Hash_Definitions_hash_alg) -> C_String_t;
