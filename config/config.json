@@ -559,6 +559,9 @@
         ],
         "kdf": [
             "kdf.cc"
+        ],
+        "drbg": [
+            "drbg.cc"
         ]
     }
 }
