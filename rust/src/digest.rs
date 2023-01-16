@@ -325,10 +325,17 @@ impl Digest {
         let mut out = vec![0u8; digest_size(self.mode)];
         unsafe {
             EverCrypt_Hash_Incremental_finish(self.c_state, out.as_mut_ptr());
-            EverCrypt_Hash_Incremental_free(self.c_state);
         }
         self.finished = true;
         Ok(out)
+    }
+}
+
+impl Drop for Digest {
+    fn drop(&mut self) {
+        unsafe {
+            EverCrypt_Hash_Incremental_free(self.c_state);
+        }
     }
 }
 

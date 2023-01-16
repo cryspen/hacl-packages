@@ -605,6 +605,156 @@ extern "C" {
     pub fn EverCrypt_Curve25519_ecdh(shared: *mut u8, my_priv: *mut u8, their_pub: *mut u8)
         -> bool;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Streaming_SHA2_state_sha2_224_s {
+    pub block_state: *mut u32,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Streaming_SHA2_state_sha2_224 = Hacl_Streaming_SHA2_state_sha2_224_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Streaming_SHA2_state_sha2_384_s {
+    pub block_state: *mut u64,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Streaming_SHA2_state_sha2_384 = Hacl_Streaming_SHA2_state_sha2_384_s;
+extern "C" {
+    #[doc = "Allocate initial state for the SHA2_256 hash. The state is to be freed by"]
+    #[doc = "calling `free_256`."]
+    pub fn Hacl_Streaming_SHA2_create_in_256() -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    #[doc = "Copies the state passed as argument into a newly allocated state (deep copy)."]
+    #[doc = "The state is to be freed by calling `free_256`. Cloning the state this way is"]
+    #[doc = "useful, for instance, if your control-flow diverges and you need to feed"]
+    #[doc = "more (different) data into the hash in each branch."]
+    pub fn Hacl_Streaming_SHA2_copy_256(
+        s0: *mut Hacl_Streaming_SHA2_state_sha2_224,
+    ) -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    #[doc = "Reset an existing state to the initial hash state with empty data."]
+    pub fn Hacl_Streaming_SHA2_init_256(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for"]
+    #[doc = "success, or 1 if the combined length of all of the data passed to `update_256`"]
+    #[doc = "(since the last call to `init_256`) exceeds 2^61-1 bytes."]
+    #[doc = ""]
+    #[doc = "This function is identical to the update function for SHA2_224."]
+    pub fn Hacl_Streaming_SHA2_update_256(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_224,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 32 bytes. The state remains"]
+    #[doc = "valid after a call to `finish_256`, meaning the user may feed more data into"]
+    #[doc = "the hash via `update_256`. (The finish_256 function operates on an internal copy of"]
+    #[doc = "the state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_finish_256(p: *mut Hacl_Streaming_SHA2_state_sha2_224, dst: *mut u8);
+}
+extern "C" {
+    #[doc = "Free a state allocated with `create_in_256`."]
+    #[doc = ""]
+    #[doc = "This function is identical to the free function for SHA2_224."]
+    pub fn Hacl_Streaming_SHA2_free_256(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 32 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha256(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_224() -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_224(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_update_224(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_224,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 28 bytes. The state remains"]
+    #[doc = "valid after a call to `finish_224`, meaning the user may feed more data into"]
+    #[doc = "the hash via `update_224`."]
+    pub fn Hacl_Streaming_SHA2_finish_224(p: *mut Hacl_Streaming_SHA2_state_sha2_224, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_free_224(p: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 28 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha224(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_512() -> *mut Hacl_Streaming_SHA2_state_sha2_384;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_512(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for"]
+    #[doc = "success, or 1 if the combined length of all of the data passed to `update_512`"]
+    #[doc = "(since the last call to `init_512`) exceeds 2^125-1 bytes."]
+    #[doc = ""]
+    #[doc = "This function is identical to the update function for SHA2_384."]
+    pub fn Hacl_Streaming_SHA2_update_512(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_384,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 64 bytes. The state remains"]
+    #[doc = "valid after a call to `finish_512`, meaning the user may feed more data into"]
+    #[doc = "the hash via `update_512`. (The finish_512 function operates on an internal copy of"]
+    #[doc = "the state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_finish_512(p: *mut Hacl_Streaming_SHA2_state_sha2_384, dst: *mut u8);
+}
+extern "C" {
+    #[doc = "Free a state allocated with `create_in_512`."]
+    #[doc = ""]
+    #[doc = "This function is identical to the free function for SHA2_384."]
+    pub fn Hacl_Streaming_SHA2_free_512(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 64 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha512(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_384() -> *mut Hacl_Streaming_SHA2_state_sha2_384;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_384(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_update_384(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_384,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 48 bytes. The state remains"]
+    #[doc = "valid after a call to `finish_384`, meaning the user may feed more data into"]
+    #[doc = "the hash via `update_384`."]
+    pub fn Hacl_Streaming_SHA2_finish_384(p: *mut Hacl_Streaming_SHA2_state_sha2_384, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_free_384(p: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 48 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha384(input: *mut u8, input_len: u32, dst: *mut u8);
+}
 extern "C" {
     pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
 }
@@ -1101,6 +1251,15 @@ extern "C" {
 extern "C" {
     pub fn EverCrypt_Hash_Incremental_block_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s_____s {
+    pub block_state: *mut EverCrypt_Hash_state_s,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____ =
+    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s_____s;
 extern "C" {
     pub fn EverCrypt_Hash_Incremental_create_in(
         a: Spec_Hash_Definitions_hash_alg,
