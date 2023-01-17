@@ -3,6 +3,7 @@ use hacl_star_sys::{
     Hacl_P256_validate_private_key, Hacl_P256_validate_public_key,
 };
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Error {
     InvalidInput,
     InvalidScalar,

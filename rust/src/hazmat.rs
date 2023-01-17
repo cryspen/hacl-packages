@@ -1,4 +1,4 @@
-//! # Raw HACL APIs
+//! # Low-level HACL APIs
 //!
 //! No hardware detection, but a safe API to HACL functions.
 //!
@@ -13,9 +13,9 @@
 //! | simd128     | -   | SSE2, SSE3, SSE4.1 | -     | NEON  | z14   |
 //! | simd256     | -   | AVX, AVX2          | -     | -     | -     |
 
-pub mod chacha20_poly1305;
-pub mod sha2;
-pub mod sha3;
 pub mod blake2;
+pub mod chacha20_poly1305;
 pub mod curve25519;
 pub mod p256;
+pub mod sha2;
+pub mod sha3;

@@ -11,7 +11,8 @@ pub mod rsa_pss;
 pub mod signature;
 pub mod x25519;
 
-mod hacl;
+#[cfg(feature = "hazmat")]
+pub mod hazmat;
 
 mod util;
 
@@ -19,4 +20,3 @@ mod util;
 pub mod rand_util;
 
 pub mod prelude;
-pub mod raw;

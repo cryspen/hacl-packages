@@ -1,7 +1,11 @@
 use hacl_star::digest::{self, Algorithm};
-use hacl_star::raw::blake2;
+
+#[cfg(feature = "hazmat")]
+use hacl_star::hazmat::blake2;
 
 mod test_util;
+
+#[cfg(feature = "hazmat")]
 use test_util::{hex_str_to_array, hex_str_to_bytes};
 
 // Tests from https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2-kat.json
@@ -21,13 +25,17 @@ fn blake2s() {
     ];
 
     assert_eq!(digest::hash(Algorithm::Blake2s, &data), expected_digest);
+    #[cfg(feature = "hazmat")]
     assert_eq!(blake2::blake2s(&data, &[]), expected_digest);
 
-    let data = b"hacl rust bindings";
-    let key = b"don't use this key";
-    let expected_digest =
-        hex_str_to_bytes("b69b76e2bf17a8683c42d746f6b2ec16796184421b29919a6be814614c345182");
-    assert_eq!(blake2::blake2s::<32>(data, key), expected_digest.as_slice());
+    #[cfg(feature = "hazmat")]
+    {
+        let data = b"hacl rust bindings";
+        let key = b"don't use this key";
+        let expected_digest =
+            hex_str_to_bytes("b69b76e2bf17a8683c42d746f6b2ec16796184421b29919a6be814614c345182");
+        assert_eq!(blake2::blake2s::<32>(data, key), expected_digest.as_slice());
+    }
 }
 
 #[test]
@@ -51,10 +59,14 @@ fn blake2b() {
     ];
 
     assert_eq!(digest::hash(Algorithm::Blake2b, &data), expected_digest);
+    #[cfg(feature = "hazmat")]
     assert_eq!(blake2::blake2b(&data, &[]), expected_digest);
 
-    let data = b"hacl rust bindings";
-    let key = b"don't use this key";
-    let expected_digest= hex_str_to_bytes("33676daed38f2f1f9518e87c4897484c609505e24a73590bbd0d251553049675452d92f53e7d5f2c9c49729310dfe5cda734b29deb3dcc46794af5de9854c5cc");
-    assert_eq!(blake2::blake2b::<64>(data, key), expected_digest.as_slice());
+    #[cfg(feature = "hazmat")]
+    {
+        let data = b"hacl rust bindings";
+        let key = b"don't use this key";
+        let expected_digest= hex_str_to_bytes("33676daed38f2f1f9518e87c4897484c609505e24a73590bbd0d251553049675452d92f53e7d5f2c9c49729310dfe5cda734b29deb3dcc46794af5de9854c5cc");
+        assert_eq!(blake2::blake2b::<64>(data, key), expected_digest.as_slice());
+    }
 }

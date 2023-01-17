@@ -1,5 +1,7 @@
 use hacl_star::digest::{self, Algorithm, Digest};
-use hacl_star::raw::{sha2, sha3};
+
+#[cfg(feature = "hazmat")]
+use hacl_star::hazmat::{sha2, sha3};
 
 mod test_util;
 use test_util::*;
@@ -19,6 +21,7 @@ fn test(alg: Algorithm, expected: &str) {
     assert!(digest.finish().is_err());
     assert!(digest.update(&[]).is_err());
 
+    #[cfg(feature = "hazmat")]
     match alg {
         Algorithm::Sha1 => (),
         Algorithm::Sha224 => assert_eq!(&sha2::sha224(data), expected_digest.as_slice()),
@@ -78,14 +81,20 @@ fn sha3() {
     let expected_digest =
         hex_str_to_bytes("9e04442d1eacc027e4dba1ffdaf3246ccaf46b6b5c5629aadd09ac88");
     assert_eq!(digest::hash(Algorithm::Sha3_224, data), expected_digest);
+
+    #[cfg(feature = "hazmat")]
     assert_eq!(&sha3::sha224(data), expected_digest.as_slice());
 
     let expected_digest = hex_str_to_bytes("cf63af77060625ef3a311e2554049ae095d67e84786bed449f86622e5d7fb5f4a3e41708294343d09d02172741ecf411");
     assert_eq!(digest::hash(Algorithm::Sha3_384, data), expected_digest);
+
+    #[cfg(feature = "hazmat")]
     assert_eq!(&sha3::sha384(data), expected_digest.as_slice());
 
     let expected_digest = hex_str_to_bytes("ccff58fa99d106e672291571a1fe7282f575d6fedeb0837bc4ddb1c79baaa7e0a6975f500259596647c966d22fb65bb0f12966925564db2cc5310fa0a7d33857");
     assert_eq!(digest::hash(Algorithm::Sha3_512, data), expected_digest);
+
+    #[cfg(feature = "hazmat")]
     assert_eq!(&sha3::sha512(data), expected_digest.as_slice());
 }
 

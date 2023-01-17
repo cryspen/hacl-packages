@@ -16,6 +16,7 @@ crate-type = ["staticlib", "cdylib", "lib"]
 default = ["random"]
 random = ["rand", "rand_core"]
 serialization = ["serde", "serde_json"]
+hazmat = [] # This feature exposes raw, but safe HACL APIs for use in other libraries. Use with care.
 
 [dependencies]
 hacl-star-sys = { version = "=0.2.0", path = "hacl-star-sys" }

@@ -212,9 +212,10 @@ fn key_gen_self_test() {
     run(Algorithm::Chacha20Poly1305);
 }
 
+#[cfg(feature = "hazmat")]
 #[test]
 fn raw_self_test() {
-    use hacl_star::raw::chacha20_poly1305;
+    use hacl_star::hazmat::chacha20_poly1305;
 
     let msg = b"HACL rules";
     let aad = b"associated data";
@@ -223,16 +224,14 @@ fn raw_self_test() {
 
     let mut io = *msg;
     let tag = chacha20_poly1305::encrypt(key, &mut io, *iv, aad);
-    assert!(chacha20_poly1305::decrypt(key, &mut io, *iv, aad, &tag));
+    assert!(chacha20_poly1305::decrypt(key, &mut io, *iv, aad, &tag).is_ok());
     assert_eq!(&io, msg);
 
     #[cfg(simd128)]
     {
         let mut io = *msg;
         let tag = chacha20_poly1305::simd128::encrypt(key, &mut io, *iv, aad);
-        assert!(chacha20_poly1305::simd128::decrypt(
-            key, &mut io, *iv, aad, &tag
-        ));
+        assert!(chacha20_poly1305::simd128::decrypt(key, &mut io, *iv, aad, &tag).is_ok());
         assert_eq!(&io, msg);
     }
 
@@ -240,9 +239,7 @@ fn raw_self_test() {
     {
         let mut io = *msg;
         let tag = chacha20_poly1305::simd256::encrypt(key, &mut io, *iv, aad);
-        assert!(chacha20_poly1305::simd256::decrypt(
-            key, &mut io, *iv, aad, &tag
-        ));
+        assert!(chacha20_poly1305::simd256::decrypt(key, &mut io, *iv, aad, &tag).is_ok());
         assert_eq!(&io, msg);
     }
 }

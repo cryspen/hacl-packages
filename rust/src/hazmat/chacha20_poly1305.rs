@@ -10,6 +10,11 @@ pub type Chacha20Key = [u8; 32];
 pub type Iv = [u8; 12];
 pub type Tag = [u8; 16];
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum Error {
+    InvalidCiphertext,
+}
+
 /// Portable 32-bit encrypt.
 ///
 /// There are no special hardware requirements to call this function.
@@ -35,8 +40,14 @@ pub fn encrypt(key: &Chacha20Key, msg_ctxt: &mut [u8], iv: Iv, aad: &[u8]) -> Ta
 ///
 /// There are no special hardware requirements to call this function.
 #[must_use]
-pub fn decrypt(key: &Chacha20Key, ctxt_msg: &mut [u8], iv: Iv, aad: &[u8], tag: &Tag) -> bool {
-    unsafe {
+pub fn decrypt(
+    key: &Chacha20Key,
+    ctxt_msg: &mut [u8],
+    iv: Iv,
+    aad: &[u8],
+    tag: &Tag,
+) -> Result<(), Error> {
+    if unsafe {
         Hacl_Chacha20Poly1305_32_aead_decrypt(
             key.as_ptr() as _,
             iv.as_ptr() as _,
@@ -47,6 +58,10 @@ pub fn decrypt(key: &Chacha20Key, ctxt_msg: &mut [u8], iv: Iv, aad: &[u8], tag: 
             ctxt_msg.as_mut_ptr(),
             tag.as_ptr() as _,
         ) == 0
+    } {
+        Ok(())
+    } else {
+        Err(Error::InvalidCiphertext)
     }
 }
 
@@ -88,8 +103,14 @@ pub mod simd128 {
     /// * ARM: Arm64, NEON
     /// * s390x: z14
     #[must_use]
-    pub fn decrypt(key: &Chacha20Key, ctxt_msg: &mut [u8], iv: Iv, aad: &[u8], tag: &Tag) -> bool {
-        unsafe {
+    pub fn decrypt(
+        key: &Chacha20Key,
+        ctxt_msg: &mut [u8],
+        iv: Iv,
+        aad: &[u8],
+        tag: &Tag,
+    ) -> Result<(), Error> {
+        if unsafe {
             Hacl_Chacha20Poly1305_128_aead_decrypt(
                 key.as_ptr() as _,
                 iv.as_ptr() as _,
@@ -100,6 +121,10 @@ pub mod simd128 {
                 ctxt_msg.as_mut_ptr(),
                 tag.as_ptr() as _,
             ) == 0
+        } {
+            Ok(())
+        } else {
+            Err(Error::InvalidCiphertext)
         }
     }
 }
@@ -137,8 +162,14 @@ pub mod simd256 {
     /// This function requires
     /// * x86_64: AVX, AVX2
     #[must_use]
-    pub fn decrypt(key: &Chacha20Key, ctxt_msg: &mut [u8], iv: Iv, aad: &[u8], tag: &Tag) -> bool {
-        unsafe {
+    pub fn decrypt(
+        key: &Chacha20Key,
+        ctxt_msg: &mut [u8],
+        iv: Iv,
+        aad: &[u8],
+        tag: &Tag,
+    ) -> Result<(), Error> {
+        if unsafe {
             Hacl_Chacha20Poly1305_256_aead_decrypt(
                 key.as_ptr() as _,
                 iv.as_ptr() as _,
@@ -149,6 +180,10 @@ pub mod simd256 {
                 ctxt_msg.as_mut_ptr(),
                 tag.as_ptr() as _,
             ) == 0
+        } {
+            Ok(())
+        } else {
+            Err(Error::InvalidCiphertext)
         }
     }
 }
