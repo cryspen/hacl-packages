@@ -82,7 +82,7 @@ pub fn derive(mode: Mode, p: &[u8], s: &[u8]) -> Result<Vec<u8>, Error> {
                 Err(_) => Err(Error::InvalidPoint),
             }
         }
-        Mode::P256 => match p256::dh(p, s) {
+        Mode::P256 => match p256::ecdh(p, s) {
             Ok(r) => Ok(r.to_vec()),
             Err(_) => Err(Error::InvalidPoint),
         },
@@ -101,7 +101,7 @@ pub fn derive_base(mode: Mode, s: &[u8]) -> Result<Vec<u8>, Error> {
 
             Ok(x25519::dh_base(&scalar).to_vec())
         }
-        Mode::P256 => match p256::dh_base(s) {
+        Mode::P256 => match p256::ecdh_base(s) {
             Ok(r) => Ok(r.to_vec()),
             Err(_) => Err(Error::InvalidPoint),
         },

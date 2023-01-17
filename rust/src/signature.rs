@@ -40,7 +40,7 @@ pub fn key_gen(mode: Mode) -> Result<(Vec<u8>, Vec<u8>), Error> {
         }
         Mode::P256 => {
             let sk = p256::key_gen().map_err(|_| Error::KeyGenError)?;
-            let pk = match p256::dh_base(&sk) {
+            let pk = match p256::ecdh_base(&sk) {
                 Ok(k) => {
                     let mut pk = vec![0x04];
                     pk.extend_from_slice(&k);
