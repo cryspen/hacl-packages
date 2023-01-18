@@ -51,6 +51,17 @@ $ sudo apt install gcc
 ```
 </details>
 
+  <summary><b>Fedora</b></summary>
+  
+```sh
+$ sudo dnf install cmake ninja-build python3
+
+# Either of ...
+$ sudo apt install clang
+$ sudo apt install gcc
+```
+</details>
+
 <details>
   <summary><b>macOS</b></summary>
 
