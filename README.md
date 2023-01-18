@@ -51,6 +51,7 @@ $ sudo apt install gcc
 ```
 </details>
 
+<details>
   <summary><b>Fedora</b></summary>
   
 ```sh
