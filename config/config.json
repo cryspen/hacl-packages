@@ -556,6 +556,15 @@
         ],
         "k256": [
             "k256.cc"
+        ],
+        "kdf": [
+            "kdf.cc"
+        ],
+        "drbg": [
+            "drbg.cc"
+        ],
+        "rsapss": [
+            "rsapss.cc"
         ]
     }
 }
