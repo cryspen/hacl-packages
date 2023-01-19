@@ -565,6 +565,9 @@
         ],
         "hmac": [
             "hmac.cc"
+        ],
+        "rsapss": [
+            "rsapss.cc"
         ]
     }
 }
