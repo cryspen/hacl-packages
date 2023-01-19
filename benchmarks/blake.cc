@@ -10,15 +10,15 @@
 #include "EverCrypt_Hash.h"
 #include "Hacl_Hash_Blake2.h"
 #include "Hacl_Streaming_Blake2.h"
-#include "Hacl_Streaming_Blake2b_256.h"
-#include "Hacl_Streaming_Blake2s_128.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_128.h"
+#include "Hacl_Streaming_Blake2s_128.h"
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_Blake2b_256.h"
+#include "Hacl_Streaming_Blake2b_256.h"
 #endif
 
 #define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
@@ -165,6 +165,7 @@ Blake2b_32_streaming(benchmark::State& state)
   }
 }
 
+#ifdef HACL_CAN_COMPILE_VEC256
 // Blake2b vec256 | streaming
 static void
 Blake2b_vec256_streaming(benchmark::State& state)
@@ -194,6 +195,7 @@ Blake2b_vec256_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
   }
 }
+#endif
 
 // Blake2b EverCrypt | streaming
 static void
@@ -361,6 +363,7 @@ Blake2s_32_streaming(benchmark::State& state)
   }
 }
 
+#ifdef HACL_CAN_COMPILE_VEC128
 // Blake2s vec128 | streaming
 static void
 Blake2s_vec128_streaming(benchmark::State& state)
@@ -390,6 +393,7 @@ Blake2s_vec128_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free(state);
   }
 }
+#endif
 
 // Blake2s EverCrypt | streaming
 static void
