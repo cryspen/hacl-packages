@@ -1,6 +1,6 @@
 use hacl_star_sys::{
-    Hacl_P256_compressed_to_raw, Hacl_P256_dh_responder, Hacl_P256_uncompressed_to_raw,
-    Hacl_P256_validate_private_key, Hacl_P256_validate_public_key,
+    Hacl_P256_compressed_to_raw, Hacl_P256_dh_initiator, Hacl_P256_dh_responder,
+    Hacl_P256_uncompressed_to_raw, Hacl_P256_validate_private_key, Hacl_P256_validate_public_key,
 };
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -66,7 +66,7 @@ pub fn validate_point(point: &[u8; 64]) -> Result<(), Error> {
 /// Validate a P256 secret key (scalar).
 ///
 /// Returns [`Error::InvalidScalar`] if the `scalar` is not valid.
-pub fn validate_scalar(scalar: [u8; 32]) -> Result<(), Error> {
+pub fn validate_scalar(scalar: &[u8; 32]) -> Result<(), Error> {
     if scalar.iter().all(|b| *b == 0) {
         return Err(Error::InvalidScalar);
     }
@@ -92,14 +92,14 @@ pub fn validate_scalar_slice(scalar: &[u8]) -> Result<[u8; 32], Error> {
         private[31 - i] = scalar[scalar.len() - 1 - i];
     }
 
-    validate_scalar(private).map(|_| private)
+    validate_scalar(&private).map(|_| private)
 }
 
 /// Compute the ECDH with the `private_key` and `public_key`.
 ///
 /// Returns the 64 bytes shared key.
 #[must_use]
-pub fn ecdh(private_key: &[u8; 32], public_key: &[u8; 32]) -> Result<[u8; 64], Error> {
+pub fn ecdh(private_key: &[u8; 32], public_key: &[u8; 64]) -> Result<[u8; 64], Error> {
     let mut shared = [0u8; 64];
     let ok = unsafe {
         Hacl_P256_dh_responder(
@@ -112,6 +112,21 @@ pub fn ecdh(private_key: &[u8; 32], public_key: &[u8; 32]) -> Result<[u8; 64], E
         Err(Error::InvalidInput)
     } else {
         Ok(shared)
+    }
+}
+
+/// Compute the public key for the provided `private_key`.
+///
+/// Returns the 64 bytes public key.
+#[must_use]
+pub fn secret_to_public(s: &[u8; 32]) -> Result<[u8; 64], Error> {
+    validate_scalar(s)?;
+
+    let mut out = [0u8; 64];
+    if unsafe { Hacl_P256_dh_initiator(out.as_mut_ptr(), s.as_ptr() as _) } {
+        Ok(out)
+    } else {
+        Err(Error::InvalidScalar)
     }
 }
 
@@ -128,7 +143,7 @@ pub mod ecdsa {
         ($name:ident, $fun:expr) => {
             /// Sign `msg` with `sk` and `nonce` with EcDSA on P256.
             pub fn $name(msg: &[u8], sk: &[u8; 32], nonce: [u8; 32]) -> Result<[u8; 64], Error> {
-                validate_scalar(nonce)?;
+                validate_scalar(&nonce)?;
                 let private = validate_scalar_slice(sk)?;
 
                 let mut signature = [0u8; 64];
