@@ -43,6 +43,8 @@ Blake2b_32_keyed(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2b_32_keyed);
+
 // Blake2b 32-bit
 static void
 Blake2b_32(benchmark::State& state)
@@ -54,7 +56,6 @@ Blake2b_32(benchmark::State& state)
 }
 
 BENCHMARK(Blake2b_32);
-BENCHMARK(Blake2b_32_keyed);
 
 // Blake2b vec256
 #ifdef HACL_CAN_COMPILE_VEC256
@@ -77,6 +78,8 @@ Blake2b_vec256_keyed(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2b_vec256_keyed);
+
 static void
 Blake2b_vec256(benchmark::State& state)
 {
@@ -93,7 +96,6 @@ Blake2b_vec256(benchmark::State& state)
 }
 
 BENCHMARK(Blake2b_vec256);
-BENCHMARK(Blake2b_vec256_keyed);
 #endif // HACL_CAN_COMPILE_VEC256
 
 // Evercrypt Blake2b
@@ -165,6 +167,8 @@ Blake2b_32_streaming(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2b_32_streaming);
+
 #ifdef HACL_CAN_COMPILE_VEC256
 // Blake2b vec256 | streaming
 static void
@@ -195,6 +199,8 @@ Blake2b_vec256_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
   }
 }
+
+BENCHMARK(Blake2b_vec256_streaming);
 #endif
 
 // Blake2b EverCrypt | streaming
@@ -221,8 +227,6 @@ Blake2b_EverCrypt_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_32_streaming);
-BENCHMARK(Blake2b_vec256_streaming);
 BENCHMARK(Blake2b_EverCrypt_streaming);
 
 // -----------------------------------------------------------------------------
@@ -241,6 +245,8 @@ Blake2s_32_keyed(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2s_32_keyed);
+
 // Blake2s 32-bit
 static void
 Blake2s_32(benchmark::State& state)
@@ -252,7 +258,6 @@ Blake2s_32(benchmark::State& state)
 }
 
 BENCHMARK(Blake2s_32);
-BENCHMARK(Blake2s_32_keyed);
 
 // Blake2s vec128
 #ifdef HACL_CAN_COMPILE_VEC128
@@ -275,6 +280,8 @@ Blake2s_vec128_keyed(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2s_vec128_keyed);
+
 static void
 Blake2s_vec128(benchmark::State& state)
 {
@@ -291,7 +298,6 @@ Blake2s_vec128(benchmark::State& state)
 }
 
 BENCHMARK(Blake2s_vec128);
-BENCHMARK(Blake2s_vec128_keyed);
 #endif // HACL_CAN_COMPILE_VEC128
 
 // Evercrypt Blake2s
@@ -306,6 +312,7 @@ Blake2s_Evercrypt(benchmark::State& state)
                         input.size());
   }
 }
+
 BENCHMARK(Blake2s_Evercrypt);
 
 #ifndef NO_OPENSSL
@@ -363,6 +370,8 @@ Blake2s_32_streaming(benchmark::State& state)
   }
 }
 
+BENCHMARK(Blake2s_32_streaming);
+
 #ifdef HACL_CAN_COMPILE_VEC128
 // Blake2s vec128 | streaming
 static void
@@ -393,6 +402,8 @@ Blake2s_vec128_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free(state);
   }
 }
+
+BENCHMARK(Blake2s_vec128_streaming);
 #endif
 
 // Blake2s EverCrypt | streaming
@@ -419,8 +430,6 @@ Blake2s_EverCrypt_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_32_streaming);
-BENCHMARK(Blake2s_vec128_streaming);
 BENCHMARK(Blake2s_EverCrypt_streaming);
 
 BENCHMARK_MAIN();
