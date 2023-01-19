@@ -40,6 +40,18 @@ $ sudo pacman -S gcc
 </details>
 
 <details>
+  <summary><b>Fedora</b></summary>
+  
+```sh
+$ sudo dnf install cmake ninja-build python3
+
+# Either of ...
+$ sudo dnf install clang
+$ sudo dnf install gcc
+```
+</details>
+
+<details>
   <summary><b>Ubuntu</b></summary>
   
 ```sh
