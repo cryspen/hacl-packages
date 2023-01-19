@@ -562,6 +562,9 @@
         ],
         "drbg": [
             "drbg.cc"
+        ],
+        "rsapss": [
+            "rsapss.cc"
         ]
     }
 }
