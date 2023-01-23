@@ -82,7 +82,10 @@ TEST(ApiSuite, ApiTest)
     bytes expected_digest =
       from_hex("0a0a9f2a6772942557ab5355d76af442f8f65e01");
 
-    EXPECT_EQ(strncmp((char*)digest, (char*)expected_digest.data(), HACL_HASH_SHA1_DIGEST_LENGTH), 0);
+    EXPECT_EQ(strncmp((char*)digest,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_SHA1_DIGEST_LENGTH),
+              0);
   }
 
   // Documentation.
@@ -188,10 +191,10 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     bytes got_digest(
       Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_SHA1));
 
-    EverCrypt_Hash_hash(Spec_Hash_Definitions_SHA1,
-                        got_digest.data(),
-                        test.msg.data(),
-                        test.msg.size());
+    EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_SHA1,
+                                    got_digest.data(),
+                                    test.msg.data(),
+                                    test.msg.size());
     ASSERT_EQ(test.md, got_digest);
   }
 
@@ -199,8 +202,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     bytes got_digest(
       Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_SHA1));
 
-    // Use a typedef?
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+    EverCrypt_Hash_Incremental_hash_state* state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA1);
     EverCrypt_Hash_Incremental_init(state);
 

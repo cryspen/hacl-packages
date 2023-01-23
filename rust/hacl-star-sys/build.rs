@@ -33,7 +33,6 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
         // Block everything we don't need or define ourselves.
-        .blocklist_type("Hacl_Streaming_.*")
         .blocklist_type("EverCrypt_AEAD_state_s.*")
         // Disable tests to avoid warnings and keep it portable
         .layout_tests(false)

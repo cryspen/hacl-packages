@@ -332,10 +332,10 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(test.digest.size(), 0);
 
-    EverCrypt_Hash_hash(Spec_Hash_Definitions_Blake2B,
-                        got_digest.data(),
-                        test.input.data(),
-                        test.input.size());
+    EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_Blake2B,
+                                    got_digest.data(),
+                                    test.input.data(),
+                                    test.input.size());
 
     EXPECT_EQ(test.digest, got_digest);
   }
@@ -344,7 +344,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(test.digest.size(), 0);
 
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+    EverCrypt_Hash_Incremental_hash_state* state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
 
     EverCrypt_Hash_Incremental_init(state);
