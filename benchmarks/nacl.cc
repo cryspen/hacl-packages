@@ -24,7 +24,7 @@ static bytes k(HACL_NACL_BEFORENMBYTES, 0);
 static bytes key(HACL_NACL_KEYBYTES, 0);
 
 static void
-Hacl_NaCl_oneshot_combined(benchmark::State& state)
+HACL_NaCl_oneshot_combined(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
@@ -47,10 +47,10 @@ Hacl_NaCl_oneshot_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_oneshot_combined);
+BENCHMARK(HACL_NaCl_oneshot_combined);
 
 static void
-Hacl_NaCl_oneshot_detached(benchmark::State& state)
+HACL_NaCl_oneshot_detached(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
@@ -75,10 +75,10 @@ Hacl_NaCl_oneshot_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_oneshot_detached);
+BENCHMARK(HACL_NaCl_oneshot_detached);
 
 static void
-Hacl_NaCl_precomputed_combined(benchmark::State& state)
+HACL_NaCl_precomputed_combined(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
@@ -101,10 +101,10 @@ Hacl_NaCl_precomputed_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_precomputed_combined);
+BENCHMARK(HACL_NaCl_precomputed_combined);
 
 static void
-Hacl_NaCl_precomputed_detached(benchmark::State& state)
+HACL_NaCl_precomputed_detached(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
@@ -129,10 +129,10 @@ Hacl_NaCl_precomputed_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_precomputed_detached);
+BENCHMARK(HACL_NaCl_precomputed_detached);
 
 static void
-Hacl_NaCl_secret_easy(benchmark::State& state)
+HACL_NaCl_secret_easy(benchmark::State& state)
 {
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
@@ -152,10 +152,10 @@ Hacl_NaCl_secret_easy(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_secret_easy);
+BENCHMARK(HACL_NaCl_secret_easy);
 
 static void
-Hacl_NaCl_secret_detached(benchmark::State& state)
+HACL_NaCl_secret_detached(benchmark::State& state)
 {
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
@@ -177,6 +177,6 @@ Hacl_NaCl_secret_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_secret_detached);
+BENCHMARK(HACL_NaCl_secret_detached);
 
 BENCHMARK_MAIN();
