@@ -6,9 +6,9 @@
  *    - http://opensource.org/licenses/MIT
  */
 
-#include "util.h"
-
 #include "Hacl_Ed25519.h"
+
+#include "util.h"
 
 #define HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN 96
 
@@ -38,7 +38,7 @@ static bytes msg = hex_to_bytes(
   "148f6c7a6e1c2f66991a07cf98");
 
 static void
-Ed25519_Sign(benchmark::State& state)
+HACL_Ed25519_Sign(benchmark::State& state)
 {
   bytes my_signature(64);
   while (state.KeepRunning()) {
@@ -46,7 +46,7 @@ Ed25519_Sign(benchmark::State& state)
   }
 }
 
-BENCHMARK(Ed25519_Sign);
+BENCHMARK(HACL_Ed25519_Sign);
 
 #ifndef NO_OPENSSL
 static void
@@ -73,7 +73,7 @@ BENCHMARK(OpenSSL_Ed25519_Sign);
 #endif
 
 static void
-Ed25519_Verify(benchmark::State& state)
+HACL_Ed25519_Verify(benchmark::State& state)
 {
   bytes pk(32);
   Hacl_Ed25519_secret_to_public(pk.data(), sk.data());
@@ -86,7 +86,7 @@ Ed25519_Verify(benchmark::State& state)
   }
 }
 
-BENCHMARK(Ed25519_Verify);
+BENCHMARK(HACL_Ed25519_Verify);
 
 #ifndef NO_OPENSSL
 static void
@@ -130,7 +130,7 @@ BENCHMARK(OpenSSL_Ed25519_Verify);
 #endif
 
 static void
-Ed25519_Sign_Precomputed(benchmark::State& state)
+HACL_Ed25519_Sign_Precomputed(benchmark::State& state)
 {
   bytes sk_expanded(HACL_SIGNATURE_ED25519_SECRETKEY_PRECOMP_LEN);
   Hacl_Ed25519_expand_keys(sk_expanded.data(), sk.data());
@@ -142,6 +142,6 @@ Ed25519_Sign_Precomputed(benchmark::State& state)
   }
 }
 
-BENCHMARK(Ed25519_Sign_Precomputed);
+BENCHMARK(HACL_Ed25519_Sign_Precomputed);
 
 BENCHMARK_MAIN();
