@@ -163,9 +163,6 @@ Sha2_256(benchmark::State& state)
 
 BENCHMARK(Sha2_256);
 
-typedef Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____
-  EverCrypt_Streaming_Hash_state;
-
 static void
 EverCrypt_Sha2_256_Streaming(benchmark::State& state)
 {
@@ -177,7 +174,7 @@ EverCrypt_Sha2_256_Streaming(benchmark::State& state)
 
   while (state.KeepRunning()) {
     // Init
-    EverCrypt_Streaming_Hash_state* sha_state =
+    EverCrypt_Hash_Incremental_hash_state* sha_state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_256);
     EverCrypt_Hash_Incremental_init(sha_state);
 

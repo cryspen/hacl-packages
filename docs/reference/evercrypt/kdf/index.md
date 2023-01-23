@@ -26,42 +26,4 @@ The following instantiations are supported:
 ```{doxygenfunction} EverCrypt_HKDF_expand
 ```
 
---------------------------------------------------------------------------------
-
-```{doxygenfunction} EverCrypt_HKDF_extract_blake2b
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_blake2b
-```
-
-```{doxygenfunction} EverCrypt_HKDF_extract_blake2s
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_blake2s
-```
-
-```{doxygenfunction} EverCrypt_HKDF_extract_sha2_256
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_sha2_256
-```
-
-```{doxygenfunction} EverCrypt_HKDF_extract_sha2_384
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_sha2_384
-```
-
-```{doxygenfunction} EverCrypt_HKDF_extract_sha2_512
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_sha2_512
-```
-
-```{doxygenfunction} EverCrypt_HKDF_extract_sha1
-```
-
-```{doxygenfunction} EverCrypt_HKDF_expand_sha1
-```
-
 [rfc 5869]: https://www.rfc-editor.org/rfc/rfc5869
