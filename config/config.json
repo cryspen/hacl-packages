@@ -563,6 +563,9 @@
         "drbg": [
             "drbg.cc"
         ],
+        "hmac": [
+            "hmac.cc"
+        ],
         "rsapss": [
             "rsapss.cc"
         ]
