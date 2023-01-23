@@ -105,9 +105,8 @@ static bytes expected_ciphertext = {
   0xab, 0x46, 0xe8, 0x6e, 0x6a, 0x03, 0xc6, 0x19, 0x2e, 0x47, 0x1e, 0xf5
 };
 
-// ChachaPoly non-vectorized
 static void
-Chacha20Poly1305_32_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_32_encrypt(benchmark::State& state)
 {
   while (state.KeepRunning()) {
     Hacl_Chacha20Poly1305_32_aead_encrypt(key.data(),
@@ -124,12 +123,12 @@ Chacha20Poly1305_32_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20Poly1305_32_encrypt);
 
-// ChachaPoly Vec128
+BENCHMARK(HACL_Chacha20Poly1305_32_encrypt);
+
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
-Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
 {
   cpu_init();
   if (!vec128_support()) {
@@ -152,13 +151,13 @@ Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20Poly1305_Vec128_encrypt);
-#endif // HACL_CAN_COMPILE_VEC128
 
-// ChachaPoly Vec256
+BENCHMARK(HACL_Chacha20Poly1305_Vec128_encrypt);
+#endif
+
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
 {
   cpu_init();
   if (!vec256_support()) {
@@ -181,12 +180,22 @@ Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20Poly1305_Vec256_encrypt);
-#endif // HACL_CAN_COMPILE_VEC256
+
+BENCHMARK(HACL_Chacha20Poly1305_Vec256_encrypt);
+#endif
+
+static void
+EverCrypt_Chacha20Poly1305_encrypt(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(EverCrypt_Chacha20Poly1305_encrypt);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_Chacha20Poly1305(benchmark::State& state)
+OpenSSL_Chacha20Poly1305_encrypt(benchmark::State& state)
 {
   // For OpenSSL we need to prepend the counter to the nonce.
   openssl_nonce[0] = 0;
@@ -230,7 +239,8 @@ Openssl_Chacha20Poly1305(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Openssl_Chacha20Poly1305);
+
+BENCHMARK(OpenSSL_Chacha20Poly1305_encrypt);
 #endif
 
 // TODO: decrypt (even though it should be the same we should measure it)
