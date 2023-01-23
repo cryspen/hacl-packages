@@ -95,10 +95,10 @@ static void
 Blake2b_Evercrypt(benchmark::State& state)
 {
   while (state.KeepRunning()) {
-    EverCrypt_Hash_hash(Spec_Hash_Definitions_Blake2B,
-                        digest2b.data(),
-                        input.data(),
-                        input.size());
+    EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_Blake2B,
+                                    digest2b.data(),
+                                    input.data(),
+                                    input.size());
   }
 }
 
@@ -208,10 +208,10 @@ Blake2s_Evercrypt(benchmark::State& state)
 {
   EverCrypt_AutoConfig2_init();
   while (state.KeepRunning()) {
-    EverCrypt_Hash_hash(Spec_Hash_Definitions_Blake2S,
-                        digest2s.data(),
-                        input.data(),
-                        input.size());
+    EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_Blake2S,
+                                    digest2s.data(),
+                                    input.data(),
+                                    input.size());
   }
 }
 BENCHMARK(Blake2s_Evercrypt);
