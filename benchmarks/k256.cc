@@ -42,9 +42,8 @@ K256_ECDSA_Sign_Normalized(benchmark::State& state)
   bytes nonce = bytes(32, 'A');
 
   for (auto _ : state) {
-    bool result = Hacl_K256_ECDSA_secp256k1_ecdsa_sign_sha256(
+    Hacl_K256_ECDSA_secp256k1_ecdsa_sign_sha256(
       signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
-    assert(result);
   }
 }
 
@@ -88,9 +87,8 @@ K256_ECDSA_Verify_Normalized(benchmark::State& state)
     signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
 
   for (auto _ : state) {
-    bool result = Hacl_K256_ECDSA_secp256k1_ecdsa_verify_sha256(
+    Hacl_K256_ECDSA_secp256k1_ecdsa_verify_sha256(
       msg.size(), msg.data(), pk.data(), signature.data());
-    assert(result);
   }
 }
 
@@ -126,9 +124,8 @@ K256_ECDSA_Sign(benchmark::State& state)
   bytes nonce = bytes(32, 'A');
 
   for (auto _ : state) {
-    bool result = Hacl_K256_ECDSA_ecdsa_sign_sha256(
+    Hacl_K256_ECDSA_ecdsa_sign_sha256(
       signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
-    assert(result);
   }
 }
 
@@ -172,9 +169,8 @@ K256_ECDSA_Verify(benchmark::State& state)
     signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
 
   for (auto _ : state) {
-    bool result = Hacl_K256_ECDSA_ecdsa_verify_sha256(
+    Hacl_K256_ECDSA_ecdsa_verify_sha256(
       msg.size(), msg.data(), pk.data(), signature.data());
-    assert(result);
   }
 }
 
@@ -188,9 +184,10 @@ K256_ECDH(benchmark::State& state)
   Hacl_K256_ECDSA_public_key_compressed_from_raw(pk_compressed.data(),
                                                  pk_raw.data());
   vector<uint64_t> public_key(15);
-  bool result =
-    Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data());
-  assert(result);
+  if (!Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data())) {
+    state.SkipWithError("Invalid public key");
+    return;
+  }
 
   bytes private_key = hex_to_bytes(
     "f4b7ff7cccc98813a69fae3df222bfe3f4e28f764bf91b4a10d8096ce446b254");
@@ -214,9 +211,10 @@ K256_ECDH_NoCompress(benchmark::State& state)
   Hacl_K256_ECDSA_public_key_compressed_from_raw(pk_compressed.data(),
                                                  pk_raw.data());
   vector<uint64_t> public_key(15);
-  bool result =
-    Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data());
-  assert(result);
+  if (!Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data())) {
+    state.SkipWithError("Invalid public key");
+    return;
+  }
 
   bytes private_key = hex_to_bytes(
     "f4b7ff7cccc98813a69fae3df222bfe3f4e28f764bf91b4a10d8096ce446b254");
