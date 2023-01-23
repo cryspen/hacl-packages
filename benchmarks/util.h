@@ -163,3 +163,21 @@ generate_rsapss_key(uint8_t** e,
   std::copy(_d.begin(), _d.end(), *d);
   std::copy(_n.begin(), _n.end(), *n);
 }
+
+vector<bytes>
+chunk(bytes data, size_t chunk_size)
+{
+  vector<bytes> out(data.size() / chunk_size);
+
+  auto start = data.begin();
+  auto end = data.end();
+
+  while (start != end) {
+    auto next = distance(start, end) >= chunk_size ? start + chunk_size : end;
+
+    out.emplace_back(start, next);
+    start = next;
+  }
+
+  return out;
+}
