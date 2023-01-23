@@ -151,19 +151,19 @@ Blake2b_32_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Blake2_blake2b_32_state_s* state =
+    Hacl_Streaming_Blake2_blake2b_32_state_s* ctx =
       Hacl_Streaming_Blake2_blake2b_32_no_key_create_in();
-    Hacl_Streaming_Blake2_blake2b_32_no_key_init(state);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
       Hacl_Streaming_Blake2_blake2b_32_no_key_update(
-        state, (uint8_t*)chunk.data(), chunk.size());
+        ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(state, digest);
-    Hacl_Streaming_Blake2_blake2b_32_no_key_free(state);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_finish(ctx, digest);
+    Hacl_Streaming_Blake2_blake2b_32_no_key_free(ctx);
   }
 }
 
@@ -184,19 +184,19 @@ Blake2b_vec256_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Blake2b_256_blake2b_256_state_s* state =
+    Hacl_Streaming_Blake2b_256_blake2b_256_state_s* ctx =
       Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in();
-    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(state);
+    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
       Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
-        state, (uint8_t*)chunk.data(), chunk.size());
+        ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(state, digest);
-    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(state);
+    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish(ctx, digest);
+    Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free(ctx);
   }
 }
 
@@ -212,18 +212,18 @@ Blake2b_EverCrypt_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+    EverCrypt_Hash_Incremental_hash_state_s* ctx =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2B);
-    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
-      EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+      EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
     // Finish
-    EverCrypt_Hash_Incremental_finish(state, digest);
-    EverCrypt_Hash_Incremental_free(state);
+    EverCrypt_Hash_Incremental_finish(ctx, digest);
+    EverCrypt_Hash_Incremental_free(ctx);
   }
 }
 
@@ -354,19 +354,19 @@ Blake2s_32_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Blake2_blake2s_32_state_s* state =
+    Hacl_Streaming_Blake2_blake2s_32_state_s* ctx =
       Hacl_Streaming_Blake2_blake2s_32_no_key_create_in();
-    Hacl_Streaming_Blake2_blake2s_32_no_key_init(state);
+    Hacl_Streaming_Blake2_blake2s_32_no_key_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
       Hacl_Streaming_Blake2_blake2s_32_no_key_update(
-        state, (uint8_t*)chunk.data(), chunk.size());
+        ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, digest);
-    Hacl_Streaming_Blake2_blake2s_32_no_key_free(state);
+    Hacl_Streaming_Blake2_blake2s_32_no_key_finish(ctx, digest);
+    Hacl_Streaming_Blake2_blake2s_32_no_key_free(ctx);
   }
 }
 
@@ -387,19 +387,19 @@ Blake2s_vec128_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Blake2s_128_blake2s_128_state_s* state =
+    Hacl_Streaming_Blake2s_128_blake2s_128_state_s* ctx =
       Hacl_Streaming_Blake2s_128_blake2s_128_no_key_create_in();
-    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_init(state);
+    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
       Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update(
-        state, (uint8_t*)chunk.data(), chunk.size());
+        ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish(state, digest);
-    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free(state);
+    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish(ctx, digest);
+    Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free(ctx);
   }
 }
 
@@ -408,25 +408,25 @@ BENCHMARK(Blake2s_vec128_streaming);
 
 // Blake2s EverCrypt | streaming
 static void
-Blake2s_EverCrypt_streaming(benchmark::State& state)
+Blake2s_EverCrypt_streaming(benchmark::State& bm_state)
 {
   cpu_init();
-  for (auto _ : state) {
+  for (auto _ : bm_state) {
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+    EverCrypt_Hash_Incremental_hash_state_s* ctx =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2S);
-    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_init(ctx);
 
     // Update
     for (auto chunk : chunk(input, 7)) {
-      EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
+      EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
     // Finish
-    EverCrypt_Hash_Incremental_finish(state, digest);
-    EverCrypt_Hash_Incremental_free(state);
+    EverCrypt_Hash_Incremental_finish(ctx, digest);
+    EverCrypt_Hash_Incremental_free(ctx);
   }
 }
 
