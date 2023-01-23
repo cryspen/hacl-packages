@@ -61,6 +61,10 @@ cpu_init()
   EverCrypt_AutoConfig2_init();
 }
 
+static void DoSetup(const benchmark::State& state) {
+  cpu_init();
+}
+
 bool
 vec128_support()
 {
@@ -180,4 +184,13 @@ chunk(bytes data, size_t chunk_size)
   }
 
   return out;
+}
+
+static void
+Range(benchmark::internal::Benchmark* b)
+{
+  b->Arg(0);
+  for (size_t i = 16; i <= 16 * 1024 * 1024; i = i * 16) {
+    b->Arg(i);
+  }
 }

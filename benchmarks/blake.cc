@@ -5,11 +5,12 @@
  *    - http://www.apache.org/licenses/LICENSE-2.0
  *    - http://opensource.org/licenses/MIT
  */
-#include "util.h"
 
 #include "EverCrypt_Hash.h"
 #include "Hacl_Hash_Blake2.h"
 #include "Hacl_Streaming_Blake2.h"
+
+#include "util.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_128.h"
@@ -29,65 +30,29 @@ static bytes key(64, 0x72);
 static bytes digest2b(64, 0);
 static bytes digest2s(32, 0);
 
-// Blake2b 32-bit keyed
 static void
-Blake2b_32_keyed(benchmark::State& state)
+HACL_blake2b_32_oneshot(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
-    Hacl_Blake2b_32_blake2b(digest2b.size(),
-                            digest2b.data(),
-                            input.size(),
-                            input.data(),
-                            key.size(),
-                            key.data());
-  }
-}
+  bytes input(state.range(0), 0xAB);
 
-BENCHMARK(Blake2b_32_keyed);
-
-// Blake2b 32-bit
-static void
-Blake2b_32(benchmark::State& state)
-{
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Blake2b_32_blake2b(
       digest2b.size(), digest2b.data(), input.size(), input.data(), 0, NULL);
   }
 }
 
-BENCHMARK(Blake2b_32);
+BENCHMARK(HACL_blake2b_32_oneshot)->Setup(DoSetup)->Apply(Range);
 
-// Blake2b vec256
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Blake2b_vec256_keyed(benchmark::State& state)
+HACL_blake2b_vec256_oneshot(benchmark::State& state)
 {
-  cpu_init();
   if (!vec256_support()) {
     state.SkipWithError("No vec256 support");
     return;
   }
 
-  for (auto _ : state) {
-    Hacl_Blake2b_256_blake2b(digest2b.size(),
-                             digest2b.data(),
-                             input.size(),
-                             input.data(),
-                             key.size(),
-                             key.data());
-  }
-}
-
-BENCHMARK(Blake2b_vec256_keyed);
-
-static void
-Blake2b_vec256(benchmark::State& state)
-{
-  cpu_init();
-  if (!vec256_support()) {
-    state.SkipWithError("No vec256 support");
-    return;
-  }
+  bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
     Hacl_Blake2b_256_blake2b(
@@ -95,14 +60,15 @@ Blake2b_vec256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_vec256);
-#endif // HACL_CAN_COMPILE_VEC256
+BENCHMARK(HACL_blake2b_vec256_oneshot)->Setup(DoSetup)->Apply(Range);
+#endif
 
-// Evercrypt Blake2b
 static void
-Blake2b_Evercrypt(benchmark::State& state)
+EverCrypt_blake2b_oneshot(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state) {
     EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_Blake2B,
                                     digest2b.data(),
                                     input.data(),
@@ -110,14 +76,15 @@ Blake2b_Evercrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_Evercrypt);
+BENCHMARK(EverCrypt_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
 
 #ifndef NO_OPENSSL
-// OpenSSL Blake2b
 static void
-Openssl_Blake2b(benchmark::State& state)
+OpenSSL_blake2b_oneshot(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state) {
     EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
     if (EVP_DigestInit_ex2(mdctx, EVP_blake2b512(), NULL) != 1) {
       state.SkipWithError("Error in EVP_DigestInit_ex2");
@@ -140,12 +107,72 @@ Openssl_Blake2b(benchmark::State& state)
   }
 }
 
-BENCHMARK(Openssl_Blake2b);
+BENCHMARK(OpenSSL_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
 #endif
 
-// Blake2b 32-bit | streaming
+// -----------------------------------------------------------------------------
+
 static void
-Blake2b_32_streaming(benchmark::State& state)
+HACL_blake2b_32_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state) {
+    Hacl_Blake2b_32_blake2b(digest2b.size(),
+                            digest2b.data(),
+                            input.size(),
+                            input.data(),
+                            key.size(),
+                            key.data());
+  }
+}
+
+BENCHMARK(HACL_blake2b_32_oneshot_keyed)->Setup(DoSetup);
+
+#ifdef HACL_CAN_COMPILE_VEC256
+static void
+HACL_blake2b_vec256_oneshot_keyed(benchmark::State& state)
+{
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+
+  for (auto _ : state) {
+    Hacl_Blake2b_256_blake2b(digest2b.size(),
+                             digest2b.data(),
+                             input.size(),
+                             input.data(),
+                             key.size(),
+                             key.data());
+  }
+}
+
+BENCHMARK(HACL_blake2b_vec256_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+static void
+EverCrypt_blake2b_oneshot_keyed(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(EverCrypt_blake2b_oneshot_keyed)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_blake2b_oneshot_keyed(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(OpenSSL_blake2b_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+// -----------------------------------------------------------------------------
+
+static void
+HACL_blake2b_32_streaming(benchmark::State& state)
 {
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
@@ -167,14 +194,12 @@ Blake2b_32_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_32_streaming);
+BENCHMARK(HACL_blake2b_32_streaming)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
-// Blake2b vec256 | streaming
 static void
-Blake2b_vec256_streaming(benchmark::State& state)
+HACL_blake2b_vec256_streaming(benchmark::State& state)
 {
-  cpu_init();
   if (!vec256_support()) {
     state.SkipWithError("No vec256 support");
     return;
@@ -200,14 +225,12 @@ Blake2b_vec256_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_vec256_streaming);
+BENCHMARK(HACL_blake2b_vec256_streaming)->Setup(DoSetup);
 #endif
 
-// Blake2b EverCrypt | streaming
 static void
-Blake2b_EverCrypt_streaming(benchmark::State& state)
+EverCrypt_blake2b_streaming(benchmark::State& state)
 {
-  cpu_init();
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
@@ -227,69 +250,44 @@ Blake2b_EverCrypt_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2b_EverCrypt_streaming);
+BENCHMARK(EverCrypt_blake2b_streaming)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_blake2b_streaming(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(OpenSSL_blake2b_streaming)->Setup(DoSetup);
+#endif
 
 // -----------------------------------------------------------------------------
 
-// Blake2s 32-bit keyed
 static void
-Blake2s_32_keyed(benchmark::State& state)
+HACL_blake2s_32_oneshot(benchmark::State& state)
 {
-  for (auto _ : state) {
-    Hacl_Blake2s_32_blake2s(digest2s.size(),
-                            digest2s.data(),
-                            input.size(),
-                            input.data(),
-                            key.size(),
-                            key.data());
-  }
-}
+  bytes input(state.range(0), 0xAB);
 
-BENCHMARK(Blake2s_32_keyed);
-
-// Blake2s 32-bit
-static void
-Blake2s_32(benchmark::State& state)
-{
   for (auto _ : state) {
     Hacl_Blake2s_32_blake2s(
       digest2s.size(), digest2s.data(), input.size(), input.data(), 0, NULL);
   }
 }
 
-BENCHMARK(Blake2s_32);
+BENCHMARK(HACL_blake2s_32_oneshot)->Setup(DoSetup)->Apply(Range);
 
-// Blake2s vec128
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
-Blake2s_vec128_keyed(benchmark::State& state)
+HACL_blake2s_vec128_oneshot(benchmark::State& state)
 {
-  cpu_init();
   if (!vec128_support()) {
     state.SkipWithError("No vec128 support");
     return;
   }
 
-  for (auto _ : state) {
-    Hacl_Blake2s_128_blake2s(digest2s.size(),
-                             digest2s.data(),
-                             input.size(),
-                             input.data(),
-                             key.size(),
-                             key.data());
-  }
-}
-
-BENCHMARK(Blake2s_vec128_keyed);
-
-static void
-Blake2s_vec128(benchmark::State& state)
-{
-  cpu_init();
-  if (!vec128_support()) {
-    state.SkipWithError("No vec128 support");
-    return;
-  }
+  bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
     Hacl_Blake2s_128_blake2s(
@@ -297,15 +295,15 @@ Blake2s_vec128(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_vec128);
-#endif // HACL_CAN_COMPILE_VEC128
+BENCHMARK(HACL_blake2s_vec128_oneshot)->Setup(DoSetup)->Apply(Range);
+#endif
 
-// Evercrypt Blake2s
 static void
-Blake2s_Evercrypt(benchmark::State& state)
+EverCrypt_blake2s_oneshot(benchmark::State& state)
 {
-  EverCrypt_AutoConfig2_init();
-  while (state.KeepRunning()) {
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state) {
     EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_Blake2S,
                                     digest2s.data(),
                                     input.data(),
@@ -313,14 +311,15 @@ Blake2s_Evercrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_Evercrypt);
+BENCHMARK(EverCrypt_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
 
 #ifndef NO_OPENSSL
-// OpenSSL Blake2s
 static void
-Openssl_Blake2s(benchmark::State& state)
+OpenSSL_blake2s_oneshot(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state) {
     EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
     if (EVP_DigestInit_ex2(mdctx, EVP_blake2s256(), NULL) != 1) {
       state.SkipWithError("Error in EVP_DigestInit_ex2");
@@ -343,12 +342,72 @@ Openssl_Blake2s(benchmark::State& state)
   }
 }
 
-BENCHMARK(Openssl_Blake2s);
+BENCHMARK(OpenSSL_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
 #endif
 
-// Blake2s 32-bit | streaming
+// -----------------------------------------------------------------------------
+
 static void
-Blake2s_32_streaming(benchmark::State& state)
+HACL_blake2s_32_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state) {
+    Hacl_Blake2s_32_blake2s(digest2s.size(),
+                            digest2s.data(),
+                            input.size(),
+                            input.data(),
+                            key.size(),
+                            key.data());
+  }
+}
+
+BENCHMARK(HACL_blake2s_32_oneshot_keyed)->Setup(DoSetup);
+
+#ifdef HACL_CAN_COMPILE_VEC128
+static void
+HACL_blake2s_vec128_oneshot_keyed(benchmark::State& state)
+{
+  if (!vec128_support()) {
+    state.SkipWithError("No vec128 support");
+    return;
+  }
+
+  for (auto _ : state) {
+    Hacl_Blake2s_128_blake2s(digest2s.size(),
+                             digest2s.data(),
+                             input.size(),
+                             input.data(),
+                             key.size(),
+                             key.data());
+  }
+}
+
+BENCHMARK(HACL_blake2s_vec128_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+static void
+EverCrypt_blake2s_oneshot_keyed(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(EverCrypt_blake2s_oneshot_keyed)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_blake2s_oneshot_keyed(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(OpenSSL_blake2s_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+// -----------------------------------------------------------------------------
+
+static void
+HACL_blake2s_32_streaming(benchmark::State& state)
 {
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
@@ -370,14 +429,12 @@ Blake2s_32_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_32_streaming);
+BENCHMARK(HACL_blake2s_32_streaming)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC128
-// Blake2s vec128 | streaming
 static void
-Blake2s_vec128_streaming(benchmark::State& state)
+HACL_blake2s_vec128_streaming(benchmark::State& state)
 {
-  cpu_init();
   if (!vec128_support()) {
     state.SkipWithError("No vec128 support");
     return;
@@ -403,14 +460,12 @@ Blake2s_vec128_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_vec128_streaming);
+BENCHMARK(HACL_blake2s_vec128_streaming)->Setup(DoSetup);
 #endif
 
-// Blake2s EverCrypt | streaming
 static void
-Blake2s_EverCrypt_streaming(benchmark::State& state)
+EverCrypt_blake2s_streaming(benchmark::State& state)
 {
-  cpu_init();
   for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
@@ -430,6 +485,17 @@ Blake2s_EverCrypt_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Blake2s_EverCrypt_streaming);
+BENCHMARK(EverCrypt_blake2s_streaming)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_blake2s_streaming(benchmark::State& state)
+{
+  // TODO
+  state.SkipWithError("Unimplemented");
+}
+
+BENCHMARK(OpenSSL_blake2s_streaming)->Setup(DoSetup);
+#endif
 
 BENCHMARK_MAIN();

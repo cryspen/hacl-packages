@@ -57,15 +57,6 @@ HACL_Hmac(benchmark::State& state, Args&&... args)
   }
 }
 
-static void
-Range(benchmark::internal::Benchmark* b)
-{
-  b->Arg(0);
-  for (size_t i = 16; i <= 16 * 1024 * 1024; i = i * 16) {
-    b->Arg(i);
-  }
-}
-
 BENCHMARK_CAPTURE(
   HACL_Hmac,
   blake2b,
