@@ -408,10 +408,10 @@ BENCHMARK(Blake2s_vec128_streaming);
 
 // Blake2s EverCrypt | streaming
 static void
-Blake2s_EverCrypt_streaming(benchmark::State& bm_state)
+Blake2s_EverCrypt_streaming(benchmark::State& state)
 {
   cpu_init();
-  for (auto _ : bm_state) {
+  for (auto _ : state) {
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
