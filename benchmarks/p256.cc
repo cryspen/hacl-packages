@@ -14,13 +14,18 @@ P256_SHA256_ECDSA_Sign(benchmark::State& state)
 {
   bytes sk = hex_to_bytes(
     "f6bbfeced354cfcd0fb7e647f3dca33116b1287b07d6a2dcc6d545248e4a6489");
-  assert(Hacl_P256_validate_private_key(sk.data()));
+  if (!Hacl_P256_validate_private_key(sk.data())) {
+    state.SkipWithError("Invalid private key");
+    return;
+  }
 
   bytes pk(64);
   bytes pk_compressed = hex_to_bytes(
     "02e5e37c0dfc63da709d3381613f672bc66a7aa5d0084d1bfea663f6e70e9d65f2");
-  bool result = Hacl_P256_compressed_to_raw(pk_compressed.data(), pk.data());
-  assert(result);
+  if (!Hacl_P256_compressed_to_raw(pk_compressed.data(), pk.data())) {
+    state.SkipWithError("Invalid public key");
+    return;
+  }
 
   bytes signature(64);
   bytes msg = hex_to_bytes(
@@ -49,9 +54,8 @@ P256_SHA256_ECDSA_Sign(benchmark::State& state)
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
   for (auto _ : state) {
-    bool result = Hacl_P256_ecdsa_sign_p256_sha2(
+    Hacl_P256_ecdsa_sign_p256_sha2(
       signature.data(), msg.size(), msg.data(), sk.data(), nonce.data());
-    assert(result);
   }
 }
 
@@ -60,13 +64,18 @@ P256_SHA256_ECDSA_Verify(benchmark::State& state)
 {
   bytes sk = hex_to_bytes(
     "f6bbfeced354cfcd0fb7e647f3dca33116b1287b07d6a2dcc6d545248e4a6489");
-  assert(Hacl_P256_validate_private_key(sk.data()));
+  if (!Hacl_P256_validate_private_key(sk.data())) {
+    state.SkipWithError("Invalid private key");
+    return;
+  }
 
   bytes pk(64);
   bytes pk_compressed = hex_to_bytes(
     "02e5e37c0dfc63da709d3381613f672bc66a7aa5d0084d1bfea663f6e70e9d65f2");
-  bool result = Hacl_P256_compressed_to_raw(pk_compressed.data(), pk.data());
-  assert(result);
+  if (!Hacl_P256_compressed_to_raw(pk_compressed.data(), pk.data())) {
+    state.SkipWithError("Invalid public key");
+    return;
+  }
 
   bytes signature(64);
   bytes msg = hex_to_bytes(
@@ -94,15 +103,17 @@ P256_SHA256_ECDSA_Verify(benchmark::State& state)
   bytes nonce = hex_to_bytes(
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-  assert(Hacl_P256_ecdsa_sign_p256_sha2(
-    signature.data(), msg.size(), msg.data(), sk.data(), nonce.data()));
+  if (!Hacl_P256_ecdsa_sign_p256_sha2(
+        signature.data(), msg.size(), msg.data(), sk.data(), nonce.data())) {
+    state.SkipWithError("Error signing");
+    return;
+  }
 
+  bytes r(signature.begin(), signature.begin() + 32);
+  bytes s(signature.begin() + 32, signature.end());
   for (auto _ : state) {
-    bytes r(signature.begin(), signature.begin() + 32);
-    bytes s(signature.begin() + 32, signature.end());
-    bool result = Hacl_P256_ecdsa_verif_p256_sha2(
+    Hacl_P256_ecdsa_verif_p256_sha2(
       msg.size(), msg.data(), pk.data(), r.data(), s.data());
-    assert(result);
   }
 }
 
@@ -113,18 +124,19 @@ P256_ECDH(benchmark::State& state)
     "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93"
     "a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf");
   bytes plain_public_key(64);
-  assert(
-    Hacl_P256_uncompressed_to_raw(public_key.data(), plain_public_key.data()));
+  if (!Hacl_P256_uncompressed_to_raw(public_key.data(),
+                                     plain_public_key.data())) {
+    state.SkipWithError("Invalid P256 key");
+    return;
+  }
 
   bytes plain_private_key = hex_to_bytes(
     "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346");
 
   bytes shared(64);
-
   for (auto _ : state) {
-    bool result = Hacl_P256_dh_responder(
+    Hacl_P256_dh_responder(
       shared.data(), plain_public_key.data(), plain_private_key.data());
-    assert(result);
   }
 }
 
