@@ -121,13 +121,12 @@ HACL_Chacha20_32_encrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Chacha20_32_encrypt);
+BENCHMARK(HACL_Chacha20_32_encrypt)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
 HACL_Chacha20_Vec128_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec128_support()) {
     state.SkipWithError("No vec128 support");
     return;
@@ -147,14 +146,13 @@ HACL_Chacha20_Vec128_encrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Chacha20_Vec128_encrypt);
+BENCHMARK(HACL_Chacha20_Vec128_encrypt)->Setup(DoSetup);
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
 HACL_Chacha20_Vec256_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec256_support()) {
     state.SkipWithError("No vec256 support");
     return;
@@ -174,7 +172,7 @@ HACL_Chacha20_Vec256_encrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Chacha20_Vec256_encrypt);
+BENCHMARK(HACL_Chacha20_Vec256_encrypt)->Setup(DoSetup);
 #endif
 
 static void
@@ -184,7 +182,7 @@ EverCrypt_Chacha20_encrypt(benchmark::State& state)
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(EverCrypt_Chacha20_encrypt);
+BENCHMARK(EverCrypt_Chacha20_encrypt)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -227,7 +225,7 @@ OpenSSL_Chacha20_encrypt(benchmark::State& state)
   }
 }
 
-BENCHMARK(OpenSSL_Chacha20_encrypt);
+BENCHMARK(OpenSSL_Chacha20_encrypt)->Setup(DoSetup);
 #endif
 
 // TODO: decrypt (even though it should be the same we should measure it)

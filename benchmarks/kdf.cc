@@ -61,14 +61,12 @@ HACL_HKDF_BLAKE2b_32_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_BLAKE2b_32_extract_expand);
+BENCHMARK(HACL_HKDF_BLAKE2b_32_extract_expand)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
 HACL_HKDF_BLAKE2b_Vec256_extract_expand(benchmark::State& state)
 {
-  cpu_init();
-
   if (!vec256_support()) {
     state.SkipWithError("No VEC256 support.");
     return;
@@ -88,7 +86,7 @@ HACL_HKDF_BLAKE2b_Vec256_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_BLAKE2b_Vec256_extract_expand);
+BENCHMARK(HACL_HKDF_BLAKE2b_Vec256_extract_expand)->Setup(DoSetup);
 #endif
 
 static void
@@ -96,7 +94,6 @@ EverCrypt_HKDF_BLAKE2b_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_BLAKE2B_PRK_LEN];
 
-  cpu_init();
   while (state.KeepRunning()) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_Blake2B,
                            prk,
@@ -114,7 +111,7 @@ EverCrypt_HKDF_BLAKE2b_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_HKDF_BLAKE2b_extract_expand);
+BENCHMARK(EverCrypt_HKDF_BLAKE2b_extract_expand)->Setup(DoSetup);
 
 static void
 HACL_HKDF_BLAKE2s_32_extract_expand(benchmark::State& state)
@@ -133,14 +130,12 @@ HACL_HKDF_BLAKE2s_32_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_BLAKE2s_32_extract_expand);
+BENCHMARK(HACL_HKDF_BLAKE2s_32_extract_expand)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
 HACL_HKDF_BLAKE2s_Vec128_extract_expand(benchmark::State& state)
 {
-  cpu_init();
-
   if (!vec128_support()) {
     state.SkipWithError("No VEC128 support.");
     return;
@@ -160,7 +155,7 @@ HACL_HKDF_BLAKE2s_Vec128_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_BLAKE2s_Vec128_extract_expand);
+BENCHMARK(HACL_HKDF_BLAKE2s_Vec128_extract_expand)->Setup(DoSetup);
 #endif
 
 static void
@@ -168,7 +163,6 @@ EverCrypt_HKDF_BLAKE2s_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_BLAKE2S_PRK_LEN];
 
-  cpu_init();
   while (state.KeepRunning()) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_Blake2S,
                            prk,
@@ -186,7 +180,7 @@ EverCrypt_HKDF_BLAKE2s_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_HKDF_BLAKE2s_extract_expand);
+BENCHMARK(EverCrypt_HKDF_BLAKE2s_extract_expand)->Setup(DoSetup);
 
 static void
 HACL_HKDF_SHA2_256_extract_expand(benchmark::State& state)
@@ -205,14 +199,13 @@ HACL_HKDF_SHA2_256_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_SHA2_256_extract_expand);
+BENCHMARK(HACL_HKDF_SHA2_256_extract_expand)->Setup(DoSetup);
 
 static void
 EverCrypt_HKDF_SHA2_256_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_SHA2_256_PRK_LEN];
 
-  cpu_init();
   while (state.KeepRunning()) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_SHA2_256,
                            prk,
@@ -230,7 +223,7 @@ EverCrypt_HKDF_SHA2_256_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_HKDF_SHA2_256_extract_expand);
+BENCHMARK(EverCrypt_HKDF_SHA2_256_extract_expand)->Setup(DoSetup);
 
 static void
 HACL_HKDF_SHA2_512_extract_expand(benchmark::State& state)
@@ -249,14 +242,13 @@ HACL_HKDF_SHA2_512_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_HKDF_SHA2_512_extract_expand);
+BENCHMARK(HACL_HKDF_SHA2_512_extract_expand)->Setup(DoSetup);
 
 static void
 EverCrypt_HKDF_SHA2_512_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_SHA2_512_PRK_LEN];
 
-  cpu_init();
   while (state.KeepRunning()) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_SHA2_512,
                            prk,
@@ -274,6 +266,6 @@ EverCrypt_HKDF_SHA2_512_extract_expand(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_HKDF_SHA2_512_extract_expand);
+BENCHMARK(EverCrypt_HKDF_SHA2_512_extract_expand)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

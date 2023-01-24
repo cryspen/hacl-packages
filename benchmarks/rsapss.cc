@@ -55,9 +55,12 @@ HACL_Rsapss_sign(benchmark::State& state, Args&&... args)
   free(e);
 }
 
-BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_256, Spec_Hash_Definitions_SHA2_256);
-BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_384, Spec_Hash_Definitions_SHA2_384);
-BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_512, Spec_Hash_Definitions_SHA2_512);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
 
 template<class... Args>
 void
@@ -114,8 +117,11 @@ HACL_Rsapss_verify(benchmark::State& state, Args&&... args)
   free(e);
 }
 
-BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_256, Spec_Hash_Definitions_SHA2_256);
-BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_384, Spec_Hash_Definitions_SHA2_384);
-BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_512, Spec_Hash_Definitions_SHA2_512);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
 
 BENCHMARK_MAIN();

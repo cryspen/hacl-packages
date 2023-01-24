@@ -59,7 +59,7 @@ HACL_P256_SHA256_ECDSA_Sign(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_P256_SHA256_ECDSA_Sign);
+BENCHMARK(HACL_P256_SHA256_ECDSA_Sign)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -124,7 +124,7 @@ OpenSSL_P256_ECDSA_Sign(benchmark::State& state)
   EVP_PKEY_free(ppkey);
 }
 
-BENCHMARK(OpenSSL_P256_ECDSA_Sign);
+BENCHMARK(OpenSSL_P256_ECDSA_Sign)->Setup(DoSetup);
 #endif
 
 static void
@@ -185,7 +185,7 @@ HACL_P256_SHA256_ECDSA_Verify(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_P256_SHA256_ECDSA_Verify);
+BENCHMARK(HACL_P256_SHA256_ECDSA_Verify)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -258,7 +258,7 @@ OpenSSL_P256_ECDSA_Verify(benchmark::State& state)
   EVP_PKEY_free(ppkey);
 }
 
-BENCHMARK(OpenSSL_P256_ECDSA_Verify);
+BENCHMARK(OpenSSL_P256_ECDSA_Verify)->Setup(DoSetup);
 #endif
 
 static void
@@ -284,7 +284,7 @@ HACL_P256_ECDH(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_P256_ECDH);
+BENCHMARK(HACL_P256_ECDH)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -315,7 +315,7 @@ OpenSSL_P256_ECDH(benchmark::State& state)
   EC_KEY_free(sk_b);
 }
 
-BENCHMARK(OpenSSL_P256_ECDH);
+BENCHMARK(OpenSSL_P256_ECDH)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

@@ -46,7 +46,7 @@ HACL_Ed25519_Sign(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Ed25519_Sign);
+BENCHMARK(HACL_Ed25519_Sign)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -69,7 +69,7 @@ OpenSSL_Ed25519_Sign(benchmark::State& state)
   EVP_PKEY_free(pkey);
 }
 
-BENCHMARK(OpenSSL_Ed25519_Sign);
+BENCHMARK(OpenSSL_Ed25519_Sign)->Setup(DoSetup);
 #endif
 
 static void
@@ -86,7 +86,7 @@ HACL_Ed25519_Verify(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Ed25519_Verify);
+BENCHMARK(HACL_Ed25519_Verify)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -126,7 +126,7 @@ OpenSSL_Ed25519_Verify(benchmark::State& state)
   EVP_MD_CTX_free(md_ctx_sign);
 }
 
-BENCHMARK(OpenSSL_Ed25519_Verify);
+BENCHMARK(OpenSSL_Ed25519_Verify)->Setup(DoSetup);
 #endif
 
 static void
@@ -142,6 +142,6 @@ HACL_Ed25519_Sign_Precomputed(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_Ed25519_Sign_Precomputed);
+BENCHMARK(HACL_Ed25519_Sign_Precomputed)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

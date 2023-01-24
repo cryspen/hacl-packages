@@ -16,7 +16,7 @@ Hacl_Sha1_oneshot(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha1_oneshot);
+BENCHMARK(Hacl_Sha1_oneshot)->Setup(DoSetup);
 
 static void
 Hacl_Sha1_streaming(benchmark::State& state)
@@ -41,6 +41,6 @@ Hacl_Sha1_streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha1_streaming);
+BENCHMARK(Hacl_Sha1_streaming)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

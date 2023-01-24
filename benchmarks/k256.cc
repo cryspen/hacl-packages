@@ -48,7 +48,7 @@ HACL_K256_ECDSA_Sign(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDSA_Sign);
+BENCHMARK(HACL_K256_ECDSA_Sign)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -114,7 +114,7 @@ OpenSSL_K256_ECDSA_Sign(benchmark::State& state)
   EVP_PKEY_free(ppkey);
 }
 
-BENCHMARK(OpenSSL_K256_ECDSA_Sign);
+BENCHMARK(OpenSSL_K256_ECDSA_Sign)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ HACL_K256_ECDSA_Sign_Normalized(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDSA_Sign_Normalized);
+BENCHMARK(HACL_K256_ECDSA_Sign_Normalized)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -166,7 +166,7 @@ OpenSSL_K256_ECDSA_Sign_Normalized(benchmark::State& state)
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(OpenSSL_K256_ECDSA_Sign_Normalized);
+BENCHMARK(OpenSSL_K256_ECDSA_Sign_Normalized)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ HACL_K256_ECDSA_Verify(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDSA_Verify);
+BENCHMARK(HACL_K256_ECDSA_Verify)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -289,7 +289,7 @@ Openssl_K256_ECDSA_Verify(benchmark::State& state)
   EVP_PKEY_free(ppkey);
 }
 
-BENCHMARK(Openssl_K256_ECDSA_Verify);
+BENCHMARK(Openssl_K256_ECDSA_Verify)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -339,7 +339,7 @@ HACL_K256_ECDSA_Verify_Normalized(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDSA_Verify_Normalized);
+BENCHMARK(HACL_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -349,7 +349,7 @@ Openssl_K256_ECDSA_Verify_Normalized(benchmark::State& state)
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(Openssl_K256_ECDSA_Verify_Normalized);
+BENCHMARK(Openssl_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -381,7 +381,7 @@ HACL_K256_ECDH(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDH);
+BENCHMARK(HACL_K256_ECDH)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -412,7 +412,7 @@ Openssl_K256_ECDH(benchmark::State& state)
   EC_KEY_free(sk_b);
 }
 
-BENCHMARK(Openssl_K256_ECDH);
+BENCHMARK(Openssl_K256_ECDH)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -442,7 +442,7 @@ HACL_K256_ECDH_NoCompress(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_K256_ECDH_NoCompress);
+BENCHMARK(HACL_K256_ECDH_NoCompress)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -452,7 +452,7 @@ Openssl_K256_ECDH_NoCompress(benchmark::State& state)
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(Openssl_K256_ECDH_NoCompress);
+BENCHMARK(Openssl_K256_ECDH_NoCompress)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

@@ -48,13 +48,12 @@ HACL_x25519_51(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_x25519_51);
+BENCHMARK(HACL_x25519_51)->Setup(DoSetup);
 
 #if HACL_CAN_COMPILE_VALE
 static void
 HACL_x25519_64(benchmark::State& state)
 {
-  cpu_init();
   if (!vale_x25519_support()) {
     state.SkipWithError("No vec256 support");
     return;
@@ -75,14 +74,12 @@ HACL_x25519_64(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_x25519_64);
+BENCHMARK(HACL_x25519_64)->Setup(DoSetup);
 #endif
 
 static void
 EverCrypt_x25519(benchmark::State& state)
 {
-  EverCrypt_AutoConfig2_init();
-
   bytes x, y, pk_x, expected_res;
   setup(x, y, pk_x, expected_res);
   bytes pk(32);
@@ -98,7 +95,7 @@ EverCrypt_x25519(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_x25519);
+BENCHMARK(EverCrypt_x25519)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -140,7 +137,7 @@ OpenSSL_x25519(benchmark::State& state)
   EVP_PKEY_CTX_free(pctx_b);
 }
 
-BENCHMARK(OpenSSL_x25519);
+BENCHMARK(OpenSSL_x25519)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -161,13 +158,12 @@ HACL_x25519_51_base(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_x25519_51_base);
+BENCHMARK(HACL_x25519_51_base)->Setup(DoSetup);
 
 #if HACL_CAN_COMPILE_VALE
 static void
 HACL_x25519_64_base(benchmark::State& state)
 {
-  cpu_init();
   if (!vale_x25519_support()) {
     state.SkipWithError("No vec256 support");
     return;
@@ -186,7 +182,7 @@ HACL_x25519_64_base(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_x25519_64_base);
+BENCHMARK(HACL_x25519_64_base)->Setup(DoSetup);
 #endif
 
 static void
@@ -205,7 +201,7 @@ EverCrypt_x25519_base(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_x25519_base);
+BENCHMARK(EverCrypt_x25519_base)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -215,7 +211,7 @@ OpenSSL_x25519_base(benchmark::State& state)
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(OpenSSL_x25519_base);
+BENCHMARK(OpenSSL_x25519_base)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();
