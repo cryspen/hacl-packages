@@ -220,7 +220,7 @@ BENCHMARK(HACL_K256_ECDSA_Verify)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_K256_ECDSA_Verify(benchmark::State& state)
+OpenSSL_K256_ECDSA_Verify(benchmark::State& state)
 {
   // Generate low level keys first.
   EC_KEY* sk_a = EC_KEY_new_by_curve_name(NID_secp256k1);
@@ -289,7 +289,7 @@ Openssl_K256_ECDSA_Verify(benchmark::State& state)
   EVP_PKEY_free(ppkey);
 }
 
-BENCHMARK(Openssl_K256_ECDSA_Verify)->Setup(DoSetup);
+BENCHMARK(OpenSSL_K256_ECDSA_Verify)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -343,13 +343,13 @@ BENCHMARK(HACL_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_K256_ECDSA_Verify_Normalized(benchmark::State& state)
+OpenSSL_K256_ECDSA_Verify_Normalized(benchmark::State& state)
 {
   // TODO
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(Openssl_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
+BENCHMARK(OpenSSL_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -385,7 +385,7 @@ BENCHMARK(HACL_K256_ECDH)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_K256_ECDH(benchmark::State& state)
+OpenSSL_K256_ECDH(benchmark::State& state)
 {
   // XXX: Note that the EC_ APIs are deprecated in OpenSSL 3.
   //      We ignore this for now though.
@@ -412,7 +412,7 @@ Openssl_K256_ECDH(benchmark::State& state)
   EC_KEY_free(sk_b);
 }
 
-BENCHMARK(Openssl_K256_ECDH)->Setup(DoSetup);
+BENCHMARK(OpenSSL_K256_ECDH)->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -446,13 +446,13 @@ BENCHMARK(HACL_K256_ECDH_NoCompress)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_K256_ECDH_NoCompress(benchmark::State& state)
+OpenSSL_K256_ECDH_NoCompress(benchmark::State& state)
 {
   // TODO
   state.SkipWithError("Unimplemented");
 }
 
-BENCHMARK(Openssl_K256_ECDH_NoCompress)->Setup(DoSetup);
+BENCHMARK(OpenSSL_K256_ECDH_NoCompress)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();
