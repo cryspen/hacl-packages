@@ -175,14 +175,8 @@ HACL_Chacha20_Vec256_encrypt(benchmark::State& state)
 BENCHMARK(HACL_Chacha20_Vec256_encrypt)->Setup(DoSetup);
 #endif
 
-static void
-EverCrypt_Chacha20_encrypt(benchmark::State& state)
-{
-  // TODO
-  state.SkipWithError("Unimplemented");
-}
-
-BENCHMARK(EverCrypt_Chacha20_encrypt)->Setup(DoSetup);
+// EverCrypt_Chacha20_encrypt
+// Not supported in EverCrypt.
 
 #ifndef NO_OPENSSL
 static void
