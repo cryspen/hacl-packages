@@ -5,7 +5,6 @@
  *    - http://www.apache.org/licenses/LICENSE-2.0
  *    - http://opensource.org/licenses/MIT
  */
-#include "util.h"
 
 #include "Hacl_Chacha20Poly1305_32.h"
 #ifdef HACL_CAN_COMPILE_VEC128
@@ -14,6 +13,10 @@
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Chacha20Poly1305_256.h"
 #endif
+
+#include "EverCrypt_AEAD.h"
+
+#include "util.h"
 
 const int INPUT_LEN = 1000;
 
@@ -185,8 +188,32 @@ BENCHMARK(HACL_Chacha20Poly1305_Vec256_encrypt)->Setup(DoSetup);
 static void
 EverCrypt_Chacha20Poly1305_encrypt(benchmark::State& state)
 {
-  // TODO
-  state.SkipWithError("Unimplemented");
+  for (auto _ : state) {
+    EverCrypt_AEAD_state_s* ctx;
+    EverCrypt_Error_error_code res = EverCrypt_AEAD_create_in(
+      Spec_Agile_AEAD_CHACHA20_POLY1305, &ctx, key.data());
+
+    if (res != EverCrypt_Error_Success) {
+      state.SkipWithError("Could not allocate AEAD state.");
+      break;
+    }
+
+    EverCrypt_AEAD_encrypt(ctx,
+                           nonce.data(),
+                           nonce.size(),
+                           aad.data(),
+                           aad.size(),
+                           plaintext.data(),
+                           INPUT_LEN,
+                           ciphertext.data(),
+                           mac.data());
+
+    EverCrypt_AEAD_free(ctx);
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
+  }
 }
 
 BENCHMARK(EverCrypt_Chacha20Poly1305_encrypt)->Setup(DoSetup);
