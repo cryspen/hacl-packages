@@ -14,49 +14,49 @@ static bytes digest_shake(42, 0);
 static void
 Hacl_Sha3_224(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_sha3_224(input.size(), input.data(), digest224.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_224);
+BENCHMARK(Hacl_Sha3_224)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_256(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_sha3_256(input.size(), input.data(), digest256.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_256);
+BENCHMARK(Hacl_Sha3_256)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_384(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_sha3_384(input.size(), input.data(), digest384.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_384);
+BENCHMARK(Hacl_Sha3_384)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_512(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_sha3_512(input.size(), input.data(), digest512.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_512);
+BENCHMARK(Hacl_Sha3_512)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_256_Streaming(benchmark::State& state)
 {
   size_t chunk_len = 135;
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA2_state_sha2_384* sha_state =
       Hacl_Streaming_SHA3_create_in_256();
@@ -75,28 +75,28 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_256_Streaming);
+BENCHMARK(Hacl_Sha3_256_Streaming)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_shake128(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_shake128_hacl(
       input.size(), input.data(), digest_shake.size(), digest_shake.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_shake128);
+BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_shake256(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_SHA3_shake256_hacl(
       input.size(), input.data(), digest_shake.size(), digest_shake.data());
   }
 }
 
-BENCHMARK(Hacl_Sha3_shake256);
+BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

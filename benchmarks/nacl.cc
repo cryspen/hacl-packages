@@ -24,13 +24,13 @@ static bytes k(HACL_NACL_BEFORENMBYTES, 0);
 static bytes key(HACL_NACL_KEYBYTES, 0);
 
 static void
-Hacl_NaCl_oneshot_combined(benchmark::State& state)
+HACL_NaCl_oneshot_combined(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_easy(ciphertext.data(),
                               plaintext.data(),
                               plaintext.size(),
@@ -47,16 +47,16 @@ Hacl_NaCl_oneshot_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_oneshot_combined);
+BENCHMARK(HACL_NaCl_oneshot_combined)->Setup(DoSetup);
 
 static void
-Hacl_NaCl_oneshot_detached(benchmark::State& state)
+HACL_NaCl_oneshot_detached(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_detached(ciphertext.data(),
                                   tag.data(),
                                   plaintext.data(),
@@ -75,18 +75,18 @@ Hacl_NaCl_oneshot_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_oneshot_detached);
+BENCHMARK(HACL_NaCl_oneshot_detached)->Setup(DoSetup);
 
 static void
-Hacl_NaCl_precomputed_combined(benchmark::State& state)
+HACL_NaCl_precomputed_combined(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
-    Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
+  Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
 
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_easy_afternm(ciphertext.data(),
                                       plaintext.data(),
                                       plaintext.size(),
@@ -101,18 +101,18 @@ Hacl_NaCl_precomputed_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_precomputed_combined);
+BENCHMARK(HACL_NaCl_precomputed_combined)->Setup(DoSetup);
 
 static void
-Hacl_NaCl_precomputed_detached(benchmark::State& state)
+HACL_NaCl_precomputed_detached(benchmark::State& state)
 {
   crypto_box_keypair_alice(alice_sk.data(), alice_pk.data());
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
-    Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
+  Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
 
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_detached_afternm(ciphertext.data(),
                                           tag.data(),
                                           plaintext.data(),
@@ -129,15 +129,15 @@ Hacl_NaCl_precomputed_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_precomputed_detached);
+BENCHMARK(HACL_NaCl_precomputed_detached)->Setup(DoSetup);
 
 static void
-Hacl_NaCl_secret_easy(benchmark::State& state)
+HACL_NaCl_secret_easy(benchmark::State& state)
 {
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_secretbox_easy(ciphertext.data(),
                                     plaintext.data(),
                                     plaintext.size(),
@@ -152,15 +152,15 @@ Hacl_NaCl_secret_easy(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_secret_easy);
+BENCHMARK(HACL_NaCl_secret_easy)->Setup(DoSetup);
 
 static void
-Hacl_NaCl_secret_detached(benchmark::State& state)
+HACL_NaCl_secret_detached(benchmark::State& state)
 {
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_secretbox_detached(ciphertext.data(),
                                         tag.data(),
                                         plaintext.data(),
@@ -177,6 +177,6 @@ Hacl_NaCl_secret_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_NaCl_secret_detached);
+BENCHMARK(HACL_NaCl_secret_detached)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

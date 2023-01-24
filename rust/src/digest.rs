@@ -277,7 +277,7 @@ const fn is_unsupported_sha3(alg: Algorithm) -> bool {
 pub struct Digest {
     mode: Algorithm,
     finished: bool,
-    c_state: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
+    c_state: *mut EverCrypt_Hash_Incremental_hash_state,
 }
 
 impl Digest {
@@ -292,7 +292,7 @@ impl Digest {
             EverCrypt_AutoConfig2_init();
         }
 
-        let c_state: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____ =
+        let c_state: *mut EverCrypt_Hash_Incremental_hash_state =
             unsafe { EverCrypt_Hash_Incremental_create_in(alg.into()) };
         Ok(Self {
             mode: alg,
@@ -365,7 +365,7 @@ macro_rules! define_plain_digest {
                     Hacl_SHA3_sha3_512(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
                 },
                 _ => unsafe {
-                    EverCrypt_Hash_hash(
+                    EverCrypt_Hash_Incremental_hash(
                         $version.into(),
                         out.as_mut_ptr(),
                         data.as_ptr() as _,

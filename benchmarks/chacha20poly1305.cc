@@ -5,7 +5,6 @@
  *    - http://www.apache.org/licenses/LICENSE-2.0
  *    - http://opensource.org/licenses/MIT
  */
-#include "util.h"
 
 #include "Hacl_Chacha20Poly1305_32.h"
 #ifdef HACL_CAN_COMPILE_VEC128
@@ -14,6 +13,10 @@
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Chacha20Poly1305_256.h"
 #endif
+
+#include "EverCrypt_AEAD.h"
+
+#include "util.h"
 
 const int INPUT_LEN = 1000;
 
@@ -105,11 +108,10 @@ static bytes expected_ciphertext = {
   0xab, 0x46, 0xe8, 0x6e, 0x6a, 0x03, 0xc6, 0x19, 0x2e, 0x47, 0x1e, 0xf5
 };
 
-// ChachaPoly non-vectorized
 static void
-Chacha20Poly1305_32_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_32_encrypt(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_32_aead_encrypt(key.data(),
                                           nonce.data(),
                                           aad.size(),
@@ -118,26 +120,25 @@ Chacha20Poly1305_32_encrypt(benchmark::State& state)
                                           plaintext.data(),
                                           ciphertext.data(),
                                           mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
-BENCHMARK(Chacha20Poly1305_32_encrypt);
 
-// ChachaPoly Vec128
+BENCHMARK(HACL_Chacha20Poly1305_32_encrypt)->Setup(DoSetup);
+
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
-Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec128_support()) {
     state.SkipWithError("No vec128 support");
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_128_aead_decrypt(key.data(),
                                            nonce.data(),
                                            aad.size(),
@@ -146,27 +147,26 @@ Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
                                            plaintext.data(),
                                            ciphertext.data(),
                                            mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
-BENCHMARK(Chacha20Poly1305_Vec128_encrypt);
-#endif // HACL_CAN_COMPILE_VEC128
 
-// ChachaPoly Vec256
+BENCHMARK(HACL_Chacha20Poly1305_Vec128_encrypt)->Setup(DoSetup);
+#endif
+
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
+HACL_Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec256_support()) {
     state.SkipWithError("No vec256 support");
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_256_aead_encrypt(key.data(),
                                            nonce.data(),
                                            aad.size(),
@@ -175,18 +175,52 @@ Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
                                            plaintext.data(),
                                            ciphertext.data(),
                                            mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
-BENCHMARK(Chacha20Poly1305_Vec256_encrypt);
-#endif // HACL_CAN_COMPILE_VEC256
+
+BENCHMARK(HACL_Chacha20Poly1305_Vec256_encrypt)->Setup(DoSetup);
+#endif
+
+static void
+EverCrypt_Chacha20Poly1305_encrypt(benchmark::State& state)
+{
+  for (auto _ : state) {
+    EverCrypt_AEAD_state_s* ctx;
+    EverCrypt_Error_error_code res = EverCrypt_AEAD_create_in(
+      Spec_Agile_AEAD_CHACHA20_POLY1305, &ctx, key.data());
+
+    if (res != EverCrypt_Error_Success) {
+      state.SkipWithError("Could not allocate AEAD state.");
+      break;
+    }
+
+    EverCrypt_AEAD_encrypt(ctx,
+                           nonce.data(),
+                           nonce.size(),
+                           aad.data(),
+                           aad.size(),
+                           plaintext.data(),
+                           INPUT_LEN,
+                           ciphertext.data(),
+                           mac.data());
+
+    EverCrypt_AEAD_free(ctx);
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
+  }
+}
+
+BENCHMARK(EverCrypt_Chacha20Poly1305_encrypt)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
-Openssl_Chacha20Poly1305(benchmark::State& state)
+OpenSSL_Chacha20Poly1305_encrypt(benchmark::State& state)
 {
   // For OpenSSL we need to prepend the counter to the nonce.
   openssl_nonce[0] = 0;
@@ -194,7 +228,7 @@ Openssl_Chacha20Poly1305(benchmark::State& state)
   openssl_nonce[2] = 0;
   openssl_nonce[3] = 0;
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     int out_len, unused_len;
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     int result = EVP_EncryptInit_ex2(
@@ -224,13 +258,14 @@ Openssl_Chacha20Poly1305(benchmark::State& state)
       break;
     }
     EVP_CIPHER_CTX_free(ctx);
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
-BENCHMARK(Openssl_Chacha20Poly1305);
+
+BENCHMARK(OpenSSL_Chacha20Poly1305_encrypt)->Setup(DoSetup);
 #endif
 
 // TODO: decrypt (even though it should be the same we should measure it)

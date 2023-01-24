@@ -13,9 +13,13 @@
 
 static bytes msg = from_hex("CAFECAFECAFECAFE");
 
-static void
-Rsapss_sign(benchmark::State& state)
+template<class... Args>
+void
+HACL_Rsapss_sign(benchmark::State& state, Args&&... args)
 {
+  auto args_tuple = std::make_tuple(std::move(args)...);
+  Spec_Hash_Definitions_hash_alg algorithm = std::get<0>(args_tuple);
+
   uint8_t* e;
   uint32_t eBits;
   uint8_t* d;
@@ -26,41 +30,45 @@ Rsapss_sign(benchmark::State& state)
   uint64_t* skey =
     Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
 
-  uint32_t saltLen = Hacl_Hash_Definitions_hash_len(state.range(0));
-  uint8_t* salt = (uint8_t*)malloc(saltLen);
+  uint32_t saltLen = Hacl_Hash_Definitions_hash_len(algorithm);
+  bytes salt(saltLen);
 
   uint32_t sgntLen = modBits / 8;
-  uint8_t* sgnt = (uint8_t*)malloc(sgntLen);
+  bytes sgnt(sgntLen);
 
   for (auto _ : state) {
-    Hacl_RSAPSS_rsapss_sign(state.range(0),
+    Hacl_RSAPSS_rsapss_sign(algorithm,
                             modBits,
                             eBits,
                             dBits,
                             skey,
                             saltLen,
-                            salt,
+                            salt.data(),
                             msg.size(),
                             msg.data(),
-                            sgnt);
+                            sgnt.data());
   }
 
-  free(sgnt);
-  free(salt);
   free(skey);
   free(mod);
   free(d);
   free(e);
 }
 
-BENCHMARK(Rsapss_sign)
-  ->Arg(Spec_Hash_Definitions_SHA2_256)
-  ->Arg(Spec_Hash_Definitions_SHA2_384)
-  ->Arg(Spec_Hash_Definitions_SHA2_512);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_sign, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
 
-static void
-Rsapss_verify(benchmark::State& state)
+template<class... Args>
+void
+HACL_Rsapss_verify(benchmark::State& state, Args&&... args)
 {
+  auto args_tuple = std::make_tuple(std::move(args)...);
+  Spec_Hash_Definitions_hash_alg algorithm = std::get<0>(args_tuple);
+
   uint8_t* e;
   uint32_t eBits;
   uint8_t* d;
@@ -71,49 +79,49 @@ Rsapss_verify(benchmark::State& state)
   uint64_t* skey =
     Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
 
-  uint32_t saltLen = Hacl_Hash_Definitions_hash_len(state.range(0));
-  uint8_t* salt = (uint8_t*)malloc(saltLen);
+  uint32_t saltLen = Hacl_Hash_Definitions_hash_len(algorithm);
+  bytes salt(saltLen);
 
   uint32_t sgntLen = modBits / 8;
-  uint8_t* sgnt = (uint8_t*)malloc(sgntLen);
+  bytes sgnt(sgntLen);
 
-  Hacl_RSAPSS_rsapss_sign(state.range(0),
+  Hacl_RSAPSS_rsapss_sign(algorithm,
                           modBits,
                           eBits,
                           dBits,
                           skey,
                           saltLen,
-                          salt,
+                          salt.data(),
                           msg.size(),
                           msg.data(),
-                          sgnt);
+                          sgnt.data());
 
   uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(modBits, eBits, mod, e);
 
   for (auto _ : state) {
-    Hacl_RSAPSS_rsapss_verify(state.range(0),
+    Hacl_RSAPSS_rsapss_verify(algorithm,
                               modBits,
                               eBits,
                               pkey,
                               saltLen,
                               sgntLen,
-                              sgnt,
+                              sgnt.data(),
                               msg.size(),
                               msg.data());
   }
 
   free(pkey);
-  free(sgnt);
-  free(salt);
   free(skey);
   free(mod);
   free(d);
   free(e);
 }
 
-BENCHMARK(Rsapss_verify)
-  ->Arg(Spec_Hash_Definitions_SHA2_256)
-  ->Arg(Spec_Hash_Definitions_SHA2_384)
-  ->Arg(Spec_Hash_Definitions_SHA2_512);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Rsapss_verify, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
 
 BENCHMARK_MAIN();

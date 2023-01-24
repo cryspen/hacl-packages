@@ -17,9 +17,13 @@ static bytes personalization_string =
 static bytes additional_input = from_hex("1CA8F61C");
 static bytes output(128);
 
-inline void
-Drbg_complete(benchmark::State& state, Spec_Hash_Definitions_hash_alg algorithm)
+template<class... Args>
+void
+HACL_Drbg_complete(benchmark::State& state, Args&&... args)
 {
+  auto args_tuple = std::make_tuple(std::move(args)...);
+  Spec_Hash_Definitions_hash_alg algorithm = std::get<0>(args_tuple);
+
   for (auto _ : state) {
     Hacl_HMAC_DRBG_state state = Hacl_HMAC_DRBG_create_in(algorithm);
     Hacl_HMAC_DRBG_instantiate(algorithm,
@@ -38,44 +42,17 @@ Drbg_complete(benchmark::State& state, Spec_Hash_Definitions_hash_alg algorithm)
                             additional_input.size(),
                             additional_input.data());
 
-    Hacl_HMAC_DRBG_free(Spec_Hash_Definitions_SHA2_256, state);
+    Hacl_HMAC_DRBG_free(algorithm, state);
   }
 }
 
-// ----- SHA-2 256 -------------------------------------------------------------
-
-static void Drbg_SHA2_256_complete(benchmark::State& state)
-{
-  Drbg_complete(state, Spec_Hash_Definitions_SHA2_256);
-}
-
-BENCHMARK(Drbg_SHA2_256_complete);
-
-// ----- SHA-2 384 -------------------------------------------------------------
-
-static void Drbg_SHA2_384_complete(benchmark::State& state)
-{
-  Drbg_complete(state, Spec_Hash_Definitions_SHA2_384);
-}
-
-BENCHMARK(Drbg_SHA2_384_complete);
-
-// ----- SHA-2 512 -------------------------------------------------------------
-
-static void Drbg_SHA2_512_complete(benchmark::State& state)
-{
-  Drbg_complete(state, Spec_Hash_Definitions_SHA2_512);
-}
-
-BENCHMARK(Drbg_SHA2_512_complete);
-
-// ----- SHA-1 -----------------------------------------------------------------
-
-static void Drbg_SHA1_complete(benchmark::State& state)
-{
-  Drbg_complete(state, Spec_Hash_Definitions_SHA1);
-}
-
-BENCHMARK(Drbg_SHA1_complete);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha1, Spec_Hash_Definitions_SHA1)
+  ->Setup(DoSetup);
 
 BENCHMARK_MAIN();

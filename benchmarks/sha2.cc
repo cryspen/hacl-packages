@@ -32,7 +32,7 @@ Sha2_224_Streaming(benchmark::State& state)
   Hacl_Hash_SHA2_hash_224(
     input.data(), input.size(), non_streaming_digest224.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA2_state_sha2_224* sha_state =
       Hacl_Streaming_SHA2_create_in_224();
@@ -63,7 +63,7 @@ Sha2_256_Streaming(benchmark::State& state)
   Hacl_Hash_SHA2_hash_256(
     input.data(), input.size(), non_streaming_digest256.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA2_state_sha2_224* sha_state =
       Hacl_Streaming_SHA2_create_in_256();
@@ -94,7 +94,7 @@ Sha2_384_Streaming(benchmark::State& state)
   Hacl_Hash_SHA2_hash_384(
     input.data(), input.size(), non_streaming_digest384.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA2_state_sha2_384* sha_state =
       Hacl_Streaming_SHA2_create_in_384();
@@ -125,7 +125,7 @@ Sha2_512_Streaming(benchmark::State& state)
   Hacl_Hash_SHA2_hash_512(
     input.data(), input.size(), non_streaming_digest512.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA2_state_sha2_512* sha_state =
       Hacl_Streaming_SHA2_create_in_512();
@@ -148,23 +148,20 @@ Sha2_512_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Sha2_224_Streaming);
-BENCHMARK(Sha2_256_Streaming);
-BENCHMARK(Sha2_384_Streaming);
-BENCHMARK(Sha2_512_Streaming);
+BENCHMARK(Sha2_224_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_256_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_384_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_512_Streaming)->Setup(DoSetup);
 
 static void
 Sha2_256(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Hash_SHA2_hash_256(input.data(), input.size(), digest256.data());
   }
 }
 
-BENCHMARK(Sha2_256);
-
-typedef Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____
-  EverCrypt_Streaming_Hash_state;
+BENCHMARK(Sha2_256)->Setup(DoSetup);
 
 static void
 EverCrypt_Sha2_256_Streaming(benchmark::State& state)
@@ -175,9 +172,9 @@ EverCrypt_Sha2_256_Streaming(benchmark::State& state)
   Hacl_Hash_SHA2_hash_256(
     input.data(), input.size(), non_streaming_digest256.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
-    EverCrypt_Streaming_Hash_state* sha_state =
+    EverCrypt_Hash_Incremental_hash_state* sha_state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_256);
     EverCrypt_Hash_Incremental_init(sha_state);
 
@@ -198,7 +195,7 @@ EverCrypt_Sha2_256_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_Sha2_256_Streaming);
+BENCHMARK(EverCrypt_Sha2_256_Streaming)->Setup(DoSetup);
 
 #ifdef LIBTOMCRYPT
 // LibTomCrypt Sha2
@@ -208,7 +205,7 @@ LibTomCrypt_Sha2_256(benchmark::State& state)
 {
   bytes hacl_digest256(32, 0);
   Hacl_Hash_SHA2_hash_256(input.data(), input.size(), hacl_digest256.data());
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     hash_state md;
     sha256_init(&md);
     int err = sha256_process(&md, input.data(), input.size());
@@ -220,7 +217,7 @@ LibTomCrypt_Sha2_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(LibTomCrypt_Sha2_256);
+BENCHMARK(LibTomCrypt_Sha2_256)->Setup(DoSetup);
 #endif
 
 #ifndef NO_OPENSSL
@@ -229,7 +226,7 @@ OpenSSL_Sha2_256(benchmark::State& state)
 {
   bytes hacl_digest256(32, 0);
   Hacl_Hash_SHA2_hash_256(input.data(), input.size(), hacl_digest256.data());
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     SHA256_CTX ctx;
     SHA256_Init(&ctx);
     SHA256_Update(&ctx, input.data(), input.size());
@@ -241,7 +238,7 @@ OpenSSL_Sha2_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(OpenSSL_Sha2_256);
+BENCHMARK(OpenSSL_Sha2_256)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

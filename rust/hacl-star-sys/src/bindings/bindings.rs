@@ -28,7 +28,6 @@ pub const EverCrypt_Error_AuthenticationFailure: u32 = 3;
 pub const EverCrypt_Error_InvalidIVLength: u32 = 4;
 pub const EverCrypt_Error_DecodeError: u32 = 5;
 pub const EverCrypt_Error_MaximumLengthExceeded: u32 = 6;
-pub type C_String_t = *const ::std::os::raw::c_char;
 pub type Spec_Hash_Definitions_hash_alg = u8;
 pub type Spec_FFDHE_ffdhe_alg = u8;
 pub type Spec_Agile_AEAD_alg = u8;
@@ -635,96 +634,27 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_update_last(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_update_key(
-        wv: *mut u64,
-        hash: *mut u64,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2b_32_blake2b(
-        nn: u32,
-        output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_key(
-        wv: *mut u32,
-        hash: *mut u32,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param a Hash function to use. Usually, the same as used in `EverCrypt_HKDF_extract`.\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from.\n@param infolen Length of context and application specific information. Can be 0.\n@param len Length of output keying material."]
+    pub fn EverCrypt_HKDF_expand(
+        a: Spec_Hash_Definitions_hash_alg,
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
         len: u32,
-        wv: *mut u32,
-        hash: *mut u32,
-        prev: u64,
-        blocks: *mut u8,
-        nb: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_last(
-        len: u32,
-        wv: *mut u32,
-        hash: *mut u32,
-        prev: u64,
-        rem: u32,
-        d: *mut u8,
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param a Hash function to use. The allowed values are:\n `Spec_Hash_Definitions_Blake2B` (`HashLen` = 64),\n `Spec_Hash_Definitions_Blake2S` (`HashLen` = 32),\n `Spec_Hash_Definitions_SHA2_256` (`HashLen` = 32),\n `Spec_Hash_Definitions_SHA2_384` (`HashLen` = 48),\n `Spec_Hash_Definitions_SHA2_512` (`HashLen` = 64), and\n `Spec_Hash_Definitions_SHA1` (`HashLen` = 20).\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n`HashLen` depends on the used algorithm `a`. See above.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn EverCrypt_HKDF_extract(
+        a: Spec_Hash_Definitions_hash_alg,
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
     );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2s_32_blake2s(
-        nn: u32,
-        output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
 }
 extern "C" {
     pub fn Hacl_SHA3_shake128_hacl(
@@ -753,6 +683,20 @@ extern "C" {
 }
 extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Hash_MD5_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
@@ -883,7 +827,82 @@ extern "C" {
     pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
 }
 extern "C" {
-    pub fn EverCrypt_Hash_string_of_alg(uu___: Spec_Hash_Definitions_hash_alg) -> C_String_t;
+    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_update_key(
+        wv: *mut u64,
+        hash: *mut u64,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_32_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_key(
+        wv: *mut u32,
+        hash: *mut u32,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_last(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_32_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -892,294 +911,58 @@ pub struct EverCrypt_Hash_state_s_s {
 }
 pub type EverCrypt_Hash_state_s = EverCrypt_Hash_state_s_s;
 extern "C" {
-    pub fn EverCrypt_Hash_uu___is_MD5_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA1_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_224_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_384_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA2_512_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_SHA3_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2S_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2S_128_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2B_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_uu___is_Blake2B_256_s(
-        uu___: Spec_Hash_Definitions_hash_alg,
-        projectee: EverCrypt_Hash_state_s,
-    ) -> bool;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_alg_of_state(
-        s: *mut EverCrypt_Hash_state_s,
-    ) -> Spec_Hash_Definitions_hash_alg;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_create_in(
-        a: Spec_Hash_Definitions_hash_alg,
-    ) -> *mut EverCrypt_Hash_state_s;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_create(a: Spec_Hash_Definitions_hash_alg) -> *mut EverCrypt_Hash_state_s;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_init(s: *mut EverCrypt_Hash_state_s);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_multi_256(s: *mut u32, blocks: *mut u8, n: u32);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_multi(
-        s: *mut EverCrypt_Hash_state_s,
-        prevlen: u64,
-        blocks: *mut u8,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_last_256(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_update_last(
-        s: *mut EverCrypt_Hash_state_s,
-        prev_len: u64,
-        last: *mut u8,
-        last_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_finish(s: *mut EverCrypt_Hash_state_s, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_free(s: *mut EverCrypt_Hash_state_s);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_copy(
-        s_src: *mut EverCrypt_Hash_state_s,
-        s_dst: *mut EverCrypt_Hash_state_s,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn EverCrypt_Hash_hash(
-        a: Spec_Hash_Definitions_hash_alg,
-        dst: *mut u8,
-        input: *mut u8,
-        len: u32,
-    );
-}
-extern "C" {
     pub fn EverCrypt_Hash_Incremental_hash_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_block_len(a: Spec_Hash_Definitions_hash_alg) -> u32;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s_____s {
+pub struct EverCrypt_Hash_Incremental_hash_state_s {
     pub block_state: *mut EverCrypt_Hash_state_s,
     pub buf: *mut u8,
     pub total_len: u64,
 }
-pub type Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____ =
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s_____s;
+pub type EverCrypt_Hash_Incremental_hash_state = EverCrypt_Hash_Incremental_hash_state_s;
 extern "C" {
+    #[doc = "Allocate initial state for the agile hash. The argument `a` stands for the\nchoice of algorithm (see Hacl_Spec.h). This API will automatically pick the most\nefficient implementation, provided you have called EverCrypt_AutoConfig2_init()\nbefore. The state is to be freed by calling `free`."]
     pub fn EverCrypt_Hash_Incremental_create_in(
         a: Spec_Hash_Definitions_hash_alg,
-    ) -> *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____;
+    ) -> *mut EverCrypt_Hash_Incremental_hash_state;
 }
 extern "C" {
-    pub fn EverCrypt_Hash_Incremental_init(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-    );
+    #[doc = "Reset an existing state to the initial hash state with empty data."]
+    pub fn EverCrypt_Hash_Incremental_init(s: *mut EverCrypt_Hash_Incremental_hash_state);
 }
 extern "C" {
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns\nEverCrypt_Error_Success for success, or EverCrypt_Error_MaximumLengthExceeded if\nthe combined length of all of the data passed to `update` (since the last call\nto `init`) exceeds 2^61-1 bytes or 2^64-1 bytes, depending on the choice of\nalgorithm. Both limits are unlikely to be attained in practice."]
     pub fn EverCrypt_Hash_Incremental_update(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
         data: *mut u8,
         len: u32,
     ) -> EverCrypt_Error_error_code;
 }
 extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_md5(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha1(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha224(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha256(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha3_256(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha384(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_sha512(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_blake2s(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_Hash_Incremental_finish_blake2b(
-        p: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-        dst: *mut u8,
-    );
-}
-extern "C" {
+    #[doc = "Perform a run-time test to determine which algorithm was chosen for the given piece of state."]
     pub fn EverCrypt_Hash_Incremental_alg_of_state(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
     ) -> Spec_Hash_Definitions_hash_alg;
 }
 extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array whose length is\nalgorithm-specific. You can use the macros defined earlier in this file to\nallocate a destination buffer of the right length. The state remains valid after\na call to `finish`, meaning the user may feed more data into the hash via\n`update`. (The finish function operates on an internal copy of the state and\ntherefore does not invalidate the client-held state.)"]
     pub fn EverCrypt_Hash_Incremental_finish(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
+        s: *mut EverCrypt_Hash_Incremental_hash_state,
         dst: *mut u8,
     );
 }
 extern "C" {
-    pub fn EverCrypt_Hash_Incremental_free(
-        s: *mut Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____,
-    );
+    #[doc = "Free a state previously allocated with `create_in`."]
+    pub fn EverCrypt_Hash_Incremental_free(s: *mut EverCrypt_Hash_Incremental_hash_state);
 }
 extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha1(
+    #[doc = "Hash `input`, of len `len`, into `dst`, an array whose length is determined by\nyour choice of algorithm `a` (see Hacl_Spec.h). You can use the macros defined\nearlier in this file to allocate a destination buffer of the right length. This\nAPI will automatically pick the most efficient implementation, provided you have\ncalled EverCrypt_AutoConfig2_init() before."]
+    pub fn EverCrypt_Hash_Incremental_hash(
+        a: Spec_Hash_Definitions_hash_alg,
         dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_256(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_384(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_sha2_512(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_blake2s(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HMAC_compute_blake2b(
-        dst: *mut u8,
-        key: *mut u8,
-        key_len: u32,
-        data: *mut u8,
-        data_len: u32,
+        input: *mut u8,
+        len: u32,
     );
 }
 extern "C" {
@@ -1193,143 +976,6 @@ extern "C" {
         keylen: u32,
         data: *mut u8,
         datalen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha1(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha1(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_256(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_256(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_384(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_384(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_sha2_512(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_sha2_512(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_blake2s(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_blake2s(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_expand_blake2b(
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    pub fn EverCrypt_HKDF_extract_blake2b(
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
-    );
-}
-extern "C" {
-    #[doc = "Expand pseudorandom key to desired length.\n\n@param a Hash function to use. Usually, the same as used in `EverCrypt_HKDF_extract`.\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from.\n@param infolen Length of context and application specific information. Can be 0.\n@param len Length of output keying material."]
-    pub fn EverCrypt_HKDF_expand(
-        a: Spec_Hash_Definitions_hash_alg,
-        okm: *mut u8,
-        prk: *mut u8,
-        prklen: u32,
-        info: *mut u8,
-        infolen: u32,
-        len: u32,
-    );
-}
-extern "C" {
-    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param a Hash function to use. The allowed values are:\n `Spec_Hash_Definitions_Blake2B` (`HashLen` = 64),\n `Spec_Hash_Definitions_Blake2S` (`HashLen` = 32),\n `Spec_Hash_Definitions_SHA2_256` (`HashLen` = 32),\n `Spec_Hash_Definitions_SHA2_384` (`HashLen` = 48),\n `Spec_Hash_Definitions_SHA2_512` (`HashLen` = 64), and\n `Spec_Hash_Definitions_SHA1` (`HashLen` = 20).\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n`HashLen` depends on the used algorithm `a`. See above.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
-    pub fn EverCrypt_HKDF_extract(
-        a: Spec_Hash_Definitions_hash_alg,
-        prk: *mut u8,
-        salt: *mut u8,
-        saltlen: u32,
-        ikm: *mut u8,
-        ikmlen: u32,
     );
 }
 extern "C" {

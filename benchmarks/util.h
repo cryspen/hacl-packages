@@ -61,6 +61,12 @@ cpu_init()
   EverCrypt_AutoConfig2_init();
 }
 
+static void
+DoSetup(const benchmark::State& state)
+{
+  cpu_init();
+}
+
 bool
 vec128_support()
 {
@@ -162,4 +168,31 @@ generate_rsapss_key(uint8_t** e,
   std::copy(_e.begin(), _e.end(), *e);
   std::copy(_d.begin(), _d.end(), *d);
   std::copy(_n.begin(), _n.end(), *n);
+}
+
+vector<bytes>
+chunk(bytes data, size_t chunk_size)
+{
+  vector<bytes> out(data.size() / chunk_size);
+
+  auto start = data.begin();
+  auto end = data.end();
+
+  while (start != end) {
+    auto next = distance(start, end) >= chunk_size ? start + chunk_size : end;
+
+    out.emplace_back(start, next);
+    start = next;
+  }
+
+  return out;
+}
+
+static void
+Range(benchmark::internal::Benchmark* b)
+{
+  b->Arg(0);
+  for (size_t i = 16; i <= 16 * 1024 * 1024; i = i * 16) {
+    b->Arg(i);
+  }
 }

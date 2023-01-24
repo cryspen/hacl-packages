@@ -104,11 +104,10 @@ static bytes expected_ciphertext = {
   0x94, 0xa9, 0x33, 0x6a, 0x08, 0x06, 0xce, 0x78, 0x88, 0x10, 0x0a, 0x2e
 };
 
-// Chacha non-vectorized
 static void
-Chacha20_32_encrypt(benchmark::State& state)
+HACL_Chacha20_32_encrypt(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20_chacha20_encrypt(INPUT_LEN,
                                    ciphertext.data(),
                                    plaintext.data(),
@@ -121,20 +120,19 @@ Chacha20_32_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20_32_encrypt);
 
-// Chacha Vec128
+BENCHMARK(HACL_Chacha20_32_encrypt)->Setup(DoSetup);
+
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
-Chacha20_Vec128_encrypt(benchmark::State& state)
+HACL_Chacha20_Vec128_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec128_support()) {
     state.SkipWithError("No vec128 support");
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20_Vec128_chacha20_encrypt_128(INPUT_LEN,
                                               ciphertext.data(),
                                               plaintext.data(),
@@ -147,21 +145,20 @@ Chacha20_Vec128_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20_Vec128_encrypt);
-#endif // HACL_CAN_COMPILE_VEC128
 
-// Chacha Vec256
+BENCHMARK(HACL_Chacha20_Vec128_encrypt)->Setup(DoSetup);
+#endif
+
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Chacha20_Vec256_encrypt(benchmark::State& state)
+HACL_Chacha20_Vec256_encrypt(benchmark::State& state)
 {
-  cpu_init();
   if (!vec256_support()) {
     state.SkipWithError("No vec256 support");
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20_Vec256_chacha20_encrypt_256(INPUT_LEN,
                                               ciphertext.data(),
                                               plaintext.data(),
@@ -174,12 +171,16 @@ Chacha20_Vec256_encrypt(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Chacha20_Vec256_encrypt);
-#endif // HACL_CAN_COMPILE_VEC256
+
+BENCHMARK(HACL_Chacha20_Vec256_encrypt)->Setup(DoSetup);
+#endif
+
+// EverCrypt_Chacha20_encrypt
+// Not supported in EverCrypt.
 
 #ifndef NO_OPENSSL
 static void
-Openssl_Chacha20(benchmark::State& state)
+OpenSSL_Chacha20_encrypt(benchmark::State& state)
 {
   // For OpenSSL we need to prepend the counter to the nonce.
   openssl_nonce[0] = 0;
@@ -187,7 +188,7 @@ Openssl_Chacha20(benchmark::State& state)
   openssl_nonce[2] = 0;
   openssl_nonce[3] = 0;
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     int out_len, unused_len;
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     int result = EVP_EncryptInit_ex2(
@@ -217,7 +218,8 @@ Openssl_Chacha20(benchmark::State& state)
     }
   }
 }
-BENCHMARK(Openssl_Chacha20);
+
+BENCHMARK(OpenSSL_Chacha20_encrypt)->Setup(DoSetup);
 #endif
 
 // TODO: decrypt (even though it should be the same we should measure it)

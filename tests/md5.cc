@@ -52,10 +52,10 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_MD5));
 
-    EverCrypt_Hash_hash(Spec_Hash_Definitions_MD5,
-                        got_digest.data(),
-                        test.message.data(),
-                        test.message.size());
+    EverCrypt_Hash_Incremental_hash(Spec_Hash_Definitions_MD5,
+                                    got_digest.data(),
+                                    test.message.data(),
+                                    test.message.size());
 
     ASSERT_EQ(test.hash, got_digest);
   }
@@ -63,8 +63,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_MD5));
 
-    // Use a typedef?
-    Hacl_Streaming_Functor_state_s___EverCrypt_Hash_state_s____* state =
+    EverCrypt_Hash_Incremental_hash_state* state =
       EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_MD5);
     EverCrypt_Hash_Incremental_init(state);
     EverCrypt_Hash_Incremental_update(
