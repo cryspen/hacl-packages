@@ -5,8 +5,6 @@
  *    - http://www.apache.org/licenses/LICENSE-2.0
  *    - http://opensource.org/licenses/MIT
  */
-#include "util.h"
-
 #include "EverCrypt_Hash.h"
 #include "Hacl_Streaming_SHA2.h"
 
@@ -18,227 +16,426 @@
 #include "Hacl_Hash_Blake2b_256.h"
 #endif
 
-static bytes input(1000, 0x37);
-static bytes digest224(28, 0);
-static bytes digest256(32, 0);
-static bytes digest384(48, 0);
-static bytes digest512(64, 0);
+#include "util.h"
 
-static void
-Sha2_224_Streaming(benchmark::State& state)
+#define HACL_HASH_SHA2_224_DIGEST_LENGTH 28
+#define HACL_HASH_SHA2_256_DIGEST_LENGTH 32
+#define HACL_HASH_SHA2_384_DIGEST_LENGTH 48
+#define HACL_HASH_SHA2_512_DIGEST_LENGTH 64
+
+bytes input(1000, 0x37);
+const bytes expected_digest_sha2_224 =
+  from_hex("07cdbd2503e3f3124311f65efafcb4eaae28b60b6bd75d06389848b7");
+const bytes expected_digest_sha2_256 =
+  from_hex("2fb8ebc720944eeb80c783813f870f3bbc20353e4d5714dea88ec06395503876");
+const bytes expected_digest_sha2_384 =
+  from_hex("1c475d9b7c90e8b9d5ce6ead1e4bf65ae872a6d4aa9801d9c3c6e54f45ea78da76b"
+           "c944ceae6f0314d006b1c8cb6c5f1");
+const bytes expected_digest_sha2_512 =
+  from_hex("e9e2fa1ce6756fabc5b49f765a48175ec431377ccfadbcfe18795fc6c868805b0c9"
+           "4ce67d06d7823fb7afef3fd5cc8b7057912ec289e0481220bc54019f86501");
+
+const size_t chunk_len = 135;
+
+template<class... Args>
+void
+HACL_Sha2_oneshot(benchmark::State& state, Args&&... args)
 {
-  size_t chunk_len = 135;
-  bytes non_streaming_digest224(28, 0);
-  Hacl_Hash_SHA2_hash_224(
-    input.data(), input.size(), non_streaming_digest224.data());
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto digest_len = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+  auto hash = std::get<2>(args_tuple);
+
+  bytes digest(digest_len, 0);
+
+  for (auto _ : state) {
+    hash(input.data(), input.size(), digest.data());
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+template<class... Args>
+void
+EverCrypt_Sha2_oneshot(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto algorithm = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+
+  auto digest_len = EverCrypt_Hash_Incremental_hash_len(algorithm);
+  bytes digest(digest_len, 0);
+
+  for (auto _ : state) {
+    EverCrypt_Hash_Incremental_hash(
+      algorithm, digest.data(), input.data(), input.size());
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+#ifndef NO_OPENSSL
+template<class... Args>
+void
+OpenSSL_Sha2_oneshot(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto algorithm = std::get<0>(args_tuple);
+  auto digest_len = std::get<1>(args_tuple);
+  auto expected_digest = std::get<2>(args_tuple);
+
+  bytes digest(digest_len, 0);
+  unsigned int len = digest.size();
+
+  for (auto _ : state) {
+    EVP_Digest(
+      input.data(), input.size(), digest.data(), &len, algorithm, NULL);
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+  }
+}
+#endif
+
+template<class... Args>
+void
+HACL_Sha2_streaming(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto digest_len = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+  auto create_in = std::get<2>(args_tuple);
+  auto init = std::get<3>(args_tuple);
+  auto update = std::get<4>(args_tuple);
+  auto finish = std::get<5>(args_tuple);
+  auto free = std::get<6>(args_tuple);
+
+  bytes digest(digest_len, 0);
 
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA2_state_sha2_224* sha_state =
-      Hacl_Streaming_SHA2_create_in_224();
-    Hacl_Streaming_SHA2_init_224(sha_state);
+    auto* ctx = create_in();
+    init(ctx);
 
     // Update
-    for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA2_update_224(
-        sha_state, input.data() + i, min(chunk_len, input.size() - i));
-      i += chunk_len;
+    for (auto chunk : chunk(input, chunk_len)) {
+      update(ctx, chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_SHA2_finish_224(sha_state, digest224.data());
-    Hacl_Streaming_SHA2_free_224(sha_state);
-    if (non_streaming_digest224 != digest224) {
-      state.SkipWithError("Wrong streaming digest");
-      return;
-    }
+    finish(ctx, digest.data());
+    free(ctx);
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
   }
 }
 
-static void
-Sha2_256_Streaming(benchmark::State& state)
+template<class... Args>
+void
+EverCrypt_Sha2_streaming(benchmark::State& state, Args&&... args)
 {
-  size_t chunk_len = 135;
-  bytes non_streaming_digest256(32, 0);
-  Hacl_Hash_SHA2_hash_256(
-    input.data(), input.size(), non_streaming_digest256.data());
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto algorithm = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+
+  auto digest_len = EverCrypt_Hash_Incremental_hash_len(algorithm);
+  bytes digest(digest_len, 0);
 
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA2_state_sha2_224* sha_state =
-      Hacl_Streaming_SHA2_create_in_256();
-    Hacl_Streaming_SHA2_init_256(sha_state);
+    EverCrypt_Hash_Incremental_hash_state* ctx =
+      EverCrypt_Hash_Incremental_create_in(algorithm);
+    EverCrypt_Hash_Incremental_init(ctx);
 
     // Update
-    for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA2_update_256(
-        sha_state, input.data() + i, min(chunk_len, input.size() - i));
-      i += chunk_len;
+    for (auto chunk : chunk(input, chunk_len)) {
+      EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_SHA2_finish_256(sha_state, digest256.data());
-    Hacl_Streaming_SHA2_free_256(sha_state);
-    if (non_streaming_digest256 != digest256) {
-      state.SkipWithError("Wrong streaming digest");
-      return;
-    }
+    EverCrypt_Hash_Incremental_finish(ctx, digest.data());
+    EverCrypt_Hash_Incremental_free(ctx);
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
   }
 }
 
-static void
-Sha2_384_Streaming(benchmark::State& state)
+#ifndef NO_OPENSSL
+template<class... Args>
+void
+OpenSSL_Sha2_streaming(benchmark::State& state, Args&&... args)
 {
-  size_t chunk_len = 135;
-  bytes non_streaming_digest384(digest384.size(), 0);
-  Hacl_Hash_SHA2_hash_384(
-    input.data(), input.size(), non_streaming_digest384.data());
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto algorithm = std::get<0>(args_tuple);
+  auto digest_len = std::get<1>(args_tuple);
+  auto expected_digest = std::get<2>(args_tuple);
+
+  bytes digest(digest_len, 0);
 
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA2_state_sha2_384* sha_state =
-      Hacl_Streaming_SHA2_create_in_384();
-    Hacl_Streaming_SHA2_init_384(sha_state);
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+    EVP_DigestInit(ctx, algorithm);
 
     // Update
-    for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA2_update_384(
-        sha_state, input.data() + i, min(chunk_len, input.size() - i));
-      i += chunk_len;
+    for (auto chunk : chunk(input, chunk_len)) {
+      EVP_DigestUpdate(ctx, chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_SHA2_finish_384(sha_state, digest384.data());
-    Hacl_Streaming_SHA2_free_384(sha_state);
-    if (non_streaming_digest384 != digest384) {
-      state.SkipWithError("Wrong streaming digest");
-      return;
-    }
+    unsigned int len = digest.size();
+    EVP_DigestFinal_ex(ctx, digest.data(), &len);
+    EVP_MD_CTX_free(ctx);
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
   }
 }
+#endif
 
-static void
-Sha2_512_Streaming(benchmark::State& state)
-{
-  size_t chunk_len = 135;
-  bytes non_streaming_digest512(digest512.size(), 0);
-  Hacl_Hash_SHA2_hash_512(
-    input.data(), input.size(), non_streaming_digest512.data());
+// -----------------------------------------------------------------------------
 
-  for (auto _ : state) {
-    // Init
-    Hacl_Streaming_SHA2_state_sha2_512* sha_state =
-      Hacl_Streaming_SHA2_create_in_512();
-    Hacl_Streaming_SHA2_init_512(sha_state);
+BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
+                  sha2_224,
+                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
+                  expected_digest_sha2_224,
+                  Hacl_Hash_SHA2_hash_224)
+  ->Setup(DoSetup);
 
-    // Update
-    for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA2_update_512(
-        sha_state, input.data() + i, min(chunk_len, input.size() - i));
-      i += chunk_len;
-    }
+BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
+                  sha2_224,
+                  Spec_Hash_Definitions_SHA2_224,
+                  expected_digest_sha2_224)
+  ->Setup(DoSetup);
 
-    // Finish
-    Hacl_Streaming_SHA2_finish_512(sha_state, digest512.data());
-    Hacl_Streaming_SHA2_free_512(sha_state);
-    if (non_streaming_digest512 != digest512) {
-      state.SkipWithError("Wrong streaming digest");
-      return;
-    }
-  }
-}
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_oneshot,
+                  sha2_224,
+                  EVP_sha224(),
+                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
+                  expected_digest_sha2_224)
+  ->Setup(DoSetup);
+#endif
 
-BENCHMARK(Sha2_224_Streaming)->Setup(DoSetup);
-BENCHMARK(Sha2_256_Streaming)->Setup(DoSetup);
-BENCHMARK(Sha2_384_Streaming)->Setup(DoSetup);
-BENCHMARK(Sha2_512_Streaming)->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
+                  sha2_256,
+                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
+                  expected_digest_sha2_256,
+                  Hacl_Hash_SHA2_hash_256)
+  ->Setup(DoSetup);
 
-static void
-Sha2_256(benchmark::State& state)
-{
-  for (auto _ : state) {
-    Hacl_Hash_SHA2_hash_256(input.data(), input.size(), digest256.data());
-  }
-}
+BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
+                  sha2_256,
+                  Spec_Hash_Definitions_SHA2_256,
+                  expected_digest_sha2_256)
+  ->Setup(DoSetup);
 
-BENCHMARK(Sha2_256)->Setup(DoSetup);
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_oneshot,
+                  sha2_256,
+                  EVP_sha256(),
+                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
+                  expected_digest_sha2_256)
+  ->Setup(DoSetup);
+#endif
 
-static void
-EverCrypt_Sha2_256_Streaming(benchmark::State& state)
-{
-  cpu_init();
-  size_t chunk_len = 135;
-  bytes non_streaming_digest256(32, 0);
-  Hacl_Hash_SHA2_hash_256(
-    input.data(), input.size(), non_streaming_digest256.data());
+BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
+                  sha2_384,
+                  HACL_HASH_SHA2_384_DIGEST_LENGTH,
+                  expected_digest_sha2_384,
+                  Hacl_Hash_SHA2_hash_384)
+  ->Setup(DoSetup);
 
-  for (auto _ : state) {
-    // Init
-    EverCrypt_Hash_Incremental_hash_state* sha_state =
-      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_SHA2_256);
-    EverCrypt_Hash_Incremental_init(sha_state);
+BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
+                  sha2_384,
+                  Spec_Hash_Definitions_SHA2_384,
+                  expected_digest_sha2_384)
+  ->Setup(DoSetup);
 
-    // Update
-    for (size_t i = 0; i < input.size();) {
-      EverCrypt_Hash_Incremental_update(
-        sha_state, input.data() + i, min(chunk_len, input.size() - i));
-      i += chunk_len;
-    }
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_oneshot,
+                  sha2_384,
+                  EVP_sha384(),
+                  HACL_HASH_SHA2_384_DIGEST_LENGTH,
+                  expected_digest_sha2_384)
+  ->Setup(DoSetup);
+#endif
 
-    // Finish
-    EverCrypt_Hash_Incremental_finish(sha_state, digest256.data());
-    EverCrypt_Hash_Incremental_free(sha_state);
-    if (non_streaming_digest256 != digest256) {
-      state.SkipWithError("Wrong streaming digest");
-      return;
-    }
-  }
-}
+BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
+                  sha2_512,
+                  HACL_HASH_SHA2_512_DIGEST_LENGTH,
+                  expected_digest_sha2_512,
+                  Hacl_Hash_SHA2_hash_512)
+  ->Setup(DoSetup);
 
-BENCHMARK(EverCrypt_Sha2_256_Streaming)->Setup(DoSetup);
+BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
+                  sha2_512,
+                  Spec_Hash_Definitions_SHA2_512,
+                  expected_digest_sha2_512)
+  ->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_oneshot,
+                  sha2_512,
+                  EVP_sha512(),
+                  HACL_HASH_SHA2_512_DIGEST_LENGTH,
+                  expected_digest_sha2_512)
+  ->Setup(DoSetup);
+#endif
+
+// -----------------------------------------------------------------------------
+
+BENCHMARK_CAPTURE(HACL_Sha2_streaming,
+                  sha2_224,
+                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
+                  expected_digest_sha2_224,
+                  Hacl_Streaming_SHA2_create_in_224,
+                  Hacl_Streaming_SHA2_init_224,
+                  Hacl_Streaming_SHA2_update_224,
+                  Hacl_Streaming_SHA2_finish_224,
+                  Hacl_Streaming_SHA2_free_224)
+  ->Setup(DoSetup);
+
+BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
+                  sha2_224,
+                  Spec_Hash_Definitions_SHA2_224,
+                  expected_digest_sha2_224)
+  ->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_streaming,
+                  sha2_224,
+                  EVP_sha224(),
+                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
+                  expected_digest_sha2_224)
+  ->Setup(DoSetup);
+#endif
+
+BENCHMARK_CAPTURE(HACL_Sha2_streaming,
+                  sha2_256,
+                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
+                  expected_digest_sha2_256,
+                  Hacl_Streaming_SHA2_create_in_256,
+                  Hacl_Streaming_SHA2_init_256,
+                  Hacl_Streaming_SHA2_update_256,
+                  Hacl_Streaming_SHA2_finish_256,
+                  Hacl_Streaming_SHA2_free_256)
+  ->Setup(DoSetup);
+
+BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
+                  sha2_256,
+                  Spec_Hash_Definitions_SHA2_256,
+                  expected_digest_sha2_256)
+  ->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_streaming,
+                  sha2_256,
+                  EVP_sha256(),
+                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
+                  expected_digest_sha2_256)
+  ->Setup(DoSetup);
+#endif
+
+BENCHMARK_CAPTURE(HACL_Sha2_streaming,
+                  sha2_384,
+                  HACL_HASH_SHA2_384_DIGEST_LENGTH,
+                  expected_digest_sha2_384,
+                  Hacl_Streaming_SHA2_create_in_384,
+                  Hacl_Streaming_SHA2_init_384,
+                  Hacl_Streaming_SHA2_update_384,
+                  Hacl_Streaming_SHA2_finish_384,
+                  Hacl_Streaming_SHA2_free_384)
+  ->Setup(DoSetup);
+
+BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
+                  sha2_384,
+                  Spec_Hash_Definitions_SHA2_384,
+                  expected_digest_sha2_384)
+  ->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_streaming,
+                  sha2_384,
+                  EVP_sha384(),
+                  HACL_HASH_SHA2_384_DIGEST_LENGTH,
+                  expected_digest_sha2_384)
+  ->Setup(DoSetup);
+#endif
+
+BENCHMARK_CAPTURE(HACL_Sha2_streaming,
+                  sha2_512,
+                  HACL_HASH_SHA2_512_DIGEST_LENGTH,
+                  expected_digest_sha2_512,
+                  Hacl_Streaming_SHA2_create_in_512,
+                  Hacl_Streaming_SHA2_init_512,
+                  Hacl_Streaming_SHA2_update_512,
+                  Hacl_Streaming_SHA2_finish_512,
+                  Hacl_Streaming_SHA2_free_512)
+  ->Setup(DoSetup);
+
+BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
+                  sha2_512,
+                  Spec_Hash_Definitions_SHA2_512,
+                  expected_digest_sha2_512)
+  ->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_Sha2_streaming,
+                  sha2_512,
+                  EVP_sha512(),
+                  HACL_HASH_SHA2_512_DIGEST_LENGTH,
+                  expected_digest_sha2_512)
+  ->Setup(DoSetup);
+#endif
+
+// -----------------------------------------------------------------------------
 
 #ifdef LIBTOMCRYPT
-// LibTomCrypt Sha2
 #include "tomcrypt.h"
+
 static void
 LibTomCrypt_Sha2_256(benchmark::State& state)
 {
-  bytes hacl_digest256(32, 0);
-  Hacl_Hash_SHA2_hash_256(input.data(), input.size(), hacl_digest256.data());
+  bytes digest(32, 0);
+
+  int err;
+
   for (auto _ : state) {
     hash_state md;
     sha256_init(&md);
-    int err = sha256_process(&md, input.data(), input.size());
-    sha256_done(&md, digest256.data());
-    if (err != CRYPT_OK || hacl_digest256 != digest256) {
-      state.SkipWithError("Wrong libtomcrypt digest");
-      return;
-    }
+    err = sha256_process(&md, input.data(), input.size());
+    sha256_done(&md, digest.data());
+  }
+
+  if (err != CRYPT_OK || digest != expected_digest_sha2_256) {
+    state.SkipWithError("Wrong libtomcrypt digest");
+    return;
   }
 }
 
 BENCHMARK(LibTomCrypt_Sha2_256)->Setup(DoSetup);
-#endif
-
-#ifndef NO_OPENSSL
-static void
-OpenSSL_Sha2_256(benchmark::State& state)
-{
-  bytes hacl_digest256(32, 0);
-  Hacl_Hash_SHA2_hash_256(input.data(), input.size(), hacl_digest256.data());
-  for (auto _ : state) {
-    SHA256_CTX ctx;
-    SHA256_Init(&ctx);
-    SHA256_Update(&ctx, input.data(), input.size());
-    SHA256_Final(digest256.data(), &ctx);
-    if (hacl_digest256 != digest256) {
-      state.SkipWithError("Wrong OpenSSL digest");
-      return;
-    }
-  }
-}
-
-BENCHMARK(OpenSSL_Sha2_256)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();
