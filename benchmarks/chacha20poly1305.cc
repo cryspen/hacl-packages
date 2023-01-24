@@ -117,10 +117,10 @@ HACL_Chacha20Poly1305_32_encrypt(benchmark::State& state)
                                           plaintext.data(),
                                           ciphertext.data(),
                                           mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
 
@@ -144,10 +144,10 @@ HACL_Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
                                            plaintext.data(),
                                            ciphertext.data(),
                                            mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
 
@@ -172,10 +172,10 @@ HACL_Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
                                            plaintext.data(),
                                            ciphertext.data(),
                                            mac.data());
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
 
@@ -231,10 +231,10 @@ OpenSSL_Chacha20Poly1305_encrypt(benchmark::State& state)
       break;
     }
     EVP_CIPHER_CTX_free(ctx);
-    if (ciphertext != expected_ciphertext) {
-      state.SkipWithError("Wrong ciphertext");
-      break;
-    }
+  }
+
+  if (ciphertext != expected_ciphertext) {
+    state.SkipWithError("Wrong ciphertext");
   }
 }
 
