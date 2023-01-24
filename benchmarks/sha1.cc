@@ -11,7 +11,7 @@ static bytes digest(HACL_HASH_SHA1_DIGEST_LENGTH, 0);
 static void
 Hacl_Sha1_oneshot(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Hash_SHA1_legacy_hash(input.data(), input.size(), digest.data());
   }
 }
@@ -22,7 +22,7 @@ static void
 Hacl_Sha1_streaming(benchmark::State& state)
 {
   size_t chunk_len = 135;
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA1_state_sha1* state =
       Hacl_Streaming_SHA1_legacy_create_in_sha1();

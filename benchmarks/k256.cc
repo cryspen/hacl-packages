@@ -71,7 +71,7 @@ OpenSSL_K256_ECDSA_Sign(benchmark::State& state)
   bytes signature(expected_sig_len);
   bytes data(128);
   RAND_bytes(data.data(), 128);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EVP_MD_CTX* mctx = EVP_MD_CTX_new();
     if (EVP_DigestSignInit(mctx, NULL, EVP_sha256(), NULL, pkey) != 1) {
       state.SkipWithError("Unable to create EVP context");
@@ -268,7 +268,7 @@ Openssl_K256_ECDSA_Verify(benchmark::State& state)
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EVP_MD_CTX* md_ctx_verify = EVP_MD_CTX_new();
     if (EVP_DigestVerifyInit(md_ctx_verify, NULL, EVP_sha256(), NULL, ppkey) !=
         1) {
@@ -400,7 +400,7 @@ Openssl_K256_ECDH(benchmark::State& state)
 
   char secret_a[32], secret_b[32];
   size_t slen_b = ECDH_compute_key(secret_b, 32, pk_a, sk_b, NULL);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     size_t slen_a = ECDH_compute_key(secret_a, 32, pk_b, sk_a, NULL);
     if (slen_a != slen_b || memcmp(secret_a, secret_b, slen_a) != 0) {
       state.SkipWithError("Invalid ECDH");

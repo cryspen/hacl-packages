@@ -61,7 +61,9 @@ cpu_init()
   EverCrypt_AutoConfig2_init();
 }
 
-static void DoSetup(const benchmark::State& state) {
+static void
+DoSetup(const benchmark::State& state)
+{
   cpu_init();
 }
 
