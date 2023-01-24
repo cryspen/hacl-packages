@@ -39,7 +39,7 @@ HACL_x25519_51(benchmark::State& state)
   Hacl_Curve25519_51_secret_to_public(pk.data(), x.data());
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Curve25519_51_ecdh(res.data(), y.data(), pk.data());
     if (res != expected_res) {
       state.SkipWithError("Error in x25519");
@@ -65,7 +65,7 @@ HACL_x25519_64(benchmark::State& state)
   Hacl_Curve25519_64_secret_to_public(pk.data(), x.data());
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Curve25519_64_ecdh(res.data(), y.data(), pk.data());
     if (res != expected_res) {
       state.SkipWithError("Error in x25519");
@@ -86,7 +86,7 @@ EverCrypt_x25519(benchmark::State& state)
   EverCrypt_Curve25519_secret_to_public(pk.data(), x.data());
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_Curve25519_ecdh(res.data(), y.data(), pk.data());
     if (res != expected_res) {
       state.SkipWithError("Error in x25519");
@@ -111,7 +111,7 @@ OpenSSL_x25519(benchmark::State& state)
 
   bytes skey(32);
   size_t skey_len = 32;
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(pkey_a, NULL);
     if (EVP_PKEY_derive_init(ctx) != 1) {
       state.SkipWithError("Error in EVP_PKEY_derive_init");
@@ -149,7 +149,7 @@ HACL_x25519_51_base(benchmark::State& state)
   setup(x, y, pk_x, expected_res);
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Curve25519_51_secret_to_public(res.data(), x.data());
     if (res != pk_x) {
       state.SkipWithError("Error in x25519 secret to public");
@@ -173,7 +173,7 @@ HACL_x25519_64_base(benchmark::State& state)
   setup(x, y, pk_x, expected_res);
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Curve25519_64_secret_to_public(res.data(), x.data());
     if (res != pk_x) {
       state.SkipWithError("Error in x25519 secret to public");
@@ -192,7 +192,7 @@ EverCrypt_x25519_base(benchmark::State& state)
   setup(x, y, pk_x, expected_res);
 
   bytes res(32);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_Curve25519_secret_to_public(res.data(), x.data());
     if (res != pk_x) {
       state.SkipWithError("Error in x25519 secret to public");

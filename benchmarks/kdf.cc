@@ -94,7 +94,7 @@ EverCrypt_HKDF_BLAKE2b_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_BLAKE2B_PRK_LEN];
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_Blake2B,
                            prk,
                            salt.data(),
@@ -163,7 +163,7 @@ EverCrypt_HKDF_BLAKE2s_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_BLAKE2S_PRK_LEN];
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_Blake2S,
                            prk,
                            salt.data(),
@@ -206,7 +206,7 @@ EverCrypt_HKDF_SHA2_256_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_SHA2_256_PRK_LEN];
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_SHA2_256,
                            prk,
                            salt.data(),
@@ -249,7 +249,7 @@ EverCrypt_HKDF_SHA2_512_extract_expand(benchmark::State& state)
 {
   uint8_t prk[HACL_KDF_HKDF_SHA2_512_PRK_LEN];
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EverCrypt_HKDF_extract(Spec_Hash_Definitions_SHA2_512,
                            prk,
                            salt.data(),

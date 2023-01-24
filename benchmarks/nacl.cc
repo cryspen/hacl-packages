@@ -30,7 +30,7 @@ HACL_NaCl_oneshot_combined(benchmark::State& state)
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_easy(ciphertext.data(),
                               plaintext.data(),
                               plaintext.size(),
@@ -56,7 +56,7 @@ HACL_NaCl_oneshot_detached(benchmark::State& state)
   crypto_box_keypair_bob(bob_sk.data(), bob_pk.data());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_detached(ciphertext.data(),
                                   tag.data(),
                                   plaintext.data(),
@@ -86,7 +86,7 @@ HACL_NaCl_precomputed_combined(benchmark::State& state)
 
   Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_easy_afternm(ciphertext.data(),
                                       plaintext.data(),
                                       plaintext.size(),
@@ -112,7 +112,7 @@ HACL_NaCl_precomputed_detached(benchmark::State& state)
 
   Hacl_NaCl_crypto_box_beforenm(k.data(), bob_pk.data(), alice_sk.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_box_detached_afternm(ciphertext.data(),
                                           tag.data(),
                                           plaintext.data(),
@@ -137,7 +137,7 @@ HACL_NaCl_secret_easy(benchmark::State& state)
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_secretbox_easy(ciphertext.data(),
                                     plaintext.data(),
                                     plaintext.size(),
@@ -160,7 +160,7 @@ HACL_NaCl_secret_detached(benchmark::State& state)
   generate_random(key.data(), key.size());
   generate_random(nonce.data(), nonce.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_NaCl_crypto_secretbox_detached(ciphertext.data(),
                                         tag.data(),
                                         plaintext.data(),

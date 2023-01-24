@@ -41,7 +41,7 @@ static void
 HACL_Ed25519_Sign(benchmark::State& state)
 {
   bytes my_signature(64);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Ed25519_sign(my_signature.data(), sk.data(), msg.size(), msg.data());
   }
 }
@@ -60,7 +60,7 @@ OpenSSL_Ed25519_Sign(benchmark::State& state)
 
   bytes my_signature(64);
   size_t siglen;
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EVP_DigestSign(
       md_ctx, my_signature.data(), &siglen, msg.data(), (size_t)msg.size());
   }
@@ -81,7 +81,7 @@ HACL_Ed25519_Verify(benchmark::State& state)
   bytes sig(64);
   Hacl_Ed25519_sign(sig.data(), sk.data(), msg.size(), msg.data());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Ed25519_verify(pk.data(), msg.size(), msg.data(), sig.data());
   }
 }
@@ -110,7 +110,7 @@ OpenSSL_Ed25519_Verify(benchmark::State& state)
   EVP_PKEY* pkey = EVP_PKEY_new_raw_public_key(
     EVP_PKEY_ED25519, NULL, pkey_raw.data(), pkey_raw.size());
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     EVP_MD_CTX* md_ctx_verify = EVP_MD_CTX_new();
     EVP_DigestVerifyInit(md_ctx_verify, NULL, NULL, NULL, pkey);
     EVP_DigestVerify(md_ctx_verify,
@@ -136,7 +136,7 @@ HACL_Ed25519_Sign_Precomputed(benchmark::State& state)
   Hacl_Ed25519_expand_keys(sk_expanded.data(), sk.data());
 
   bytes my_signature(64);
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Ed25519_sign_expanded(
       my_signature.data(), sk_expanded.data(), msg.size(), msg.data());
   }

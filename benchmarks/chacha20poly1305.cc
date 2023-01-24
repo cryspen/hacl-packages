@@ -108,7 +108,7 @@ static bytes expected_ciphertext = {
 static void
 HACL_Chacha20Poly1305_32_encrypt(benchmark::State& state)
 {
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_32_aead_encrypt(key.data(),
                                           nonce.data(),
                                           aad.size(),
@@ -135,7 +135,7 @@ HACL_Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_128_aead_decrypt(key.data(),
                                            nonce.data(),
                                            aad.size(),
@@ -163,7 +163,7 @@ HACL_Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
     return;
   }
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     Hacl_Chacha20Poly1305_256_aead_encrypt(key.data(),
                                            nonce.data(),
                                            aad.size(),
@@ -201,7 +201,7 @@ OpenSSL_Chacha20Poly1305_encrypt(benchmark::State& state)
   openssl_nonce[2] = 0;
   openssl_nonce[3] = 0;
 
-  while (state.KeepRunning()) {
+  for (auto _ : state) {
     int out_len, unused_len;
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     int result = EVP_EncryptInit_ex2(
