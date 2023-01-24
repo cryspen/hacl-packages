@@ -104,8 +104,8 @@ pub fn ecdh(private_key: &[u8; 32], public_key: &[u8; 64]) -> Result<[u8; 64], E
     let ok = unsafe {
         Hacl_P256_dh_responder(
             shared.as_mut_ptr(),
-            private_key.as_ptr() as _,
             public_key.as_ptr() as _,
+            private_key.as_ptr() as _,
         )
     };
     if !ok {
