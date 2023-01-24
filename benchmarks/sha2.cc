@@ -148,10 +148,10 @@ Sha2_512_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Sha2_224_Streaming);
-BENCHMARK(Sha2_256_Streaming);
-BENCHMARK(Sha2_384_Streaming);
-BENCHMARK(Sha2_512_Streaming);
+BENCHMARK(Sha2_224_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_256_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_384_Streaming)->Setup(DoSetup);
+BENCHMARK(Sha2_512_Streaming)->Setup(DoSetup);
 
 static void
 Sha2_256(benchmark::State& state)
@@ -161,7 +161,7 @@ Sha2_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Sha2_256);
+BENCHMARK(Sha2_256)->Setup(DoSetup);
 
 static void
 EverCrypt_Sha2_256_Streaming(benchmark::State& state)
@@ -195,7 +195,7 @@ EverCrypt_Sha2_256_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(EverCrypt_Sha2_256_Streaming);
+BENCHMARK(EverCrypt_Sha2_256_Streaming)->Setup(DoSetup);
 
 #ifdef LIBTOMCRYPT
 // LibTomCrypt Sha2
@@ -217,7 +217,7 @@ LibTomCrypt_Sha2_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(LibTomCrypt_Sha2_256);
+BENCHMARK(LibTomCrypt_Sha2_256)->Setup(DoSetup);
 #endif
 
 #ifndef NO_OPENSSL
@@ -238,7 +238,7 @@ OpenSSL_Sha2_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(OpenSSL_Sha2_256);
+BENCHMARK(OpenSSL_Sha2_256)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

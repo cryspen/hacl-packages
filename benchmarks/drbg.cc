@@ -46,9 +46,13 @@ HACL_Drbg_complete(benchmark::State& state, Args&&... args)
   }
 }
 
-BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_256, Spec_Hash_Definitions_SHA2_256);
-BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_384, Spec_Hash_Definitions_SHA2_384);
-BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_512, Spec_Hash_Definitions_SHA2_512);
-BENCHMARK_CAPTURE(HACL_Drbg_complete, sha1, Spec_Hash_Definitions_SHA1);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_256, Spec_Hash_Definitions_SHA2_256)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_384, Spec_Hash_Definitions_SHA2_384)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha2_512, Spec_Hash_Definitions_SHA2_512)
+  ->Setup(DoSetup);
+BENCHMARK_CAPTURE(HACL_Drbg_complete, sha1, Spec_Hash_Definitions_SHA1)
+  ->Setup(DoSetup);
 
 BENCHMARK_MAIN();

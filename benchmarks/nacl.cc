@@ -47,7 +47,7 @@ HACL_NaCl_oneshot_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_oneshot_combined);
+BENCHMARK(HACL_NaCl_oneshot_combined)->Setup(DoSetup);
 
 static void
 HACL_NaCl_oneshot_detached(benchmark::State& state)
@@ -75,7 +75,7 @@ HACL_NaCl_oneshot_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_oneshot_detached);
+BENCHMARK(HACL_NaCl_oneshot_detached)->Setup(DoSetup);
 
 static void
 HACL_NaCl_precomputed_combined(benchmark::State& state)
@@ -101,7 +101,7 @@ HACL_NaCl_precomputed_combined(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_precomputed_combined);
+BENCHMARK(HACL_NaCl_precomputed_combined)->Setup(DoSetup);
 
 static void
 HACL_NaCl_precomputed_detached(benchmark::State& state)
@@ -129,7 +129,7 @@ HACL_NaCl_precomputed_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_precomputed_detached);
+BENCHMARK(HACL_NaCl_precomputed_detached)->Setup(DoSetup);
 
 static void
 HACL_NaCl_secret_easy(benchmark::State& state)
@@ -152,7 +152,7 @@ HACL_NaCl_secret_easy(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_secret_easy);
+BENCHMARK(HACL_NaCl_secret_easy)->Setup(DoSetup);
 
 static void
 HACL_NaCl_secret_detached(benchmark::State& state)
@@ -177,6 +177,6 @@ HACL_NaCl_secret_detached(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_NaCl_secret_detached);
+BENCHMARK(HACL_NaCl_secret_detached)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

@@ -19,7 +19,7 @@ Hacl_Sha3_224(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_224);
+BENCHMARK(Hacl_Sha3_224)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_256(benchmark::State& state)
@@ -29,7 +29,7 @@ Hacl_Sha3_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_256);
+BENCHMARK(Hacl_Sha3_256)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_384(benchmark::State& state)
@@ -39,7 +39,7 @@ Hacl_Sha3_384(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_384);
+BENCHMARK(Hacl_Sha3_384)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_512(benchmark::State& state)
@@ -49,7 +49,7 @@ Hacl_Sha3_512(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_512);
+BENCHMARK(Hacl_Sha3_512)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_256_Streaming(benchmark::State& state)
@@ -75,7 +75,7 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_256_Streaming);
+BENCHMARK(Hacl_Sha3_256_Streaming)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_shake128(benchmark::State& state)
@@ -86,7 +86,7 @@ Hacl_Sha3_shake128(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_shake128);
+BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
 
 static void
 Hacl_Sha3_shake256(benchmark::State& state)
@@ -97,6 +97,6 @@ Hacl_Sha3_shake256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Sha3_shake256);
+BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
 
 BENCHMARK_MAIN();
