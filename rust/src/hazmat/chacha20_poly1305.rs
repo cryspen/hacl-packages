@@ -15,7 +15,7 @@ pub enum Error {
     InvalidCiphertext,
 }
 
-/// Portable 32-bit encrypt.
+/// Portable 32-bit in-place encrypt.
 ///
 /// There are no special hardware requirements to call this function.
 #[must_use]
@@ -36,7 +36,7 @@ pub fn encrypt(key: &Chacha20Key, msg_ctxt: &mut [u8], iv: Iv, aad: &[u8]) -> Ta
     tag
 }
 
-/// Portable 32-bit decrypt.
+/// Portable 32-bit in-place decrypt.
 ///
 /// There are no special hardware requirements to call this function.
 #[must_use]

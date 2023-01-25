@@ -56,9 +56,6 @@ pub fn sha512(payload: &[u8]) -> [u8; 64] {
 }
 
 /// SHAKE 128
-///
-/// Note that the output length `BYTES` must fit into 32 bit. If it is longer,
-/// the output will only return `u32::MAX` bytes.
 pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {

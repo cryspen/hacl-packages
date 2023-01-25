@@ -6,7 +6,7 @@ use hacl_star_sys::{Hacl_Blake2b_32_blake2b, Hacl_Blake2s_32_blake2s};
 /// larger than 64, the 64-byte output value is written to the first 64 bytes of
 /// the output.
 ///
-/// The input and key are truncated at 2^32 bytes.
+/// The payload and key are truncated at 2^32 bytes.
 ///
 /// The `key` may be an empty slice.
 pub fn blake2b<const LEN: usize>(payload: &[u8], key: &[u8]) -> [u8; LEN] {

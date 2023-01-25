@@ -6,7 +6,7 @@ use hacl_star::hazmat::blake2;
 mod test_util;
 
 #[cfg(feature = "hazmat")]
-use test_util::{hex_str_to_array, hex_str_to_bytes};
+use test_util::hex_str_to_bytes;
 
 // Tests from https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2-kat.json
 

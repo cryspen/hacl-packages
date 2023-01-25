@@ -11,7 +11,3 @@
 #include "hacl/Hacl_RSAPSS.h"
 #include "hacl/Hacl_SHA3.h"
 #include "hacl/Hacl_Spec.h"
-
-// #if defined(VALE)
-// #include "hacl/Hacl_Curve25519_64.h"
-// #endif
