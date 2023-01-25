@@ -99,7 +99,7 @@ def compare_benchmarks(benchmarks, path_new, path_old):
             for x in data[:-1]:
                 # For each benchmark, the result is the CPU-time evolution
                 result = x["measurements"][0]["cpu"]
-                print("- {:30} {:+0.2f}".format(x["name"], result))
+                print("- {:40} {:+0.2f}".format(x["name"], result))
                 # If one result is greater than the threshold, the command fails
                 if result > threshold:
                     fail = True
