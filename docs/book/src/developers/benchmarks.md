@@ -1,6 +1,6 @@
 # Benchmarks
 
-HACL Packages provides a set of benchmarks that serve two purposes: To detect regressions, and to see how HACL Packages compares to other cryptographic libraries. Although the benchmarks give us an idea about HACL Package's performance, they should not be overly relied on.
+HACL Packages provides a set of benchmarks that serves two purposes: To detect regressions, and to see how HACL Packages compares to other cryptographic libraries. Although the benchmarks give us an idea about HACL Package's performance, they should not be overly relied on.
 
 All benchmarks are in the `benchmarks` folder and are registered through `config/config.json` in `mach`. To build the benchmarks, run ...
 
