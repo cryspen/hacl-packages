@@ -266,7 +266,7 @@ impl Algorithm {
 /// Check if we do SHA3, which is not in the agile API and hence has to be
 /// handled differently.
 /// SHA3 256 is supported.
-const fn is_unsupported_sha3(alg: Algorithm) -> bool {
+const fn does_not_support_streaming(alg: Algorithm) -> bool {
     matches!(
         alg,
         Algorithm::Sha3_224 | Algorithm::Sha3_384 | Algorithm::Sha3_512
@@ -283,7 +283,7 @@ pub struct Digest {
 impl Digest {
     /// Create a new digest for the given mode `alg`.
     pub fn new(alg: Algorithm) -> Result<Self, Error> {
-        if is_unsupported_sha3(alg) {
+        if does_not_support_streaming(alg) {
             return Err(Error::ModeUnsupportedForStreaming);
         }
 
