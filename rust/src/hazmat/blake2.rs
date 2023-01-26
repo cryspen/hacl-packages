@@ -29,7 +29,7 @@ pub fn blake2b<const LEN: usize>(payload: &[u8], key: &[u8]) -> [u8; LEN] {
 pub mod simd256 {
     use hacl_star_sys::Hacl_Blake2b_256_blake2b;
 
-    /// Blake2b
+    /// BLAKE2b
     ///
     /// Note that the output can not be more than 64. If the requested output is
     /// larger than 64, the 64-byte output value is written to the first 64 bytes of
