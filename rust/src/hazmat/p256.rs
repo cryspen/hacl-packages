@@ -141,7 +141,7 @@ pub mod ecdsa {
 
     macro_rules! impl_sign {
         ($name:ident, $fun:expr) => {
-            /// Sign `msg` with `sk` and `nonce` with EcDSA on P256.
+            /// Sign `msg` with `sk` and `nonce` with ECDSA on P256.
             pub fn $name(msg: &[u8], sk: &[u8; 32], nonce: [u8; 32]) -> Result<[u8; 64], Error> {
                 validate_scalar(&nonce)?;
                 let private = validate_scalar_slice(sk)?;

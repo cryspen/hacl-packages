@@ -1,6 +1,6 @@
 use hacl_star_sys::{Hacl_Blake2b_32_blake2b, Hacl_Blake2s_32_blake2s};
 
-/// Blake2b
+/// BLAKE2b
 ///
 /// Note that the output can not be more than 64. If the requested output is
 /// larger than 64, the 64-byte output value is written to the first 64 bytes of
@@ -55,7 +55,7 @@ pub mod simd256 {
     }
 }
 
-/// Blake2s
+/// BLAKE2s
 ///
 /// Note that the output can not be more than 32. If the requested output is
 /// larger than 32, the 32-byte output value is written to the first 32 bytes of
@@ -84,7 +84,7 @@ pub fn blake2s<const LEN: usize>(payload: &[u8], key: &[u8]) -> [u8; LEN] {
 pub mod simd128 {
     use hacl_star_sys::Hacl_Blake2s_128_blake2s;
 
-    /// Blake2s
+    /// BLAKE2s
     ///
     /// Note that the output can not be more than 32. If the requested output is
     /// larger than 32, the 32-byte output value is written to the first 32 bytes of
