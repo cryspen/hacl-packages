@@ -123,7 +123,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::shake128(&data, 64);
+                let _d: [u8; 64] = digest::shake128(&data);
             },
             BatchSize::SmallInput,
         )
@@ -132,7 +132,7 @@ fn criterion_digest(c: &mut Criterion) {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
             |data| {
-                let _d = digest::shake256(&data, 64);
+                let _d: [u8; 64] = digest::shake256(&data);
             },
             BatchSize::SmallInput,
         )
@@ -534,14 +534,14 @@ fn criterion_p256(c: &mut Criterion) {
     c.bench_function("P256 base", |b| {
         let sk1 = hex_to_bytes(SK1_HEX);
         b.iter(|| {
-            let _pk = p256::dh_base(&sk1).unwrap();
+            let _pk = p256::ecdh_base(&sk1).unwrap();
         });
     });
     c.bench_function("P256 DH", |b| {
         let pk1 = hex_to_bytes(PK1_HEX);
         let sk2 = hex_to_bytes(SK2_HEX);
         b.iter(|| {
-            let _zz = p256::dh(&pk1, &sk2).unwrap();
+            let _zz = p256::ecdh(&pk1, &sk2).unwrap();
         });
     });
     c.bench_function("P256 base Agile", |b| {

@@ -33,6 +33,86 @@ pub type Spec_FFDHE_ffdhe_alg = u8;
 pub type Spec_Agile_AEAD_alg = u8;
 pub type EverCrypt_Error_error_code = u8;
 extern "C" {
+    #[doc = "Encrypt a message `m` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the message.\n@param m Pointer to `mlen` bytes of memory where the message is read from.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.\n@param mac Pointer to 16 bytes of memory where the mac is written to."]
+    pub fn Hacl_Chacha20Poly1305_32_aead_encrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Decrypt a ciphertext `cipher` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\nIf decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.\nIf decryption fails, the array `m` remains unchanged and the function returns the error code 1.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the ciphertext.\n@param m Pointer to `mlen` bytes of memory where the message is written to.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is read from.\n@param mac Pointer to 16 bytes of memory where the mac is read from.\n\n@returns 0 on succeess; 1 on failure."]
+    pub fn Hacl_Chacha20Poly1305_32_aead_decrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    ) -> u32;
+}
+pub type uint32x4_t = [u32; 4usize];
+pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
+extern "C" {
+    #[doc = "Encrypt a message `m` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the message.\n@param m Pointer to `mlen` bytes of memory where the message is read from.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.\n@param mac Pointer to 16 bytes of memory where the mac is written to."]
+    pub fn Hacl_Chacha20Poly1305_256_aead_encrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Decrypt a ciphertext `cipher` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\nIf decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.\nIf decryption fails, the array `m` remains unchanged and the function returns the error code 1.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the ciphertext.\n@param m Pointer to `mlen` bytes of memory where the message is written to.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is read from.\n@param mac Pointer to 16 bytes of memory where the mac is read from.\n\n@returns 0 on succeess; 1 on failure."]
+    pub fn Hacl_Chacha20Poly1305_256_aead_decrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Encrypt a message `m` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the message.\n@param m Pointer to `mlen` bytes of memory where the message is read from.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.\n@param mac Pointer to 16 bytes of memory where the mac is written to."]
+    pub fn Hacl_Chacha20Poly1305_128_aead_encrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Decrypt a ciphertext `cipher` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\nIf decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.\nIf decryption fails, the array `m` remains unchanged and the function returns the error code 1.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the ciphertext.\n@param m Pointer to `mlen` bytes of memory where the message is written to.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is read from.\n@param mac Pointer to 16 bytes of memory where the mac is read from.\n\n@returns 0 on succeess; 1 on failure."]
+    pub fn Hacl_Chacha20Poly1305_128_aead_decrypt(
+        k: *mut u8,
+        n: *mut u8,
+        aadlen: u32,
+        aad: *mut u8,
+        mlen: u32,
+        m: *mut u8,
+        cipher: *mut u8,
+        mac: *mut u8,
+    ) -> u32;
+}
+extern "C" {
     pub fn EverCrypt_AutoConfig2_has_shaext() -> bool;
 }
 extern "C" {
@@ -323,6 +403,30 @@ extern "C" {
     pub fn EverCrypt_AEAD_free(s: *mut EverCrypt_AEAD_state_s);
 }
 extern "C" {
+    #[doc = "Compute the scalar multiple of a point.\n\n@param out Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where the secret/private key is read from.\n@param pub Pointer to 32 bytes of memory where the public point is read from."]
+    pub fn Hacl_Curve25519_64_scalarmult(out: *mut u8, priv_: *mut u8, pub_: *mut u8);
+}
+extern "C" {
+    #[doc = "Calculate a public point from a secret/private key.\n\nThis computes a scalar multiplication of the secret/private key with the curve's basepoint.\n\n@param pub Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where the secret/private key is read from."]
+    pub fn Hacl_Curve25519_64_secret_to_public(pub_: *mut u8, priv_: *mut u8);
+}
+extern "C" {
+    #[doc = "Execute the diffie-hellmann key exchange.\n\n@param out Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where **our** secret/private key is read from.\n@param pub Pointer to 32 bytes of memory where **their** public point is read from."]
+    pub fn Hacl_Curve25519_64_ecdh(out: *mut u8, priv_: *mut u8, pub_: *mut u8) -> bool;
+}
+extern "C" {
+    #[doc = "Compute the scalar multiple of a point.\n\n@param out Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where the secret/private key is read from.\n@param pub Pointer to 32 bytes of memory where the public point is read from."]
+    pub fn Hacl_Curve25519_51_scalarmult(out: *mut u8, priv_: *mut u8, pub_: *mut u8);
+}
+extern "C" {
+    #[doc = "Calculate a public point from a secret/private key.\n\nThis computes a scalar multiplication of the secret/private key with the curve's basepoint.\n\n@param pub Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where the secret/private key is read from."]
+    pub fn Hacl_Curve25519_51_secret_to_public(pub_: *mut u8, priv_: *mut u8);
+}
+extern "C" {
+    #[doc = "Execute the diffie-hellmann key exchange.\n\n@param out Pointer to 32 bytes of memory, allocated by the caller, where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where **our** secret/private key is read from.\n@param pub Pointer to 32 bytes of memory where **their** public point is read from."]
+    pub fn Hacl_Curve25519_51_ecdh(out: *mut u8, priv_: *mut u8, pub_: *mut u8) -> bool;
+}
+extern "C" {
     #[doc = "Calculate a public point from a secret/private key.\n\nThis computes a scalar multiplication of the secret/private key with the curve's basepoint.\n\n@param pub Pointer to 32 bytes of memory where the resulting point is written to.\n@param priv Pointer to 32 bytes of memory where the secret/private key is read from."]
     pub fn EverCrypt_Curve25519_secret_to_public(pub_: *mut u8, priv_: *mut u8);
 }
@@ -334,6 +438,170 @@ extern "C" {
     #[doc = "Execute the diffie-hellmann key exchange.\n\n@param shared Pointer to 32 bytes of memory where the resulting point is written to.\n@param my_priv Pointer to 32 bytes of memory where **our** secret/private key is read from.\n@param their_pub Pointer to 32 bytes of memory where **their** public point is read from."]
     pub fn EverCrypt_Curve25519_ecdh(shared: *mut u8, my_priv: *mut u8, their_pub: *mut u8)
         -> bool;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Streaming_SHA2_state_sha2_224_s {
+    pub block_state: *mut u32,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Streaming_SHA2_state_sha2_224 = Hacl_Streaming_SHA2_state_sha2_224_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Streaming_SHA2_state_sha2_384_s {
+    pub block_state: *mut u64,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Streaming_SHA2_state_sha2_384 = Hacl_Streaming_SHA2_state_sha2_384_s;
+extern "C" {
+    #[doc = "Allocate initial state for the SHA2_256 hash. The state is to be freed by\ncalling `free_256`."]
+    pub fn Hacl_Streaming_SHA2_create_in_256() -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    #[doc = "Copies the state passed as argument into a newly allocated state (deep copy).\nThe state is to be freed by calling `free_256`. Cloning the state this way is\nuseful, for instance, if your control-flow diverges and you need to feed\nmore (different) data into the hash in each branch."]
+    pub fn Hacl_Streaming_SHA2_copy_256(
+        s0: *mut Hacl_Streaming_SHA2_state_sha2_224,
+    ) -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    #[doc = "Reset an existing state to the initial hash state with empty data."]
+    pub fn Hacl_Streaming_SHA2_init_256(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_256`\n(since the last call to `init_256`) exceeds 2^61-1 bytes.\n\nThis function is identical to the update function for SHA2_224."]
+    pub fn Hacl_Streaming_SHA2_update_256(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_224,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 32 bytes. The state remains\nvalid after a call to `finish_256`, meaning the user may feed more data into\nthe hash via `update_256`. (The finish_256 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_finish_256(p: *mut Hacl_Streaming_SHA2_state_sha2_224, dst: *mut u8);
+}
+extern "C" {
+    #[doc = "Free a state allocated with `create_in_256`.\n\nThis function is identical to the free function for SHA2_224."]
+    pub fn Hacl_Streaming_SHA2_free_256(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 32 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha256(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_224() -> *mut Hacl_Streaming_SHA2_state_sha2_224;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_224(s: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_update_224(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_224,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 28 bytes. The state remains\nvalid after a call to `finish_224`, meaning the user may feed more data into\nthe hash via `update_224`."]
+    pub fn Hacl_Streaming_SHA2_finish_224(p: *mut Hacl_Streaming_SHA2_state_sha2_224, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_free_224(p: *mut Hacl_Streaming_SHA2_state_sha2_224);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 28 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha224(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_512() -> *mut Hacl_Streaming_SHA2_state_sha2_384;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_512(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_512`\n(since the last call to `init_512`) exceeds 2^125-1 bytes.\n\nThis function is identical to the update function for SHA2_384."]
+    pub fn Hacl_Streaming_SHA2_update_512(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_384,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 64 bytes. The state remains\nvalid after a call to `finish_512`, meaning the user may feed more data into\nthe hash via `update_512`. (The finish_512 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_finish_512(p: *mut Hacl_Streaming_SHA2_state_sha2_384, dst: *mut u8);
+}
+extern "C" {
+    #[doc = "Free a state allocated with `create_in_512`.\n\nThis function is identical to the free function for SHA2_384."]
+    pub fn Hacl_Streaming_SHA2_free_512(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 64 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha512(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_create_in_384() -> *mut Hacl_Streaming_SHA2_state_sha2_384;
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_init_384(s: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_update_384(
+        p: *mut Hacl_Streaming_SHA2_state_sha2_384,
+        input: *mut u8,
+        input_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Write the resulting hash into `dst`, an array of 48 bytes. The state remains\nvalid after a call to `finish_384`, meaning the user may feed more data into\nthe hash via `update_384`."]
+    pub fn Hacl_Streaming_SHA2_finish_384(p: *mut Hacl_Streaming_SHA2_state_sha2_384, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Streaming_SHA2_free_384(p: *mut Hacl_Streaming_SHA2_state_sha2_384);
+}
+extern "C" {
+    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 48 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha384(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_256(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_384(s: *mut u64, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_multi_512(s: *mut u64, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_last_224(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_update_last_256(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn EverCrypt_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
@@ -415,6 +683,226 @@ extern "C" {
 }
 extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_MD5_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_init(
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        kk: u32,
+        nn: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_key(
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_multi(
+        len: u32,
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_update_last(
+        len: u32,
+        wv: *mut Lib_IntVector_Intrinsics_vec128,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_finish(
+        nn: u32,
+        output: *mut u8,
+        hash: *mut Lib_IntVector_Intrinsics_vec128,
+    );
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_128_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_store_state128s_to_state32(
+        st32: *mut u32,
+        st: *mut Lib_IntVector_Intrinsics_vec128,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_load_state128s_from_state32(
+        st: *mut Lib_IntVector_Intrinsics_vec128,
+        st32: *mut u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_128_blake2s_malloc() -> *mut Lib_IntVector_Intrinsics_vec128;
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_init(hash: *mut *mut ::std::os::raw::c_void, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_update_key(
+        wv: *mut *mut ::std::os::raw::c_void,
+        hash: *mut *mut ::std::os::raw::c_void,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_finish(
+        nn: u32,
+        output: *mut u8,
+        hash: *mut *mut ::std::os::raw::c_void,
+    );
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_256_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_load_state256b_from_state32(
+        st: *mut *mut ::std::os::raw::c_void,
+        st32: *mut u64,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_store_state256b_to_state32(
+        st32: *mut u64,
+        st: *mut *mut ::std::os::raw::c_void,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_update_key(
+        wv: *mut u64,
+        hash: *mut u64,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_32_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_key(
+        wv: *mut u32,
+        hash: *mut u32,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_last(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_32_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

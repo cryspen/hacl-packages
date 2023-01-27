@@ -61,7 +61,7 @@ fn test_wycheproof() {
             let private = hex_str_to_bytes(&test.private);
             let shared = hex_str_to_bytes(&test.shared);
 
-            let result = p256::dh(&public, &private);
+            let result = p256::ecdh(&public, &private);
             let result_ = ecdh::derive(Mode::P256, &public, &private);
             match result {
                 Ok(r) => {

@@ -11,6 +11,9 @@ pub mod rsa_pss;
 pub mod signature;
 pub mod x25519;
 
+#[cfg(feature = "hazmat")]
+pub mod hazmat;
+
 mod util;
 
 #[cfg(feature = "random")]

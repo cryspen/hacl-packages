@@ -67,7 +67,7 @@ pub fn validate_sk(sk: &[u8]) -> Result<Scalar, Error> {
 }
 
 /// Return base * s
-pub fn dh_base(s: &[u8]) -> Result<[u8; 64], Error> {
+pub fn ecdh_base(s: &[u8]) -> Result<[u8; 64], Error> {
     let private = validate_sk(s)?;
 
     let mut out = [0u8; 64];
@@ -83,7 +83,7 @@ pub fn dh_base(s: &[u8]) -> Result<[u8; 64], Error> {
 ///
 /// The public key `p` can be in uncompressed or compressed form or a concatenation
 /// of the two 32 byte values.
-pub fn dh(p: &[u8], s: &[u8]) -> Result<[u8; 64], Error> {
+pub fn ecdh(p: &[u8], s: &[u8]) -> Result<[u8; 64], Error> {
     let public = validate_pk(p)?;
     let private = validate_sk(s)?;
 
