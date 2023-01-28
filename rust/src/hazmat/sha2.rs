@@ -94,7 +94,10 @@ pub mod streaming {
                 }
 
                 /// Add the `payload` to the digest.
-                pub fn update(&self, payload: &[u8]) {
+                pub fn update(&mut self, payload: &[u8]) {
+                    // Note that we don't really need mut here because the mutability is
+                    // only in unsafe C code.
+                    // But this way we force the borrow checker to do the right thing.
                     unsafe { $update(self.state, payload.as_ptr() as _, payload.len() as u32) };
                 }
 
@@ -102,7 +105,10 @@ pub mod streaming {
                 ///
                 /// Note that the digest state can be continued to be used, to extend the
                 /// digest.
-                pub fn finish(&self) -> [u8; $digest_size] {
+                pub fn finish(&mut self) -> [u8; $digest_size] {
+                    // Note that we don't really need mut here because the mutability is
+                    // only in unsafe C code.
+                    // But this way we force the borrow checker to do the right thing.
                     let mut digest = [0u8; $digest_size];
                     unsafe {
                         $finish(self.state, digest.as_mut_ptr());
