@@ -22,6 +22,12 @@ Note that it is also possible to compare two benchmark runs, e.g., to test for r
 
 Note that you need to build the benchmarks in the other checkout, too. But `mach` will remind you about that.
 
+## OpenSSL comparison
+
+The benchmarks in HACL are compared with OpenSSL.
+If OpenSSL 3 is not in the `PATH`, the `OPENSSL_HOME` environment variable can be set.
+To disable OpenSSL benchmarks, use `--no-openssl` when building benchmarks.
+
 ## Contributing to the benchmarks
 
 We use the [Google Benchmark] framework to define and run all benchmarks and it is generally useful to consult the [User Guide] while working on the benchmarks. Although Google Benchmark helps a lot, writing benchmarks remains a delicate task. Thus, we collected some rules of thumb to apply during benchmarking:
