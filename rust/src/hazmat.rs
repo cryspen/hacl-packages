@@ -16,6 +16,8 @@
 pub mod blake2;
 pub mod chacha20_poly1305;
 pub mod curve25519;
+pub mod hkdf;
+pub mod hmac;
 pub mod p256;
 pub mod sha2;
 pub mod sha3;

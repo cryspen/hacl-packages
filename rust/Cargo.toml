@@ -26,6 +26,7 @@ serde_json = { version = "1.0", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
+hacl-star = { path = ".", features = ["hazmat", "random"] }
 serde_json = "1.0"
 serde = {version = "1.0", features = ["derive"]}
 criterion = "0.4"

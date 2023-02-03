@@ -657,6 +657,111 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_update_last(
+        s: *mut u32,
+        prev_len: u64,
+        input: *mut u8,
+        input_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_update_key(
+        wv: *mut u64,
+        hash: *mut u64,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2b_32_blake2b(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_key(
+        wv: *mut u32,
+        hash: *mut u32,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        blocks: *mut u8,
+        nb: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_update_last(
+        len: u32,
+        wv: *mut u32,
+        hash: *mut u32,
+        prev: u64,
+        rem: u32,
+        d: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
+    pub fn Hacl_Blake2s_32_blake2s(
+        nn: u32,
+        output: *mut u8,
+        ll: u32,
+        d: *mut u8,
+        kk: u32,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
+}
+extern "C" {
+    pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
+}
+extern "C" {
+    pub fn EverCrypt_HMAC_compute(
+        a: Spec_Hash_Definitions_hash_alg,
+        mac: *mut u8,
+        key: *mut u8,
+        keylen: u32,
+        data: *mut u8,
+        datalen: u32,
+    );
+}
+extern "C" {
     pub fn Hacl_SHA3_shake128_hacl(
         inputByteLen: u32,
         input: *mut u8,
@@ -683,20 +788,6 @@ extern "C" {
 }
 extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_update_last(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA1_legacy_hash(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Hash_MD5_legacy_update_multi(s: *mut u32, blocks: *mut u8, n_blocks: u32);
@@ -826,84 +917,6 @@ extern "C" {
 extern "C" {
     pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
 }
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_update_key(
-        wv: *mut u64,
-        hash: *mut u64,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2b_32_blake2b(
-        nn: u32,
-        output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_key(
-        wv: *mut u32,
-        hash: *mut u32,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_multi(
-        len: u32,
-        wv: *mut u32,
-        hash: *mut u32,
-        prev: u64,
-        blocks: *mut u8,
-        nb: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_last(
-        len: u32,
-        wv: *mut u32,
-        hash: *mut u32,
-        prev: u64,
-        rem: u32,
-        d: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2s_32_blake2s(
-        nn: u32,
-        output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct EverCrypt_Hash_state_s_s {
@@ -966,16 +979,147 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
+    #[doc = "Write the HMAC-SHA-1 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 64 byte.\n`dst` must point to 20 bytes of memory."]
+    pub fn Hacl_HMAC_legacy_compute_sha1(
+        dst: *mut u8,
+        key: *mut u8,
+        key_len: u32,
+        data: *mut u8,
+        data_len: u32,
+    );
 }
 extern "C" {
-    pub fn EverCrypt_HMAC_compute(
-        a: Spec_Hash_Definitions_hash_alg,
-        mac: *mut u8,
+    #[doc = "Write the HMAC-SHA-2-256 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 64 bytes.\n`dst` must point to 32 bytes of memory."]
+    pub fn Hacl_HMAC_compute_sha2_256(
+        dst: *mut u8,
         key: *mut u8,
-        keylen: u32,
+        key_len: u32,
         data: *mut u8,
-        datalen: u32,
+        data_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Write the HMAC-SHA-2-384 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.\n`dst` must point to 48 bytes of memory."]
+    pub fn Hacl_HMAC_compute_sha2_384(
+        dst: *mut u8,
+        key: *mut u8,
+        key_len: u32,
+        data: *mut u8,
+        data_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Write the HMAC-SHA-2-512 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.\n`dst` must point to 64 bytes of memory."]
+    pub fn Hacl_HMAC_compute_sha2_512(
+        dst: *mut u8,
+        key: *mut u8,
+        key_len: u32,
+        data: *mut u8,
+        data_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Write the HMAC-BLAKE2s MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 64 bytes.\n`dst` must point to 32 bytes of memory."]
+    pub fn Hacl_HMAC_compute_blake2s_32(
+        dst: *mut u8,
+        key: *mut u8,
+        key_len: u32,
+        data: *mut u8,
+        data_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Write the HMAC-BLAKE2b MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 128 bytes.\n`dst` must point to 64 bytes of memory."]
+    pub fn Hacl_HMAC_compute_blake2b_32(
+        dst: *mut u8,
+        key: *mut u8,
+        key_len: u32,
+        data: *mut u8,
+        data_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
+    pub fn Hacl_HKDF_expand_sha2_256(
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
+        len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn Hacl_HKDF_extract_sha2_256(
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
+    );
+}
+extern "C" {
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
+    pub fn Hacl_HKDF_expand_sha2_512(
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
+        len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn Hacl_HKDF_extract_sha2_512(
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
+    );
+}
+extern "C" {
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
+    pub fn Hacl_HKDF_expand_blake2s_32(
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
+        len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn Hacl_HKDF_extract_blake2s_32(
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
+    );
+}
+extern "C" {
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
+    pub fn Hacl_HKDF_expand_blake2b_32(
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
+        len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn Hacl_HKDF_extract_blake2b_32(
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
     );
 }
 extern "C" {
