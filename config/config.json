@@ -524,50 +524,8 @@
         ]
     },
     "benchmarks": {
-        "blake2": [
-            "blake.cc"
-        ],
-        "chacha20": [
-            "chacha20.cc"
-        ],
-        "chacha20poly1305": [
-            "chacha20poly1305.cc"
-        ],
-        "curve25519": [
-            "x25519.cc"
-        ],
-        "ed25519": [
-            "ed25519.cc"
-        ],
-        "nacl": [
-            "nacl.cc"
-        ],
-        "p256": [
-            "p256.cc"
-        ],
-        "sha1": [
-            "sha1.cc"
-        ],
         "sha2": [
             "sha2.cc"
-        ],
-        "sha3": [
-            "sha3.cc"
-        ],
-        "k256": [
-            "k256.cc"
-        ],
-        "kdf": [
-            "kdf.cc"
-        ],
-        "drbg": [
-            "drbg.cc"
-        ],
-        "hmac": [
-            "hmac.cc"
-        ],
-        "rsapss": [
-            "rsapss.cc"
         ]
     }
 }

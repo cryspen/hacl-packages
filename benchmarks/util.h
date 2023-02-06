@@ -196,3 +196,41 @@ Range(benchmark::internal::Benchmark* b)
     b->Arg(i);
   }
 }
+
+#ifndef NO_OPENSSL
+template<class... Args>
+void
+OpenSSL_hash_streaming(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto algorithm = std::get<0>(args_tuple);
+  const size_t digest_len = std::get<1>(args_tuple);
+  const bytes expected_digest = std::get<2>(args_tuple);
+  const bytes input = std::get<3>(args_tuple);
+  const size_t chunk_len = std::get<4>(args_tuple);
+
+  bytes digest(digest_len, 0);
+
+  for (auto _ : state) {
+    // Init
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+    EVP_DigestInit(ctx, algorithm);
+
+    // Update
+    for (auto chunk : chunk(input, chunk_len)) {
+      EVP_DigestUpdate(ctx, chunk.data(), chunk.size());
+    }
+
+    // Finish
+    unsigned int len = digest.size();
+    EVP_DigestFinal_ex(ctx, digest.data(), &len);
+    EVP_MD_CTX_free(ctx);
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+#endif
