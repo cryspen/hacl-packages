@@ -3,10 +3,6 @@
 #include "Hacl_SHA3.h"
 #include "Hacl_Streaming_SHA3.h"
 
-#ifndef NO_OPENSSL
-#include <openssl/evp.h>
-#endif
-
 const bytes input(1000, 0x37);
 
 static bytes digest224(28, 0);
