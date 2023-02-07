@@ -25,10 +25,6 @@
 #define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
 #define HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX 32
 
-#ifndef NO_OPENSSL
-#include <openssl/evp.h>
-#endif
-
 const bytes input(1000, 0x37);
 
 static bytes key(64, 0x72);
