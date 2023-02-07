@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-11
+          - macos-latest
           - ubuntu-latest
           - windows-latest
 
@@ -55,7 +55,7 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo
 
-      - if: matrix.os == 'macos-11'
+      - if: matrix.os == 'macos-latest'
         run: brew install ninja
 
       - if: matrix.os == 'ubuntu-latest'
@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-11
+          - macos-latest
           - ubuntu-latest
           # - windows-latest # FIXME
 
@@ -108,7 +108,7 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo
 
-      - if: matrix.os == 'macos-11'
+      - if: matrix.os == 'macos-latest'
         run: brew install ninja
 
       - if: matrix.os == 'ubuntu-latest'
