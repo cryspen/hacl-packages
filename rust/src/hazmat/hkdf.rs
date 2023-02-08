@@ -1,6 +1,15 @@
+/// HKDF Errors.
+pub enum Error {
+    /// The requested output key material in expand was too large for the used
+    /// hash function.
+    OkmTooLarge,
+}
+
 macro_rules! impl_hkdf {
     ($name:ident,$extract:ident,$expand:ident,$tag_len:literal) => {
         pub mod $name {
+            use super::Error;
+
             /// HKDF extract using the `salt`, and the input key material `ikm`.
             /// Returns the pre-key material in an array of tag length.
             ///
@@ -21,16 +30,17 @@ macro_rules! impl_hkdf {
 
             /// HKDF expand using the pre-key material `prk` and `info`. The output length
             /// is defined through the result type.
-            /// Returns the key material in an array of length `okm_len`.
-            ///
-            /// **NOTE:** This function returns an all zero array if the requested output
-            ///           size is too large.
+            /// Returns the key material in an array of length `okm_len` or
+            /// [`Error::OkmTooLarge`] of the requested `okm_len` is too large.
             ///
             /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
-            pub fn expand<const OKM_LEN: usize>(prk: &[u8], info: &[u8]) -> [u8; OKM_LEN] {
+            pub fn expand<const OKM_LEN: usize>(
+                prk: &[u8],
+                info: &[u8],
+            ) -> Result<[u8; OKM_LEN], Error> {
                 if OKM_LEN > 255 * $tag_len {
                     // Output size is too large. HACL doesn't catch this.
-                    return [0u8; OKM_LEN];
+                    return Err(Error::OkmTooLarge);
                 }
                 let mut okm = [0u8; OKM_LEN];
                 unsafe {
@@ -43,7 +53,7 @@ macro_rules! impl_hkdf {
                         OKM_LEN.try_into().unwrap(),
                     );
                 }
-                okm
+                Ok(okm)
             }
 
             /// HKDF using the `salt`, input key material `ikm`, `info`. The output length
@@ -55,7 +65,7 @@ macro_rules! impl_hkdf {
                 salt: &[u8],
                 ikm: &[u8],
                 info: &[u8],
-            ) -> [u8; OKM_LEN] {
+            ) -> Result<[u8; OKM_LEN], Error> {
                 let prk = extract(salt, ikm);
                 expand(&prk, info)
             }
@@ -63,18 +73,18 @@ macro_rules! impl_hkdf {
             /// This module uses heap allocated vectors for cases where the output
             /// length is not const.
             pub mod vec {
+                use super::super::Error;
+
                 /// HKDF expand using the pre-key material `prk` and `info`. The output length
                 /// is defined through the result type.
-                /// Returns the key material in an array of length `okm_len`.
-                ///
-                /// **NOTE:** This function returns an all zero array if the requested output
-                ///           size is too large.
+                /// Returns the key material in an array of length `okm_len` or
+                /// [`Error::OkmTooLarge`] of the requested `okm_len` is too large.
                 ///
                 /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
-                pub fn expand(prk: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
+                pub fn expand(prk: &[u8], info: &[u8], okm_len: usize) -> Result<Vec<u8>, Error> {
                     if okm_len > 255 * $tag_len {
                         // Output size is too large. HACL doesn't catch this.
-                        return vec![0u8; okm_len];
+                        return Err(Error::OkmTooLarge);
                     }
                     let mut okm = vec![0u8; okm_len];
                     unsafe {
@@ -87,7 +97,7 @@ macro_rules! impl_hkdf {
                             okm_len.try_into().unwrap(),
                         );
                     }
-                    okm
+                    Ok(okm)
                 }
 
                 /// HKDF using the `salt`, input key material `ikm`, `info`. The output length
@@ -95,7 +105,12 @@ macro_rules! impl_hkdf {
                 /// Calls `extract` and `expand` with the given input.
                 ///
                 /// Returns the key material in an array of length `okm_len`.
-                pub fn hkdf(salt: &[u8], ikm: &[u8], info: &[u8], okm_len: usize) -> Vec<u8> {
+                pub fn hkdf(
+                    salt: &[u8],
+                    ikm: &[u8],
+                    info: &[u8],
+                    okm_len: usize,
+                ) -> Result<Vec<u8>, Error> {
                     let prk = super::extract(salt, ikm);
                     expand(&prk, info, okm_len)
                 }
