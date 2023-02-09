@@ -125,6 +125,13 @@ impl_hkdf!(
     Hacl_HKDF_expand_sha2_256,
     32
 );
+
+impl_hkdf!(
+    sha2_384,
+    Hacl_HKDF_extract_sha2_384,
+    Hacl_HKDF_expand_sha2_384,
+    48
+);
 impl_hkdf!(
     sha2_512,
     Hacl_HKDF_extract_sha2_512,

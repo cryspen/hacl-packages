@@ -1061,6 +1061,27 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
+    pub fn Hacl_HKDF_expand_sha2_384(
+        okm: *mut u8,
+        prk: *mut u8,
+        prklen: u32,
+        info: *mut u8,
+        infolen: u32,
+        len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Extract a fixed-length pseudorandom key from input keying material.\n\n@param prk Pointer to `HashLen` bytes of memory where pseudorandom key is written to.\n@param salt Pointer to `saltlen` bytes of memory where salt value is read from.\n@param saltlen Length of salt value.\n@param ikm Pointer to `ikmlen` bytes of memory where input keying material is read from.\n@param ikmlen Length of input keying material."]
+    pub fn Hacl_HKDF_extract_sha2_384(
+        prk: *mut u8,
+        salt: *mut u8,
+        saltlen: u32,
+        ikm: *mut u8,
+        ikmlen: u32,
+    );
+}
+extern "C" {
+    #[doc = "Expand pseudorandom key to desired length.\n\n@param okm Pointer to `len` bytes of memory where output keying material is written to.\n@param prk Pointer to at least `HashLen` bytes of memory where pseudorandom key is read from. Usually, this points to the output from the extract step.\n@param prklen Length of pseudorandom key.\n@param info Pointer to `infolen` bytes of memory where context and application specific information is read from. Can be a zero-length string.\n@param infolen Length of context and application specific information.\n@param len Length of output keying material."]
     pub fn Hacl_HKDF_expand_sha2_512(
         okm: *mut u8,
         prk: *mut u8,
