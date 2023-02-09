@@ -25,10 +25,19 @@
 #define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
 #define HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX 32
 
-static bytes input(1000, 0x37);
+const bytes input(1000, 0x37);
+
 static bytes key(64, 0x72);
 static bytes digest2b(64, 0);
 static bytes digest2s(32, 0);
+
+const size_t chunk_len = 135;
+
+const bytes expected_digest_blake2b512 =
+  from_hex("f70070628cf99c5f67f56079024f952a7a4f58b7a0e1c9bff1962502bc2ae1eb2ec"
+           "f12d5249461e8efe27a58c0c9a549ccb4506cc9f986226e69e7be98ae27a1");
+const bytes expected_digest_blake2s256 =
+  from_hex("1b472dff2aec94842fc209bf6f0f922a330e2da17c4464ef06e5035c3f1cf1e4");
 
 static void
 HACL_blake2b_32_oneshot(benchmark::State& state)
@@ -36,8 +45,12 @@ HACL_blake2b_32_oneshot(benchmark::State& state)
   bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
-    Hacl_Blake2b_32_blake2b(
-      digest2b.size(), digest2b.data(), input.size(), input.data(), 0, NULL);
+    Hacl_Blake2b_32_blake2b(digest2b.size(),
+                            digest2b.data(),
+                            input.size(),
+                            (uint8_t*)input.data(),
+                            0,
+                            NULL);
   }
 }
 
@@ -55,8 +68,12 @@ HACL_blake2b_vec256_oneshot(benchmark::State& state)
   bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
-    Hacl_Blake2b_256_blake2b(
-      digest2b.size(), digest2b.data(), input.size(), input.data(), 0, NULL);
+    Hacl_Blake2b_256_blake2b(digest2b.size(),
+                             digest2b.data(),
+                             input.size(),
+                             (uint8_t*)input.data(),
+                             0,
+                             NULL);
   }
 }
 
@@ -79,35 +96,13 @@ EverCrypt_blake2b_oneshot(benchmark::State& state)
 BENCHMARK(EverCrypt_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
 
 #ifndef NO_OPENSSL
-static void
-OpenSSL_blake2b_oneshot(benchmark::State& state)
-{
-  bytes input(state.range(0), 0xAB);
-
-  for (auto _ : state) {
-    EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
-    if (EVP_DigestInit_ex2(mdctx, EVP_blake2b512(), NULL) != 1) {
-      state.SkipWithError("Error in EVP_DigestInit_ex2");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    if (EVP_DigestUpdate(mdctx, input.data(), input.size()) != 1) {
-      state.SkipWithError("Error in EVP_DigestUpdate");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    unsigned int md_len = 0;
-    if (EVP_DigestFinal_ex(mdctx, digest2b.data(), &md_len) != 1 ||
-        md_len != 64) {
-      state.SkipWithError("Error in EVP_DigestFinal_ex");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    EVP_MD_CTX_free(mdctx);
-  }
-}
-
-BENCHMARK(OpenSSL_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  blake2b512,
+                  EVP_blake2b512(),
+                  input,
+                  digest2b.size(),
+                  expected_digest_blake2b512)
+  ->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -119,7 +114,7 @@ HACL_blake2b_32_oneshot_keyed(benchmark::State& state)
     Hacl_Blake2b_32_blake2b(digest2b.size(),
                             digest2b.data(),
                             input.size(),
-                            input.data(),
+                            (uint8_t*)input.data(),
                             key.size(),
                             key.data());
   }
@@ -140,7 +135,7 @@ HACL_blake2b_vec256_oneshot_keyed(benchmark::State& state)
     Hacl_Blake2b_256_blake2b(digest2b.size(),
                              digest2b.data(),
                              input.size(),
-                             input.data(),
+                             (uint8_t*)input.data(),
                              key.size(),
                              key.data());
   }
@@ -253,14 +248,14 @@ EverCrypt_blake2b_streaming(benchmark::State& state)
 BENCHMARK(EverCrypt_blake2b_streaming)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
-static void
-OpenSSL_blake2b_streaming(benchmark::State& state)
-{
-  // TODO
-  state.SkipWithError("Unimplemented");
-}
-
-BENCHMARK(OpenSSL_blake2b_streaming)->Setup(DoSetup);
+BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
+                  blake2b512,
+                  EVP_blake2b512(),
+                  input,
+                  chunk_len,
+                  digest2b.size(),
+                  expected_digest_blake2b512)
+  ->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -314,35 +309,13 @@ EverCrypt_blake2s_oneshot(benchmark::State& state)
 BENCHMARK(EverCrypt_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
 
 #ifndef NO_OPENSSL
-static void
-OpenSSL_blake2s_oneshot(benchmark::State& state)
-{
-  bytes input(state.range(0), 0xAB);
-
-  for (auto _ : state) {
-    EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
-    if (EVP_DigestInit_ex2(mdctx, EVP_blake2s256(), NULL) != 1) {
-      state.SkipWithError("Error in EVP_DigestInit_ex2");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    if (EVP_DigestUpdate(mdctx, input.data(), input.size()) != 1) {
-      state.SkipWithError("Error in EVP_DigestUpdate");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    unsigned int md_len = 0;
-    if (EVP_DigestFinal_ex(mdctx, digest2s.data(), &md_len) != 1 ||
-        md_len != 32) {
-      state.SkipWithError("Error in EVP_DigestFinal_ex");
-      EVP_MD_CTX_free(mdctx);
-      break;
-    }
-    EVP_MD_CTX_free(mdctx);
-  }
-}
-
-BENCHMARK(OpenSSL_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  blake2s256,
+                  EVP_blake2s256(),
+                  input,
+                  digest2s.size(),
+                  expected_digest_blake2s256)
+  ->Setup(DoSetup);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -354,7 +327,7 @@ HACL_blake2s_32_oneshot_keyed(benchmark::State& state)
     Hacl_Blake2s_32_blake2s(digest2s.size(),
                             digest2s.data(),
                             input.size(),
-                            input.data(),
+                            (uint8_t*)input.data(),
                             key.size(),
                             key.data());
   }
@@ -375,7 +348,7 @@ HACL_blake2s_vec128_oneshot_keyed(benchmark::State& state)
     Hacl_Blake2s_128_blake2s(digest2s.size(),
                              digest2s.data(),
                              input.size(),
-                             input.data(),
+                             (uint8_t*)input.data(),
                              key.size(),
                              key.data());
   }
@@ -488,14 +461,15 @@ EverCrypt_blake2s_streaming(benchmark::State& state)
 BENCHMARK(EverCrypt_blake2s_streaming)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
-static void
-OpenSSL_blake2s_streaming(benchmark::State& state)
-{
-  // TODO
-  state.SkipWithError("Unimplemented");
-}
+BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
+                  blake2s256,
+                  EVP_blake2s256(),
+                  input,
+                  chunk_len,
+                  digest2s.size(),
+                  expected_digest_blake2s256)
+  ->Setup(DoSetup);
 
-BENCHMARK(OpenSSL_blake2s_streaming)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

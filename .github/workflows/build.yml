@@ -94,11 +94,11 @@ jobs:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
-        version: [9, 10, 11, 12, 13, 14]
+        version: [11, 12, 13, 14]
         bits: [64]
         target: ["", "aarch64-apple-ios", "aarch64-apple-darwin"]
         exclude:
@@ -106,11 +106,6 @@ jobs:
             version: 13
           - compiler: gcc
             version: 14
-          - compiler: clang
-            version: 9
-          # Not available in brew
-          - compiler: clang
-            version: 10
 
     steps:
       - name: Setup | Install Ninja
