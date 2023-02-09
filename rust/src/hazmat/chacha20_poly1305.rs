@@ -131,6 +131,7 @@ pub mod simd128 {
 
 #[cfg(simd256)]
 pub mod simd256 {
+    use super::*;
     use hacl_star_sys::{
         Hacl_Chacha20Poly1305_256_aead_decrypt, Hacl_Chacha20Poly1305_256_aead_encrypt,
     };
