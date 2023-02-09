@@ -13,6 +13,7 @@ The following instantiations are supported:
 * BLAKE2b (`HashLen` = 64)
 * BLAKE2s (`HashLen` = 32)
 * SHA2-256 (`HashLen` = 32)
+* SHA2-384 (`HashLen` = 48)
 * SHA2-512 (`HashLen` = 64)
 
 ### Available Implementations
@@ -135,6 +136,18 @@ The following instantiations are supported:
 ```
 
 ```{doxygenfunction} Hacl_HKDF_expand_sha2_256
+```
+
+#### SHA2-384
+
+```C
+#include "Hacl_HKDF.h"
+```
+
+```{doxygenfunction} Hacl_HKDF_extract_sha2_384
+```
+
+```{doxygenfunction} Hacl_HKDF_expand_sha2_384
 ```
 
 #### SHA2-512
