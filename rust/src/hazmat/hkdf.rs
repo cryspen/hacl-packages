@@ -31,7 +31,7 @@ macro_rules! impl_hkdf {
             /// HKDF expand using the pre-key material `prk` and `info`. The output length
             /// is defined through the result type.
             /// Returns the key material in an array of length `okm_len` or
-            /// [`Error::OkmTooLarge`] of the requested `okm_len` is too large.
+            /// [`Error::OkmTooLarge`] if the requested `okm_len` is too large.
             ///
             /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
             pub fn expand<const OKM_LEN: usize>(
@@ -78,7 +78,7 @@ macro_rules! impl_hkdf {
                 /// HKDF expand using the pre-key material `prk` and `info`. The output length
                 /// is defined through the result type.
                 /// Returns the key material in an array of length `okm_len` or
-                /// [`Error::OkmTooLarge`] of the requested `okm_len` is too large.
+                /// [`Error::OkmTooLarge`] if the requested `okm_len` is too large.
                 ///
                 /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
                 pub fn expand(prk: &[u8], info: &[u8], okm_len: usize) -> Result<Vec<u8>, Error> {
@@ -132,6 +132,7 @@ impl_hkdf!(
     Hacl_HKDF_expand_sha2_384,
     48
 );
+
 impl_hkdf!(
     sha2_512,
     Hacl_HKDF_extract_sha2_512,
