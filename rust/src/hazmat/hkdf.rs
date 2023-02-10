@@ -3,6 +3,8 @@ pub enum Error {
     /// The requested output key material in expand was too large for the used
     /// hash function.
     OkmTooLarge,
+    /// At least one function argument has been too large to process.
+    ArgumentsTooLarge,
 }
 
 macro_rules! impl_hkdf {
@@ -33,7 +35,8 @@ macro_rules! impl_hkdf {
             /// Returns the key material in an array of length `okm_len` or
             /// [`Error::OkmTooLarge`] if the requested `okm_len` is too large.
             ///
-            /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
+            /// Note that this function returns an [`Error::ArgumentsTooLarge`]
+            /// if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
             pub fn expand<const OKM_LEN: usize>(
                 prk: &[u8],
                 info: &[u8],
@@ -47,10 +50,12 @@ macro_rules! impl_hkdf {
                     hacl_star_sys::$expand(
                         okm.as_mut_ptr(),
                         prk.as_ptr() as _,
-                        prk.len().try_into().unwrap(),
+                        prk.len().try_into().map_err(|_| Error::ArgumentsTooLarge)?,
                         info.as_ptr() as _,
-                        info.len().try_into().unwrap(),
-                        OKM_LEN.try_into().unwrap(),
+                        info.len()
+                            .try_into()
+                            .map_err(|_| Error::ArgumentsTooLarge)?,
+                        OKM_LEN.try_into().map_err(|_| Error::ArgumentsTooLarge)?,
                     );
                 }
                 Ok(okm)
@@ -80,7 +85,8 @@ macro_rules! impl_hkdf {
                 /// Returns the key material in an array of length `okm_len` or
                 /// [`Error::OkmTooLarge`] if the requested `okm_len` is too large.
                 ///
-                /// Note that this function panics if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
+                /// Note that this function returns an [`Error::ArgumentsTooLarge`]
+                /// if `salt`, `ikm`, or `OKM_LEN` is larger than 2**32 bytes.
                 pub fn expand(prk: &[u8], info: &[u8], okm_len: usize) -> Result<Vec<u8>, Error> {
                     if okm_len > 255 * $tag_len {
                         // Output size is too large. HACL doesn't catch this.
@@ -91,10 +97,12 @@ macro_rules! impl_hkdf {
                         hacl_star_sys::$expand(
                             okm.as_mut_ptr(),
                             prk.as_ptr() as _,
-                            prk.len().try_into().unwrap(),
+                            prk.len().try_into().map_err(|_| Error::ArgumentsTooLarge)?,
                             info.as_ptr() as _,
-                            info.len().try_into().unwrap(),
-                            okm_len.try_into().unwrap(),
+                            info.len()
+                                .try_into()
+                                .map_err(|_| Error::ArgumentsTooLarge)?,
+                            okm_len.try_into().map_err(|_| Error::ArgumentsTooLarge)?,
                         );
                     }
                     Ok(okm)
