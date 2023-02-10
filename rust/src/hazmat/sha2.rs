@@ -78,7 +78,7 @@ pub mod streaming {
     };
 
     macro_rules! impl_streaming {
-        ($name:ident, $state:ty, $create:expr, $init:expr, $update:expr, $finish:expr, $free:expr) => {
+        ($name:ident, $digest_size:literal, $state:ty, $create:expr, $init:expr, $update:expr, $finish:expr, $free:expr) => {
             pub struct $name {
                 state: *mut $state,
             }
@@ -94,7 +94,10 @@ pub mod streaming {
                 }
 
                 /// Add the `payload` to the digest.
-                pub fn update(&self, payload: &[u8]) {
+                pub fn update(&mut self, payload: &[u8]) {
+                    // Note that we don't really need mut here because the mutability is
+                    // only in unsafe C code.
+                    // But this way we force the borrow checker to do the right thing.
                     unsafe { $update(self.state, payload.as_ptr() as _, payload.len() as u32) };
                 }
 
@@ -102,8 +105,11 @@ pub mod streaming {
                 ///
                 /// Note that the digest state can be continued to be used, to extend the
                 /// digest.
-                pub fn finish(&self) -> [u8; 32] {
-                    let mut digest = [0u8; 32];
+                pub fn finish(&mut self) -> [u8; $digest_size] {
+                    // Note that we don't really need mut here because the mutability is
+                    // only in unsafe C code.
+                    // But this way we force the borrow checker to do the right thing.
+                    let mut digest = [0u8; $digest_size];
                     unsafe {
                         $finish(self.state, digest.as_mut_ptr());
                     }
@@ -121,6 +127,7 @@ pub mod streaming {
 
     impl_streaming!(
         Sha224,
+        28,
         Hacl_Streaming_SHA2_state_sha2_224,
         Hacl_Streaming_SHA2_create_in_224,
         Hacl_Streaming_SHA2_init_224,
@@ -131,6 +138,7 @@ pub mod streaming {
 
     impl_streaming!(
         Sha256,
+        32,
         Hacl_Streaming_SHA2_state_sha2_224,
         Hacl_Streaming_SHA2_create_in_256,
         Hacl_Streaming_SHA2_init_256,
@@ -141,6 +149,7 @@ pub mod streaming {
 
     impl_streaming!(
         Sha384,
+        48,
         Hacl_Streaming_SHA2_state_sha2_384,
         Hacl_Streaming_SHA2_create_in_384,
         Hacl_Streaming_SHA2_init_384,
@@ -151,6 +160,7 @@ pub mod streaming {
 
     impl_streaming!(
         Sha512,
+        64,
         Hacl_Streaming_SHA2_state_sha2_384,
         Hacl_Streaming_SHA2_create_in_512,
         Hacl_Streaming_SHA2_init_512,

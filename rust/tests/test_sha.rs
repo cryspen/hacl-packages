@@ -24,10 +24,34 @@ fn test(alg: Algorithm, expected: &str) {
     #[cfg(feature = "hazmat")]
     match alg {
         Algorithm::Sha1 => (),
-        Algorithm::Sha224 => assert_eq!(&sha2::sha224(data), expected_digest.as_slice()),
-        Algorithm::Sha256 => assert_eq!(&sha2::sha256(data), expected_digest.as_slice()),
-        Algorithm::Sha384 => assert_eq!(&sha2::sha384(data), expected_digest.as_slice()),
-        Algorithm::Sha512 => assert_eq!(&sha2::sha512(data), expected_digest.as_slice()),
+        Algorithm::Sha224 => {
+            assert_eq!(&sha2::sha224(data), expected_digest.as_slice());
+
+            let mut state = sha2::streaming::Sha224::new();
+            state.update(data);
+            assert_eq!(&state.finish(), expected_digest.as_slice());
+        }
+        Algorithm::Sha256 => {
+            assert_eq!(&sha2::sha256(data), expected_digest.as_slice());
+
+            let mut state = sha2::streaming::Sha256::new();
+            state.update(data);
+            assert_eq!(&state.finish(), expected_digest.as_slice());
+        }
+        Algorithm::Sha384 => {
+            assert_eq!(&sha2::sha384(data), expected_digest.as_slice());
+
+            let mut state = sha2::streaming::Sha384::new();
+            state.update(data);
+            assert_eq!(&state.finish(), expected_digest.as_slice());
+        }
+        Algorithm::Sha512 => {
+            assert_eq!(&sha2::sha512(data), expected_digest.as_slice());
+
+            let mut state = sha2::streaming::Sha512::new();
+            state.update(data);
+            assert_eq!(&state.finish(), expected_digest.as_slice());
+        }
         Algorithm::Blake2s => (),
         Algorithm::Blake2b => (),
         Algorithm::Sha3_256 => assert_eq!(&sha3::sha256(data), expected_digest.as_slice()),

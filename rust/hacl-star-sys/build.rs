@@ -34,6 +34,8 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_function("Hacl_Streaming_.*")
         .allowlist_function("Hacl_Blake2.*")
         .allowlist_function("Hacl_Curve25519_.*")
+        .allowlist_function("Hacl_HKDF_.*")
+        .allowlist_function("Hacl_HMAC_.*")
         .allowlist_var("EverCrypt_Error_.*")
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
