@@ -5,6 +5,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_51.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Scalar32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2.c

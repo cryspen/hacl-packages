@@ -7,14 +7,7 @@
  */
 #include "EverCrypt_Hash.h"
 #include "Hacl_Streaming_SHA2.h"
-
-#ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Hash_Blake2s_128.h"
-#endif
-
-#ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_Hash_Blake2b_256.h"
-#endif
+#include "Hacl_SHA2_Scalar32.h"
 
 #include "util.h"
 
@@ -51,6 +44,29 @@ HACL_Sha2_oneshot(benchmark::State& state, Args&&... args)
 
   for (auto _ : state) {
     hash((uint8_t*)input.data(), input.size(), digest.data());
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+
+template<class... Args>
+void
+HACL_Sha2_new_oneshot(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto digest_len = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+  auto hash = std::get<2>(args_tuple);
+
+  bytes digest(digest_len, 0);
+
+  for (auto _ : state) {
+    hash(digest.data(), input.size(), (uint8_t*)input.data());
   }
 
   if (digest != expected_digest) {
@@ -162,6 +178,13 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   Hacl_Hash_SHA2_hash_224)
   ->Setup(DoSetup);
 
+BENCHMARK_CAPTURE(HACL_Sha2_new_oneshot,
+                  sha2_224_new,
+                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
+                  expected_digest_sha2_224,
+                  Hacl_SHA2_Scalar32_sha224)
+  ->Setup(DoSetup);
+
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
                   sha2_224,
                   Spec_Hash_Definitions_SHA2_224,
@@ -183,6 +206,13 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
                   Hacl_Hash_SHA2_hash_256)
+  ->Setup(DoSetup);
+
+BENCHMARK_CAPTURE(HACL_Sha2_new_oneshot,
+                  sha2_256_new,
+                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
+                  expected_digest_sha2_256,
+                  Hacl_SHA2_Scalar32_sha256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
