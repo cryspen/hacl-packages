@@ -87,7 +87,7 @@ jobs:
         run: sudo apt-get install ninja-build opam libgmp-dev
       - name: Setup macOS
         if: matrix.os == 'macos-latest'
-        run: brew install ninja opam gmp
+        run: brew install ninja opam gmp pkg-config
       - name: OCaml Setup
         run: |
           opam init --auto-setup --disable-sandboxing --yes --bare
