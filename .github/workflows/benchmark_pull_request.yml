@@ -17,7 +17,7 @@ jobs:
           sudo apt-get install ninja-build
           sudo apt-get install python3 python3-scipy python3-pandas
           sudo apt-get install clang
-	  echo "CC=clang" >> $GITHUB_ENV
+          echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
 
       - name: Checkout hacl-packages (${{ github.ref }})
