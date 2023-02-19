@@ -7,7 +7,6 @@
  */
 #include "EverCrypt_Hash.h"
 #include "Hacl_Streaming_SHA2.h"
-#include "Hacl_SHA2_Scalar32.h"
 
 #include "util.h"
 
@@ -175,14 +174,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_224,
                   HACL_HASH_SHA2_224_DIGEST_LENGTH,
                   expected_digest_sha2_224,
-                  Hacl_Hash_SHA2_hash_224)
-  ->Setup(DoSetup);
-
-BENCHMARK_CAPTURE(HACL_Sha2_new_oneshot,
-                  sha2_224_new,
-                  HACL_HASH_SHA2_224_DIGEST_LENGTH,
-                  expected_digest_sha2_224,
-                  Hacl_SHA2_Scalar32_sha224)
+                  Hacl_Streaming_SHA2_sha224)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -205,14 +197,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_256,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
-                  Hacl_Hash_SHA2_hash_256)
-  ->Setup(DoSetup);
-
-BENCHMARK_CAPTURE(HACL_Sha2_new_oneshot,
-                  sha2_256_new,
-                  HACL_HASH_SHA2_256_DIGEST_LENGTH,
-                  expected_digest_sha2_256,
-                  Hacl_SHA2_Scalar32_sha256)
+                  Hacl_Streaming_SHA2_sha256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -235,7 +220,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_384,
                   HACL_HASH_SHA2_384_DIGEST_LENGTH,
                   expected_digest_sha2_384,
-                  Hacl_Hash_SHA2_hash_384)
+                  Hacl_Streaming_SHA2_sha384)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -258,7 +243,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_512,
                   HACL_HASH_SHA2_512_DIGEST_LENGTH,
                   expected_digest_sha2_512,
-                  Hacl_Hash_SHA2_hash_512)
+                  Hacl_Streaming_SHA2_sha512)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,

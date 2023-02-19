@@ -192,10 +192,6 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_SHA2_Scalar32.c",
-                "features": "std"
-            },
-            {
                 "file": "Hacl_SHA2_Vec128.c",
                 "features": "vec128"
             },
