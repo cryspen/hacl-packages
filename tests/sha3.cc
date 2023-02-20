@@ -11,8 +11,7 @@
 #include <nlohmann/json.hpp>
 #include <string.h>
 
-#include "Hacl_SHA3.h"
-#include "Hacl_Streaming_SHA3.h"
+#include "Hacl_Hash_SHA3.h"
 
 #include "config.h"
 #include "util.h"
@@ -95,8 +94,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Streaming_SHA3_state_sha3_256* state =
-      Hacl_Streaming_SHA3_create_in_256();
+    Hacl_Streaming_SHA3_state_256* state = Hacl_Streaming_SHA3_create_in_256();
     Hacl_Streaming_SHA3_init_256(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and

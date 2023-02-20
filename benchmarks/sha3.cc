@@ -1,7 +1,6 @@
 #include "util.h"
 
-#include "Hacl_SHA3.h"
-#include "Hacl_Streaming_SHA3.h"
+#include "Hacl_Hash_SHA3.h"
 
 const bytes input(1000, 0x37);
 
@@ -85,7 +84,7 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
 {
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA2_state_sha2_384* sha_state =
+    Hacl_Streaming_SHA3_state_256* sha_state =
       Hacl_Streaming_SHA3_create_in_256();
     Hacl_Streaming_SHA3_init_256(sha_state);
 
