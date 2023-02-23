@@ -6,6 +6,7 @@
 - [Platforms](./platforms.md)
   - [Architectures](./architectures.md)
 <!-- - [Installation](./installation.md) -->
+- [Development News](./news.md)
 
 # Building
 
@@ -20,7 +21,7 @@
 - [Rust](./hacl-rust/readme.md)
   <!-- - [AEADs](./hacl-rust/aead.md) -->
 - [OCaml](./hacl-ocaml/readme.md)
-<!-- - [JavaScript](./hacl-js/readme.md) -->
+- [JavaScript](./hacl-js/readme.md)
 
 # Developer Guide
 
