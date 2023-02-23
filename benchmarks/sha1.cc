@@ -1,7 +1,6 @@
 #include "util.h"
 
 #include "Hacl_Hash_SHA1.h"
-#include "Hacl_Streaming_SHA1.h"
 
 #define HACL_HASH_SHA1_DIGEST_LENGTH 20
 
@@ -17,7 +16,7 @@ HACL_Sha1_oneshot(benchmark::State& state)
   bytes digest(HACL_HASH_SHA1_DIGEST_LENGTH, 0);
 
   for (auto _ : state) {
-    Hacl_Hash_SHA1_legacy_hash(input.data(), input.size(), digest.data());
+    Hacl_Streaming_SHA1_legacy_hash(input.data(), input.size(), digest.data());
   }
 
   if (digest != expected_digest) {
@@ -56,20 +55,20 @@ HACL_Sha1_streaming(benchmark::State& state)
 
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA1_state_sha1* state =
-      Hacl_Streaming_SHA1_legacy_create_in_sha1();
-    Hacl_Streaming_SHA1_legacy_init_sha1(state);
+    Hacl_Streaming_SHA1_state* state =
+      Hacl_Streaming_SHA1_legacy_create_in();
+    Hacl_Streaming_SHA1_legacy_init(state);
 
     // Update
     for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA1_legacy_update_sha1(
+      Hacl_Streaming_SHA1_legacy_update(
         state, input.data() + i, min(chunk_len, input.size() - i));
       i += chunk_len;
     }
 
     // Finish
-    Hacl_Streaming_SHA1_legacy_finish_sha1(state, digest.data());
-    Hacl_Streaming_SHA1_legacy_free_sha1(state);
+    Hacl_Streaming_SHA1_legacy_finish(state, digest.data());
+    Hacl_Streaming_SHA1_legacy_free(state);
   }
 
   if (digest != expected_digest) {

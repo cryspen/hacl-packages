@@ -23,13 +23,9 @@ For a detailed description fo the Support column, please see the [Architectures 
 | Hash                 | Blake2            | Portable \| vec128 \| vec256            |
 | Key Derivation       | HKDF              | Portable (depends on hash)              |
 | Symmetric Encryption | Chacha20          | Portable \| vec128 \| vec256            |
+| Symmetric Encryption | Salsa20           | Portable                                |
 | Symmetric Encryption | AES 128           | AES-NI & CLMUL (x86 only)               |
 | Symmetric Encryption | AES 256           | AES-NI & CLMUL (x86 only)               |
 | MAC                  | HMAC              | Portable (depends on hash)              |
 | MAC                  | Poly1305          | Portable \| vec128 \| vec256 \| x64 ASM |
-
-TODO:
-
-- [ ] Salsa
-- [ ] Nacl API
-- [ ] x64 assembly support requirements
+| Hybrid Encryption    | Nacl              | Portable                                |

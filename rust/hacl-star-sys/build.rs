@@ -39,6 +39,8 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_var("EverCrypt_Error_.*")
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
+        .allowlist_type("Hacl_Streaming_SHA2_state.*")
+        .allowlist_type("Hacl_Streaming_SHA3_state.*")
         // Block everything we don't need or define ourselves.
         .blocklist_type("EverCrypt_AEAD_state_s.*")
         // These functions currently use FFI-unsafe u128

@@ -14,11 +14,11 @@ Building HACL from sources requires a set of basic dependencies
 ## Command line reference
 
 ```
-usage: mach [-h] {test,install,build,clean} ...
+usage: mach [-h] {benchmark,configure,doc,rust,test,update,install,build,clean} ...
 
 positional arguments:
-  {test,install,build,clean}
+  {benchmark,configure,doc,rust,test,update,install,build,clean}
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
 ```
