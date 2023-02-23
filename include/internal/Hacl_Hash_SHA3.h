@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_SHA2_Types_H
-#define __Hacl_SHA2_Types_H
+#ifndef __internal_Hacl_Hash_SHA3_H
+#define __internal_Hacl_Hash_SHA3_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,11 +35,15 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-typedef uint8_t *Hacl_Impl_SHA2_Types_uint8_1p;
+#include "../Hacl_Hash_SHA3.h"
+
+void Hacl_Impl_SHA3_state_permute(uint64_t *s);
+
+void Hacl_Impl_SHA3_loadState(uint32_t rateInBytes, uint8_t *input, uint64_t *s);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_SHA2_Types_H_DEFINED
+#define __internal_Hacl_Hash_SHA3_H_DEFINED
 #endif
