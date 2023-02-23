@@ -33,7 +33,7 @@ TEST_P(Md5Suite, TestCase)
   auto test = GetParam();
 
   bytes got_hash = std::vector<uint8_t>(16);
-  Hacl_Hash_MD5_legacy_hash(
+  Hacl_Streaming_MD5_legacy_hash(
     test.message.data(), test.message.size(), got_hash.data());
 
   EXPECT_EQ(got_hash, test.hash);

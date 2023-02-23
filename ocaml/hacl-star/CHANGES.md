@@ -1,3 +1,6 @@
+## 0.7.0 (Unreleased)
+- API changes for all hash functions
+
 ## 0.6.2
 - Updated Vale snapshot
 
