@@ -45,7 +45,7 @@ jobs:
         run: sudo apt-get update
 
       - name: Setup | System
-        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev ninja-build
+        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev ninja-build nodejs
 
       - name: Setup | OCaml
         run: |
@@ -53,6 +53,10 @@ jobs:
           opam switch create 4.14.1 --yes
           eval $(opam env)
           opam install --yes ocamlfind odoc ctypes zarith cppo dune
+
+      - name: Setup | JS
+        run: |
+          npm install jsdoc
 
       - name: Setup | Sphinx
         run: |
@@ -106,6 +110,17 @@ jobs:
               cd ../
             fi
           done
+
+      - name: Build | JS API Reference
+        run: |
+          cp -r js/* src/wasm
+          cd src/wasm
+          mkdir doc
+          node api_doc.js
+          jsdoc doc/readable_api.js -d doc/out
+          cd ../..
+          mkdir -p build/js
+          cp -r src/wasm/doc/out build/js/main
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
