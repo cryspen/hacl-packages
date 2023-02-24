@@ -1151,6 +1151,67 @@ extern "C" {
         ikmlen: u32,
     );
 }
+pub type Hacl_HMAC_DRBG_supported_alg = Spec_Hash_Definitions_hash_alg;
+extern "C" {
+    #[doc = "Return the minimal entropy input length of the desired hash function.\n\n@param a Hash algorithm to use."]
+    pub fn Hacl_HMAC_DRBG_min_length(a: Spec_Hash_Definitions_hash_alg) -> u32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_HMAC_DRBG_state_s {
+    pub k: *mut u8,
+    pub v: *mut u8,
+    pub reseed_counter: *mut u32,
+}
+pub type Hacl_HMAC_DRBG_state = Hacl_HMAC_DRBG_state_s;
+extern "C" {
+    pub fn Hacl_HMAC_DRBG_uu___is_State(
+        a: Spec_Hash_Definitions_hash_alg,
+        projectee: Hacl_HMAC_DRBG_state,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = "Create a DRBG state.\n\n@param a Hash algorithm to use. The possible instantiations are ...\n `Spec_Hash_Definitions_SHA2_256`,\n `Spec_Hash_Definitions_SHA2_384`,\n `Spec_Hash_Definitions_SHA2_512`, and\n `Spec_Hash_Definitions_SHA1`."]
+    pub fn Hacl_HMAC_DRBG_create_in(a: Spec_Hash_Definitions_hash_alg) -> Hacl_HMAC_DRBG_state;
+}
+extern "C" {
+    #[doc = "Instantiate the DRBG.\n\n@param a Hash algorithm to use. (Value must match the value used in `Hacl_HMAC_DRBG_create_in`.)\n@param st Pointer to DRBG state.\n@param entropy_input_len Length of entropy input.\n@param entropy_input Pointer to `entropy_input_len` bytes of memory where entropy input is read from.\n@param nonce_len Length of nonce.\n@param nonce Pointer to `nonce_len` bytes of memory where nonce is read from.\n@param personalization_string_len length of personalization string.\n@param personalization_string Pointer to `personalization_string_len` bytes of memory where personalization string is read from."]
+    pub fn Hacl_HMAC_DRBG_instantiate(
+        a: Spec_Hash_Definitions_hash_alg,
+        st: Hacl_HMAC_DRBG_state,
+        entropy_input_len: u32,
+        entropy_input: *mut u8,
+        nonce_len: u32,
+        nonce: *mut u8,
+        personalization_string_len: u32,
+        personalization_string: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Reseed the DRBG.\n\n@param a Hash algorithm to use. (Value must match the value used in `Hacl_HMAC_DRBG_create_in`.)\n@param st Pointer to DRBG state.\n@param entropy_input_len Length of entropy input.\n@param entropy_input Pointer to `entropy_input_len` bytes of memory where entropy input is read from.\n@param additional_input_input_len Length of additional input.\n@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from."]
+    pub fn Hacl_HMAC_DRBG_reseed(
+        a: Spec_Hash_Definitions_hash_alg,
+        st: Hacl_HMAC_DRBG_state,
+        entropy_input_len: u32,
+        entropy_input: *mut u8,
+        additional_input_input_len: u32,
+        additional_input_input: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Generate output.\n\n@param a Hash algorithm to use. (Value must match the value used in `create_in`.)\n@param output Pointer to `n` bytes of memory where random output is written to.\n@param st Pointer to DRBG state.\n@param n Length of desired output.\n@param additional_input_input_len Length of additional input.\n@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from."]
+    pub fn Hacl_HMAC_DRBG_generate(
+        a: Spec_Hash_Definitions_hash_alg,
+        output: *mut u8,
+        st: Hacl_HMAC_DRBG_state,
+        n: u32,
+        additional_input_len: u32,
+        additional_input: *mut u8,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_HMAC_DRBG_free(uu___: Spec_Hash_Definitions_hash_alg, s: Hacl_HMAC_DRBG_state);
+}
 extern "C" {
     #[doc = "Hash the message with SHA2-256, then sign the resulting digest with the P256 signature function.\n\nInput: result buffer: uint8[64],\nm buffer: uint8 [mLen],\npriv(ate)Key: uint8[32],\nk (nonce): uint32[32].\n\nOutput: bool, where True stands for the correct signature generation. False value means that an error has occurred.\n\nThe private key and the nonce are expected to be more than 0 and less than the curve order."]
     pub fn Hacl_P256_ecdsa_sign_p256_sha2(
