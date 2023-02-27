@@ -10,12 +10,12 @@ Please note that the API is asynchronous and uses promises.
 
 ## Example (with Node.js)
 
-```
+```javascript
   var hacl = require("hacl-wasm");
   hacl.Curve25519.ecdh(new Uint8Array(32), new Uint8Array(32)).then(function (result) {
     // Here result contains an Uint8Array of size 32 with the DH exchange result
   });
-```javascript
+```
 
 ## Documentation
 
