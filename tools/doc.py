@@ -17,7 +17,12 @@ from tools.utils import argument, check_cmd, mprint as print, subcommand
             "--ocaml",
             help="Build OCaml docs as well (requires dune).",
             action="store_true",
-        )
+        ),
+        argument(
+            "--js",
+            help="Build JavaScript docs as well (requires to build js bindings first).",
+            action="store_true",
+        ),
     ]
 )
 def doc(args):
@@ -55,6 +60,27 @@ def doc(args):
         shutil.copytree(
             "opam/_build/default/_doc/_html",
             "build/docs/ocaml/main",
+            dirs_exist_ok=True,
+        )
+
+    if args.js:
+        check_cmd("node", "--version")
+        check_cmd("jsdoc", "--version")
+        if not os.path.exists("build/js"):
+            print(
+                "! Build missing! Please build js bindings first: `./mach build -l js`. Aborting!"
+            )
+            exit(1)
+        print("# Building JavaScript API Reference")
+        os.makedirs("build/docs/js/main", exist_ok=True)
+        os.chdir("build/js")
+        os.makedirs("doc", exist_ok=True)
+        subprocess.call(["node", "api_doc.js"])
+        subprocess.call(["jsdoc", "doc/readable_api.js", "-d", "doc/out"])
+        os.chdir(backup)
+        shutil.copytree(
+            "build/js/doc/out",
+            "build/docs/js/main",
             dirs_exist_ok=True,
         )
 

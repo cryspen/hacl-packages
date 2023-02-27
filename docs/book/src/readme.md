@@ -15,7 +15,7 @@ Depending on the language you are looking for there are different entry points.
 - [C][c crypto library]
 - [Rust]
 - [OCaml]
-<!-- - [JavaScript] -->
+- [JavaScript]
 
 ## Contributing
 
