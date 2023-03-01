@@ -79,7 +79,7 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 :end-before: "// ANCHOR_END(streaming)"
 ```
 
-```{doxygentypedef} Hacl_Streaming_SHA3_state_sha3_256
+```{doxygentypedef} Hacl_Streaming_SHA3_state_256
 ```
 
 ```{doxygenfunction} Hacl_Streaming_SHA3_create_in_256
