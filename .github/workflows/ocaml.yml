@@ -84,15 +84,18 @@ jobs:
 
       - name: Setup Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install ninja-build opam libgmp-dev
+        run: sudo apt-get install ninja-build libgmp-dev
       - name: Setup macOS
         if: matrix.os == 'macos-latest'
-        run: brew install ninja opam gmp pkg-config
-      - name: OCaml Setup
+        run: brew install ninja gmp pkg-config
+
+      - name: OCaml Setup 1/2
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: 4.14.1
+
+      - name: OCaml Setup 2/2
         run: |
-          opam init --auto-setup --disable-sandboxing --yes --bare
-          opam switch create 4.14.1 --yes
-          eval $(opam env)
           opam install --yes ocamlfind ctypes zarith cppo
 
       - name: Setup HACL opam
@@ -100,4 +103,4 @@ jobs:
 
       - name: Package & Test
         working-directory: opam
-        run: opam install . --verbose --with-test --yes --assume-depexts
+        run: opam install . --verbose --with-test --yes

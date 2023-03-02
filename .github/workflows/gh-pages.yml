@@ -45,14 +45,22 @@ jobs:
         run: sudo apt-get update
 
       - name: Setup | System
-        run: sudo apt-get install doxygen python3-sphinx opam libgmp-dev ninja-build
-
-      - name: Setup | OCaml
         run: |
-          opam init --auto-setup --disable-sandboxing --yes --bare
-          opam switch create 4.14.1 --yes
-          eval $(opam env)
+          sudo apt-get install doxygen python3-sphinx libgmp-dev ninja-build nodejs
+          sudo pip install --upgrade pip
+
+      - name: Setup | OCaml | 1/2
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: 4.14.1
+
+      - name: Setup | OCaml | 2/2
+        run: |
           opam install --yes ocamlfind odoc ctypes zarith cppo dune
+
+      - name: Setup | JS
+        run: |
+          npm install -g jsdoc
 
       - name: Setup | Sphinx
         run: |
@@ -83,7 +91,7 @@ jobs:
           ./opam.sh
           cd opam
           eval $(opam env)
-          opam install . --yes --assume-depexts
+          opam install . --yes
           dune build @doc --only-packages=hacl-star
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
@@ -100,12 +108,24 @@ jobs:
               ./opam.sh
               cd opam
               eval $(opam env)
-              opam install . --yes --assume-depexts
+              opam install . --yes
               dune build @doc --only-packages=hacl-star
               cp -r _build/default/_doc/_html/* ../build/ocaml/$tag/
               cd ../
             fi
           done
+
+      - name: Build | JS API Reference
+        run: |
+          git checkout main
+          cp -r js/* src/wasm
+          cd src/wasm
+          mkdir doc
+          node api_doc.js
+          jsdoc doc/readable_api.js -d doc/out
+          cd ../..
+          mkdir -p build/js
+          cp -r src/wasm/doc/out build/js/main
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
