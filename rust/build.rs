@@ -55,6 +55,7 @@ fn aes_ni_support() -> bool {
     std::arch::is_x86_feature_detected!("avx")
         && std::arch::is_x86_feature_detected!("sse")
         && std::arch::is_x86_feature_detected!("aes")
+        && std::arch::is_x86_feature_detected!("pclmulqdq")
 }
 
 #[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]

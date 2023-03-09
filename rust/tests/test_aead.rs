@@ -215,7 +215,7 @@ fn key_gen_self_test() {
 #[cfg(feature = "hazmat")]
 #[test]
 fn raw_self_test() {
-    use hacl_star::hazmat::chacha20_poly1305;
+    use hacl_star::hazmat::{aesgcm, chacha20_poly1305};
 
     let msg = b"HACL rules";
     let aad = b"associated data";
@@ -241,5 +241,21 @@ fn raw_self_test() {
         let tag = chacha20_poly1305::simd256::encrypt(key, &mut io, *iv, aad);
         assert!(chacha20_poly1305::simd256::decrypt(key, &mut io, *iv, aad, &tag).is_ok());
         assert_eq!(&io, msg);
+    }
+
+    #[cfg(aes_ni)]
+    {
+        if aesgcm::hardware_support().is_ok() {
+            let mut io = *msg;
+            let tag = aesgcm::encrypt_256(key, &mut io, *iv, aad).unwrap();
+            assert!(aesgcm::decrypt_256(key, &mut io, *iv, aad, &tag).is_ok());
+            assert_eq!(&io, msg);
+
+            let key = b"Never be used!!!" as &[u8; 16];
+            let mut io = *msg;
+            let tag = aesgcm::encrypt_128(key, &mut io, *iv, aad).unwrap();
+            assert!(aesgcm::decrypt_128(key, &mut io, *iv, aad, &tag).is_ok());
+            assert_eq!(&io, msg);
+        }
     }
 }
