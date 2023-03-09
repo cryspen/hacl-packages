@@ -28,11 +28,38 @@ fn simd256_support() -> bool {
     false
 }
 
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+fn bmi2_adx_support() -> bool {
+    std::arch::is_x86_feature_detected!("bmi2") && std::arch::is_x86_feature_detected!("adx")
+}
+
+#[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]
+fn bmi2_adx_support() -> bool {
+    false
+}
+
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+fn sha_ni_support() -> bool {
+    std::arch::is_x86_feature_detected!("sha")
+}
+
+#[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]
+fn sha_ni_support() -> bool {
+    false
+}
+
 fn main() {
     if simd128_support() {
         println!("cargo:rustc-cfg=simd128");
     }
     if simd256_support() {
         println!("cargo:rustc-cfg=simd256");
+    }
+    if bmi2_adx_support() {
+        println!("cargo:rustc-cfg=bmi2");
+        println!("cargo:rustc-cfg=adx");
+    }
+    if sha_ni_support() {
+        println!("cargo:rustc-cfg=sha_ni");
     }
 }

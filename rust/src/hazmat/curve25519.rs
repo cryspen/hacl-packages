@@ -37,7 +37,8 @@ pub fn secret_to_public(private_key: &[u8; 32]) -> [u8; 32] {
 }
 
 #[cfg(all(bmi2, adx, target_arch = "x86_64"))]
-mod vale {
+pub mod vale {
+    use super::Error;
     use hacl_star_sys::Hacl_Curve25519_64_ecdh;
 
     /// Compute the ECDH with the `private_key` and `public_key`.
