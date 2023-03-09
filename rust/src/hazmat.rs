@@ -30,5 +30,36 @@ pub enum Error {
     ChaCha20Poly1305(chacha20_poly1305::Error),
     Curve25519(curve25519::Error),
     P256(p256::Error),
+    Ed25519(ed25519::Error),
     Hkdf(hkdf::Error),
+}
+
+impl Into<Error> for chacha20_poly1305::Error {
+    fn into(self) -> Error {
+        Error::ChaCha20Poly1305(self)
+    }
+}
+
+impl Into<Error> for curve25519::Error {
+    fn into(self) -> Error {
+        Error::Curve25519(self)
+    }
+}
+
+impl Into<Error> for p256::Error {
+    fn into(self) -> Error {
+        Error::P256(self)
+    }
+}
+
+impl Into<Error> for hkdf::Error {
+    fn into(self) -> Error {
+        Error::Hkdf(self)
+    }
+}
+
+impl Into<Error> for ed25519::Error {
+    fn into(self) -> Error {
+        Error::Ed25519(self)
+    }
 }
