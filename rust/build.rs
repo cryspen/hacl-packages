@@ -48,6 +48,20 @@ fn sha_ni_support() -> bool {
     false
 }
 
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+fn aes_ni_support() -> bool {
+    // FIXME: std::arch::is_x86_feature_detected!("movbe") is not supported yet
+    //        we assume here that it is supported :|
+    std::arch::is_x86_feature_detected!("avx")
+        && std::arch::is_x86_feature_detected!("sse")
+        && std::arch::is_x86_feature_detected!("aes")
+}
+
+#[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]
+fn aes_ni_support() -> bool {
+    false
+}
+
 fn main() {
     if simd128_support() {
         println!("cargo:rustc-cfg=simd128");
@@ -61,5 +75,8 @@ fn main() {
     }
     if sha_ni_support() {
         println!("cargo:rustc-cfg=sha_ni");
+    }
+    if aes_ni_support() {
+        println!("cargo:rustc-cfg=aes_ni");
     }
 }
