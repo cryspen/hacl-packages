@@ -42,27 +42,19 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_Hash_Blake2.c",
+                "file": "Hacl_Hash_Blake2b_32.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_Streaming_Blake2.c",
+                "file": "Hacl_Hash_Blake2s_32.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_Hash_Blake2b_256.c",
+                "file": "Hacl_Hash_Blake2b_Simd256.c",
                 "features": "vec256"
             },
             {
-                "file": "Hacl_Streaming_Blake2b_256.c",
-                "features": "vec256"
-            },
-            {
-                "file": "Hacl_Hash_Blake2s_128.c",
-                "features": "vec128"
-            },
-            {
-                "file": "Hacl_Streaming_Blake2s_128.c",
+                "file": "Hacl_Hash_Blake2s_Simd128.c",
                 "features": "vec128"
             }
         ],

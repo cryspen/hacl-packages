@@ -6,13 +6,13 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_32.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_32.c
 	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA2.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Base.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum256_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum256.c
@@ -56,8 +56,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AEAD.c
 )
 set(SOURCES_vec256
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_256.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2b_256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_Simd256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20Poly1305_256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Poly1305_256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec256.c
@@ -70,8 +69,7 @@ set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP256_SHA256.c
 )
 set(SOURCES_vec128
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_128.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2s_128.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_Simd128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum4096.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum64.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_GenericField64.c
@@ -124,7 +122,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_32.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_32.h
 	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Streaming_SHA2.h
@@ -139,16 +138,13 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b_32.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s_32.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_Blake2_Constants.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
 	${PROJECT_SOURCE_DIR}/build/config.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_128.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2s_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
@@ -266,7 +262,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_32.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_32.h
 	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
@@ -275,14 +272,10 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
 	${PROJECT_SOURCE_DIR}/build/config.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2b_256.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_128.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Blake2s_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
