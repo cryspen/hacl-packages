@@ -12,16 +12,14 @@
 
 #include "EverCrypt_Hash.h"
 // ANCHOR(example header)
-#include "Hacl_Hash_Blake2.h"
+#include "Hacl_Hash_Blake2s_32.h"
 // ANCHOR_END(example header)
-#include "Hacl_Streaming_Blake2.h"
 #include "evercrypt.h"
 #include "hacl-cpu-features.h"
 #include "util.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Hash_Blake2s_128.h"
-#include "Hacl_Streaming_Blake2s_128.h"
+#include "Hacl_Hash_Blake2s_Simd128.h"
 #endif
 
 // ANCHOR(example define)
@@ -73,12 +71,12 @@ TEST(ApiTestSuite, ApiTest)
     uint32_t key_len = 0;
     uint8_t* key = 0;
 
-    Hacl_Blake2s_32_blake2s(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX,
-                            output,
-                            message_len,
-                            (uint8_t*)message,
-                            key_len,
-                            key);
+    Hacl_Hash_Blake2s_32_hash_with_key(output,
+                                       HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX,
+                                       (uint8_t*)message,
+                                       message_len,
+                                       key,
+                                       key_len);
 
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, output);
     // ANCHOR_END(example)
@@ -107,25 +105,22 @@ TEST(ApiTestSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Streaming_Blake2_blake2s_32_state_s* state =
-      Hacl_Streaming_Blake2_blake2s_32_no_key_create_in();
-    Hacl_Streaming_Blake2_blake2s_32_no_key_init(state);
+    Hacl_Hash_Blake2s_32_state_t* state = Hacl_Hash_Blake2s_32_malloc();
+    Hacl_Hash_Blake2s_32_reset(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
-    Hacl_Streaming_Blake2_blake2s_32_no_key_update(
-      state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Hash_Blake2s_32_update(state, (uint8_t*)chunk_1, chunk_1_size);
     // This is optional when no intermediate results are required.
-    Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, digest_1);
+    Hacl_Hash_Blake2s_32_digest(state, digest_1);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
-    Hacl_Streaming_Blake2_blake2s_32_no_key_update(
-      state, (uint8_t*)chunk_2, chunk_2_size);
-    Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, digest_2);
+    Hacl_Hash_Blake2s_32_update(state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Hash_Blake2s_32_digest(state, digest_2);
 
     // Cleanup
-    Hacl_Streaming_Blake2_blake2s_32_no_key_free(state);
+    Hacl_Hash_Blake2s_32_free(state);
 
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, digest_1);
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, digest_2);
@@ -161,12 +156,12 @@ TEST_P(Blake2s, TryKAT)
   {
     bytes got_digest(test.out_len);
 
-    Hacl_Blake2s_32_blake2s(test.out_len,
-                            got_digest.data(),
-                            test.input.size(),
-                            test.input.data(),
-                            test.key.size(),
-                            test.key.data());
+    Hacl_Hash_Blake2s_32_hash_with_key(got_digest.data(),
+			               test.out_len,
+                                       test.input.data(),
+                                       test.input.size(),
+                                       test.key.data(),
+                                       test.key.size());
 
     bool outcome = false;
     outcome =
@@ -181,19 +176,17 @@ TEST_P(Blake2s, TryKAT)
 
     if (test.key.size() == 0) {
       // Init
-      Hacl_Streaming_Blake2_blake2s_32_state* state =
-        Hacl_Streaming_Blake2_blake2s_32_no_key_create_in();
-      Hacl_Streaming_Blake2_blake2s_32_no_key_init(state);
+      Hacl_Hash_Blake2s_32_state_t* state = Hacl_Hash_Blake2s_32_malloc();
+      Hacl_Hash_Blake2s_32_reset(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.input, lengths)) {
-        Hacl_Streaming_Blake2_blake2s_32_no_key_update(
-          state, chunk.data(), chunk.size());
+        Hacl_Hash_Blake2s_32_update(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_Blake2_blake2s_32_no_key_finish(state, got_digest.data());
-      Hacl_Streaming_Blake2_blake2s_32_no_key_free(state);
+      Hacl_Hash_Blake2s_32_digest(state, got_digest.data());
+      Hacl_Hash_Blake2s_32_free(state);
 
       bool outcome = compare_and_print(
         test.digest.size(), got_digest.data(), test.digest.data());
@@ -210,23 +203,21 @@ TEST_P(Blake2s, TryKAT)
       // TODO: Enable this. See
       // https://github.com/project-everest/hacl-star/issues/586
       //
-      //    Hacl_Blake2s_128_blake2s(expected_len, got_digest.data(), input_len,
-      //    input, key_len, key); outcome = outcome &&
+      //    Hacl_Hash_Blake2s_Simd128_hash(got_digest.data(), expected_len, input,
+      //    input_len, key, key_len); outcome = outcome &&
       //    compare_and_print(expected_len, got_digest.data(), expected);
       //
       //    // Streaming variant.
       //    if (key_len == 0) {
       //      // Init
-      //      Hacl_Streaming_Blake2s_128_blake2s_128_state_s* state =
-      //        Hacl_Streaming_Blake2s_128_blake2s_128_no_key_create_in();
+      //      Hacl_Hash_Blake2s_Simd128_state_t* state =
+      //        Hacl_Hash_Blake2s_Simd128_malloc();
       //
       //      // Update
-      //      Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update(state, input,
-      //      input_len);
+      //      Hacl_Hash_Blake2s_Simd128_update(state, input, input_len);
       //
       //      // Finish
-      //      Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish(state,
-      //      got_digest.data());
+      //      Hacl_Hash_Blake2s_Simd128_digest(state, got_digest.data());
       //
       //      outcome = outcome && compare_and_print(expected_len,
       //      got_digest.data(), expected);
@@ -327,13 +318,13 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     bytes got_digest(test.digest.size(), 0);
 
     EverCrypt_Hash_Incremental_hash_state* state =
-      EverCrypt_Hash_Incremental_create_in(Spec_Hash_Definitions_Blake2S);
+      EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2S);
 
-    EverCrypt_Hash_Incremental_init(state);
+    EverCrypt_Hash_Incremental_reset(state);
     for (auto chunk : split_by_index_list(test.input, lengths)) {
       EverCrypt_Hash_Incremental_update(state, chunk.data(), chunk.size());
     }
-    EverCrypt_Hash_Incremental_finish(state, got_digest.data());
+    EverCrypt_Hash_Incremental_digest(state, got_digest.data());
     EverCrypt_Hash_Incremental_free(state);
 
     EXPECT_EQ(test.digest, got_digest);

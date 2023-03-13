@@ -146,8 +146,8 @@ poly1305_mac_streaming(bytes key,
     // Init
     uint8_t raw_state[32];
     Hacl_Streaming_Poly1305_32_poly1305_32_state_s* state =
-      Hacl_Streaming_Poly1305_32_create_in(raw_state);
-    Hacl_Streaming_Poly1305_32_init(key.data(), state);
+      Hacl_Streaming_Poly1305_32_malloc(raw_state);
+    Hacl_Streaming_Poly1305_32_reset(key.data(), state);
 
     // Update
     for (auto chunk : split_by_index_list(text, lengths)) {
@@ -155,7 +155,7 @@ poly1305_mac_streaming(bytes key,
     }
 
     // Finish
-    Hacl_Streaming_Poly1305_32_finish(state, got_tag.data());
+    Hacl_Streaming_Poly1305_32_digest(state, got_tag.data());
     Hacl_Streaming_Poly1305_32_free(state);
 
     ASSERT_EQ(expected_tag, got_tag);
@@ -189,8 +189,8 @@ poly1305_mac_streaming(bytes key,
 
       // Init
       Hacl_Streaming_Poly1305_128_poly1305_128_state* state =
-        Hacl_Streaming_Poly1305_128_create_in(key.data());
-      Hacl_Streaming_Poly1305_128_init(key.data(), state);
+        Hacl_Streaming_Poly1305_128_malloc(key.data());
+      Hacl_Streaming_Poly1305_128_reset(key.data(), state);
 
       // Update
       for (auto chunk : split_by_index_list(text, lengths)) {
@@ -198,7 +198,7 @@ poly1305_mac_streaming(bytes key,
       }
 
       // Finish
-      Hacl_Streaming_Poly1305_128_finish(state, got_tag.data());
+      Hacl_Streaming_Poly1305_128_digest(state, got_tag.data());
       Hacl_Streaming_Poly1305_128_free(state);
 
       ASSERT_EQ(expected_tag, got_tag);

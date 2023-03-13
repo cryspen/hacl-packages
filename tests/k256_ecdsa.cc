@@ -178,7 +178,7 @@ TEST_P(P256EcdsaWycheproof, TryWycheproof)
 
     // TODO: Only testing non low-S normalized here for now.
     uint8_t digest[32] = { 0 };
-    Hacl_Hash_SHA2_hash_256(msg, test_case.msg.size(), &digest[0]);
+    Hacl_Hash_SHA2_hash_256(&digest[0], msg, test_case.msg.size());
     EXPECT_EQ(test_case.valid,
               Hacl_K256_ECDSA_ecdsa_verify_hashed_msg(
                 &digest[0], plain_public_key, rs.data()));
