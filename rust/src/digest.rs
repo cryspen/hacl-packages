@@ -293,7 +293,7 @@ impl Digest {
         }
 
         let c_state: *mut EverCrypt_Hash_Incremental_hash_state =
-            unsafe { EverCrypt_Hash_Incremental_create_in(alg.into()) };
+            unsafe { EverCrypt_Hash_Incremental_malloc(alg.into()) };
         Ok(Self {
             mode: alg,
             finished: false,
@@ -324,7 +324,7 @@ impl Digest {
         }
         let mut out = vec![0u8; digest_size(self.mode)];
         unsafe {
-            EverCrypt_Hash_Incremental_finish(self.c_state, out.as_mut_ptr());
+            EverCrypt_Hash_Incremental_digest(self.c_state, out.as_mut_ptr());
         }
         self.finished = true;
         Ok(out)

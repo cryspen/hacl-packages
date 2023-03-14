@@ -58,8 +58,10 @@ extern "C" {
         mac: *mut u8,
     ) -> u32;
 }
-pub type uint32x4_t = [u32; 4usize];
-pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
+pub type __m128i = [::std::os::raw::c_longlong; 2usize];
+pub type Lib_IntVector_Intrinsics_vec128 = __m128i;
+pub type __m256i = [::std::os::raw::c_longlong; 4usize];
+pub type Lib_IntVector_Intrinsics_vec256 = __m256i;
 extern "C" {
     #[doc = "Encrypt a message `m` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the message.\n@param m Pointer to `mlen` bytes of memory where the message is read from.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.\n@param mac Pointer to 16 bytes of memory where the mac is written to."]
     pub fn Hacl_Chacha20Poly1305_256_aead_encrypt(
@@ -461,7 +463,7 @@ pub type Hacl_Streaming_SHA2_state_sha2_384 = Hacl_Streaming_MD_state_64;
 pub type Hacl_Streaming_SHA2_state_sha2_512 = Hacl_Streaming_MD_state_64;
 extern "C" {
     #[doc = "Allocate initial state for the SHA2_256 hash. The state is to be freed by\ncalling `free_256`."]
-    pub fn Hacl_Streaming_SHA2_create_in_256() -> *mut Hacl_Streaming_MD_state_32;
+    pub fn Hacl_Streaming_SHA2_malloc_256() -> *mut Hacl_Streaming_MD_state_32;
 }
 extern "C" {
     #[doc = "Copies the state passed as argument into a newly allocated state (deep copy).\nThe state is to be freed by calling `free_256`. Cloning the state this way is\nuseful, for instance, if your control-flow diverges and you need to feed\nmore (different) data into the hash in each branch."]
@@ -471,10 +473,10 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Reset an existing state to the initial hash state with empty data."]
-    pub fn Hacl_Streaming_SHA2_init_256(s: *mut Hacl_Streaming_MD_state_32);
+    pub fn Hacl_Streaming_SHA2_reset_256(state: *mut Hacl_Streaming_MD_state_32);
 }
 extern "C" {
-    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_256`\n(since the last call to `init_256`) exceeds 2^61-1 bytes.\n\nThis function is identical to the update function for SHA2_224."]
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_256`\n(since the last call to `reset_256`) exceeds 2^61-1 bytes.\n\nThis function is identical to the update function for SHA2_224."]
     pub fn Hacl_Streaming_SHA2_update_256(
         p: *mut Hacl_Streaming_MD_state_32,
         input: *mut u8,
@@ -482,22 +484,22 @@ extern "C" {
     ) -> u32;
 }
 extern "C" {
-    #[doc = "Write the resulting hash into `dst`, an array of 32 bytes. The state remains\nvalid after a call to `finish_256`, meaning the user may feed more data into\nthe hash via `update_256`. (The finish_256 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
-    pub fn Hacl_Streaming_SHA2_finish_256(p: *mut Hacl_Streaming_MD_state_32, dst: *mut u8);
+    #[doc = "Write the resulting hash into `output`, an array of 32 bytes. The state remains\nvalid after a call to `digest_256`, meaning the user may feed more data into\nthe hash via `update_256`. (The digest_256 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_digest_256(state: *mut Hacl_Streaming_MD_state_32, output: *mut u8);
 }
 extern "C" {
-    #[doc = "Free a state allocated with `create_in_256`.\n\nThis function is identical to the free function for SHA2_224."]
-    pub fn Hacl_Streaming_SHA2_free_256(s: *mut Hacl_Streaming_MD_state_32);
+    #[doc = "Free a state allocated with `malloc_256`.\n\nThis function is identical to the free function for SHA2_224."]
+    pub fn Hacl_Streaming_SHA2_free_256(state: *mut Hacl_Streaming_MD_state_32);
 }
 extern "C" {
-    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 32 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha256(input: *mut u8, input_len: u32, dst: *mut u8);
+    #[doc = "Hash `input`, of len `input_len`, into `output`, an array of 32 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha256(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_create_in_224() -> *mut Hacl_Streaming_MD_state_32;
+    pub fn Hacl_Streaming_SHA2_malloc_224() -> *mut Hacl_Streaming_MD_state_32;
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_init_224(s: *mut Hacl_Streaming_MD_state_32);
+    pub fn Hacl_Streaming_SHA2_reset_224(state: *mut Hacl_Streaming_MD_state_32);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_update_224(
@@ -507,18 +509,18 @@ extern "C" {
     ) -> u32;
 }
 extern "C" {
-    #[doc = "Write the resulting hash into `dst`, an array of 28 bytes. The state remains\nvalid after a call to `finish_224`, meaning the user may feed more data into\nthe hash via `update_224`."]
-    pub fn Hacl_Streaming_SHA2_finish_224(p: *mut Hacl_Streaming_MD_state_32, dst: *mut u8);
+    #[doc = "Write the resulting hash into `output`, an array of 28 bytes. The state remains\nvalid after a call to `digest_224`, meaning the user may feed more data into\nthe hash via `update_224`."]
+    pub fn Hacl_Streaming_SHA2_digest_224(state: *mut Hacl_Streaming_MD_state_32, output: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_free_224(p: *mut Hacl_Streaming_MD_state_32);
 }
 extern "C" {
-    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 28 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha224(input: *mut u8, input_len: u32, dst: *mut u8);
+    #[doc = "Hash `input`, of len `input_len`, into `output`, an array of 28 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha224(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_create_in_512() -> *mut Hacl_Streaming_MD_state_64;
+    pub fn Hacl_Streaming_SHA2_malloc_512() -> *mut Hacl_Streaming_MD_state_64;
 }
 extern "C" {
     #[doc = "Copies the state passed as argument into a newly allocated state (deep copy).\nThe state is to be freed by calling `free_512`. Cloning the state this way is\nuseful, for instance, if your control-flow diverges and you need to feed\nmore (different) data into the hash in each branch."]
@@ -527,10 +529,10 @@ extern "C" {
     ) -> *mut Hacl_Streaming_MD_state_64;
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_init_512(s: *mut Hacl_Streaming_MD_state_64);
+    pub fn Hacl_Streaming_SHA2_reset_512(state: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
-    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_512`\n(since the last call to `init_512`) exceeds 2^125-1 bytes.\n\nThis function is identical to the update function for SHA2_384."]
+    #[doc = "Feed an arbitrary amount of data into the hash. This function returns 0 for\nsuccess, or 1 if the combined length of all of the data passed to `update_512`\n(since the last call to `reset_512`) exceeds 2^125-1 bytes.\n\nThis function is identical to the update function for SHA2_384."]
     pub fn Hacl_Streaming_SHA2_update_512(
         p: *mut Hacl_Streaming_MD_state_64,
         input: *mut u8,
@@ -538,22 +540,22 @@ extern "C" {
     ) -> u32;
 }
 extern "C" {
-    #[doc = "Write the resulting hash into `dst`, an array of 64 bytes. The state remains\nvalid after a call to `finish_512`, meaning the user may feed more data into\nthe hash via `update_512`. (The finish_512 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
-    pub fn Hacl_Streaming_SHA2_finish_512(p: *mut Hacl_Streaming_MD_state_64, dst: *mut u8);
+    #[doc = "Write the resulting hash into `output`, an array of 64 bytes. The state remains\nvalid after a call to `digest_512`, meaning the user may feed more data into\nthe hash via `update_512`. (The digest_512 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
+    pub fn Hacl_Streaming_SHA2_digest_512(state: *mut Hacl_Streaming_MD_state_64, output: *mut u8);
 }
 extern "C" {
-    #[doc = "Free a state allocated with `create_in_512`.\n\nThis function is identical to the free function for SHA2_384."]
-    pub fn Hacl_Streaming_SHA2_free_512(s: *mut Hacl_Streaming_MD_state_64);
+    #[doc = "Free a state allocated with `malloc_512`.\n\nThis function is identical to the free function for SHA2_384."]
+    pub fn Hacl_Streaming_SHA2_free_512(state: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
-    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 64 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha512(input: *mut u8, input_len: u32, dst: *mut u8);
+    #[doc = "Hash `input`, of len `input_len`, into `output`, an array of 64 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha512(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_create_in_384() -> *mut Hacl_Streaming_MD_state_64;
+    pub fn Hacl_Streaming_SHA2_malloc_384() -> *mut Hacl_Streaming_MD_state_64;
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA2_init_384(s: *mut Hacl_Streaming_MD_state_64);
+    pub fn Hacl_Streaming_SHA2_reset_384(state: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_update_384(
@@ -563,15 +565,15 @@ extern "C" {
     ) -> u32;
 }
 extern "C" {
-    #[doc = "Write the resulting hash into `dst`, an array of 48 bytes. The state remains\nvalid after a call to `finish_384`, meaning the user may feed more data into\nthe hash via `update_384`."]
-    pub fn Hacl_Streaming_SHA2_finish_384(p: *mut Hacl_Streaming_MD_state_64, dst: *mut u8);
+    #[doc = "Write the resulting hash into `output`, an array of 48 bytes. The state remains\nvalid after a call to `digest_384`, meaning the user may feed more data into\nthe hash via `update_384`."]
+    pub fn Hacl_Streaming_SHA2_digest_384(state: *mut Hacl_Streaming_MD_state_64, output: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_free_384(p: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
-    #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 48 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha384(input: *mut u8, input_len: u32, dst: *mut u8);
+    #[doc = "Hash `input`, of len `input_len`, into `output`, an array of 48 bytes."]
+    pub fn Hacl_Streaming_SHA2_sha384(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
     pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
@@ -602,16 +604,16 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Hash_SHA2_hash_224(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Hash_SHA2_hash_256(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Hash_SHA2_hash_384(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Hash_SHA2_hash_512(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
     pub fn EverCrypt_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
@@ -667,39 +669,10 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_init(hash: *mut u64, kk: u32, nn: u32);
+    pub fn Hacl_Hash_Blake2s_32_init(hash: *mut u32, kk: u32, nn: u32);
 }
 extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_update_key(
-        wv: *mut u64,
-        hash: *mut u64,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2b_32_blake2b(
-        nn: u32,
-        output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Blake2b_32_blake2b_malloc() -> *mut u64;
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_init(hash: *mut u32, kk: u32, nn: u32);
-}
-extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_key(
+    pub fn Hacl_Hash_Blake2s_32_update_key(
         wv: *mut u32,
         hash: *mut u32,
         kk: u32,
@@ -708,7 +681,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_multi(
+    pub fn Hacl_Hash_Blake2s_32_update_multi(
         len: u32,
         wv: *mut u32,
         hash: *mut u32,
@@ -718,7 +691,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_update_last(
+    pub fn Hacl_Hash_Blake2s_32_update_last(
         len: u32,
         wv: *mut u32,
         hash: *mut u32,
@@ -728,21 +701,128 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
+    pub fn Hacl_Hash_Blake2s_32_finish(nn: u32, output: *mut u8, hash: *mut u32);
 }
 extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2s_32_blake2s(
-        nn: u32,
+    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 32.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    pub fn Hacl_Hash_Blake2s_32_hash_with_key(
         output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
+        output_len: u32,
+        input: *mut u8,
+        input_len: u32,
+        key: *mut u8,
+        key_len: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_32_blake2s_malloc() -> *mut u32;
+    pub fn Hacl_Hash_Blake2s_32_malloc_with_key() -> *mut u32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2s_32_block_state_t_s {
+    pub fst: *mut u32,
+    pub snd: *mut u32,
+}
+pub type Hacl_Hash_Blake2s_32_block_state_t = Hacl_Hash_Blake2s_32_block_state_t_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2s_32_state_t_s {
+    pub block_state: Hacl_Hash_Blake2s_32_block_state_t,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Hash_Blake2s_32_state_t = Hacl_Hash_Blake2s_32_state_t_s;
+extern "C" {
+    #[doc = "State allocation function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_32_malloc() -> *mut Hacl_Hash_Blake2s_32_state_t;
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_32_reset(state: *mut Hacl_Hash_Blake2s_32_state_t);
+}
+extern "C" {
+    #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
+    pub fn Hacl_Hash_Blake2s_32_update(
+        state: *mut Hacl_Hash_Blake2s_32_state_t,
+        chunk: *mut u8,
+        chunk_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Finish function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_32_digest(state: *mut Hacl_Hash_Blake2s_32_state_t, output: *mut u8);
+}
+extern "C" {
+    #[doc = "Free state function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_32_free(state: *mut Hacl_Hash_Blake2s_32_state_t);
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_32_init(hash: *mut u64, kk: u32, nn: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_32_update_key(
+        wv: *mut u64,
+        hash: *mut u64,
+        kk: u32,
+        k: *mut u8,
+        ll: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_32_finish(nn: u32, output: *mut u8, hash: *mut u64);
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    pub fn Hacl_Hash_Blake2b_32_hash_with_key(
+        output: *mut u8,
+        output_len: u32,
+        input: *mut u8,
+        input_len: u32,
+        key: *mut u8,
+        key_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_32_malloc_with_key() -> *mut u64;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_32_block_state_t_s {
+    pub fst: *mut u64,
+    pub snd: *mut u64,
+}
+pub type Hacl_Hash_Blake2b_32_block_state_t = Hacl_Hash_Blake2b_32_block_state_t_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_32_state_t_s {
+    pub block_state: Hacl_Hash_Blake2b_32_block_state_t,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Hash_Blake2b_32_state_t = Hacl_Hash_Blake2b_32_state_t_s;
+extern "C" {
+    #[doc = "State allocation function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_32_malloc() -> *mut Hacl_Hash_Blake2b_32_state_t;
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_32_reset(state: *mut Hacl_Hash_Blake2b_32_state_t);
+}
+extern "C" {
+    #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
+    pub fn Hacl_Hash_Blake2b_32_update(
+        state: *mut Hacl_Hash_Blake2b_32_state_t,
+        chunk: *mut u8,
+        chunk_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Finish function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_32_digest(state: *mut Hacl_Hash_Blake2b_32_state_t, output: *mut u8);
+}
+extern "C" {
+    #[doc = "Free state function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_32_free(state: *mut Hacl_Hash_Blake2b_32_state_t);
 }
 extern "C" {
     pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
@@ -759,24 +839,24 @@ extern "C" {
 }
 pub type Hacl_Streaming_SHA3_state_256 = Hacl_Streaming_MD_state_64;
 extern "C" {
-    pub fn Hacl_Streaming_SHA3_create_in_256() -> *mut Hacl_Streaming_MD_state_64;
+    pub fn Hacl_Streaming_SHA3_malloc_256() -> *mut Hacl_Streaming_MD_state_64;
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA3_init_256(s: *mut Hacl_Streaming_MD_state_64);
+    pub fn Hacl_Streaming_SHA3_reset_256(state: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
     #[doc = "0 = success, 1 = max length exceeded. Due to internal limitations, there is currently an arbitrary limit of 2^64-1 bytes that can be hashed through this interface."]
     pub fn Hacl_Streaming_SHA3_update_256(
-        p: *mut Hacl_Streaming_MD_state_64,
-        data: *mut u8,
-        len: u32,
+        state: *mut Hacl_Streaming_MD_state_64,
+        chunk: *mut u8,
+        chunk_len: u32,
     ) -> u32;
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA3_finish_256(p: *mut Hacl_Streaming_MD_state_64, dst: *mut u8);
+    pub fn Hacl_Streaming_SHA3_digest_256(state: *mut Hacl_Streaming_MD_state_64, output: *mut u8);
 }
 extern "C" {
-    pub fn Hacl_Streaming_SHA3_free_256(s: *mut Hacl_Streaming_MD_state_64);
+    pub fn Hacl_Streaming_SHA3_free_256(state: *mut Hacl_Streaming_MD_state_64);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA3_copy_256(
@@ -812,14 +892,14 @@ extern "C" {
     pub fn Hacl_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_init(
+    pub fn Hacl_Hash_Blake2s_Simd128_init(
         hash: *mut Lib_IntVector_Intrinsics_vec128,
         kk: u32,
         nn: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_update_key(
+    pub fn Hacl_Hash_Blake2s_Simd128_update_key(
         wv: *mut Lib_IntVector_Intrinsics_vec128,
         hash: *mut Lib_IntVector_Intrinsics_vec128,
         kk: u32,
@@ -828,7 +908,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_update_multi(
+    pub fn Hacl_Hash_Blake2s_Simd128_update_multi(
         len: u32,
         wv: *mut Lib_IntVector_Intrinsics_vec128,
         hash: *mut Lib_IntVector_Intrinsics_vec128,
@@ -838,7 +918,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_update_last(
+    pub fn Hacl_Hash_Blake2s_Simd128_update_last(
         len: u32,
         wv: *mut Lib_IntVector_Intrinsics_vec128,
         hash: *mut Lib_IntVector_Intrinsics_vec128,
@@ -848,82 +928,170 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_finish(
+    pub fn Hacl_Hash_Blake2s_Simd128_finish(
         nn: u32,
         output: *mut u8,
         hash: *mut Lib_IntVector_Intrinsics_vec128,
     );
 }
 extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `d` using key `k` into `output`.\n\n@param nn Length of to-be-generated digest with 1 <= `nn` <= 32.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2s_128_blake2s(
-        nn: u32,
+    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 32.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    pub fn Hacl_Hash_Blake2s_Simd128_hash_with_key(
         output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
+        output_len: u32,
+        input: *mut u8,
+        input_len: u32,
+        key: *mut u8,
+        key_len: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_store_state128s_to_state32(
+    pub fn Hacl_Hash_Blake2s_Simd128_store_state128s_to_state32(
         st32: *mut u32,
         st: *mut Lib_IntVector_Intrinsics_vec128,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_load_state128s_from_state32(
+    pub fn Hacl_Hash_Blake2s_Simd128_load_state128s_from_state32(
         st: *mut Lib_IntVector_Intrinsics_vec128,
         st32: *mut u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2s_128_blake2s_malloc() -> *mut Lib_IntVector_Intrinsics_vec128;
+    pub fn Hacl_Hash_Blake2s_Simd128_malloc_with_key() -> *mut Lib_IntVector_Intrinsics_vec128;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2s_Simd128_block_state_t_s {
+    pub fst: *mut Lib_IntVector_Intrinsics_vec128,
+    pub snd: *mut Lib_IntVector_Intrinsics_vec128,
+}
+pub type Hacl_Hash_Blake2s_Simd128_block_state_t = Hacl_Hash_Blake2s_Simd128_block_state_t_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2s_Simd128_state_t_s {
+    pub block_state: Hacl_Hash_Blake2s_Simd128_block_state_t,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Hash_Blake2s_Simd128_state_t = Hacl_Hash_Blake2s_Simd128_state_t_s;
+extern "C" {
+    #[doc = "State allocation function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_Simd128_malloc() -> *mut Hacl_Hash_Blake2s_Simd128_state_t;
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_init(hash: *mut *mut ::std::os::raw::c_void, kk: u32, nn: u32);
+    #[doc = "Re-initialization function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_Simd128_reset(state: *mut Hacl_Hash_Blake2s_Simd128_state_t);
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_update_key(
-        wv: *mut *mut ::std::os::raw::c_void,
-        hash: *mut *mut ::std::os::raw::c_void,
+    #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
+    pub fn Hacl_Hash_Blake2s_Simd128_update(
+        state: *mut Hacl_Hash_Blake2s_Simd128_state_t,
+        chunk: *mut u8,
+        chunk_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Finish function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_Simd128_digest(
+        state: *mut Hacl_Hash_Blake2s_Simd128_state_t,
+        output: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Free state function when there is no key"]
+    pub fn Hacl_Hash_Blake2s_Simd128_free(state: *mut Hacl_Hash_Blake2s_Simd128_state_t);
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_Simd256_init(
+        hash: *mut Lib_IntVector_Intrinsics_vec256,
+        kk: u32,
+        nn: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_Simd256_update_key(
+        wv: *mut Lib_IntVector_Intrinsics_vec256,
+        hash: *mut Lib_IntVector_Intrinsics_vec256,
         kk: u32,
         k: *mut u8,
         ll: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_finish(
+    pub fn Hacl_Hash_Blake2b_Simd256_finish(
         nn: u32,
         output: *mut u8,
-        hash: *mut *mut ::std::os::raw::c_void,
+        hash: *mut Lib_IntVector_Intrinsics_vec256,
     );
 }
 extern "C" {
-    #[doc = "Write the BLAKE2b digest of message `d` using key `k` into `output`.\n\n@param nn Length of the to-be-generated digest with 1 <= `nn` <= 64.\n@param output Pointer to `nn` bytes of memory where the digest is written to.\n@param ll Length of the input message.\n@param d Pointer to `ll` bytes of memory where the input message is read from.\n@param kk Length of the key. Can be 0.\n@param k Pointer to `kk` bytes of memory where the key is read from."]
-    pub fn Hacl_Blake2b_256_blake2b(
-        nn: u32,
+    #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    pub fn Hacl_Hash_Blake2b_Simd256_hash_with_key(
         output: *mut u8,
-        ll: u32,
-        d: *mut u8,
-        kk: u32,
-        k: *mut u8,
+        output_len: u32,
+        input: *mut u8,
+        input_len: u32,
+        key: *mut u8,
+        key_len: u32,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_load_state256b_from_state32(
-        st: *mut *mut ::std::os::raw::c_void,
+    pub fn Hacl_Hash_Blake2b_Simd256_load_state256b_from_state32(
+        st: *mut Lib_IntVector_Intrinsics_vec256,
         st32: *mut u64,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_store_state256b_to_state32(
+    pub fn Hacl_Hash_Blake2b_Simd256_store_state256b_to_state32(
         st32: *mut u64,
-        st: *mut *mut ::std::os::raw::c_void,
+        st: *mut Lib_IntVector_Intrinsics_vec256,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
+    pub fn Hacl_Hash_Blake2b_Simd256_malloc_with_key() -> *mut Lib_IntVector_Intrinsics_vec256;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_Simd256_block_state_t_s {
+    pub fst: *mut Lib_IntVector_Intrinsics_vec256,
+    pub snd: *mut Lib_IntVector_Intrinsics_vec256,
+}
+pub type Hacl_Hash_Blake2b_Simd256_block_state_t = Hacl_Hash_Blake2b_Simd256_block_state_t_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_Simd256_state_t_s {
+    pub block_state: Hacl_Hash_Blake2b_Simd256_block_state_t,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Hash_Blake2b_Simd256_state_t = Hacl_Hash_Blake2b_Simd256_state_t_s;
+extern "C" {
+    #[doc = "State allocation function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_Simd256_malloc() -> *mut Hacl_Hash_Blake2b_Simd256_state_t;
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_Simd256_reset(state: *mut Hacl_Hash_Blake2b_Simd256_state_t);
+}
+extern "C" {
+    #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
+    pub fn Hacl_Hash_Blake2b_Simd256_update(
+        state: *mut Hacl_Hash_Blake2b_Simd256_state_t,
+        chunk: *mut u8,
+        chunk_len: u32,
+    ) -> u32;
+}
+extern "C" {
+    #[doc = "Finish function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_Simd256_digest(
+        state: *mut Hacl_Hash_Blake2b_Simd256_state_t,
+        output: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Free state function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_Simd256_free(state: *mut Hacl_Hash_Blake2b_Simd256_state_t);
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -944,20 +1112,20 @@ pub struct EverCrypt_Hash_Incremental_hash_state_s {
 pub type EverCrypt_Hash_Incremental_hash_state = EverCrypt_Hash_Incremental_hash_state_s;
 extern "C" {
     #[doc = "Allocate initial state for the agile hash. The argument `a` stands for the\nchoice of algorithm (see Hacl_Spec.h). This API will automatically pick the most\nefficient implementation, provided you have called EverCrypt_AutoConfig2_init()\nbefore. The state is to be freed by calling `free`."]
-    pub fn EverCrypt_Hash_Incremental_create_in(
+    pub fn EverCrypt_Hash_Incremental_malloc(
         a: Spec_Hash_Definitions_hash_alg,
     ) -> *mut EverCrypt_Hash_Incremental_hash_state;
 }
 extern "C" {
     #[doc = "Reset an existing state to the initial hash state with empty data."]
-    pub fn EverCrypt_Hash_Incremental_init(s: *mut EverCrypt_Hash_Incremental_hash_state);
+    pub fn EverCrypt_Hash_Incremental_reset(state: *mut EverCrypt_Hash_Incremental_hash_state);
 }
 extern "C" {
     #[doc = "Feed an arbitrary amount of data into the hash. This function returns\nEverCrypt_Error_Success for success, or EverCrypt_Error_MaximumLengthExceeded if\nthe combined length of all of the data passed to `update` (since the last call\nto `init`) exceeds 2^61-1 bytes or 2^64-1 bytes, depending on the choice of\nalgorithm. Both limits are unlikely to be attained in practice."]
     pub fn EverCrypt_Hash_Incremental_update(
-        s: *mut EverCrypt_Hash_Incremental_hash_state,
-        data: *mut u8,
-        len: u32,
+        state: *mut EverCrypt_Hash_Incremental_hash_state,
+        chunk: *mut u8,
+        chunk_len: u32,
     ) -> EverCrypt_Error_error_code;
 }
 extern "C" {
@@ -967,23 +1135,23 @@ extern "C" {
     ) -> Spec_Hash_Definitions_hash_alg;
 }
 extern "C" {
-    #[doc = "Write the resulting hash into `dst`, an array whose length is\nalgorithm-specific. You can use the macros defined earlier in this file to\nallocate a destination buffer of the right length. The state remains valid after\na call to `finish`, meaning the user may feed more data into the hash via\n`update`. (The finish function operates on an internal copy of the state and\ntherefore does not invalidate the client-held state.)"]
-    pub fn EverCrypt_Hash_Incremental_finish(
-        s: *mut EverCrypt_Hash_Incremental_hash_state,
-        dst: *mut u8,
+    #[doc = "Write the resulting hash into `output`, an array whose length is\nalgorithm-specific. You can use the macros defined earlier in this file to\nallocate a destination buffer of the right length. The state remains valid after\na call to `digest`, meaning the user may feed more data into the hash via\n`update`. (The finish function operates on an internal copy of the state and\ntherefore does not invalidate the client-held state.)"]
+    pub fn EverCrypt_Hash_Incremental_digest(
+        state: *mut EverCrypt_Hash_Incremental_hash_state,
+        output: *mut u8,
     );
 }
 extern "C" {
     #[doc = "Free a state previously allocated with `create_in`."]
-    pub fn EverCrypt_Hash_Incremental_free(s: *mut EverCrypt_Hash_Incremental_hash_state);
+    pub fn EverCrypt_Hash_Incremental_free(state: *mut EverCrypt_Hash_Incremental_hash_state);
 }
 extern "C" {
-    #[doc = "Hash `input`, of len `len`, into `dst`, an array whose length is determined by\nyour choice of algorithm `a` (see Hacl_Spec.h). You can use the macros defined\nearlier in this file to allocate a destination buffer of the right length. This\nAPI will automatically pick the most efficient implementation, provided you have\ncalled EverCrypt_AutoConfig2_init() before."]
+    #[doc = "Hash `input`, of len `input_len`, into `output`, an array whose length is determined by\nyour choice of algorithm `a` (see Hacl_Spec.h). You can use the macros defined\nearlier in this file to allocate a destination buffer of the right length. This\nAPI will automatically pick the most efficient implementation, provided you have\ncalled EverCrypt_AutoConfig2_init() before."]
     pub fn EverCrypt_Hash_Incremental_hash(
         a: Spec_Hash_Definitions_hash_alg,
-        dst: *mut u8,
+        output: *mut u8,
         input: *mut u8,
-        len: u32,
+        input_len: u32,
     );
 }
 extern "C" {
