@@ -85,8 +85,7 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
   for (auto _ : state) {
     // Init
     Hacl_Streaming_SHA3_state_256* sha_state =
-      Hacl_Streaming_SHA3_create_in_256();
-    Hacl_Streaming_SHA3_init_256(sha_state);
+      Hacl_Streaming_SHA3_malloc_256();
 
     // Update
     for (size_t i = 0; i < input.size();) {
@@ -97,7 +96,7 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
     }
 
     // Finish
-    Hacl_Streaming_SHA3_finish_256(sha_state, digest256.data());
+    Hacl_Streaming_SHA3_digest_256(sha_state, digest256.data());
     Hacl_Streaming_SHA3_free_256(sha_state);
   }
 
