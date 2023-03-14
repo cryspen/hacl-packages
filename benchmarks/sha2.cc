@@ -132,7 +132,7 @@ EverCrypt_Sha2_streaming(benchmark::State& state, Args&&... args)
 
   for (auto _ : state) {
     // Init
-    EverCrypt_Hash_Incremental_hash_state* ctx =
+    EverCrypt_Hash_Incremental_state_t* ctx =
       EverCrypt_Hash_Incremental_malloc(algorithm);
 
     // Update

@@ -7,8 +7,8 @@
  */
 
 #include "EverCrypt_Hash.h"
-#include "Hacl_Hash_Blake2b_32.h"
-#include "Hacl_Hash_Blake2s_32.h"
+#include "Hacl_Hash_Blake2b.h"
+#include "Hacl_Hash_Blake2s.h"
 
 #include "util.h"
 
@@ -43,7 +43,7 @@ HACL_blake2b_32_oneshot(benchmark::State& state)
   bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
-    Hacl_Hash_Blake2b_32_hash_with_key(
+    Hacl_Hash_Blake2b_hash_with_key(
       digest2b.data(), digest2b.size(), (uint8_t*)input.data(), input.size(),
       NULL, 0);
   }
@@ -101,7 +101,7 @@ static void
 HACL_blake2b_32_oneshot_keyed(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_Blake2b_32_hash_with_key(
+    Hacl_Hash_Blake2b_hash_with_key(
       digest2b.data(), digest2b.size(), (uint8_t*)input.data(), input.size(),
       key.data(), key.size());
   }
@@ -157,16 +157,16 @@ HACL_blake2b_32_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Hash_Blake2b_32_state_t* ctx = Hacl_Hash_Blake2b_32_malloc();
+    Hacl_Hash_Blake2b_state_t* ctx = Hacl_Hash_Blake2b_malloc();
 
     // Update
     for (auto chunk : chunk(input, 7)) {
-      Hacl_Hash_Blake2b_32_update(ctx, (uint8_t*)chunk.data(), chunk.size());
+      Hacl_Hash_Blake2b_update(ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Hash_Blake2b_32_digest(ctx, digest);
-    Hacl_Hash_Blake2b_32_free(ctx);
+    Hacl_Hash_Blake2b_digest(ctx, digest);
+    Hacl_Hash_Blake2b_free(ctx);
   }
 }
 
@@ -209,7 +209,7 @@ EverCrypt_blake2b_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX];
 
     // Init
-    EverCrypt_Hash_Incremental_hash_state_s* ctx =
+    EverCrypt_Hash_Incremental_state_t* ctx =
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2B);
 
     // Update
@@ -244,7 +244,7 @@ HACL_blake2s_32_oneshot(benchmark::State& state)
   bytes input(state.range(0), 0xAB);
 
   for (auto _ : state) {
-    Hacl_Hash_Blake2s_32_hash_with_key(
+    Hacl_Hash_Blake2s_hash_with_key(
       digest2s.data(), digest2s.size(), input.data(), input.size(), NULL, 0);
   }
 }
@@ -300,7 +300,7 @@ static void
 HACL_blake2s_32_oneshot_keyed(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_Blake2s_32_hash_with_key(
+    Hacl_Hash_Blake2s_hash_with_key(
       digest2s.data(), digest2s.size(), (uint8_t*)input.data(), input.size(),
       key.data(), key.size());
   }
@@ -356,16 +356,16 @@ HACL_blake2s_32_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Hash_Blake2s_32_state_t* ctx = Hacl_Hash_Blake2s_32_malloc();
+    Hacl_Hash_Blake2s_state_t* ctx = Hacl_Hash_Blake2s_malloc();
 
     // Update
     for (auto chunk : chunk(input, 7)) {
-      Hacl_Hash_Blake2s_32_update(ctx, (uint8_t*)chunk.data(), chunk.size());
+      Hacl_Hash_Blake2s_update(ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Hash_Blake2s_32_digest(ctx, digest);
-    Hacl_Hash_Blake2s_32_free(ctx);
+    Hacl_Hash_Blake2s_digest(ctx, digest);
+    Hacl_Hash_Blake2s_free(ctx);
   }
 }
 
@@ -408,7 +408,7 @@ EverCrypt_blake2s_streaming(benchmark::State& state)
     uint8_t digest[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    EverCrypt_Hash_Incremental_hash_state_s* ctx =
+    EverCrypt_Hash_Incremental_state_t* ctx =
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2S);
 
     // Update

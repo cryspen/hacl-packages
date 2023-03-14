@@ -55,7 +55,7 @@ HACL_Sha1_streaming(benchmark::State& state)
 
   for (auto _ : state) {
     // Init
-    Hacl_Hash_SHA1_state* state = Hacl_Hash_SHA1_malloc();
+    Hacl_Hash_SHA1_state_t* state = Hacl_Hash_SHA1_malloc();
 
     // Update
     for (size_t i = 0; i < input.size();) {
