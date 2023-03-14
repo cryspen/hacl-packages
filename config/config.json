@@ -42,11 +42,11 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_Hash_Blake2b_32.c",
+                "file": "Hacl_Hash_Blake2b.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_Hash_Blake2s_32.c",
+                "file": "Hacl_Hash_Blake2s.c",
                 "features": "std"
             },
             {
