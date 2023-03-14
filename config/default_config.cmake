@@ -6,8 +6,8 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_32.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_32.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s.c
 	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_SHA2.c
@@ -122,8 +122,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_32.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_32.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Streaming_SHA2.h
@@ -138,8 +138,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b_32.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s_32.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_Blake2_Constants.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
@@ -262,8 +262,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Spec.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_32.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_32.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/Lib_Memzero0.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Streaming_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
