@@ -33,8 +33,7 @@ TEST_P(Md5Suite, TestCase)
   auto test = GetParam();
 
   bytes got_hash = std::vector<uint8_t>(16);
-  Hacl_Hash_MD5_legacy_hash0(
-    got_hash.data(), test.message.data(), test.message.size());
+  Hacl_Hash_MD5_hash(got_hash.data(), test.message.data(), test.message.size());
 
   EXPECT_EQ(got_hash, test.hash);
 }
@@ -63,7 +62,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_MD5));
 
-    EverCrypt_Hash_Incremental_hash_state* state =
+    EverCrypt_Hash_Incremental_state_t* state =
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_MD5);
     EverCrypt_Hash_Incremental_reset(state);
     EverCrypt_Hash_Incremental_update(

@@ -105,7 +105,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA1_DIGEST_LENGTH];
 
     // Init
-    Hacl_Hash_SHA1_state* state = Hacl_Hash_SHA1_malloc();
+    Hacl_Hash_SHA1_state_t* state = Hacl_Hash_SHA1_malloc();
     Hacl_Hash_SHA1_reset(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and
@@ -154,7 +154,7 @@ TEST_P(Sha1, KAT)
   bytes digest(test.md.size());
 
   // Init
-  Hacl_Hash_SHA1_state* state = Hacl_Hash_SHA1_malloc();
+  Hacl_Hash_SHA1_state_t* state = Hacl_Hash_SHA1_malloc();
   Hacl_Hash_SHA1_reset(state);
 
   // Update
@@ -198,7 +198,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
     bytes got_digest(
       Hacl_Hash_Definitions_hash_len(Spec_Hash_Definitions_SHA1));
 
-    EverCrypt_Hash_Incremental_hash_state* state =
+    EverCrypt_Hash_Incremental_state_t* state =
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_SHA1);
     EverCrypt_Hash_Incremental_reset(state);
 

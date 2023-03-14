@@ -12,7 +12,7 @@
 
 #include "EverCrypt_Hash.h"
 // ANCHOR(example header)
-#include "Hacl_Hash_Blake2s_32.h"
+#include "Hacl_Hash_Blake2s.h"
 // ANCHOR_END(example header)
 #include "evercrypt.h"
 #include "hacl-cpu-features.h"
@@ -71,12 +71,10 @@ TEST(ApiTestSuite, ApiTest)
     uint32_t key_len = 0;
     uint8_t* key = 0;
 
-    Hacl_Hash_Blake2s_32_hash_with_key(output,
-                                       HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX,
-                                       (uint8_t*)message,
-                                       message_len,
-                                       key,
-                                       key_len);
+    Hacl_Hash_Blake2s_hash_with_key(
+      output, HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX,
+      (uint8_t*)message, message_len,
+      key, key_len);
 
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, output);
     // ANCHOR_END(example)
@@ -105,22 +103,22 @@ TEST(ApiTestSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX];
 
     // Init
-    Hacl_Hash_Blake2s_32_state_t* state = Hacl_Hash_Blake2s_32_malloc();
-    Hacl_Hash_Blake2s_32_reset(state);
+    Hacl_Hash_Blake2s_state_t* state = Hacl_Hash_Blake2s_malloc();
+    Hacl_Hash_Blake2s_reset(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
-    Hacl_Hash_Blake2s_32_update(state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Hash_Blake2s_update(state, (uint8_t*)chunk_1, chunk_1_size);
     // This is optional when no intermediate results are required.
-    Hacl_Hash_Blake2s_32_digest(state, digest_1);
+    Hacl_Hash_Blake2s_digest(state, digest_1);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
-    Hacl_Hash_Blake2s_32_update(state, (uint8_t*)chunk_2, chunk_2_size);
-    Hacl_Hash_Blake2s_32_digest(state, digest_2);
+    Hacl_Hash_Blake2s_update(state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Hash_Blake2s_digest(state, digest_2);
 
     // Cleanup
-    Hacl_Hash_Blake2s_32_free(state);
+    Hacl_Hash_Blake2s_free(state);
 
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, digest_1);
     print_hex_ln(HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX, digest_2);
@@ -156,12 +154,9 @@ TEST_P(Blake2s, TryKAT)
   {
     bytes got_digest(test.out_len);
 
-    Hacl_Hash_Blake2s_32_hash_with_key(got_digest.data(),
-			               test.out_len,
-                                       test.input.data(),
-                                       test.input.size(),
-                                       test.key.data(),
-                                       test.key.size());
+    Hacl_Hash_Blake2s_hash_with_key(
+      got_digest.data(), test.out_len, test.input.data(), test.input.size(),
+      test.key.data(), test.key.size());
 
     bool outcome = false;
     outcome =
@@ -176,17 +171,17 @@ TEST_P(Blake2s, TryKAT)
 
     if (test.key.size() == 0) {
       // Init
-      Hacl_Hash_Blake2s_32_state_t* state = Hacl_Hash_Blake2s_32_malloc();
-      Hacl_Hash_Blake2s_32_reset(state);
+      Hacl_Hash_Blake2s_state_t* state = Hacl_Hash_Blake2s_malloc();
+      Hacl_Hash_Blake2s_reset(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.input, lengths)) {
-        Hacl_Hash_Blake2s_32_update(state, chunk.data(), chunk.size());
+        Hacl_Hash_Blake2s_update(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Hash_Blake2s_32_digest(state, got_digest.data());
-      Hacl_Hash_Blake2s_32_free(state);
+      Hacl_Hash_Blake2s_digest(state, got_digest.data());
+      Hacl_Hash_Blake2s_free(state);
 
       bool outcome = compare_and_print(
         test.digest.size(), got_digest.data(), test.digest.data());
@@ -317,7 +312,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(test.digest.size(), 0);
 
-    EverCrypt_Hash_Incremental_hash_state* state =
+    EverCrypt_Hash_Incremental_state_t* state =
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2S);
 
     EverCrypt_Hash_Incremental_reset(state);

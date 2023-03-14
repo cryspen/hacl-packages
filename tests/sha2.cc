@@ -284,7 +284,7 @@ TEST_P(EverCryptSuiteTestCase, HashTest)
   {
     bytes got_digest(test.md.size(), 0);
 
-    EverCrypt_Hash_Incremental_hash_state* state;
+    EverCrypt_Hash_Incremental_state_t* state;
     if (test.md.size() == 224 / 8) {
       state =
         EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_SHA2_224);
