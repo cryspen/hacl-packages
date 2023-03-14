@@ -516,9 +516,9 @@
   },
   "Blake2": {
     "blake2b": {
-      "module": "Hacl_Hash_Blake2b_32",
+      "module": "Hacl_Hash_Blake2b",
       "custom_module_name": true,
-      "name": "Hacl_Hash_Blake2b_32_hash_with_key",
+      "name": "Hacl_Hash_Blake2b_hash_with_key",
       "args": [{
           "name": "output",
           "kind": "output",
@@ -571,9 +571,9 @@
       }
     },
     "blake2s": {
-      "module": "Hacl_Hash_Blake2s_32",
+      "module": "Hacl_Hash_Blake2s",
       "custom_module_name": true,
-      "name": "Hacl_Hash_Blake2s_32_hash_with_key",
+      "name": "Hacl_Hash_Blake2s_hash_with_key",
       "args": [{
           "name": "output",
           "kind": "output",
@@ -3679,7 +3679,7 @@
       "args": [{
           "name": "state",
           "kind": "input",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
@@ -3706,7 +3706,7 @@
       ],
       "return": {
         "kind": "layout",
-        "type": "EverCrypt_Hash_Incremental_hash_state",
+        "type": "EverCrypt_Hash_Incremental_state_t",
         "tests": [
         ]
       }
@@ -3718,7 +3718,7 @@
       "args": [{
           "name": "state",
           "kind": "output",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
@@ -3749,7 +3749,7 @@
       "args": [{
           "name": "state",
           "kind": "input",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
