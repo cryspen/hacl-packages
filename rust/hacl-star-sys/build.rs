@@ -47,8 +47,8 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .blocklist_type("FStar_UInt128_uint128")
         .blocklist_function("Hacl_Hash_SHA2_update_last_384")
         .blocklist_function("Hacl_Hash_SHA2_update_last_512")
-        .blocklist_function("Hacl_Hash_Blake2b_32_update_multi")
-        .blocklist_function("Hacl_Hash_Blake2b_32_update_last")
+        .blocklist_function("Hacl_Hash_Blake2b_update_multi")
+        .blocklist_function("Hacl_Hash_Blake2b_update_last")
         .blocklist_function("Hacl_Hash_Blake2b_Simd256_update_multi")
         .blocklist_function("Hacl_Hash_Blake2b_Simd256_update_last")
         // Disable tests to avoid warnings and keep it portable

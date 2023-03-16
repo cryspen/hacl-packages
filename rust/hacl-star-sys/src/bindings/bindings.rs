@@ -669,19 +669,13 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_init(hash: *mut u32, kk: u32, nn: u32);
+    pub fn Hacl_Hash_Blake2s_init(hash: *mut u32, kk: u32, nn: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_update_key(
-        wv: *mut u32,
-        hash: *mut u32,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
+    pub fn Hacl_Hash_Blake2s_update_key(wv: *mut u32, hash: *mut u32, kk: u32, k: *mut u8, ll: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_update_multi(
+    pub fn Hacl_Hash_Blake2s_update_multi(
         len: u32,
         wv: *mut u32,
         hash: *mut u32,
@@ -691,7 +685,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_update_last(
+    pub fn Hacl_Hash_Blake2s_update_last(
         len: u32,
         wv: *mut u32,
         hash: *mut u32,
@@ -701,11 +695,11 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_finish(nn: u32, output: *mut u8, hash: *mut u32);
+    pub fn Hacl_Hash_Blake2s_finish(nn: u32, output: *mut u8, hash: *mut u32);
 }
 extern "C" {
     #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 32.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
-    pub fn Hacl_Hash_Blake2s_32_hash_with_key(
+    pub fn Hacl_Hash_Blake2s_hash_with_key(
         output: *mut u8,
         output_len: u32,
         input: *mut u8,
@@ -715,65 +709,59 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2s_32_malloc_with_key() -> *mut u32;
+    pub fn Hacl_Hash_Blake2s_malloc_with_key() -> *mut u32;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2s_32_block_state_t_s {
+pub struct Hacl_Hash_Blake2s_block_state_t_s {
     pub fst: *mut u32,
     pub snd: *mut u32,
 }
-pub type Hacl_Hash_Blake2s_32_block_state_t = Hacl_Hash_Blake2s_32_block_state_t_s;
+pub type Hacl_Hash_Blake2s_block_state_t = Hacl_Hash_Blake2s_block_state_t_s;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2s_32_state_t_s {
-    pub block_state: Hacl_Hash_Blake2s_32_block_state_t,
+pub struct Hacl_Hash_Blake2s_state_t_s {
+    pub block_state: Hacl_Hash_Blake2s_block_state_t,
     pub buf: *mut u8,
     pub total_len: u64,
 }
-pub type Hacl_Hash_Blake2s_32_state_t = Hacl_Hash_Blake2s_32_state_t_s;
+pub type Hacl_Hash_Blake2s_state_t = Hacl_Hash_Blake2s_state_t_s;
 extern "C" {
     #[doc = "State allocation function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_32_malloc() -> *mut Hacl_Hash_Blake2s_32_state_t;
+    pub fn Hacl_Hash_Blake2s_malloc() -> *mut Hacl_Hash_Blake2s_state_t;
 }
 extern "C" {
     #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_32_reset(state: *mut Hacl_Hash_Blake2s_32_state_t);
+    pub fn Hacl_Hash_Blake2s_reset(state: *mut Hacl_Hash_Blake2s_state_t);
 }
 extern "C" {
     #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
-    pub fn Hacl_Hash_Blake2s_32_update(
-        state: *mut Hacl_Hash_Blake2s_32_state_t,
+    pub fn Hacl_Hash_Blake2s_update(
+        state: *mut Hacl_Hash_Blake2s_state_t,
         chunk: *mut u8,
         chunk_len: u32,
     ) -> u32;
 }
 extern "C" {
     #[doc = "Finish function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_32_digest(state: *mut Hacl_Hash_Blake2s_32_state_t, output: *mut u8);
+    pub fn Hacl_Hash_Blake2s_digest(state: *mut Hacl_Hash_Blake2s_state_t, output: *mut u8);
 }
 extern "C" {
     #[doc = "Free state function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_32_free(state: *mut Hacl_Hash_Blake2s_32_state_t);
+    pub fn Hacl_Hash_Blake2s_free(state: *mut Hacl_Hash_Blake2s_state_t);
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2b_32_init(hash: *mut u64, kk: u32, nn: u32);
+    pub fn Hacl_Hash_Blake2b_init(hash: *mut u64, kk: u32, nn: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2b_32_update_key(
-        wv: *mut u64,
-        hash: *mut u64,
-        kk: u32,
-        k: *mut u8,
-        ll: u32,
-    );
+    pub fn Hacl_Hash_Blake2b_update_key(wv: *mut u64, hash: *mut u64, kk: u32, k: *mut u8, ll: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2b_32_finish(nn: u32, output: *mut u8, hash: *mut u64);
+    pub fn Hacl_Hash_Blake2b_finish(nn: u32, output: *mut u8, hash: *mut u64);
 }
 extern "C" {
     #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
-    pub fn Hacl_Hash_Blake2b_32_hash_with_key(
+    pub fn Hacl_Hash_Blake2b_hash_with_key(
         output: *mut u8,
         output_len: u32,
         input: *mut u8,
@@ -783,46 +771,46 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_Blake2b_32_malloc_with_key() -> *mut u64;
+    pub fn Hacl_Hash_Blake2b_malloc_with_key() -> *mut u64;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2b_32_block_state_t_s {
+pub struct Hacl_Hash_Blake2b_block_state_t_s {
     pub fst: *mut u64,
     pub snd: *mut u64,
 }
-pub type Hacl_Hash_Blake2b_32_block_state_t = Hacl_Hash_Blake2b_32_block_state_t_s;
+pub type Hacl_Hash_Blake2b_block_state_t = Hacl_Hash_Blake2b_block_state_t_s;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2b_32_state_t_s {
-    pub block_state: Hacl_Hash_Blake2b_32_block_state_t,
+pub struct Hacl_Hash_Blake2b_state_t_s {
+    pub block_state: Hacl_Hash_Blake2b_block_state_t,
     pub buf: *mut u8,
     pub total_len: u64,
 }
-pub type Hacl_Hash_Blake2b_32_state_t = Hacl_Hash_Blake2b_32_state_t_s;
+pub type Hacl_Hash_Blake2b_state_t = Hacl_Hash_Blake2b_state_t_s;
 extern "C" {
     #[doc = "State allocation function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_32_malloc() -> *mut Hacl_Hash_Blake2b_32_state_t;
+    pub fn Hacl_Hash_Blake2b_malloc() -> *mut Hacl_Hash_Blake2b_state_t;
 }
 extern "C" {
     #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_32_reset(state: *mut Hacl_Hash_Blake2b_32_state_t);
+    pub fn Hacl_Hash_Blake2b_reset(state: *mut Hacl_Hash_Blake2b_state_t);
 }
 extern "C" {
     #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
-    pub fn Hacl_Hash_Blake2b_32_update(
-        state: *mut Hacl_Hash_Blake2b_32_state_t,
+    pub fn Hacl_Hash_Blake2b_update(
+        state: *mut Hacl_Hash_Blake2b_state_t,
         chunk: *mut u8,
         chunk_len: u32,
     ) -> u32;
 }
 extern "C" {
     #[doc = "Finish function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_32_digest(state: *mut Hacl_Hash_Blake2b_32_state_t, output: *mut u8);
+    pub fn Hacl_Hash_Blake2b_digest(state: *mut Hacl_Hash_Blake2b_state_t, output: *mut u8);
 }
 extern "C" {
     #[doc = "Free state function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_32_free(state: *mut Hacl_Hash_Blake2b_32_state_t);
+    pub fn Hacl_Hash_Blake2b_free(state: *mut Hacl_Hash_Blake2b_state_t);
 }
 extern "C" {
     pub fn EverCrypt_HMAC_is_supported_alg(uu___: Spec_Hash_Definitions_hash_alg) -> bool;
@@ -1104,26 +1092,26 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct EverCrypt_Hash_Incremental_hash_state_s {
+pub struct EverCrypt_Hash_Incremental_state_t_s {
     pub block_state: *mut EverCrypt_Hash_state_s,
     pub buf: *mut u8,
     pub total_len: u64,
 }
-pub type EverCrypt_Hash_Incremental_hash_state = EverCrypt_Hash_Incremental_hash_state_s;
+pub type EverCrypt_Hash_Incremental_state_t = EverCrypt_Hash_Incremental_state_t_s;
 extern "C" {
     #[doc = "Allocate initial state for the agile hash. The argument `a` stands for the\nchoice of algorithm (see Hacl_Spec.h). This API will automatically pick the most\nefficient implementation, provided you have called EverCrypt_AutoConfig2_init()\nbefore. The state is to be freed by calling `free`."]
     pub fn EverCrypt_Hash_Incremental_malloc(
         a: Spec_Hash_Definitions_hash_alg,
-    ) -> *mut EverCrypt_Hash_Incremental_hash_state;
+    ) -> *mut EverCrypt_Hash_Incremental_state_t;
 }
 extern "C" {
     #[doc = "Reset an existing state to the initial hash state with empty data."]
-    pub fn EverCrypt_Hash_Incremental_reset(state: *mut EverCrypt_Hash_Incremental_hash_state);
+    pub fn EverCrypt_Hash_Incremental_reset(state: *mut EverCrypt_Hash_Incremental_state_t);
 }
 extern "C" {
     #[doc = "Feed an arbitrary amount of data into the hash. This function returns\nEverCrypt_Error_Success for success, or EverCrypt_Error_MaximumLengthExceeded if\nthe combined length of all of the data passed to `update` (since the last call\nto `init`) exceeds 2^61-1 bytes or 2^64-1 bytes, depending on the choice of\nalgorithm. Both limits are unlikely to be attained in practice."]
     pub fn EverCrypt_Hash_Incremental_update(
-        state: *mut EverCrypt_Hash_Incremental_hash_state,
+        state: *mut EverCrypt_Hash_Incremental_state_t,
         chunk: *mut u8,
         chunk_len: u32,
     ) -> EverCrypt_Error_error_code;
@@ -1131,19 +1119,19 @@ extern "C" {
 extern "C" {
     #[doc = "Perform a run-time test to determine which algorithm was chosen for the given piece of state."]
     pub fn EverCrypt_Hash_Incremental_alg_of_state(
-        s: *mut EverCrypt_Hash_Incremental_hash_state,
+        s: *mut EverCrypt_Hash_Incremental_state_t,
     ) -> Spec_Hash_Definitions_hash_alg;
 }
 extern "C" {
     #[doc = "Write the resulting hash into `output`, an array whose length is\nalgorithm-specific. You can use the macros defined earlier in this file to\nallocate a destination buffer of the right length. The state remains valid after\na call to `digest`, meaning the user may feed more data into the hash via\n`update`. (The finish function operates on an internal copy of the state and\ntherefore does not invalidate the client-held state.)"]
     pub fn EverCrypt_Hash_Incremental_digest(
-        state: *mut EverCrypt_Hash_Incremental_hash_state,
+        state: *mut EverCrypt_Hash_Incremental_state_t,
         output: *mut u8,
     );
 }
 extern "C" {
     #[doc = "Free a state previously allocated with `create_in`."]
-    pub fn EverCrypt_Hash_Incremental_free(state: *mut EverCrypt_Hash_Incremental_hash_state);
+    pub fn EverCrypt_Hash_Incremental_free(state: *mut EverCrypt_Hash_Incremental_state_t);
 }
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `output`, an array whose length is determined by\nyour choice of algorithm `a` (see Hacl_Spec.h). You can use the macros defined\nearlier in this file to allocate a destination buffer of the right length. This\nAPI will automatically pick the most efficient implementation, provided you have\ncalled EverCrypt_AutoConfig2_init() before."]
@@ -1156,7 +1144,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Write the HMAC-SHA-1 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 64 byte.\n`dst` must point to 20 bytes of memory."]
-    pub fn Hacl_HMAC_legacy_compute_sha1(
+    pub fn Hacl_HMAC_compute_sha1(
         dst: *mut u8,
         key: *mut u8,
         key_len: u32,

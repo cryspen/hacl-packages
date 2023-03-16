@@ -277,7 +277,7 @@ const fn does_not_support_streaming(alg: Algorithm) -> bool {
 pub struct Digest {
     mode: Algorithm,
     finished: bool,
-    c_state: *mut EverCrypt_Hash_Incremental_hash_state,
+    c_state: *mut EverCrypt_Hash_Incremental_state_t,
 }
 
 impl Digest {
@@ -292,7 +292,7 @@ impl Digest {
             EverCrypt_AutoConfig2_init();
         }
 
-        let c_state: *mut EverCrypt_Hash_Incremental_hash_state =
+        let c_state: *mut EverCrypt_Hash_Incremental_state_t =
             unsafe { EverCrypt_Hash_Incremental_malloc(alg.into()) };
         Ok(Self {
             mode: alg,
