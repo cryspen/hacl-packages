@@ -146,15 +146,14 @@ module Hash = struct
       everCrypt_Hash_Incremental_hash (alg_definition alg) (C.ctypes_buf digest) (C.ctypes_buf msg) (C.size_uint32 msg)
     let finish ~st:(alg, t) ~digest =
       assert (C.size digest = digest_len alg);
-      everCrypt_Hash_Incremental_finish t (C.ctypes_buf digest)
+      everCrypt_Hash_Incremental_digest t (C.ctypes_buf digest)
   end
   (* TODO: get rid of the `alg` here by using `alg_of_state` *)
-  type t = alg * everCrypt_Hash_Incremental_hash_state Ctypes_static.ptr
+  type t = alg * everCrypt_Hash_Incremental_state_t Ctypes_static.ptr
   let init ~alg =
     Lazy.force at_exit_full_major;
     let alg_spec = alg_definition alg in
-    let st = everCrypt_Hash_Incremental_create_in alg_spec in
-    everCrypt_Hash_Incremental_init st;
+    let st = everCrypt_Hash_Incremental_malloc alg_spec in
     Gc.finalise everCrypt_Hash_Incremental_free st;
     alg, st
   let update ~st:(_alg, t) ~msg =

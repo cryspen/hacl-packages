@@ -178,7 +178,7 @@ type all_hash_alg =
 module Make_HashFunction_generic (C: Buffer)
     (Impl : sig
        val hash_alg : all_hash_alg
-       val hash : C.buf -> uint32 -> C.buf -> unit
+       val hash : C.buf -> C.buf -> uint32 -> unit
      end)
 = struct
   type bytes = C.t
@@ -193,7 +193,7 @@ module Make_HashFunction_generic (C: Buffer)
       check_max_buffer_len (C.size msg);
       assert (C.size digest = digest_len Impl.hash_alg);
       assert (C.disjoint msg digest);
-      Impl.hash (C.ctypes_buf msg) (C.size_uint32 msg) (C.ctypes_buf digest)
+      Impl.hash (C.ctypes_buf digest) (C.ctypes_buf msg) (C.size_uint32 msg)
   end
   let hash msg =
     let digest = C.make (digest_len Impl.hash_alg) in
@@ -330,7 +330,7 @@ end
 module Make_Blake2b_generic (C: Buffer)
     (Impl : sig
        val reqs : feature list
-       val blake2b : uint32 -> C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> unit
+       val blake2b : C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> uint32 -> unit
      end)
 = struct
   type bytes = C.t
@@ -344,7 +344,7 @@ module Make_Blake2b_generic (C: Buffer)
       assert (C.disjoint key msg);
       assert (C.disjoint key digest);
       assert (C.disjoint msg digest);
-      Impl.blake2b (C.size_uint32 digest) (C.ctypes_buf digest) (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 key) (C.ctypes_buf key)
+      Impl.blake2b (C.ctypes_buf digest) (C.size_uint32 digest) (C.ctypes_buf msg) (C.size_uint32 msg) (C.ctypes_buf key) (C.size_uint32 key)
   end
   let hash ?(key = C.empty) msg size =
     assert (size > 0 && size <= 64);
@@ -356,7 +356,7 @@ end
 module Make_Blake2s_generic (C: Buffer)
     (Impl : sig
        val reqs : feature list
-       val blake2s : uint32 -> C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> unit
+       val blake2s : C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> uint32 -> unit
      end)
 = struct
   type bytes = C.t
@@ -370,7 +370,7 @@ module Make_Blake2s_generic (C: Buffer)
       assert (C.disjoint key msg);
       assert (C.disjoint key digest);
       assert (C.disjoint msg digest);
-      Impl.blake2s (C.size_uint32 digest) (C.ctypes_buf digest) (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 key) (C.ctypes_buf key)
+      Impl.blake2s (C.ctypes_buf digest) (C.size_uint32 digest) (C.ctypes_buf msg) (C.size_uint32 msg) (C.ctypes_buf key) (C.size_uint32 key)
   end
   let hash ?(key = C.empty) msg size =
     assert (size > 0 && size <= 32);

@@ -442,16 +442,16 @@ end
     - BLAKE2s, optimised for 8- to 32-bit architectures
 *)
 
-module Blake2b_32 : Blake2
+module Blake2b : Blake2
 (** Portable BLAKE2b implementation *)
 
-module Blake2b_256 : Blake2
+module Blake2b_Simd256 : Blake2
 (** Vectorized BLAKE2b implementation, requiring {{!AutoConfig2.VEC256} 256-bit vector support} *)
 
-module Blake2s_32 : Blake2
+module Blake2s : Blake2
 (** Portable BLAKE2s implementation *)
 
-module Blake2s_128 : Blake2
+module Blake2s_Simd128 : Blake2
 (** Vectorized BLAKE2s implementation, requiring {{!AutoConfig2.VEC128} 128-bit vector support} *)
 
 (** {2 Legacy (deprecated)}
