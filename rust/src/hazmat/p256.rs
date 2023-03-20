@@ -151,9 +151,6 @@ pub mod ecdsa {
                 private_key: &[u8; 32],
                 nonce: &[u8; 32],
             ) -> Result<[u8; 64], Error> {
-                validate_scalar(&nonce)?;
-                validate_scalar(private_key)?;
-
                 let mut result = [0u8; 64];
                 if unsafe {
                     $fun_sign(
@@ -180,8 +177,6 @@ pub mod ecdsa {
                 signature_r: &[u8; 32],
                 signature_s: &[u8; 32],
             ) -> Result<(), Error> {
-                validate_point(public_key)?;
-
                 if unsafe {
                     $fun_verify(
                         payload.len().try_into().unwrap(),

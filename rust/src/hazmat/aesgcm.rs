@@ -9,13 +9,21 @@ pub type Aes256Key = [u8; 32];
 pub type Iv = [u8; 12];
 pub type Tag = [u8; 16];
 
+/// AES GCM Errors
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Error {
+    /// The hardware does not support the required features.
     UnsupportedHardware,
+
+    /// Encryption failed because the provided arguments were not valid.
     EncryptionError,
+
+    /// Decryption failed.
     InvalidCiphertext,
 }
 
+/// Check if the hardware supports the required features.
+/// This uses the evercrypt feature detection.
 pub fn hardware_support() -> Result<(), Error> {
     unsafe {
         EverCrypt_AutoConfig2_init();
@@ -34,6 +42,11 @@ pub fn hardware_support() -> Result<(), Error> {
 
 macro_rules! implement {
     ($name:ident, $name_dec:ident, $alg:expr, $keytype:ty) => {
+        /// Encrypt the payload in `msg_ctxt` with the provided `key`, `iv`, and
+        /// `aad`.
+        ///
+        /// Returns the ciphertext in `msg_ctx` and the `Tag`, or an `Error` if
+        /// the provided arguments are not valid.
         #[must_use]
         pub fn $name(
             key: &$keytype,
@@ -42,9 +55,8 @@ macro_rules! implement {
             aad: &[u8],
         ) -> Result<Tag, Error> {
             let mut tag = Tag::default();
+            hardware_support()?;
             let ok = unsafe {
-                hardware_support()?;
-
                 let mut state_ptr: *mut EverCrypt_AEAD_state_s = std::ptr::null_mut();
                 let e = EverCrypt_AEAD_create_in($alg as u8, &mut state_ptr, key.as_ptr() as _);
                 if e != 0 {
@@ -72,6 +84,11 @@ macro_rules! implement {
             }
         }
 
+        /// Decrypt the ciphertext in `payload` with the provided `key`, `iv`, and
+        /// `aad`.
+        ///
+        /// Returns the plaintext in `payload` if decryption is successful or
+        /// an `Error`.
         #[must_use]
         pub fn $name_dec(
             key: &$keytype,
@@ -80,9 +97,8 @@ macro_rules! implement {
             aad: &[u8],
             tag: &Tag,
         ) -> Result<(), Error> {
+            hardware_support()?;
             let ok = unsafe {
-                hardware_support()?;
-
                 let mut state_ptr: *mut EverCrypt_AEAD_state_s = std::ptr::null_mut();
                 let e = EverCrypt_AEAD_create_in($alg as u8, &mut state_ptr, key.as_ptr() as _);
                 if e != 0 {
