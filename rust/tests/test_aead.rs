@@ -215,7 +215,7 @@ fn key_gen_self_test() {
 #[cfg(feature = "hazmat")]
 #[test]
 fn raw_self_test() {
-    use hacl_star::hazmat::{aesgcm, chacha20_poly1305};
+    use hacl_star::hazmat::chacha20_poly1305;
 
     let msg = b"HACL rules";
     let aad = b"associated data";
@@ -245,6 +245,8 @@ fn raw_self_test() {
 
     #[cfg(aes_ni)]
     {
+        use hacl_star::hazmat::aesgcm;
+
         if aesgcm::hardware_support().is_ok() {
             let mut io = *msg;
             let tag = aesgcm::encrypt_256(key, &mut io, *iv, aad).unwrap();

@@ -15,6 +15,9 @@ pub enum Algorithm {
 }
 
 pub enum Error {
+    /// Invalid input, e.g. input values are too large.
+    InvalidInput,
+
     /// Unable to generate the requested randomness.
     UnableToGenerate,
 }
@@ -28,37 +31,50 @@ impl Drbg {
     /// Create a new DRBG state with the given hash function.
     /// This also initializes the DRBG state with the given entropy, nonce and
     /// personalization string.
-    pub fn new(alg: Algorithm, entropy: &[u8], nonce: &[u8], personalization: &str) -> Self {
+    pub fn new(
+        alg: Algorithm,
+        entropy: &[u8],
+        nonce: &[u8],
+        personalization: &str,
+    ) -> Result<Self, Error> {
         let state = unsafe { Hacl_HMAC_DRBG_create_in(alg as u8) };
         unsafe {
             Hacl_HMAC_DRBG_instantiate(
                 alg as u8,
                 state,
-                entropy.len().try_into().unwrap(),
+                entropy.len().try_into().map_err(|_| Error::InvalidInput)?,
                 entropy.as_ptr() as _,
-                nonce.len().try_into().unwrap(),
+                nonce.len().try_into().map_err(|_| Error::InvalidInput)?,
                 nonce.as_ptr() as _,
-                personalization.len().try_into().unwrap(),
+                personalization
+                    .len()
+                    .try_into()
+                    .map_err(|_| Error::InvalidInput)?,
                 personalization.as_bytes().as_ptr() as _,
             );
         }
-        Self { state, alg }
+        Ok(Self { state, alg })
     }
 
     /// Reseed the DRBG state.
     ///
     /// It is very unlikely that you will need this function.
-    pub fn reseed(&mut self, entropy: &[u8], additional_input: &[u8]) {
+    pub fn reseed(&mut self, entropy: &[u8], additional_input: &[u8]) -> Result<(), Error> {
         unsafe {
             Hacl_HMAC_DRBG_reseed(
                 self.alg as u8,
                 self.state,
-                entropy.len().try_into().unwrap(),
+                entropy.len().try_into().map_err(|_| Error::InvalidInput)?,
                 entropy.as_ptr() as _,
-                additional_input.len().try_into().unwrap(),
+                additional_input
+                    .len()
+                    .try_into()
+                    .map_err(|_| Error::InvalidInput)?,
                 additional_input.as_ptr() as _,
             );
         }
+
+        Ok(())
     }
 
     /// Generate random bytes.
@@ -68,8 +84,11 @@ impl Drbg {
                 self.alg as u8,
                 output.as_mut_ptr(),
                 self.state,
-                output.len().try_into().unwrap(),
-                additional_input.len().try_into().unwrap(),
+                output.len().try_into().map_err(|_| Error::InvalidInput)?,
+                additional_input
+                    .len()
+                    .try_into()
+                    .map_err(|_| Error::InvalidInput)?,
                 additional_input.as_ptr() as _,
             )
         } {

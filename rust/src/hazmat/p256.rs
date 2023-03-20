@@ -155,7 +155,7 @@ pub mod ecdsa {
                 if unsafe {
                     $fun_sign(
                         result.as_mut_ptr(),
-                        payload.len().try_into().unwrap(),
+                        payload.len().try_into().map_err(|_| Error::InvalidInput)?,
                         payload.as_ptr() as _,
                         private_key.as_ptr() as _,
                         nonce.as_ptr() as _,
@@ -179,7 +179,7 @@ pub mod ecdsa {
             ) -> Result<(), Error> {
                 if unsafe {
                     $fun_verify(
-                        payload.len().try_into().unwrap(),
+                        payload.len().try_into().map_err(|_| Error::InvalidInput)?,
                         payload.as_ptr() as _,
                         public_key.as_ptr() as _,
                         signature_r.as_ptr() as _,
