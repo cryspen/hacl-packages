@@ -45,7 +45,7 @@ templates_path = ['_templates']
 
 html_sidebars = {
     "**": [
-        "sidebar-logo.html",
+        "navbar-logo.html",
         "book.html",
         "search-field.html",
         "sbt-sidebar-nav.html",
