@@ -242,4 +242,22 @@ fn raw_self_test() {
         assert!(chacha20_poly1305::simd256::decrypt(key, &mut io, *iv, aad, &tag).is_ok());
         assert_eq!(&io, msg);
     }
+
+    #[cfg(aes_ni)]
+    {
+        use hacl_star::hazmat::aesgcm;
+
+        if aesgcm::hardware_support().is_ok() {
+            let mut io = *msg;
+            let tag = aesgcm::encrypt_256(key, &mut io, *iv, aad).unwrap();
+            assert!(aesgcm::decrypt_256(key, &mut io, *iv, aad, &tag).is_ok());
+            assert_eq!(&io, msg);
+
+            let key = b"Never be used!!!" as &[u8; 16];
+            let mut io = *msg;
+            let tag = aesgcm::encrypt_128(key, &mut io, *iv, aad).unwrap();
+            assert!(aesgcm::decrypt_128(key, &mut io, *iv, aad, &tag).is_ok());
+            assert_eq!(&io, msg);
+        }
+    }
 }

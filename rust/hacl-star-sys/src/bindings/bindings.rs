@@ -614,6 +614,36 @@ extern "C" {
     pub fn Hacl_Hash_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
+    #[doc = "Compute the public key from the private key.\n\nThe outparam `public_key`  points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32]."]
+    pub fn Hacl_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
+}
+extern "C" {
+    #[doc = "Compute the expanded keys for an Ed25519 signature.\n\nThe outparam `expanded_keys` points to 96 bytes of valid memory, i.e., uint8_t[96].\nThe argument `private_key`   points to 32 bytes of valid memory, i.e., uint8_t[32].\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    pub fn Hacl_Ed25519_expand_keys(expanded_keys: *mut u8, private_key: *mut u8);
+}
+extern "C" {
+    #[doc = "Create an Ed25519 signature with the (precomputed) expanded keys.\n\nThe outparam `signature`     points to 64 bytes of valid memory, i.e., uint8_t[64].\nThe argument `expanded_keys` points to 96 bytes of valid memory, i.e., uint8_t[96].\nThe argument `msg`    points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\n\nThe argument `expanded_keys` is obtained through `expand_keys`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    pub fn Hacl_Ed25519_sign_expanded(
+        signature: *mut u8,
+        expanded_keys: *mut u8,
+        msg_len: u32,
+        msg: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Create an Ed25519 signature.\n\nThe outparam `signature`   points to 64 bytes of valid memory, i.e., uint8_t[64].\nThe argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `msg`  points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\n\nThe function first calls `expand_keys` and then invokes `sign_expanded`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    pub fn Hacl_Ed25519_sign(signature: *mut u8, private_key: *mut u8, msg_len: u32, msg: *mut u8);
+}
+extern "C" {
+    #[doc = "Verify an Ed25519 signature.\n\nThe function returns `true` if the signature is valid and `false` otherwise.\n\nThe argument `public_key` points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\nThe argument `signature`  points to 64 bytes of valid memory, i.e., uint8_t[64]."]
+    pub fn Hacl_Ed25519_verify(
+        public_key: *mut u8,
+        msg_len: u32,
+        msg: *mut u8,
+        signature: *mut u8,
+    ) -> bool;
+}
+extern "C" {
     pub fn EverCrypt_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
 }
 extern "C" {
@@ -986,6 +1016,145 @@ extern "C" {
         len: u32,
     );
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s {
+    pub len: u32,
+    pub n: *mut u64,
+    pub mu: u64,
+    pub r2: *mut u64,
+}
+pub type Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64 = Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64_s;
+extern "C" {
+    #[doc = "Write `a + b mod 2 ^ (64 * len)` in `res`.\n\nThis functions returns the carry.\n\nThe arguments a, b and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len]"]
+    pub fn Hacl_Bignum64_add(len: u32, a: *mut u64, b: *mut u64, res: *mut u64) -> u64;
+}
+extern "C" {
+    #[doc = "Write `a - b mod 2 ^ (64 * len)` in `res`.\n\nThis functions returns the carry.\n\nThe arguments a, b and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len]"]
+    pub fn Hacl_Bignum64_sub(len: u32, a: *mut u64, b: *mut u64, res: *mut u64) -> u64;
+}
+extern "C" {
+    #[doc = "Write `(a + b) mod n` in `res`.\n\nThe arguments a, b, n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• a < n\n• b < n"]
+    pub fn Hacl_Bignum64_add_mod(len: u32, n: *mut u64, a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    #[doc = "Write `(a - b) mod n` in `res`.\n\nThe arguments a, b, n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• a < n\n• b < n"]
+    pub fn Hacl_Bignum64_sub_mod(len: u32, n: *mut u64, a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    #[doc = "Write `a * b` in `res`.\n\nThe arguments a and b are meant to be `len` limbs in size, i.e. uint64_t[len].\nThe outparam res is meant to be `2*len` limbs in size, i.e. uint64_t[2*len]."]
+    pub fn Hacl_Bignum64_mul(len: u32, a: *mut u64, b: *mut u64, res: *mut u64);
+}
+extern "C" {
+    #[doc = "Write `a * a` in `res`.\n\nThe argument a is meant to be `len` limbs in size, i.e. uint64_t[len].\nThe outparam res is meant to be `2*len` limbs in size, i.e. uint64_t[2*len]."]
+    pub fn Hacl_Bignum64_sqr(len: u32, a: *mut u64, res: *mut u64);
+}
+extern "C" {
+    #[doc = "Write `a mod n` in `res`.\n\nThe argument a is meant to be `2*len` limbs in size, i.e. uint64_t[2*len].\nThe argument n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nThe function returns false if any of the following preconditions are violated,\ntrue otherwise.\n• 1 < n\n• n % 2 = 1"]
+    pub fn Hacl_Bignum64_mod(len: u32, n: *mut u64, a: *mut u64, res: *mut u64) -> bool;
+}
+extern "C" {
+    #[doc = "Write `a ^ b mod n` in `res`.\n\nThe arguments a, n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nThe argument b is a bignum of any size, and bBits is an upper bound on the\nnumber of significant bits of b. A tighter bound results in faster execution\ntime. When in doubt, the number of bits for the bignum size is always a safe\ndefault, e.g. if b is a 4096-bit bignum, bBits should be 4096.\n\nThe function is *NOT* constant-time on the argument b. See the\nmod_exp_consttime_* functions for constant-time variants.\n\nThe function returns false if any of the following preconditions are violated,\ntrue otherwise.\n• n % 2 = 1\n• 1 < n\n• b < pow2 bBits\n• a < n"]
+    pub fn Hacl_Bignum64_mod_exp_vartime(
+        len: u32,
+        n: *mut u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = "Write `a ^ b mod n` in `res`.\n\nThe arguments a, n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nThe argument b is a bignum of any size, and bBits is an upper bound on the\nnumber of significant bits of b. A tighter bound results in faster execution\ntime. When in doubt, the number of bits for the bignum size is always a safe\ndefault, e.g. if b is a 4096-bit bignum, bBits should be 4096.\n\nThis function is constant-time over its argument b, at the cost of a slower\nexecution time than mod_exp_vartime.\n\nThe function returns false if any of the following preconditions are violated,\ntrue otherwise.\n• n % 2 = 1\n• 1 < n\n• b < pow2 bBits\n• a < n"]
+    pub fn Hacl_Bignum64_mod_exp_consttime(
+        len: u32,
+        n: *mut u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = "Write `a ^ (-1) mod n` in `res`.\n\nThe arguments a, n and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• n is a prime\n\nThe function returns false if any of the following preconditions are violated,\ntrue otherwise.\n• n % 2 = 1\n• 1 < n\n• 0 < a\n• a < n"]
+    pub fn Hacl_Bignum64_mod_inv_prime_vartime(
+        len: u32,
+        n: *mut u64,
+        a: *mut u64,
+        res: *mut u64,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = "Heap-allocate and initialize a montgomery context.\n\nThe argument n is meant to be `len` limbs in size, i.e. uint64_t[len].\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• n % 2 = 1\n• 1 < n\n\nThe caller will need to call Hacl_Bignum64_mont_ctx_free on the return value\nto avoid memory leaks."]
+    pub fn Hacl_Bignum64_mont_ctx_init(
+        len: u32,
+        n: *mut u64,
+    ) -> *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64;
+}
+extern "C" {
+    #[doc = "Deallocate the memory previously allocated by Hacl_Bignum64_mont_ctx_init.\n\nThe argument k is a montgomery context obtained through Hacl_Bignum64_mont_ctx_init."]
+    pub fn Hacl_Bignum64_mont_ctx_free(k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64);
+}
+extern "C" {
+    #[doc = "Write `a mod n` in `res`.\n\nThe argument a is meant to be `2*len` limbs in size, i.e. uint64_t[2*len].\nThe outparam res is meant to be `len` limbs in size, i.e. uint64_t[len].\nThe argument k is a montgomery context obtained through Hacl_Bignum64_mont_ctx_init."]
+    pub fn Hacl_Bignum64_mod_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    #[doc = "Write `a ^ b mod n` in `res`.\n\nThe arguments a and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\nThe argument k is a montgomery context obtained through Hacl_Bignum64_mont_ctx_init.\n\nThe argument b is a bignum of any size, and bBits is an upper bound on the\nnumber of significant bits of b. A tighter bound results in faster execution\ntime. When in doubt, the number of bits for the bignum size is always a safe\ndefault, e.g. if b is a 4096-bit bignum, bBits should be 4096.\n\nThe function is *NOT* constant-time on the argument b. See the\nmod_exp_consttime_* functions for constant-time variants.\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• b < pow2 bBits\n• a < n"]
+    pub fn Hacl_Bignum64_mod_exp_vartime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    #[doc = "Write `a ^ b mod n` in `res`.\n\nThe arguments a and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\nThe argument k is a montgomery context obtained through Hacl_Bignum64_mont_ctx_init.\n\nThe argument b is a bignum of any size, and bBits is an upper bound on the\nnumber of significant bits of b. A tighter bound results in faster execution\ntime. When in doubt, the number of bits for the bignum size is always a safe\ndefault, e.g. if b is a 4096-bit bignum, bBits should be 4096.\n\nThis function is constant-time over its argument b, at the cost of a slower\nexecution time than mod_exp_vartime_*.\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• b < pow2 bBits\n• a < n"]
+    pub fn Hacl_Bignum64_mod_exp_consttime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        bBits: u32,
+        b: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    #[doc = "Write `a ^ (-1) mod n` in `res`.\n\nThe argument a and the outparam res are meant to be `len` limbs in size, i.e. uint64_t[len].\nThe argument k is a montgomery context obtained through Hacl_Bignum64_mont_ctx_init.\n\nBefore calling this function, the caller will need to ensure that the following\npreconditions are observed.\n• n is a prime\n• 0 < a\n• a < n"]
+    pub fn Hacl_Bignum64_mod_inv_prime_vartime_precomp(
+        k: *mut Hacl_Bignum_MontArithmetic_bn_mont_ctx_u64,
+        a: *mut u64,
+        res: *mut u64,
+    );
+}
+extern "C" {
+    #[doc = "Load a bid-endian bignum from memory.\n\nThe argument b points to `len` bytes of valid memory.\nThe function returns a heap-allocated bignum of size sufficient to hold the\nresult of loading b, or NULL if either the allocation failed, or the amount of\nrequired memory would exceed 4GB.\n\nIf the return value is non-null, clients must eventually call free(3) on it to\navoid memory leaks."]
+    pub fn Hacl_Bignum64_new_bn_from_bytes_be(len: u32, b: *mut u8) -> *mut u64;
+}
+extern "C" {
+    #[doc = "Load a little-endian bignum from memory.\n\nThe argument b points to `len` bytes of valid memory.\nThe function returns a heap-allocated bignum of size sufficient to hold the\nresult of loading b, or NULL if either the allocation failed, or the amount of\nrequired memory would exceed 4GB.\n\nIf the return value is non-null, clients must eventually call free(3) on it to\navoid memory leaks."]
+    pub fn Hacl_Bignum64_new_bn_from_bytes_le(len: u32, b: *mut u8) -> *mut u64;
+}
+extern "C" {
+    #[doc = "Serialize a bignum into big-endian memory.\n\nThe argument b points to a bignum of ⌈len / 8⌉ size.\nThe outparam res points to `len` bytes of valid memory."]
+    pub fn Hacl_Bignum64_bn_to_bytes_be(len: u32, b: *mut u64, res: *mut u8);
+}
+extern "C" {
+    #[doc = "Serialize a bignum into little-endian memory.\n\nThe argument b points to a bignum of ⌈len / 8⌉ size.\nThe outparam res points to `len` bytes of valid memory."]
+    pub fn Hacl_Bignum64_bn_to_bytes_le(len: u32, b: *mut u64, res: *mut u8);
+}
+extern "C" {
+    #[doc = "Returns 2^64 - 1 if a < b, otherwise returns 0.\n\nThe arguments a and b are meant to be `len` limbs in size, i.e. uint64_t[len]."]
+    pub fn Hacl_Bignum64_lt_mask(len: u32, a: *mut u64, b: *mut u64) -> u64;
+}
+extern "C" {
+    #[doc = "Returns 2^64 - 1 if a = b, otherwise returns 0.\n\nThe arguments a and b are meant to be `len` limbs in size, i.e. uint64_t[len]."]
+    pub fn Hacl_Bignum64_eq_mask(len: u32, a: *mut u64, b: *mut u64) -> u64;
+}
 extern "C" {
     #[doc = "Write the HMAC-SHA-1 MAC of a message (`data`) by using a key (`key`) into `dst`.\n\nThe key can be any length and will be hashed if it is longer and padded if it is shorter than 64 byte.\n`dst` must point to 20 bytes of memory."]
     pub fn Hacl_HMAC_legacy_compute_sha1(
@@ -1150,6 +1319,67 @@ extern "C" {
         ikm: *mut u8,
         ikmlen: u32,
     );
+}
+pub type Hacl_HMAC_DRBG_supported_alg = Spec_Hash_Definitions_hash_alg;
+extern "C" {
+    #[doc = "Return the minimal entropy input length of the desired hash function.\n\n@param a Hash algorithm to use."]
+    pub fn Hacl_HMAC_DRBG_min_length(a: Spec_Hash_Definitions_hash_alg) -> u32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_HMAC_DRBG_state_s {
+    pub k: *mut u8,
+    pub v: *mut u8,
+    pub reseed_counter: *mut u32,
+}
+pub type Hacl_HMAC_DRBG_state = Hacl_HMAC_DRBG_state_s;
+extern "C" {
+    pub fn Hacl_HMAC_DRBG_uu___is_State(
+        a: Spec_Hash_Definitions_hash_alg,
+        projectee: Hacl_HMAC_DRBG_state,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = "Create a DRBG state.\n\n@param a Hash algorithm to use. The possible instantiations are ...\n `Spec_Hash_Definitions_SHA2_256`,\n `Spec_Hash_Definitions_SHA2_384`,\n `Spec_Hash_Definitions_SHA2_512`, and\n `Spec_Hash_Definitions_SHA1`."]
+    pub fn Hacl_HMAC_DRBG_create_in(a: Spec_Hash_Definitions_hash_alg) -> Hacl_HMAC_DRBG_state;
+}
+extern "C" {
+    #[doc = "Instantiate the DRBG.\n\n@param a Hash algorithm to use. (Value must match the value used in `Hacl_HMAC_DRBG_create_in`.)\n@param st Pointer to DRBG state.\n@param entropy_input_len Length of entropy input.\n@param entropy_input Pointer to `entropy_input_len` bytes of memory where entropy input is read from.\n@param nonce_len Length of nonce.\n@param nonce Pointer to `nonce_len` bytes of memory where nonce is read from.\n@param personalization_string_len length of personalization string.\n@param personalization_string Pointer to `personalization_string_len` bytes of memory where personalization string is read from."]
+    pub fn Hacl_HMAC_DRBG_instantiate(
+        a: Spec_Hash_Definitions_hash_alg,
+        st: Hacl_HMAC_DRBG_state,
+        entropy_input_len: u32,
+        entropy_input: *mut u8,
+        nonce_len: u32,
+        nonce: *mut u8,
+        personalization_string_len: u32,
+        personalization_string: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Reseed the DRBG.\n\n@param a Hash algorithm to use. (Value must match the value used in `Hacl_HMAC_DRBG_create_in`.)\n@param st Pointer to DRBG state.\n@param entropy_input_len Length of entropy input.\n@param entropy_input Pointer to `entropy_input_len` bytes of memory where entropy input is read from.\n@param additional_input_input_len Length of additional input.\n@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from."]
+    pub fn Hacl_HMAC_DRBG_reseed(
+        a: Spec_Hash_Definitions_hash_alg,
+        st: Hacl_HMAC_DRBG_state,
+        entropy_input_len: u32,
+        entropy_input: *mut u8,
+        additional_input_input_len: u32,
+        additional_input_input: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Generate output.\n\n@param a Hash algorithm to use. (Value must match the value used in `create_in`.)\n@param output Pointer to `n` bytes of memory where random output is written to.\n@param st Pointer to DRBG state.\n@param n Length of desired output.\n@param additional_input_input_len Length of additional input.\n@param additional_input_input Pointer to `additional_input_input_len` bytes of memory where additional input is read from."]
+    pub fn Hacl_HMAC_DRBG_generate(
+        a: Spec_Hash_Definitions_hash_alg,
+        output: *mut u8,
+        st: Hacl_HMAC_DRBG_state,
+        n: u32,
+        additional_input_len: u32,
+        additional_input: *mut u8,
+    ) -> bool;
+}
+extern "C" {
+    pub fn Hacl_HMAC_DRBG_free(uu___: Spec_Hash_Definitions_hash_alg, s: Hacl_HMAC_DRBG_state);
 }
 extern "C" {
     #[doc = "Hash the message with SHA2-256, then sign the resulting digest with the P256 signature function.\n\nInput: result buffer: uint8[64],\nm buffer: uint8 [mLen],\npriv(ate)Key: uint8[32],\nk (nonce): uint32[32].\n\nOutput: bool, where True stands for the correct signature generation. False value means that an error has occurred.\n\nThe private key and the nonce are expected to be more than 0 and less than the curve order."]

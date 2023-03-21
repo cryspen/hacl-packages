@@ -1,4 +1,5 @@
 /// HKDF Errors.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Error {
     /// The requested output key material in expand was too large for the used
     /// hash function.
