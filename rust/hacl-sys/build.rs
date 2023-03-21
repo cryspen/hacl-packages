@@ -134,6 +134,62 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
     }
 }
 
+#[cfg(not(windows))]
+fn copy_hacl_to_out(out_dir: &Path) {
+    let mkdir_status = Command::new("mkdir")
+        .arg("-p")
+        .arg(out_dir.join("build"))
+        .status()
+        .expect("Failed to create build dir in out_dir.");
+    if !mkdir_status.success() {
+        panic!("Failed to create build dir in out_dir.")
+    }
+
+    fn copy_dir(path: &Path, out_dir: &Path) {
+        let cp_status = Command::new("cp")
+            .arg("-r")
+            .arg(path)
+            .arg(out_dir)
+            .status()
+            .expect("Failed to copy hacl to out_dir.");
+        if !cp_status.success() {
+            panic!("Failed to copy hacl to out_dir.")
+        }
+    }
+    let local_c_path = Path::new(".c");
+    copy_dir(&local_c_path.join("config"), &out_dir.join("config"));
+    copy_dir(&local_c_path.join("src"), &out_dir.join("src"));
+    copy_dir(&local_c_path.join("vale"), &out_dir.join("vale"));
+    copy_dir(&local_c_path.join("karamel"), &out_dir.join("karamel"));
+    copy_dir(&local_c_path.join("include"), &out_dir.join("include"));
+    copy_dir(
+        &local_c_path.join("config").join("default_config.cmake"),
+        &out_dir.join("build").join("config.cmake"),
+    );
+    copy_dir(&local_c_path.join("CMakeLists.txt"), out_dir);
+}
+
+// TODO: make this work on windows.
+#[cfg(windows)]
+fn copy_hacl_to_out(out_dir: &Path) {
+    panic!("TODO: Windows build is not supported right now.");
+    // let cp_status = Command::new("cmd")
+    //     .args(&[
+    //         "/C",
+    //         "robocopy",
+    //         ".c",
+    //         &format!("{}\\.c", out_dir.to_str().unwrap()),
+    //         "/e",
+    //         "/s",
+    //     ])
+    //     .status()
+    //     .expect(&format!("Failed to copy hacl to {:?}", out_dir));
+
+    // println!("Return code {}", cp_status.code().unwrap());
+
+    // println!("Copied hacl-star to {:?}", out_dir);
+}
+
 fn main() {
     // Get ENV variables
     let home_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
@@ -141,6 +197,8 @@ fn main() {
     let mach_build = env::var("MACH_BUILD").ok().is_some();
     let target = env::var("TARGET").unwrap();
     let host = env::var("HOST").unwrap();
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = Path::new(&out_dir);
     println!("mach_build: {}", mach_build);
 
     let cross_target = if target != host { Some(target) } else { None };
@@ -149,23 +207,15 @@ fn main() {
     // This is the default behaviour. It can be disabled when working on this
     // to pick up the local version. This is what the global mach script does.
     let hacl_path = if !mach_build {
-        // Check if we have to copy the C files first.
-        if !home_dir.join("..").join(".c").exists() {
-            println!(" >>> Copying HACL C file");
-            // ./mach rust
-            let mut mach_cmd = Command::new("./mach");
-            let mach_status = mach_cmd
-                .current_dir(home_dir.join("..").join(".."))
-                .args(&["rust"])
-                .status()
-                .expect("Failed to run ./mach rust.");
-            if !mach_status.success() {
-                panic!("Failed to run ./mach rust.")
-            }
-        }
-        let c_path = home_dir.join("..").join(".c");
-        build_hacl_c(&c_path, cross_target);
-        c_path.join("build").join("installed")
+        // Copy all of the code into out to prepare build
+        let c_out_dir = out_dir.join("c");
+        println!(" >>> Copying HACL C file");
+        println!("     from {}", home_dir.join(".c").display());
+        println!("     to {}", c_out_dir.display());
+        copy_hacl_to_out(&c_out_dir);
+        build_hacl_c(&c_out_dir, cross_target);
+
+        c_out_dir.join("build").join("installed")
     } else {
         // Use the higher level install directory.
         home_dir

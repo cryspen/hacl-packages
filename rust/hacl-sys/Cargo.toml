@@ -6,11 +6,33 @@ edition = "2021"
 build = "build.rs"
 categories = ["cryptography", "api-bindings"]
 links = "hacl"
-license = "GPLv3"
+license = "Apache-2.0"
 documentation = "https://docs.rs/hacl-sys/"
 description = "FFI bindings for the HACL C package"
 readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages/rust"
+exclude = [
+    ".c/tests",
+    ".c/wasm",
+    ".c/ocaml",
+    ".c/js",
+    ".c/opam",
+    ".c/build",
+    ".c/opam.sh",
+    ".c/mach",
+    ".c/tools",
+    ".c/docs",
+    ".c/cpu-features",
+    ".c/src/wasm",
+    ".c/_build.sh",
+    ".c/Doxyfile",
+    ".c/.github",
+    ".c/.drone.yml",
+    ".c/.ci",
+    ".c/.devcontainer",
+    ".c/.git",
+    ".c/.gitignore",
+]
 
 [dependencies]
 

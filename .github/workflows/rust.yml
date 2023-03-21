@@ -120,9 +120,6 @@ jobs:
       - if: matrix.os == 'windows-latest'
         run: choco install ninja
 
-      - name: Prepare
-        run: ./mach rust
-
       - name: Cargo update
         working-directory: rust
         run: cargo update
