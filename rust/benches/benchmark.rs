@@ -1,9 +1,4 @@
-#[macro_use]
-extern crate criterion;
-extern crate hacl_star;
-extern crate rand;
-
-use criterion::{BatchSize, Criterion};
+use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 
 // 1 MB
 const PAYLOAD_SIZE: usize = 0x100000;
