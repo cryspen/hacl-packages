@@ -1,4 +1,4 @@
-use hacl_star::aead::{self, Aead, Algorithm};
+use hacl::aead::{self, Aead, Algorithm};
 #[test]
 fn stateful() {
     // ANCHOR: stateful

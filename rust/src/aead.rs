@@ -7,7 +7,7 @@
 //!
 //! ## Aead with key state
 //! ```rust
-//! use hacl_star::aead::{Aead, Algorithm, Error};
+//! use hacl::aead::{Aead, Algorithm, Error};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
@@ -36,7 +36,7 @@
 //!
 //! ## Single-shot API
 //! ```rust
-//! use hacl_star::aead::{self, Algorithm};
+//! use hacl::aead::{self, Algorithm};
 //!
 //! let key = [0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea, 0xdb, 0xa9, 0x31, 0xb0, 0xcc,
 //!            0xf3, 0x48, 0x43, 0xda, 0xb9, 0x5b, 0x96, 0x04, 0xfe, 0x14, 0xea,
@@ -64,7 +64,7 @@ use std::convert::TryInto;
 #[cfg(feature = "serialization")]
 use serde::{Deserialize, Serialize};
 
-use hacl_star_sys::*;
+use hacl_sys::*;
 
 /// The AEAD Algorithm Identifier.
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -168,7 +168,11 @@ pub type Tag = [u8; 16];
 /// Associated data are byte arrays.
 pub type Aad = [u8];
 
-// Check hardware support for HACL* AES implementation.
+/// Check hardware support for HACL* AES implementation.
+///
+/// # Safety
+/// This function checks CPU flags, which can not be done in safe rust.
+/// It does not interact with memory and should therefore always be safe to use.
 pub unsafe fn hacl_aes_available() -> bool {
     EverCrypt_AutoConfig2_has_pclmulqdq()
         && EverCrypt_AutoConfig2_has_avx()

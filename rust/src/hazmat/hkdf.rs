@@ -20,7 +20,7 @@ macro_rules! impl_hkdf {
             pub fn extract(salt: &[u8], ikm: &[u8]) -> [u8; $tag_len] {
                 let mut prk = [0u8; $tag_len];
                 unsafe {
-                    hacl_star_sys::$extract(
+                    hacl_sys::$extract(
                         prk.as_mut_ptr(),
                         salt.as_ptr() as _,
                         salt.len().try_into().unwrap(),
@@ -48,7 +48,7 @@ macro_rules! impl_hkdf {
                 }
                 let mut okm = [0u8; OKM_LEN];
                 unsafe {
-                    hacl_star_sys::$expand(
+                    hacl_sys::$expand(
                         okm.as_mut_ptr(),
                         prk.as_ptr() as _,
                         prk.len().try_into().map_err(|_| Error::ArgumentsTooLarge)?,
@@ -95,7 +95,7 @@ macro_rules! impl_hkdf {
                     }
                     let mut okm = vec![0u8; okm_len];
                     unsafe {
-                        hacl_star_sys::$expand(
+                        hacl_sys::$expand(
                             okm.as_mut_ptr(),
                             prk.as_ptr() as _,
                             prk.len().try_into().map_err(|_| Error::ArgumentsTooLarge)?,

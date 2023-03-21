@@ -1,7 +1,7 @@
-use hacl_star::digest::{self, Algorithm};
+use hacl::digest::{self, Algorithm};
 
 #[cfg(feature = "hazmat")]
-use hacl_star::hazmat::blake2;
+use hacl::hazmat::blake2;
 
 mod test_util;
 

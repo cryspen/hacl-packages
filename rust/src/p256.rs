@@ -1,4 +1,4 @@
-use hacl_star_sys::*;
+use hacl_sys::*;
 
 use crate::digest::Algorithm;
 
