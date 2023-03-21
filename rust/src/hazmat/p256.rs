@@ -1,4 +1,4 @@
-use hacl_star_sys::{
+use hacl_sys::{
     Hacl_P256_compressed_to_raw, Hacl_P256_dh_initiator, Hacl_P256_dh_responder,
     Hacl_P256_uncompressed_to_raw, Hacl_P256_validate_private_key, Hacl_P256_validate_public_key,
 };
@@ -134,7 +134,7 @@ pub fn secret_to_public(s: &[u8; 32]) -> Result<[u8; 64], Error> {
 /// ECDSA on P256
 pub mod ecdsa {
     use super::*;
-    use hacl_star_sys::{
+    use hacl_sys::{
         Hacl_P256_ecdsa_sign_p256_sha2, Hacl_P256_ecdsa_sign_p256_sha384,
         Hacl_P256_ecdsa_sign_p256_sha512, Hacl_P256_ecdsa_verif_p256_sha2,
         Hacl_P256_ecdsa_verif_p256_sha384, Hacl_P256_ecdsa_verif_p256_sha512,

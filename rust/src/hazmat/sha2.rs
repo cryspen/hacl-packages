@@ -1,4 +1,4 @@
-use hacl_star_sys::{
+use hacl_sys::{
     Hacl_Streaming_SHA2_sha224, Hacl_Streaming_SHA2_sha256, Hacl_Streaming_SHA2_sha384,
     Hacl_Streaming_SHA2_sha512,
 };
@@ -64,7 +64,7 @@ pub fn sha512(payload: &[u8]) -> [u8; 64] {
 }
 
 pub mod streaming {
-    use hacl_star_sys::{
+    use hacl_sys::{
         Hacl_Streaming_SHA2_create_in_224, Hacl_Streaming_SHA2_create_in_256,
         Hacl_Streaming_SHA2_create_in_384, Hacl_Streaming_SHA2_create_in_512,
         Hacl_Streaming_SHA2_finish_224, Hacl_Streaming_SHA2_finish_256,

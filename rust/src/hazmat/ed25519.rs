@@ -1,4 +1,4 @@
-use hacl_star_sys::{Hacl_Ed25519_sign, Hacl_Ed25519_verify};
+use hacl_sys::{Hacl_Ed25519_sign, Hacl_Ed25519_verify};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Error {

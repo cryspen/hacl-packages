@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_star::aead::{hacl_aes_available, Aead, Algorithm, Error};
+use hacl::aead::{hacl_aes_available, Aead, Algorithm, Error};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
@@ -215,7 +215,7 @@ fn key_gen_self_test() {
 #[cfg(feature = "hazmat")]
 #[test]
 fn raw_self_test() {
-    use hacl_star::hazmat::chacha20_poly1305;
+    use hacl::hazmat::chacha20_poly1305;
 
     let msg = b"HACL rules";
     let aad = b"associated data";
@@ -245,7 +245,7 @@ fn raw_self_test() {
 
     #[cfg(aes_ni)]
     {
-        use hacl_star::hazmat::aesgcm;
+        use hacl::hazmat::aesgcm;
 
         if aesgcm::hardware_support().is_ok() {
             let mut io = *msg;

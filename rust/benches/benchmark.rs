@@ -37,7 +37,7 @@ fn hex_to_bytes(hex: &str) -> Vec<u8> {
 }
 
 fn criterion_digest(c: &mut Criterion) {
-    use hacl_star::digest::{self, Algorithm};
+    use hacl::digest::{self, Algorithm};
     c.bench_function("SHA1", |b| {
         b.iter_batched(
             || randombytes(PAYLOAD_SIZE),
@@ -158,7 +158,7 @@ fn criterion_digest(c: &mut Criterion) {
 }
 
 fn criterion_aead(c: &mut Criterion) {
-    use hacl_star::aead::{Aead, Algorithm};
+    use hacl::aead::{Aead, Algorithm};
 
     fn bench_encrypt<F>(c: &mut Criterion, id: &str, mode: Algorithm, mut fun: F)
     where
@@ -363,7 +363,7 @@ fn criterion_aead(c: &mut Criterion) {
 }
 
 fn criterion_aead_keys(c: &mut Criterion) {
-    use hacl_star::aead::{self, Aead, Algorithm};
+    use hacl::aead::{self, Aead, Algorithm};
 
     const PAYLOAD_MB: usize = PAYLOAD_SIZE / 1024 / 1024;
     const CHUNKS: usize = 100;
@@ -436,7 +436,7 @@ fn criterion_aead_keys(c: &mut Criterion) {
 }
 
 fn criterion_x25519(c: &mut Criterion) {
-    use hacl_star::prelude::*;
+    use hacl::prelude::*;
     c.bench_function("X25519 base", |b| {
         b.iter_batched(
             || clone_into_array(&randombytes(32)),
@@ -523,7 +523,7 @@ macro_rules! p256_signature_bench {
 }
 
 fn criterion_p256(c: &mut Criterion) {
-    use hacl_star::prelude::*;
+    use hacl::prelude::*;
 
     const PK1_HEX: &str = "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf";
     const SK1_HEX: &str = "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346";
@@ -590,7 +590,7 @@ fn criterion_p256(c: &mut Criterion) {
 }
 
 fn criterion_ed25519(c: &mut Criterion) {
-    use hacl_star::ed25519;
+    use hacl::ed25519;
     c.bench_function("ed25519 key gen", |b| {
         b.iter_batched(
             || clone_into_array(&randombytes(32)),
@@ -631,7 +631,7 @@ fn criterion_ed25519(c: &mut Criterion) {
 }
 
 fn criterion_hmac(c: &mut Criterion) {
-    use hacl_star::hmac::{hmac, Algorithm};
+    use hacl::hmac::{hmac, Algorithm};
     const KEY: [u8; 10] = [0u8, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     c.bench_function("HMAC SHA1", |b| {
         b.iter_batched(
@@ -672,7 +672,7 @@ fn criterion_hmac(c: &mut Criterion) {
 }
 
 fn criterion_hkdf(c: &mut Criterion) {
-    use hacl_star::prelude::*;
+    use hacl::prelude::*;
 
     macro_rules! hkdf_expand_bench {
         ($c:expr, $name_expand:literal, $name_extract:literal, $m:expr) => {

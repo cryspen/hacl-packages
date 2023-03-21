@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_star::x25519::{self, Error, Point, Scalar};
+use hacl::x25519::{self, Error, Point, Scalar};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]

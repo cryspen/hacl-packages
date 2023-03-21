@@ -1,4 +1,4 @@
-use hacl_star_sys::{Hacl_Blake2b_32_blake2b, Hacl_Blake2s_32_blake2s};
+use hacl_sys::{Hacl_Blake2b_32_blake2b, Hacl_Blake2s_32_blake2s};
 
 /// BLAKE2b
 ///
@@ -27,7 +27,7 @@ pub fn blake2b<const LEN: usize>(payload: &[u8], key: &[u8]) -> [u8; LEN] {
 
 #[cfg(simd256)]
 pub mod simd256 {
-    use hacl_star_sys::Hacl_Blake2b_256_blake2b;
+    use hacl_sys::Hacl_Blake2b_256_blake2b;
 
     /// BLAKE2b
     ///
@@ -82,7 +82,7 @@ pub fn blake2s<const LEN: usize>(payload: &[u8], key: &[u8]) -> [u8; LEN] {
 
 #[cfg(simd128)]
 pub mod simd128 {
-    use hacl_star_sys::Hacl_Blake2s_128_blake2s;
+    use hacl_sys::Hacl_Blake2s_128_blake2s;
 
     /// BLAKE2s
     ///

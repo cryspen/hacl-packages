@@ -1,4 +1,4 @@
-use hacl_star_sys::{
+use hacl_sys::{
     EverCrypt_AEAD_create_in, EverCrypt_AEAD_decrypt, EverCrypt_AEAD_encrypt,
     EverCrypt_AEAD_state_s, EverCrypt_AutoConfig2_init, Spec_Agile_AEAD_AES128_GCM,
     Spec_Agile_AEAD_AES256_GCM,
@@ -27,11 +27,11 @@ pub enum Error {
 pub fn hardware_support() -> Result<(), Error> {
     unsafe {
         EverCrypt_AutoConfig2_init();
-        if hacl_star_sys::EverCrypt_AutoConfig2_has_aesni()
-            && hacl_star_sys::EverCrypt_AutoConfig2_has_pclmulqdq()
-            && hacl_star_sys::EverCrypt_AutoConfig2_has_avx()
-            && hacl_star_sys::EverCrypt_AutoConfig2_has_sse()
-            && hacl_star_sys::EverCrypt_AutoConfig2_has_movbe()
+        if hacl_sys::EverCrypt_AutoConfig2_has_aesni()
+            && hacl_sys::EverCrypt_AutoConfig2_has_pclmulqdq()
+            && hacl_sys::EverCrypt_AutoConfig2_has_avx()
+            && hacl_sys::EverCrypt_AutoConfig2_has_sse()
+            && hacl_sys::EverCrypt_AutoConfig2_has_movbe()
         {
             Ok(())
         } else {

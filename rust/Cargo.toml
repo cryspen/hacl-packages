@@ -1,10 +1,10 @@
 [package]
-name = "hacl-star"
-version = "0.2.0"
+name = "hacl"
+version = "0.0.1-dev.1"
 authors = ["Franziskus Kiefer <franziskuskiefer@gmail.com>"]
 edition = "2021"
-license = "GPLv3"
-documentation = "https://docs.rs/hacl-star/"
+license = "Apache-2.0"
+documentation = "https://docs.rs/hacl/"
 description = "Crypto library using formally verified code from the HACL project"
 readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages/rust"
@@ -19,14 +19,14 @@ serialization = ["serde", "serde_json"]
 hazmat = [] # This feature exposes raw, but safe HACL APIs for use in other libraries. Use with care.
 
 [dependencies]
-hacl-star-sys = { version = "=0.2.0", path = "hacl-star-sys" }
+hacl-sys = { version = "=0.0.1-dev.1", path = "hacl-sys" }
 rand = { version = "0.8", optional = true }
 rand_core = { version = "0.6", optional = true }
 serde_json = { version = "1.0", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
-hacl-star = { path = ".", features = ["hazmat", "random"] }
+hacl = { path = ".", features = ["hazmat", "random"] }
 serde_json = "1.0"
 serde = {version = "1.0", features = ["derive"]}
 criterion = "0.4"

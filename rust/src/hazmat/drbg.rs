@@ -1,4 +1,4 @@
-use hacl_star_sys::{
+use hacl_sys::{
     Hacl_HMAC_DRBG_create_in, Hacl_HMAC_DRBG_free, Hacl_HMAC_DRBG_generate,
     Hacl_HMAC_DRBG_instantiate, Hacl_HMAC_DRBG_reseed, Hacl_HMAC_DRBG_state,
     Spec_Hash_Definitions_SHA1, Spec_Hash_Definitions_SHA2_256, Spec_Hash_Definitions_SHA2_384,

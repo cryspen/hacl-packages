@@ -23,9 +23,9 @@ pub use crate::ed25519::{
 pub use crate::hkdf::{self, expand as hkdf_expand, extract as hkdf_extract, hkdf};
 pub use crate::hmac::{self, hmac, tag_size, Algorithm as HmacAlgorithm};
 pub use crate::p256::{
-    self, ecdh as p256, ecdh_base as p256_base, ecdsa_sign as p256_sign, ecdsa_verify as p256_verify,
-    validate_pk as p256_validate_pk, validate_sk as p256_validate_sk, Error as P256Error,
-    Nonce as P256Nonce, Scalar as P256Scalar, Signature as EcdsaSignature,
+    self, ecdh as p256, ecdh_base as p256_base, ecdsa_sign as p256_sign,
+    ecdsa_verify as p256_verify, validate_pk as p256_validate_pk, validate_sk as p256_validate_sk,
+    Error as P256Error, Nonce as P256Nonce, Scalar as P256Scalar, Signature as EcdsaSignature,
 };
 pub use crate::rsa_pss::{
     self, sign as rsa_pss_sign, verify as rsa_pss_verify, KeySize as RsaPssKeySize,
