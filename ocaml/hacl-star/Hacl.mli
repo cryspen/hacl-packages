@@ -498,13 +498,13 @@ module HMAC_BLAKE2s : MAC
 
 (** {2 Poly1305} *)
 
-module Poly1305_32 : MAC
+module Poly1305 : MAC
 (** Portable C implementation of Poly1305 *)
 
-module Poly1305_128 : MAC
+module Poly1305_Simd128 : MAC
 (** Vectorized C implementation of Poly1305 that runs on platforms with {{!AutoConfig2.VEC128} 128-bit vector support} *)
 
-module Poly1305_256 : MAC
+module Poly1305_Simd256 : MAC
 (** Vectorized C implementation of Poly1305 that runs on platforms with {{!AutoConfig2.VEC256} 256-bit vector support} *)
 
 

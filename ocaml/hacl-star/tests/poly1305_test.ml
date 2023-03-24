@@ -52,13 +52,13 @@ end
 let _ =
   List.iter validate_test tests;
 
-  let module Tests = MakeTests (Hacl.Poly1305_32) in
+  let module Tests = MakeTests (Hacl.Poly1305) in
   Tests.run_tests "Hacl.Poly1305_32" [];
 
-  let module Tests = MakeTests (Hacl.Poly1305_128) in
+  let module Tests = MakeTests (Hacl.Poly1305_Simd128) in
   Tests.run_tests "Hacl.Poly1305_128" [VEC128];
 
-  let module Tests = MakeTests (Hacl.Poly1305_256) in
+  let module Tests = MakeTests (Hacl.Poly1305_Simd256) in
   Tests.run_tests "Hacl.Poly1305_256" [VEC256];
 
   let module Tests = MakeTests (EverCrypt.Poly1305) in

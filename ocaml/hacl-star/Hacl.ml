@@ -15,7 +15,7 @@ module Hacl_Curve25519_51 = Hacl_Curve25519_51_bindings.Bindings(Hacl_Curve25519
 module Hacl_Ed25519 = Hacl_Ed25519_bindings.Bindings(Hacl_Ed25519_stubs)
 module Hacl_Hash_SHA3 = Hacl_Hash_SHA3_bindings.Bindings(Hacl_Hash_SHA3_stubs)
 module Hacl_HMAC = Hacl_HMAC_bindings.Bindings(Hacl_HMAC_stubs)
-module Hacl_Poly1305_32 = Hacl_Poly1305_32_bindings.Bindings(Hacl_Poly1305_32_stubs)
+module Hacl_MAC_Poly1305 = Hacl_MAC_Poly1305_bindings.Bindings(Hacl_MAC_Poly1305_stubs)
 module Hacl_HKDF = Hacl_HKDF_bindings.Bindings(Hacl_HKDF_stubs)
 module Hacl_NaCl = Hacl_NaCl_bindings.Bindings(Hacl_NaCl_stubs)
 module Hacl_Hash_Blake2b = Hacl_Hash_Blake2b_bindings.Bindings(Hacl_Hash_Blake2b_stubs)
@@ -25,13 +25,13 @@ module Hacl_K256 = Hacl_K256_ECDSA_bindings.Bindings(Hacl_K256_ECDSA_stubs)
 
 #ifdef HACL_CAN_COMPILE_VEC128
 module Hacl_Chacha20Poly1305_128 = Hacl_Chacha20Poly1305_128_bindings.Bindings(Hacl_Chacha20Poly1305_128_stubs)
-module Hacl_Poly1305_128 = Hacl_Poly1305_128_bindings.Bindings(Hacl_Poly1305_128_stubs)
+module Hacl_MAC_Poly1305_Simd128 = Hacl_MAC_Poly1305_Simd128_bindings.Bindings(Hacl_MAC_Poly1305_Simd128_stubs)
 module Hacl_Hash_Blake2s_Simd128 = Hacl_Hash_Blake2s_Simd128_bindings.Bindings(Hacl_Hash_Blake2s_Simd128_stubs)
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
 module Hacl_Chacha20Poly1305_256 = Hacl_Chacha20Poly1305_256_bindings.Bindings(Hacl_Chacha20Poly1305_256_stubs)
-module Hacl_Poly1305_256 = Hacl_Poly1305_256_bindings.Bindings(Hacl_Poly1305_256_stubs)
+module Hacl_MAC_Poly1305_Simd256 = Hacl_MAC_Poly1305_Simd256_bindings.Bindings(Hacl_MAC_Poly1305_Simd256_stubs)
 module Hacl_Hash_Blake2b_Simd256 = Hacl_Hash_Blake2b_Simd256_bindings.Bindings(Hacl_Hash_Blake2b_Simd256_stubs)
 #endif
 
@@ -197,10 +197,10 @@ module HMAC_BLAKE2s : MAC =
     let mac = Hacl_HMAC.hacl_HMAC_compute_blake2s_32
 end)
 
-module Poly1305_32 : MAC =
+module Poly1305 : MAC =
   Make_Poly1305 (struct
     let reqs = []
-    let mac = Hacl_Poly1305_32.hacl_Poly1305_32_poly1305_mac
+    let mac = fun output input_len input key -> Hacl_MAC_Poly1305.hacl_MAC_Poly1305_mac output input input_len key
 end)
 
 module HKDF_SHA2_256 : HKDF =
@@ -645,10 +645,10 @@ module Chacha20_Poly1305_128 : Chacha20_Poly1305 =
     let decrypt = Hacl_Chacha20Poly1305_128.hacl_Chacha20Poly1305_128_aead_decrypt
   end)
 
-module Poly1305_128 : MAC =
+module Poly1305_Simd128 : MAC =
   Make_Poly1305 (struct
     let reqs = [VEC128]
-    let mac = Hacl_Poly1305_128.hacl_Poly1305_128_poly1305_mac
+    let mac = fun output input_len input key -> Hacl_MAC_Poly1305_Simd128.hacl_MAC_Poly1305_Simd128_mac output input input_len key
 end)
 
 module Blake2s_Simd128 : Blake2 =
@@ -685,10 +685,10 @@ module Chacha20_Poly1305_256 : Chacha20_Poly1305 =
     let decrypt = Hacl_Chacha20Poly1305_256.hacl_Chacha20Poly1305_256_aead_decrypt
   end)
 
-module Poly1305_256 : MAC =
+module Poly1305_Simd256 : MAC =
   Make_Poly1305 (struct
       let reqs = [VEC256]
-    let mac = Hacl_Poly1305_256.hacl_Poly1305_256_poly1305_mac
+    let mac = fun output input_len input key -> Hacl_MAC_Poly1305_Simd256.hacl_MAC_Poly1305_Simd256_mac output input input_len key
 end)
 
 module Blake2b_Simd256 : Blake2 =
@@ -704,7 +704,7 @@ module Chacha20_Poly1305_256 : Chacha20_Poly1305 =
     let decrypt _ _ _ _ _ _ = failwith "Not implemented on this platform"
   end)
 
-module Poly1305_256 : MAC =
+module Poly1305_Simd256 : MAC =
   Make_Poly1305 (struct
       let reqs = [VEC256]
     let mac _ _ _ = failwith "Not implemented on this platform"

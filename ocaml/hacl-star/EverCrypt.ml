@@ -194,7 +194,7 @@ end
 module Poly1305 : MAC =
   Make_Poly1305 (struct
     let reqs = []
-    let mac dst data_len data key = EverCrypt_Poly1305.everCrypt_Poly1305_poly1305 dst data data_len key
+    let mac dst data_len data key = EverCrypt_Poly1305.everCrypt_Poly1305_mac dst data data_len key
 end)
 
 module HKDF = struct
