@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_Poly1305_256_H
-#define __Hacl_Poly1305_256_H
+#ifndef __internal_Hacl_MAC_Poly1305_Simd128_H
+#define __internal_Hacl_MAC_Poly1305_Simd128_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,33 +35,20 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
+#include "../Hacl_MAC_Poly1305_Simd128.h"
 #include "libintvector.h"
 
-typedef Lib_IntVector_Intrinsics_vec256 *Hacl_Poly1305_256_poly1305_ctx;
-
-void Hacl_Poly1305_256_poly1305_init(Lib_IntVector_Intrinsics_vec256 *ctx, uint8_t *key);
-
-void Hacl_Poly1305_256_poly1305_update1(Lib_IntVector_Intrinsics_vec256 *ctx, uint8_t *text);
+void Hacl_MAC_Poly1305_Simd128_load_acc2(Lib_IntVector_Intrinsics_vec128 *acc, uint8_t *b);
 
 void
-Hacl_Poly1305_256_poly1305_update(
-  Lib_IntVector_Intrinsics_vec256 *ctx,
-  uint32_t len,
-  uint8_t *text
+Hacl_MAC_Poly1305_Simd128_fmul_r2_normalize(
+  Lib_IntVector_Intrinsics_vec128 *out,
+  Lib_IntVector_Intrinsics_vec128 *p
 );
-
-void
-Hacl_Poly1305_256_poly1305_finish(
-  uint8_t *tag,
-  uint8_t *key,
-  Lib_IntVector_Intrinsics_vec256 *ctx
-);
-
-void Hacl_Poly1305_256_poly1305_mac(uint8_t *tag, uint32_t len, uint8_t *text, uint8_t *key);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Poly1305_256_H_DEFINED
+#define __internal_Hacl_MAC_Poly1305_Simd128_H_DEFINED
 #endif

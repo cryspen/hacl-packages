@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_Poly1305_128_H
-#define __Hacl_Poly1305_128_H
+#ifndef __Hacl_MAC_Poly1305_Simd128_H
+#define __Hacl_MAC_Poly1305_Simd128_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,31 +37,67 @@ extern "C" {
 
 #include "libintvector.h"
 
-typedef Lib_IntVector_Intrinsics_vec128 *Hacl_Poly1305_128_poly1305_ctx;
-
-void Hacl_Poly1305_128_poly1305_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key);
-
-void Hacl_Poly1305_128_poly1305_update1(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *text);
+typedef Lib_IntVector_Intrinsics_vec128 *Hacl_MAC_Poly1305_Simd128_poly1305_ctx;
 
 void
-Hacl_Poly1305_128_poly1305_update(
+Hacl_MAC_Poly1305_Simd128_poly1305_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key);
+
+void
+Hacl_MAC_Poly1305_Simd128_poly1305_update1(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *text);
+
+void
+Hacl_MAC_Poly1305_Simd128_poly1305_update(
   Lib_IntVector_Intrinsics_vec128 *ctx,
   uint32_t len,
   uint8_t *text
 );
 
 void
-Hacl_Poly1305_128_poly1305_finish(
+Hacl_MAC_Poly1305_Simd128_poly1305_finish(
   uint8_t *tag,
   uint8_t *key,
   Lib_IntVector_Intrinsics_vec128 *ctx
 );
 
-void Hacl_Poly1305_128_poly1305_mac(uint8_t *tag, uint32_t len, uint8_t *text, uint8_t *key);
+void
+Hacl_MAC_Poly1305_Simd128_mac(
+  uint8_t *output,
+  uint8_t *input,
+  uint32_t input_len,
+  uint8_t *key
+);
+
+typedef struct Hacl_MAC_Poly1305_Simd128_state_t_s
+{
+  Lib_IntVector_Intrinsics_vec128 *block_state;
+  uint8_t *buf;
+  uint64_t total_len;
+  uint8_t *p_key;
+}
+Hacl_MAC_Poly1305_Simd128_state_t;
+
+Hacl_MAC_Poly1305_Simd128_state_t *Hacl_MAC_Poly1305_Simd128_malloc(uint8_t *key);
+
+void Hacl_MAC_Poly1305_Simd128_reset(Hacl_MAC_Poly1305_Simd128_state_t *state, uint8_t *key);
+
+/**
+0 = success, 1 = max length exceeded
+*/
+uint32_t
+Hacl_MAC_Poly1305_Simd128_update(
+  Hacl_MAC_Poly1305_Simd128_state_t *state,
+  uint8_t *chunk,
+  uint32_t chunk_len
+);
+
+void
+Hacl_MAC_Poly1305_Simd128_digest(Hacl_MAC_Poly1305_Simd128_state_t *state, uint8_t *output);
+
+void Hacl_MAC_Poly1305_Simd128_free(Hacl_MAC_Poly1305_Simd128_state_t *state);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Poly1305_128_H_DEFINED
+#define __Hacl_MAC_Poly1305_Simd128_H_DEFINED
 #endif

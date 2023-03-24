@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_Streaming_Poly1305_256_H
-#define __Hacl_Streaming_Poly1305_256_H
+#ifndef __Hacl_MAC_Poly1305_Simd256_H
+#define __Hacl_MAC_Poly1305_Simd256_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,46 +35,69 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "Hacl_Poly1305_256.h"
+#include "libintvector.h"
 
-typedef struct Hacl_Streaming_Poly1305_256_poly1305_256_state_s
+typedef Lib_IntVector_Intrinsics_vec256 *Hacl_MAC_Poly1305_Simd256_poly1305_ctx;
+
+void
+Hacl_MAC_Poly1305_Simd256_poly1305_init(Lib_IntVector_Intrinsics_vec256 *ctx, uint8_t *key);
+
+void
+Hacl_MAC_Poly1305_Simd256_poly1305_update1(Lib_IntVector_Intrinsics_vec256 *ctx, uint8_t *text);
+
+void
+Hacl_MAC_Poly1305_Simd256_poly1305_update(
+  Lib_IntVector_Intrinsics_vec256 *ctx,
+  uint32_t len,
+  uint8_t *text
+);
+
+void
+Hacl_MAC_Poly1305_Simd256_poly1305_finish(
+  uint8_t *tag,
+  uint8_t *key,
+  Lib_IntVector_Intrinsics_vec256 *ctx
+);
+
+void
+Hacl_MAC_Poly1305_Simd256_mac(
+  uint8_t *output,
+  uint8_t *input,
+  uint32_t input_len,
+  uint8_t *key
+);
+
+typedef struct Hacl_MAC_Poly1305_Simd256_state_t_s
 {
   Lib_IntVector_Intrinsics_vec256 *block_state;
   uint8_t *buf;
   uint64_t total_len;
   uint8_t *p_key;
 }
-Hacl_Streaming_Poly1305_256_poly1305_256_state;
+Hacl_MAC_Poly1305_Simd256_state_t;
 
-Hacl_Streaming_Poly1305_256_poly1305_256_state *Hacl_Streaming_Poly1305_256_malloc(uint8_t *k);
+Hacl_MAC_Poly1305_Simd256_state_t *Hacl_MAC_Poly1305_Simd256_malloc(uint8_t *key);
 
-void
-Hacl_Streaming_Poly1305_256_reset(
-  uint8_t *k,
-  Hacl_Streaming_Poly1305_256_poly1305_256_state *state
-);
+void Hacl_MAC_Poly1305_Simd256_reset(Hacl_MAC_Poly1305_Simd256_state_t *state, uint8_t *key);
 
 /**
 0 = success, 1 = max length exceeded
 */
 uint32_t
-Hacl_Streaming_Poly1305_256_update(
-  Hacl_Streaming_Poly1305_256_poly1305_256_state *state,
+Hacl_MAC_Poly1305_Simd256_update(
+  Hacl_MAC_Poly1305_Simd256_state_t *state,
   uint8_t *chunk,
   uint32_t chunk_len
 );
 
 void
-Hacl_Streaming_Poly1305_256_digest(
-  Hacl_Streaming_Poly1305_256_poly1305_256_state *state,
-  uint8_t *output
-);
+Hacl_MAC_Poly1305_Simd256_digest(Hacl_MAC_Poly1305_Simd256_state_t *state, uint8_t *output);
 
-void Hacl_Streaming_Poly1305_256_free(Hacl_Streaming_Poly1305_256_poly1305_256_state *state);
+void Hacl_MAC_Poly1305_Simd256_free(Hacl_MAC_Poly1305_Simd256_state_t *state);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_Streaming_Poly1305_256_H_DEFINED
+#define __Hacl_MAC_Poly1305_Simd256_H_DEFINED
 #endif
