@@ -100,7 +100,7 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_Streaming_Poly1305_32.c",
+                "file": "Hacl_MAC_Poly1305.c",
                 "features": "std"
             },
             {
@@ -112,7 +112,7 @@
                 "features": "vec128"
             },
             {
-                "file": "Hacl_Streaming_Poly1305_128.c",
+                "file": "Hacl_MAC_Poly1305_Simd128.c",
                 "features": "vec128"
             },
             {
@@ -124,7 +124,7 @@
                 "features": "vec256"
             },
             {
-                "file": "Hacl_Streaming_Poly1305_256.c",
+                "file": "Hacl_MAC_Poly1305_Simd256.c",
                 "features": "vec256"
             },
             {
