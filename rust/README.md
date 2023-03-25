@@ -1,13 +1,14 @@
 # HACL Rust bindings
 
-![Maturity Level][maturity-badge]
 [![Build & Test][github-actions-badge]][github-actions-link]
+![Rust Version][rustc-image]
+[![crates.io][hacl-crate-badge]](https://crates.io/crates/hacl)
+[![Docs][docs-badge]](https://docs.rs/hacl)
 
-This is the `hacl-star` crate that provides Rust bindings for the HACL C package.
-The FFI bindings are in the [hacl-star-sys](hacl-star-sys/) crates.
+This is the `hacl` crate that provides Rust bindings for the HACL C package.
+The FFI bindings are in the [hacl-sys](hacl-sys/) crates.
 
-**⚠️ Note:** This crate is still work in progress.
-Don't use in production just yet.
+Please see the [top level readme] for more information about the underlying code.
 
 | Platform    | Supported |
 | :---------- | :-------: |
@@ -16,20 +17,13 @@ Don't use in production just yet.
 | iOS         |    ✅     |
 | Linux x64   |    ✅     |
 | Linux x86   |    ✅     |
-| Windows x64 |    ✅     |
+| Windows x64 |    ❌     |
 | Arm64 Linux |    ✅     |
 | Arm32 Linux |    ✅     |
 
-## Crates
-
-| Name          | Crates.io                                                                         |                         Docs                         |
-| :------------ | :-------------------------------------------------------------------------------- | :--------------------------------------------------: |
-| hacl-star-sys | [![crates.io][hacl-star-sys-crate-badge]](https://crates.io/crates/hacl-star-sys) | [![Docs][docs-badge]](https://docs.rs/hacl-star-sys) |
-| hacl-star     | [![crates.io][hacl-star-crate-badge]](https://crates.io/crates/hacl-star)         |   [![Docs][docs-badge]](https://docs.rs/hacl-star)   |
-
 ## Features
 
-By default the hacl-star crate includes the `random` feature that allows generating random values (keys, nonces, etc.).
+By default the hacl crate includes the `random` feature that allows generating random values (keys, nonces, etc.).
 But this is not verified code and uses the [rand](https://crates.io/crates/rand) crate. It can be disabled with `--no-default-features`.
 Please bring your own randomness if you want to be safe.
 
@@ -40,13 +34,8 @@ See above for a list of supported platforms.
 ### Building
 
 ```bash
-cd ../
-./mach rust
-cd -
 cargo build
 ```
-
-Please see the [top level readme] for how to build.
 
 ## Benchmarks
 
@@ -61,7 +50,7 @@ This will also run automatically generated binding tests from bindgen.
 [maturity-badge]: https://img.shields.io/badge/maturity-beta-orange.svg?style=for-the-badge
 [github-actions-badge]: https://img.shields.io/github/actions/workflow/status/cryspen/hacl-packages/rust.yml?label=build%20%26%20tests&logo=github&style=for-the-badge&branch=main
 [github-actions-link]: https://github.com/cryspen/hacl-packages/actions/workflows/rust.yml?query=branch%3Amain
-[hacl-star-crate-badge]: https://img.shields.io/crates/v/hacl-star.svg?style=for-the-badge
-[hacl-star-sys-crate-badge]: https://img.shields.io/crates/v/hacl-star-sys.svg?style=for-the-badge
+[hacl-crate-badge]: https://img.shields.io/crates/v/hacl.svg?style=for-the-badge
 [docs-badge]: https://img.shields.io/badge/docs-blue.svg?style=for-the-badge
 [top level readme]: https://github.com/cryspen/hacl-packages#readme
+[rustc-image]: https://img.shields.io/badge/rustc-1.56+-blue.svg?style=for-the-badge
