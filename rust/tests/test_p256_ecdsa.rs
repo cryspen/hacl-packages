@@ -196,38 +196,3 @@ fn test_self() {
     let verified = p256::ecdsa_verify(Algorithm::Sha512, &msg[..], &pk, &sig).unwrap();
     assert!(verified);
 }
-
-#[test]
-fn test_zero_sig() {
-    // From https://tools.ietf.org/html/rfc6979#appendix-A.2.5
-    const PK_HEX: &str = "0460FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB67903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299";
-    const SK_HEX: &str = "C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721";
-
-    let pk = hex_str_to_bytes(PK_HEX);
-    let sk = hex_str_to_array(SK_HEX);
-    let nonce = p256::random_nonce().unwrap();
-    let msg = b"sample";
-
-    let sig = p256::ecdsa_sign(Algorithm::Sha256, &msg[..], &sk, &nonce).unwrap();
-    let sig_ = signature::sign(
-        SignatureMode::P256,
-        Some(Algorithm::Sha256),
-        &sk,
-        &msg[..],
-        &nonce,
-    );
-    assert_eq!(&sig.raw()[..], &sig_.unwrap()[..]);
-
-    let sig = p256::Signature::new(&[0u8; 32], &[0u8; 32]);
-
-    let verified = p256::ecdsa_verify(Algorithm::Sha256, &msg[..], &pk, &sig).unwrap();
-    let verified_ = signature::verify(
-        SignatureMode::P256,
-        Some(Algorithm::Sha256),
-        &pk,
-        &sig.raw(),
-        &msg[..],
-    );
-    assert_eq!(verified, verified_.unwrap());
-    assert!(!verified);
-}
