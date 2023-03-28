@@ -49,7 +49,7 @@ C_DYN_LIB?=lib$(DYNAMIC_C_LIB_NAME).$(SO)
 # directory. Hence the other way of calling it here.
 build-c:
 	cd build && cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../
-	make -C build
+	$(MAKE) -C build
 	cp build/$(C_LIB) .
 	cp build/$(C_DYN_LIB) .
 

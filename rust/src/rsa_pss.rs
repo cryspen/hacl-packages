@@ -1,4 +1,4 @@
-use hacl_star_sys::*;
+use hacl_sys::*;
 
 use crate::digest::Algorithm as Digest;
 
@@ -88,10 +88,7 @@ impl<'a> PrivateKey<'a> {
         if pk.n.len() != d.len() {
             return Err(Error::InvalidKeySize);
         }
-        Ok(Self {
-            pk: pk,
-            d: d.into(),
-        })
+        Ok(Self { pk, d: d.into() })
     }
 }
 

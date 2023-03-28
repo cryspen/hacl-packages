@@ -1,7 +1,7 @@
 mod test_util;
 use test_util::*;
 
-use hacl_star::{
+use hacl::{
     prelude::DigestAlgorithm::{self, Sha256},
     rsa_pss::*,
 };

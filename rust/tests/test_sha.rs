@@ -1,7 +1,7 @@
-use hacl_star::digest::{self, Algorithm, Digest};
+use hacl::digest::{self, Algorithm, Digest};
 
 #[cfg(feature = "hazmat")]
-use hacl_star::hazmat::{sha2, sha3};
+use hacl::hazmat::{sha2, sha3};
 
 mod test_util;
 use test_util::*;

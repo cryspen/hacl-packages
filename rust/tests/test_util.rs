@@ -7,7 +7,7 @@ pub use std::io::{prelude::*, BufReader};
 
 use std::num::ParseIntError;
 
-// use hacl_star::aead::Nonce;
+// use hacl::aead::Nonce;
 
 pub(crate) trait ReadFromFile {
     fn from_file<T: DeserializeOwned>(file: &'static str) -> T {

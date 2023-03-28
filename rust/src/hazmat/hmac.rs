@@ -1,4 +1,4 @@
-use hacl_star_sys::{
+use hacl_sys::{
     Hacl_HMAC_compute_sha2_256, Hacl_HMAC_compute_sha2_384, Hacl_HMAC_compute_sha2_512,
     Hacl_HMAC_compute_sha1,
 };

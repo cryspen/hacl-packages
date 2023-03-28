@@ -7,7 +7,7 @@
 //!
 //! ## Stateful Hashing
 //! ```rust
-//! use hacl_star::digest::{Digest, Algorithm};
+//! use hacl::digest::{Digest, Algorithm};
 //!
 //! let expected_digest_256 = [
 //!     0xa5, 0x35, 0xf2, 0x6a, 0xff, 0xbc, 0x1f, 0x08, 0x73, 0xdb, 0x15, 0x15, 0x9d, 0xce, 0xbf,
@@ -48,7 +48,7 @@
 //!
 //! ## Single-shot API
 //! ```rust
-//! use hacl_star::digest::{self, Algorithm};
+//! use hacl::digest::{self, Algorithm};
 //!
 //! let expected_digest_256 = [
 //!     0xa5, 0x35, 0xf2, 0x6a, 0xff, 0xbc, 0x1f, 0x08, 0x73, 0xdb, 0x15, 0x15, 0x9d, 0xce, 0xbf,
@@ -80,7 +80,7 @@
 //!
 //! ## SHA 3
 //! ```rust
-//! use hacl_star::digest::{self, Algorithm};
+//! use hacl::digest::{self, Algorithm};
 //!
 //! let data = b"evercrypt-rust bindings";
 //! let expected_digest_3_256 = [
@@ -105,7 +105,7 @@
 //!
 //! ## SHAKE
 //! ```rust
-//! use hacl_star::digest::{self, Algorithm};
+//! use hacl::digest::{self, Algorithm};
 //!
 //! let data = b"evercrypt-rust bindings";
 //! let expected_digest_128 = [
@@ -131,7 +131,7 @@
 //!
 //! ## Blake2b
 //! ```rust
-//! use hacl_star::digest::{self, Algorithm};
+//! use hacl::digest::{self, Algorithm};
 //!
 //! let data = [
 //!     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
@@ -156,7 +156,7 @@
 //!
 //! ## Blake2s
 //! ```rust
-//! use hacl_star::digest::{self, Algorithm};
+//! use hacl::digest::{self, Algorithm};
 //!
 //! let data = [
 //!     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
@@ -176,7 +176,7 @@
 #[cfg(feature = "serialization")]
 use serde::{Deserialize, Serialize};
 
-use hacl_star_sys::*;
+use hacl_sys::*;
 
 #[derive(Debug)]
 pub enum Error {

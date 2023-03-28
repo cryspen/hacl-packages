@@ -1,5 +1,9 @@
-## 0.7.0 (Unreleased)
+## 0.8.0 (Unreleased)
 - API changes for all hash functions
+
+## 0.7.0
+- Added K-256 and libsecp256k1 API
+- Removed some non-agile APIs for SHA-2, HMAC, and HKDF
 
 ## 0.6.2
 - Updated Vale snapshot

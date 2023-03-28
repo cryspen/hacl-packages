@@ -4,7 +4,7 @@
 //! The caller MUST ensure that the required hardware features are available
 //! before calling the functions.
 
-use hacl_star_sys::{Hacl_Chacha20Poly1305_32_aead_decrypt, Hacl_Chacha20Poly1305_32_aead_encrypt};
+use hacl_sys::{Hacl_Chacha20Poly1305_32_aead_decrypt, Hacl_Chacha20Poly1305_32_aead_encrypt};
 
 pub type Chacha20Key = [u8; 32];
 pub type Iv = [u8; 12];
@@ -68,7 +68,7 @@ pub fn decrypt(
 #[cfg(simd128)]
 pub mod simd128 {
     use super::*;
-    use hacl_star_sys::{
+    use hacl_sys::{
         Hacl_Chacha20Poly1305_128_aead_decrypt, Hacl_Chacha20Poly1305_128_aead_encrypt,
     };
 
@@ -132,7 +132,7 @@ pub mod simd128 {
 #[cfg(simd256)]
 pub mod simd256 {
     use super::*;
-    use hacl_star_sys::{
+    use hacl_sys::{
         Hacl_Chacha20Poly1305_256_aead_decrypt, Hacl_Chacha20Poly1305_256_aead_encrypt,
     };
 
