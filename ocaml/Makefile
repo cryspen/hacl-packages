@@ -89,14 +89,13 @@ BLOCKLIST=Hacl_HPKE_Curve51_CP256_SHA512.c \
 			Hacl_HPKE_Curve64_CP256_SHA256.c \
 			Hacl_HPKE_Curve64_CP32_SHA512.c
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC128))
-BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_Poly1305_128.c \
+BLOCKLIST+=Hacl_Chacha20Poly1305_128.c Hacl_MAC_Poly1305_Simd128.c \
 			Hacl_Hash_Blake2s_Simd128.c
 endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VEC256))
 BLOCKLIST+=Hacl_Bignum256.c Hacl_Chacha20Poly1305_256.c Hacl_Chacha20_Vec256.c \
 			Hacl_HKDF_Blake2b_256.c Hacl_HMAC_Blake2b_256.c \
-			Hacl_Hash_Blake2b_Simd256.c Hacl_Poly1305_256.c Hacl_SHA2_Vec256.c \
-			Hacl_Streaming_Poly1305_256.c \
+			Hacl_Hash_Blake2b_Simd256.c Hacl_MAC_Poly1305_Simd256.c Hacl_SHA2_Vec256.c \
 			Hacl_GenericField64.c Hacl_Bignum4096.c Hacl_Bignum64.c # These all link against 256-bit bignum
 endif
 ifeq (,$(TOOLCHAIN_CAN_COMPILE_VALE))
