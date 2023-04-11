@@ -23,7 +23,7 @@ Rust wrapper for [hacl](https://github.com/cryspen/hacl-packages).
 
 #### Building on Windows
 
-TBD [#78](https://github.com/cryspen/hacl-packages/issues/78)
+Enabling builds on Windows is tracked in [#78](https://github.com/cryspen/hacl-packages/issues/78).
 
 <!-- To build `evercrypt` and `evercrypt-sys` on Windows ensure path for the `VsDevCmd.bat`
 called in in `hacl-build.bat` is correct on your system.
