@@ -1,9 +1,6 @@
-#[cfg(not(windows))]
-extern crate bindgen;
-
 use std::{env, path::Path, process::Command};
 
-#[cfg(not(windows))]
+#[cfg(all(not(windows), not(nobindgen)))]
 fn create_bindings(include_path: &Path, home_dir: &Path) {
     // Include paths
     let hacl_includes = vec![
@@ -69,7 +66,7 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .expect("Couldn't write bindings!");
 }
 
-#[cfg(windows)]
+#[cfg(any(windows, nobindgen))]
 fn create_bindings(_: &Path, _: &Path) {}
 
 fn build_hacl_c(path: &Path, cross_target: Option<String>) {
@@ -239,7 +236,9 @@ fn main() {
     //     hacl_lib_path.join(library_name).display()
     // );
 
-    // Generate new bindings. This is a no-op on Windows.
+    // Generate new bindings.
+    // This is a no-op on Windows.
+    // Also don't build with cfg nobindgen (e.g. on docs.rs because of file system access).
     create_bindings(&hacl_include_path, home_dir);
 
     // Link hacl library.
