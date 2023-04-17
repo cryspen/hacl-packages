@@ -6,6 +6,7 @@
     "vale_include_paths": [
         "vale/include"
     ],
+
     "hacl_sources": {
         "nacl": [
             {
@@ -154,7 +155,12 @@
             {
                 "file": "Hacl_P256.c",
                 "features": "std"
+            },
+            {
+                "file": "ecckiila_secp256r1.c",
+                "features": "std"
             }
+
         ],
         "k256": [
             {

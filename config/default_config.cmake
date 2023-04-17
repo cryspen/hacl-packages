@@ -24,6 +24,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P256.c
+	${PROJECT_SOURCE_DIR}/src/ecckiila_secp256r1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_K256_ECDSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
