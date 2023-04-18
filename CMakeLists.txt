@@ -482,7 +482,7 @@ if(ENABLE_BENCHMARKS)
 
     FetchContent_Populate(benchmark
         GIT_REPOSITORY  https://github.com/google/benchmark.git
-        # The lateste relese 1.7.1 is broken due to https://github.com/google/benchmark/pull/1517
+        # The latest release 1.7.1 is broken due to https://github.com/google/benchmark/pull/1517
         GIT_TAG         b177433f3ee2513b1075140c723d73ab8901790f
     )
     add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
