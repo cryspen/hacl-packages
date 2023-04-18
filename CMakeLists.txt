@@ -251,7 +251,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
         target_include_directories(hacl_vec256 PRIVATE)
 
         # We really should only get here on x86 architectures. But let's make sure.
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86|x86_64|amd64|AMD64")
             if(MSVC)
                 target_compile_options(hacl_vec256 PRIVATE
                     /arch:AVX
@@ -302,7 +302,7 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X64})
 
 # x86
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86")
     message(STATUS "Detected an x86 architecture")
     set(ARCHITECTURE intel)
     set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X86})
@@ -473,7 +473,7 @@ if(ENABLE_BENCHMARKS)
     # We need gtest as well
     FetchContent_Declare(googletest
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+        URL https://github.com/google/googletest/archive/refs/tags/v1.13.0.zip
     )
 
     # For Windows: Prevent overriding the parent project's compiler/linker settings
@@ -481,8 +481,9 @@ if(ENABLE_BENCHMARKS)
     FetchContent_MakeAvailable(googletest)
 
     FetchContent_Populate(benchmark
-        GIT_REPOSITORY  https://github.com/google/benchmark
-        GIT_TAG         v1.7.0
+        GIT_REPOSITORY  https://github.com/google/benchmark.git
+        # The latest release 1.7.1 is broken due to https://github.com/google/benchmark/pull/1517
+        GIT_TAG         b177433f3ee2513b1075140c723d73ab8901790f
     )
     add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
 
