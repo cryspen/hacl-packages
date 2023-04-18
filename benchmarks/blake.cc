@@ -178,7 +178,7 @@ HACL_blake2b_32_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2_blake2b_32_no_key_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Streaming_Blake2_blake2b_32_no_key_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -209,7 +209,7 @@ HACL_blake2b_vec256_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -235,7 +235,7 @@ EverCrypt_blake2b_streaming(benchmark::State& state)
     EverCrypt_Hash_Incremental_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
@@ -391,7 +391,7 @@ HACL_blake2s_32_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2_blake2s_32_no_key_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Streaming_Blake2_blake2s_32_no_key_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -422,7 +422,7 @@ HACL_blake2s_vec128_streaming(benchmark::State& state)
     Hacl_Streaming_Blake2s_128_blake2s_128_no_key_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -448,7 +448,7 @@ EverCrypt_blake2s_streaming(benchmark::State& state)
     EverCrypt_Hash_Incremental_init(ctx);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
