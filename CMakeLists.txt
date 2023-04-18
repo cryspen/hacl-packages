@@ -251,7 +251,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
         target_include_directories(hacl_vec256 PRIVATE)
 
         # We really should only get here on x86 architectures. But let's make sure.
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86|x86_64|amd64|AMD64")
             if(MSVC)
                 target_compile_options(hacl_vec256 PRIVATE
                     /arch:AVX
@@ -302,7 +302,7 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
     set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X64})
 
 # x86
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86")
     message(STATUS "Detected an x86 architecture")
     set(ARCHITECTURE intel)
     set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X86})
