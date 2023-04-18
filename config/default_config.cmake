@@ -196,7 +196,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_FFDHE_Constants.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA3.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
@@ -229,6 +230,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP32_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo1344.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Frodo_KEM.h
 	${PROJECT_SOURCE_DIR}/include/Lib_RandomBuffer_System.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
@@ -318,7 +320,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
@@ -347,6 +349,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_P256_CP32_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo1344.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3.h
 	${PROJECT_SOURCE_DIR}/include/Lib_RandomBuffer_System.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h

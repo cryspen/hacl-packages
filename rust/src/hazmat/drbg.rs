@@ -57,8 +57,6 @@ impl Drbg {
     }
 
     /// Reseed the DRBG state.
-    ///
-    /// It is very unlikely that you will need this function.
     pub fn reseed(&mut self, entropy: &[u8], additional_input: &[u8]) -> Result<(), Error> {
         unsafe {
             Hacl_HMAC_DRBG_reseed(
@@ -78,17 +76,21 @@ impl Drbg {
     }
 
     /// Generate random bytes.
+    ///
+    /// Note that you will need to reseed after at most 1024 invocations.
     pub fn generate(&mut self, output: &mut [u8], additional_input: &[u8]) -> Result<(), Error> {
+        let out_len = output.len().try_into().map_err(|_| Error::InvalidInput)?;
+        let aad = additional_input
+            .len()
+            .try_into()
+            .map_err(|_| Error::InvalidInput)?;
         if unsafe {
             Hacl_HMAC_DRBG_generate(
                 self.alg as u8,
                 output.as_mut_ptr(),
                 self.state,
-                output.len().try_into().map_err(|_| Error::InvalidInput)?,
-                additional_input
-                    .len()
-                    .try_into()
-                    .map_err(|_| Error::InvalidInput)?,
+                out_len,
+                aad,
                 additional_input.as_ptr() as _,
             )
         } {
