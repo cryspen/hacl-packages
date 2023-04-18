@@ -160,7 +160,7 @@ HACL_blake2b_32_streaming(benchmark::State& state)
     Hacl_Hash_Blake2b_state_t* ctx = Hacl_Hash_Blake2b_malloc();
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Hash_Blake2b_update(ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
@@ -188,7 +188,7 @@ HACL_blake2b_vec256_streaming(benchmark::State& state)
     Hacl_Hash_Blake2b_Simd256_state_t* ctx = Hacl_Hash_Blake2b_Simd256_malloc();
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Hash_Blake2b_Simd256_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -213,7 +213,7 @@ EverCrypt_blake2b_streaming(benchmark::State& state)
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2B);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 
@@ -359,7 +359,7 @@ HACL_blake2s_32_streaming(benchmark::State& state)
     Hacl_Hash_Blake2s_state_t* ctx = Hacl_Hash_Blake2s_malloc();
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Hash_Blake2s_update(ctx, (uint8_t*)chunk.data(), chunk.size());
     }
 
@@ -387,7 +387,7 @@ HACL_blake2s_vec128_streaming(benchmark::State& state)
     Hacl_Hash_Blake2s_Simd128_state_t* ctx = Hacl_Hash_Blake2s_Simd128_malloc();
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       Hacl_Hash_Blake2s_Simd128_update(
         ctx, (uint8_t*)chunk.data(), chunk.size());
     }
@@ -412,7 +412,7 @@ EverCrypt_blake2s_streaming(benchmark::State& state)
       EverCrypt_Hash_Incremental_malloc(Spec_Hash_Definitions_Blake2S);
 
     // Update
-    for (auto chunk : chunk(input, 7)) {
+    for (auto chunk : chunk(input, chunk_len)) {
       EverCrypt_Hash_Incremental_update(ctx, chunk.data(), chunk.size());
     }
 

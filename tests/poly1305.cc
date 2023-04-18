@@ -115,27 +115,7 @@ poly1305_mac_streaming(bytes key,
                        vector<size_t> lengths,
                        bytes expected_tag)
 {
-  cout << "Poly1305.Mac (Streaming, Variant 1)" << endl;
-  {
-    bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
-    // Init
-    vector<uint64_t> ctx(32);
-    Hacl_MAC_Poly1305_poly1305_init(ctx.data(), key.data());
-
-    // Update
-    // Note: This doesn't work with arbitrary chunks.
-    for (auto chunk : chunk(text, 16)) {
-      Hacl_MAC_Poly1305_poly1305_update(ctx.data(), chunk.size(), chunk.data());
-    }
-
-    // Finish
-    Hacl_MAC_Poly1305_poly1305_finish(got_tag.data(), key.data(), ctx.data());
-
-    ASSERT_EQ(expected_tag, got_tag);
-  }
-
-  cout << "Poly1305.Mac (Streaming, Variant 2)" << endl;
+  cout << "Poly1305.Mac (Streaming)" << endl;
   {
     bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
@@ -158,29 +138,7 @@ poly1305_mac_streaming(bytes key,
 
 #ifdef HACL_CAN_COMPILE_VEC128
   if (hacl_vec128_support()) {
-    cout << "Poly1305.Mac (VEC128, Streaming, Variant 1)" << endl;
-    {
-      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
-      // Init
-      Lib_IntVector_Intrinsics_vec128 ctx[32];
-      Hacl_MAC_Poly1305_Simd128_poly1305_init(ctx, key.data());
-
-      // Update
-      // Note: This doesn't work with arbitrary chunks.
-      for (auto chunk : chunk(text, 16)) {
-        Hacl_MAC_Poly1305_Simd128_poly1305_update(
-          ctx, chunk.size(), chunk.data());
-      }
-
-      // Finish
-      Hacl_MAC_Poly1305_Simd128_poly1305_finish(
-        got_tag.data(), key.data(), ctx);
-
-      ASSERT_EQ(expected_tag, got_tag);
-    }
-
-    cout << "Poly1305.Mac (VEC128, Streaming, Variant 2)" << endl;
+    cout << "Poly1305.Mac (VEC128, Streaming)" << endl;
     {
       bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
@@ -207,29 +165,7 @@ poly1305_mac_streaming(bytes key,
 
 #ifdef HACL_CAN_COMPILE_VEC256
   if (hacl_vec256_support()) {
-    cout << "Poly1305.Mac (VEC256, Streaming, Variant 1)" << endl;
-    {
-      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
-      // Init
-      Lib_IntVector_Intrinsics_vec256 ctx[32];
-      Hacl_MAC_Poly1305_Simd256_poly1305_init(ctx, key.data());
-
-      // Update
-      // Note: This doesn't work with arbitrary chunks.
-      for (auto chunk : chunk(text, 16)) {
-        Hacl_MAC_Poly1305_Simd256_poly1305_update(
-          ctx, chunk.size(), chunk.data());
-      }
-
-      // Finish
-      Hacl_MAC_Poly1305_Simd256_poly1305_finish(
-        got_tag.data(), key.data(), ctx);
-
-      ASSERT_EQ(expected_tag, got_tag);
-    }
-
-    cout << "Poly1305.Mac (VEC256, Streaming, Variant 2)" << endl;
+    cout << "Poly1305.Mac (VEC256, Streaming)" << endl;
     {
       bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
       
