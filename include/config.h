@@ -1,0 +1,4 @@
+#define TARGET_ARCHITECTURE TARGET_ARCHITECTURE_ID_ARM8
+#define HACL_CAN_COMPILE_VEC128 1
+#define Lib_IntVector_Intrinsics_vec256 void *
+#define HACL_CAN_COMPILE_UINT128 1
