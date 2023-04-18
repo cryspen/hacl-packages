@@ -1,6 +1,6 @@
 [package]
 name = "hacl-sys"
-version = "0.0.2-dev.3"
+version = "0.0.2-dev.4"
 authors = ["Franziskus Kiefer <franziskuskiefer@gmail.com>"]
 edition = "2021"
 build = "build.rs"
@@ -37,7 +37,7 @@ exclude = [
 [dependencies]
 
 [target.'cfg(all(not(windows), not(nobindgen)))'.build-dependencies]
-bindgen = "0.64"
+bindgen = "0.65"
 
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "nobindgen"]

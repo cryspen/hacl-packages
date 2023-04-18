@@ -129,12 +129,13 @@ jobs:
 
       - name: Build | Rust Docs
         run: |
+          mkdir -p build/rust
           cd rust/hacl-sys
           cargo doc --no-deps
-          cp -r target/doc build/rust/main
+          cp -r target/doc ../../build/rust/main
           cd ../
-          cargo doc --no-deps
-          cp -r target/doc build/rust/main
+          cargo doc --no-deps --all-features
+          cp -r target/doc/* ../build/rust/main
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
