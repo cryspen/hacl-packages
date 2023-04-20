@@ -27,6 +27,10 @@
 
 #include <stdint.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 struct sha256_ctx
 {
 	uint64_t sz;
@@ -49,5 +53,9 @@ void digestif_sha224_finalize(struct sha224_ctx *ctx, uint8_t *out);
 void digestif_sha256_init(struct sha256_ctx *ctx);
 void digestif_sha256_update(struct sha256_ctx *ctx, uint8_t *data, uint32_t len);
 void digestif_sha256_finalize(struct sha256_ctx *ctx, uint8_t *out);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif

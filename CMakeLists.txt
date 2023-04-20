@@ -419,6 +419,13 @@ if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
     target_include_directories(blake2 PUBLIC ${PROJECT_SOURCE_DIR}/third-party/blake2/ref)
 endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
 
+# Add digestif for benchmarks
+include(${PROJECT_SOURCE_DIR}/third-party/digestif/config.cmake)
+if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+    add_library(digestif OBJECT ${SOURCES_digestif})
+    target_include_directories(digestif PUBLIC ${PROJECT_SOURCE_DIR}/third-party/digestif)
+endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
@@ -540,6 +547,7 @@ if(ENABLE_BENCHMARKS)
             hacl_static
 	    ecckiila
 	    blake2
+	    digestif
             hacl_cpu_features
             benchmark::benchmark
         )

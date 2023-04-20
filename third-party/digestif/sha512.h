@@ -26,6 +26,11 @@
 
 #include <stdint.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 struct sha512_ctx
 {
 	uint64_t sz[2];
@@ -48,5 +53,10 @@ void digestif_sha384_finalize(struct sha384_ctx *ctx, uint8_t *out);
 void digestif_sha512_init(struct sha512_ctx *ctx);
 void digestif_sha512_update(struct sha512_ctx *ctx, uint8_t *data, uint32_t len);
 void digestif_sha512_finalize(struct sha512_ctx *ctx, uint8_t *out);
+
+#if defined(__cplusplus)
+}
+#endif
+
 
 #endif
