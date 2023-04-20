@@ -406,6 +406,20 @@ if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
     target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
 
+# Add ecckiila for benchmarks
+include(${PROJECT_SOURCE_DIR}/third-party/ecckiila/config.cmake)
+if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+    add_library(ecckiila OBJECT ${SOURCES_ecckiila})
+endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+
+# Add blake2 for benchmarks
+include(${PROJECT_SOURCE_DIR}/third-party/blake2/config.cmake)
+if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+    add_library(blake2 OBJECT ${SOURCES_blake2_ref})
+    target_include_directories(blake2 PUBLIC ${PROJECT_SOURCE_DIR}/third-party/blake2/ref)
+endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+
+
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
 if(ENABLE_TESTS)
@@ -524,6 +538,8 @@ if(ENABLE_BENCHMARKS)
         add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
+	    ecckiila
+	    blake2
             hacl_cpu_features
             benchmark::benchmark
         )
