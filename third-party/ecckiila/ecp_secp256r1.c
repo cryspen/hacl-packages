@@ -4553,7 +4553,6 @@ static void fixed_smul_cmb(pt_aff_t *out, const unsigned char scalar[32]) {
 
 #else /* __SIZEOF_INT128__ */
 
-#include "ecp_secp256r1.h"
 #include <stdint.h>
 #include <string.h>
 #define LIMB_BITS 32
