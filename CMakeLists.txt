@@ -545,9 +545,9 @@ if(ENABLE_BENCHMARKS)
         add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
-	    ecckiila
-	    blake2
-	    digestif
+            ecckiila
+            blake2
+            digestif
             hacl_cpu_features
             benchmark::benchmark
         )
