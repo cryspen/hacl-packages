@@ -3,7 +3,7 @@ name: build_pull_request
 on:
   push:
     branches:
-      - 'hacl-star-**'
+      - "hacl-star-**"
   pull_request:
     paths-ignore:
       - .gitignore
@@ -116,6 +116,7 @@ jobs:
           target: ${{ matrix.target }}
 
       - name: mach | Benchmark
+        if: ${{ matrix.target == '' }} # Only run benchmarks on the native build.
         uses: ./.github/actions/mach_benchmark
         with:
           bits: ${{ matrix.bits }}
