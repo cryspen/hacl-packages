@@ -11,6 +11,7 @@
 
 import os
 import pathlib
+import platform
 import re
 import shutil
 import subprocess
@@ -23,6 +24,7 @@ from tools.configure import Config
 from tools.doc import doc
 from tools.macos import ios_sysroot
 from tools.ocaml import build_ocaml, clean_ocaml
+from tools.openssl import find_openssl_home
 from tools.rust import rust
 from tools.js import build_js
 from tools.test import run_tests
@@ -63,7 +65,8 @@ def _install(prefix=None, config="Release"):
 
 @subcommand(
     [
-        argument("-p", "--prefix", help="The path prefix to install into.", type=str),
+        argument("-p", "--prefix",
+                 help="The path prefix to install into.", type=str),
         argument("--debug", help="Install a debug build.", action="store_true"),
     ]
 )
@@ -80,11 +83,13 @@ def install(args):
 
 @subcommand(
     [
-        argument("-c", "--clean", help="Clean before building.", action="store_true"),
+        argument("-c", "--clean", help="Clean before building.",
+                 action="store_true"),
         argument("--tests", help="Build tests.", action="store_true"),
         argument("--test", help="Build and run tests.", action="store_true"),
         argument("--benchmarks", help="Build benchmarks.", action="store_true"),
-        argument("--benchmark", help="Build and run benchmarks.", action="store_true"),
+        argument("--benchmark", help="Build and run benchmarks.",
+                 action="store_true"),
         argument(
             "--no-openssl",
             help="Don't build and run OpenSSL benchmarks.",
@@ -95,7 +100,8 @@ def install(args):
             help="Build and run LibTomCrypt benchmarks.",
             action="store_true",
         ),
-        argument("-r", "--release", help="Build in release mode.", action="store_true"),
+        argument("-r", "--release", help="Build in release mode.",
+                 action="store_true"),
         argument(
             "-a",
             "--algorithms",
@@ -121,14 +127,16 @@ def install(args):
             help="Use MSVC on Windows (default is clang-cl).",
             action="store_true",
         ),
-        argument("-e", "--edition", help="Choose a different HACL* edition.", type=str),
+        argument("-e", "--edition",
+                 help="Choose a different HACL* edition.", type=str),
         argument(
             "-l",
             "--language",
             help="Build language bindings for the given language.",
             type=str,
         ),
-        argument("-v", "--verbose", help="Make builds verbose.", action="store_true"),
+        argument("-v", "--verbose", help="Make builds verbose.",
+                 action="store_true"),
         argument(
             "-m32", help="Build for 32-bit (even when on 64-bit).", action="store_true"
         ),
@@ -266,6 +274,9 @@ def build(args):
     if windows and args.msvc:
         cmake_args.append("-DUSE_MSVC=1")
 
+    # Enrich the environment for all calls.
+    env = os.environ
+
     # Set target toolchain if cross compiling
     target = args.target
     if args.target:
@@ -276,7 +287,8 @@ def build(args):
             print("! Cross-compilation is not supported when --m32 is set.")
             exit(1)
         if args.target == "x86_64-apple-darwin":
-            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"])
         elif args.target == "s390x-linux-gnu":
             cmake_args.extend(
                 [
@@ -286,10 +298,12 @@ def build(args):
                 ]
             )
         elif args.target == "aarch64-apple-ios":
-            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-ios.cmake"])
             cmake_args.extend(["-DCMAKE_OSX_SYSROOT=" + ios_sysroot()])
         elif args.target == "aarch64-apple-darwin":
-            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"])
         elif args.target == "aarch64-linux-android":
             if args.ndk:
                 cmake_args.append("-DANDROID_NDK_PATH=" + args.ndk)
@@ -300,7 +314,8 @@ def build(args):
                 )
                 print("  See help for more information.")
                 exit(1)
-            cmake_args.extend(["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
+            cmake_args.extend(
+                ["-DCMAKE_TOOLCHAIN_FILE=config/aarch64-android.cmake"])
         else:
             print('! Unknown cross-compilation target "%s"' % args.target)
             print("  See help for available targets.")
@@ -327,6 +342,10 @@ def build(args):
         cmake_args.append("-DENABLE_BENCHMARKS=ON")
         if not args.no_openssl:
             cmake_args.append("-DENABLE_OPENSSL_BENCHMARKS=ON")
+            if platform.system() == "Darwin":
+                openssl_home = find_openssl_home()
+                if openssl_home is not None:
+                    env = {**env, "OPENSSL_HOME": openssl_home}
         if args.libtomcrypt:
             cmake_args.append("-DENABLE_LIBTOMCRYPT_BENCHMARKS=ON")
     if args.sanitizer:
@@ -383,7 +402,7 @@ def build(args):
         cmake_cmd = ["cmake", "-B", "build"]
         cmake_cmd.extend(cmake_args)
         vprint(str(cmake_cmd))
-        subprocess.run(cmake_cmd, check=True)
+        subprocess.run(cmake_cmd, check=True, env=env)
 
         pathlib.Path(config_cache()).touch()
 
@@ -405,7 +424,7 @@ def build(args):
     cmake_cmd = ["cmake", "-B", "build"]
     cmake_cmd.extend(cmake_args)
     vprint(str(cmake_cmd))
-    subprocess.run(cmake_cmd, check=True)
+    subprocess.run(cmake_cmd, check=True, env=env)
 
     if args.no_build:
         print("Finished configuration, exiting because you didn't want me to build.")
