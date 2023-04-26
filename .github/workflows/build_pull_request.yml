@@ -27,8 +27,7 @@ jobs:
       matrix:
         compiler: [gcc, clang]
         bits: [32, 64]
-        edition: [""] # ignore c89 for now
-        #edition: [ c89, "" ]
+        edition: [""]
 
     steps:
       - name: Setup | Update
