@@ -3,7 +3,7 @@ name: build_pull_request
 on:
   push:
     branches:
-      - 'hacl-star-**'
+      - "hacl-star-**"
   pull_request:
     paths-ignore:
       - .gitignore
@@ -27,8 +27,7 @@ jobs:
       matrix:
         compiler: [gcc, clang]
         bits: [32, 64]
-        edition: [""] # ignore c89 for now
-        #edition: [ c89, "" ]
+        edition: [""]
 
     steps:
       - name: Setup | Update
@@ -116,12 +115,11 @@ jobs:
           target: ${{ matrix.target }}
 
       - name: mach | Benchmark
+        if: ${{ matrix.target == '' }} # Only run benchmarks on the native build.
         uses: ./.github/actions/mach_benchmark
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
-          args: "--no-openssl" # FIXME: #198 For some reason openssl isn't work
-          environment: OPENSSL_HOME=/usr/local/opt/openssl@3/
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
