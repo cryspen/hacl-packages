@@ -131,60 +131,37 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
     }
 }
 
-#[cfg(not(windows))]
 fn copy_hacl_to_out(out_dir: &Path) {
-    let mkdir_status = Command::new("mkdir")
-        .arg("-p")
-        .arg(out_dir.join("build"))
-        .status()
-        .expect("Failed to create build dir in out_dir.");
-    if !mkdir_status.success() {
-        panic!("Failed to create build dir in out_dir.")
-    }
+    use fs_extra::{
+        dir::{copy, create_all, CopyOptions},
+        file,
+    };
 
-    fn copy_dir(path: &Path, out_dir: &Path) {
-        let cp_status = Command::new("cp")
-            .arg("-r")
-            .arg(path)
-            .arg(out_dir)
-            .status()
-            .expect("Failed to copy hacl to out_dir.");
-        if !cp_status.success() {
-            panic!("Failed to copy hacl to out_dir.")
-        }
-    }
+    let build_dir = out_dir.join("build");
+    create_all(&build_dir, true).unwrap();
+
     let local_c_path = Path::new(".c");
-    copy_dir(&local_c_path.join("config"), &out_dir.join("config"));
-    copy_dir(&local_c_path.join("src"), &out_dir.join("src"));
-    copy_dir(&local_c_path.join("vale"), &out_dir.join("vale"));
-    copy_dir(&local_c_path.join("karamel"), &out_dir.join("karamel"));
-    copy_dir(&local_c_path.join("include"), &out_dir.join("include"));
-    copy_dir(
+    let options = CopyOptions::new().overwrite(true);
+
+    copy(&local_c_path.join("config"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("src"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("vale"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("karamel"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("include"), &out_dir, &options).unwrap();
+
+    let options = file::CopyOptions::new().overwrite(true);
+    file::copy(
         &local_c_path.join("config").join("default_config.cmake"),
         &out_dir.join("build").join("config.cmake"),
-    );
-    copy_dir(&local_c_path.join("CMakeLists.txt"), out_dir);
-}
-
-// TODO: make this work on windows.
-#[cfg(windows)]
-fn copy_hacl_to_out(out_dir: &Path) {
-    panic!("TODO: Windows build is not supported right now.");
-    // let cp_status = Command::new("cmd")
-    //     .args(&[
-    //         "/C",
-    //         "robocopy",
-    //         ".c",
-    //         &format!("{}\\.c", out_dir.to_str().unwrap()),
-    //         "/e",
-    //         "/s",
-    //     ])
-    //     .status()
-    //     .expect(&format!("Failed to copy hacl to {:?}", out_dir));
-
-    // println!("Return code {}", cp_status.code().unwrap());
-
-    // println!("Copied hacl-star to {:?}", out_dir);
+        &options,
+    )
+    .unwrap();
+    file::copy(
+        &local_c_path.join("CMakeLists.txt"),
+        out_dir.join("CMakeLists.txt"),
+        &options,
+    )
+    .unwrap();
 }
 
 fn main() {

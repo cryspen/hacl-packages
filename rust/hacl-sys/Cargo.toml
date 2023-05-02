@@ -39,6 +39,9 @@ exclude = [
 [target.'cfg(all(not(windows), not(nobindgen)))'.build-dependencies]
 bindgen = "0.65"
 
+[build-dependencies]
+fs_extra = "1.3.0"
+
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "nobindgen"]
 rustc-args = ["--cfg", "nobindgen"]
