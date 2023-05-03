@@ -21,27 +21,22 @@ concurrency:
 
 jobs:
   linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
-        version: [7, 8, 9, 10, 11, 12, 13, 14]
+        version: [9, 10, 11, 12, 13, 14]
         bits: [32, 64]
         edition: [""] # ignore c89 for now
-        #edition: [ c89, "" ]
         exclude:
           - compiler: gcc
-            version: 12
-          - compiler: gcc
             version: 13
           - compiler: gcc
             version: 14
-          # Not available
           - compiler: clang
-            version: 13
-          # Not available
+            version: 9
           - compiler: clang
-            version: 14
+            version: 10
 
     steps:
       - name: Setup | Update
@@ -86,7 +81,6 @@ jobs:
         with:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
-          args: "--no-openssl" # Ubuntu 20.04 doesn't have OpenSSL3
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -148,12 +142,11 @@ jobs:
           target: ${{ matrix.target }}
 
       - name: mach | Benchmark
+        if: ${{ matrix.target == '' }} # Only run benchmarks on the native build.
         uses: ./.github/actions/mach_benchmark
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
-          args: "--no-openssl" # FIXME: #198 For some reason openssl isn't work
-          environment: OPENSSL_HOME=/usr/local/opt/openssl@3/
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts

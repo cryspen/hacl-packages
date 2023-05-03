@@ -50,8 +50,9 @@ fn sha_ni_support() -> bool {
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 fn aes_ni_support() -> bool {
-    // FIXME: #380 std::arch::is_x86_feature_detected!("movbe") is not supported yet
-    //        we assume here that it is supported :|
+    // Note that we don't check for "movbe" here.
+    // This will be checked only on runtime.
+    // This is good enough here for the build.
     std::arch::is_x86_feature_detected!("avx")
         && std::arch::is_x86_feature_detected!("sse")
         && std::arch::is_x86_feature_detected!("aes")
