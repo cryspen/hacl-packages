@@ -10,7 +10,6 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
-#include "Hacl_EC_K256.h"
 #include "util.h"
 
 using json = nlohmann::json;
@@ -154,15 +153,15 @@ TEST_P(K256EcdhWycheproof, KAT)
   WycheproofEcdh test = GetParam();
 
   // Obtain public key from test.
-  vector<uint64_t> public_key(15);
+  bytes public_key(64);
   {
+    // Instead of parsing ASN.1, we just ignore the prefix ...
+    bytes prefix = from_hex("3056301006072a8648ce3d020106052b8104000a034200");
+    bytes pk = bytes(test.public_key_asn1.begin() + prefix.size(), test.public_key_asn1.end());
     if (test.CompressedPoint) {
-      cout << "Skipping. Compressed points are no longer supported." << endl;
-      return;
+      Hacl_K256_ECDSA_public_key_compressed_to_raw(public_key.data(), pk.data());
     } else {
-      // TODO(https://github.com/cryspen/hacl-packages/issues/157)
-      cout << "Skipping. Only compressed points are supported for now." << endl;
-      return;
+      Hacl_K256_ECDSA_public_key_uncompressed_to_raw(public_key.data(), pk.data());
     }
   }
 
@@ -180,23 +179,15 @@ TEST_P(K256EcdhWycheproof, KAT)
   }
 
   // Compute shared secret.
-  vector<uint64_t> shared_projective(15);
-  Hacl_EC_K256_point_mul(
-    private_key.data(), public_key.data(), shared_projective.data());
-
-  // Obtain raw serialized x-coordinate.
-  bytes shared_compressed(33);
-  //Hacl_EC_K256_point_compress(shared_projective.data(),
-  //                            shared_compressed.data());
-
-  // Trim first byte.
-  ASSERT_EQ(shared_compressed[0], 0x02);
-  bytes shared = bytes(shared_compressed.begin() + 1, shared_compressed.end());
+  bytes shared(64);
+  bool res = Hacl_K256_ECDSA_ecdh(shared.data(), public_key.data(), private_key.data());
 
   if (test.valid) {
-    EXPECT_EQ(shared, test.shared);
+    EXPECT_TRUE(res);
+    EXPECT_EQ(bytes(shared.begin(), shared.begin() + 32), test.shared);
   } else {
-    EXPECT_NE(shared, test.shared);
+    EXPECT_FALSE(res);
+    EXPECT_NE(bytes(shared.begin(), shared.begin() + 32), test.shared);
   }
 }
 
