@@ -94,22 +94,22 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Streaming_SHA3_state_256* state = Hacl_Streaming_SHA3_create_in_256();
-    Hacl_Streaming_SHA3_init_256(state);
+    Hacl_Streaming_Keccak_state* state = Hacl_Streaming_Keccak_malloc(Spec_Hash_Definitions_SHA3_256);
+    Hacl_Streaming_Keccak_reset(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
-    Hacl_Streaming_SHA3_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_1, chunk_1_size);
     // This is optional when no intermediate results are required.
-    Hacl_Streaming_SHA3_finish_256(state, digest_1);
+    Hacl_Streaming_Keccak_finish(state, digest_1);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
-    Hacl_Streaming_SHA3_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
-    Hacl_Streaming_SHA3_finish_256(state, digest_2);
+    Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Streaming_Keccak_finish(state, digest_2);
 
     // Cleanup
-    Hacl_Streaming_SHA3_free_256(state);
+    Hacl_Streaming_Keccak_free(state);
 
     print_hex_ln(HACL_HASH_SHA3_256_DIGEST_LENGTH, digest_1);
     print_hex_ln(HACL_HASH_SHA3_256_DIGEST_LENGTH, digest_2);
