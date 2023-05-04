@@ -157,19 +157,8 @@ TEST_P(K256EcdhWycheproof, KAT)
   vector<uint64_t> public_key(15);
   {
     if (test.CompressedPoint) {
-      // Instead of parsing ASN.1, we just ignore the prefix ...
-      bytes prefix = from_hex("3056301006072a8648ce3d020106052b8104000a034200");
-      bytes compressed(test.public_key_asn1.begin() + prefix.size(),
-                       test.public_key_asn1.end());
-
-      bool res =
-        Hacl_EC_K256_point_decompress(compressed.data(), public_key.data());
-
-      if (test.valid) {
-        EXPECT_TRUE(res);
-      } else {
-        return;
-      }
+      cout << "Skipping. Compressed points are no longer supported." << endl;
+      return;
     } else {
       // TODO(https://github.com/cryspen/hacl-packages/issues/157)
       cout << "Skipping. Only compressed points are supported for now." << endl;
@@ -197,8 +186,8 @@ TEST_P(K256EcdhWycheproof, KAT)
 
   // Obtain raw serialized x-coordinate.
   bytes shared_compressed(33);
-  Hacl_EC_K256_point_compress(shared_projective.data(),
-                              shared_compressed.data());
+  //Hacl_EC_K256_point_compress(shared_projective.data(),
+  //                            shared_compressed.data());
 
   // Trim first byte.
   ASSERT_EQ(shared_compressed[0], 0x02);
