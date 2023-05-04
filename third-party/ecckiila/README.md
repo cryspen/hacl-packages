@@ -8,6 +8,3 @@ https://gitlab.com/nisec/ecckiila/-/blob/master/README.md
 We cleaned up the generated code using unifdef:
 `unifdef ../original-code.c -DRIG_NULL -URIG_GOST -URIG_NSS -UOPENSSL_BUILDING_OPENSSL -UKIILA_OPENSSL_EMIT_CURVEDEF -ULIB_TEST > output-code.c`
 
-
-
-
