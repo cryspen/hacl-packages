@@ -413,18 +413,18 @@ if(ENABLE_BENCHMARKS)
 endif(ENABLE_BENCHMARKS)
 
 # Add blake2 for benchmarks
-if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+if(ENABLE_BENCHMARKS)
     include(${PROJECT_SOURCE_DIR}/third-party/blake2/config.cmake)
     add_library(blake2 OBJECT ${SOURCES_blake2_ref})
     target_include_directories(blake2 PUBLIC ${PROJECT_SOURCE_DIR}/third-party/blake2/ref)
-endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+endif(ENABLE_BENCHMARKS)
 
 # Add digestif for benchmarks
-if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+if(ENABLE_BENCHMARKS)
     include(${PROJECT_SOURCE_DIR}/third-party/digestif/config.cmake)
     add_library(digestif OBJECT ${SOURCES_digestif})
     target_include_directories(digestif PUBLIC ${PROJECT_SOURCE_DIR}/third-party/digestif)
-endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+endif(ENABLE_BENCHMARKS)
 
 
 # Testing
