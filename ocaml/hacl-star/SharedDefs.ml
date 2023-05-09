@@ -16,6 +16,7 @@ module type Buffer = sig
   val make : int -> bytes
   val disjoint : bytes -> bytes -> bool
   val sub : bytes -> int -> int -> bytes
+  val copy : bytes -> bytes
   val z_compare : bytes -> Z.t -> int
 end
 (** Abstract representation of buffers *)
@@ -35,6 +36,7 @@ module CBytes : Buffer with type t = Bytes.t and type buf = Bytes.t Ctypes.ocaml
   let make l = Bytes.make l '\x00'
   let disjoint b1 b2 = b1 != b2
   let sub = Bytes.sub
+  let copy = Bytes.copy
   let z_compare b z = Z.compare (Z.of_bits (Bytes.to_string b)) z
 end
 (** Representation of [Bytes.t] buffers *)
