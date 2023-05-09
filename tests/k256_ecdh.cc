@@ -156,12 +156,33 @@ TEST_P(K256EcdhWycheproof, KAT)
   bytes public_key(64);
   {
     // Instead of parsing ASN.1, we just ignore the prefix ...
+    if (test.InvalidAsn) {
+      cout << "Tests with invalid ASN are unsupported." << endl;
+      return;
+    }
     bytes prefix = from_hex("3056301006072a8648ce3d020106052b8104000a034200");
     bytes pk = bytes(test.public_key_asn1.begin() + prefix.size(), test.public_key_asn1.end());
+
     if (test.CompressedPoint) {
-      Hacl_K256_ECDSA_public_key_compressed_to_raw(public_key.data(), pk.data());
+      if (pk.size() != 33) {
+	cout << "Unsupported public key size." << endl;
+	return;
+      }
+      bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(public_key.data(), pk.data());
+      if (!res) {
+	EXPECT_FALSE(test.valid);
+	return;
+      }
     } else {
-      Hacl_K256_ECDSA_public_key_uncompressed_to_raw(public_key.data(), pk.data());
+      if (pk.size() != 65) {
+	cout << "Unsupported public key size." << endl;
+	return;
+      }
+      bool res = Hacl_K256_ECDSA_public_key_uncompressed_to_raw(public_key.data(), pk.data());
+      if (!res) {
+	EXPECT_FALSE(test.valid);
+	return;
+      }
     }
   }
 
