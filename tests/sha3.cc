@@ -94,7 +94,8 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Streaming_Keccak_state* state = Hacl_Streaming_Keccak_malloc(Spec_Hash_Definitions_SHA3_256);
+    Hacl_Streaming_Keccak_state* state =
+      Hacl_Streaming_Keccak_malloc(Spec_Hash_Definitions_SHA3_256);
     Hacl_Streaming_Keccak_reset(state);
 
     // 1/2 Include `Hello, ` into the hash calculation and

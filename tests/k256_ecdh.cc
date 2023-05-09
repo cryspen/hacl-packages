@@ -161,27 +161,30 @@ TEST_P(K256EcdhWycheproof, KAT)
       return;
     }
     bytes prefix = from_hex("3056301006072a8648ce3d020106052b8104000a034200");
-    bytes pk = bytes(test.public_key_asn1.begin() + prefix.size(), test.public_key_asn1.end());
+    bytes pk = bytes(test.public_key_asn1.begin() + prefix.size(),
+                     test.public_key_asn1.end());
 
     if (test.CompressedPoint) {
       if (pk.size() != 33) {
-	cout << "Unsupported public key size." << endl;
-	return;
+        cout << "Unsupported public key size." << endl;
+        return;
       }
-      bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(public_key.data(), pk.data());
+      bool res = Hacl_K256_ECDSA_public_key_compressed_to_raw(public_key.data(),
+                                                              pk.data());
       if (!res) {
-	EXPECT_FALSE(test.valid);
-	return;
+        EXPECT_FALSE(test.valid);
+        return;
       }
     } else {
       if (pk.size() != 65) {
-	cout << "Unsupported public key size." << endl;
-	return;
+        cout << "Unsupported public key size." << endl;
+        return;
       }
-      bool res = Hacl_K256_ECDSA_public_key_uncompressed_to_raw(public_key.data(), pk.data());
+      bool res = Hacl_K256_ECDSA_public_key_uncompressed_to_raw(
+        public_key.data(), pk.data());
       if (!res) {
-	EXPECT_FALSE(test.valid);
-	return;
+        EXPECT_FALSE(test.valid);
+        return;
       }
     }
   }
@@ -201,7 +204,8 @@ TEST_P(K256EcdhWycheproof, KAT)
 
   // Compute shared secret.
   bytes shared(64);
-  bool res = Hacl_K256_ECDSA_ecdh(shared.data(), public_key.data(), private_key.data());
+  bool res =
+    Hacl_K256_ECDSA_ecdh(shared.data(), public_key.data(), private_key.data());
 
   if (test.valid) {
     EXPECT_TRUE(res);
