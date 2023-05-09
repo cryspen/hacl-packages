@@ -599,8 +599,9 @@ module K256 = struct
       assert (C.size signature = size_signature);
         Hacl_K256.hacl_K256_ECDSA_secp256k1_ecdsa_is_signature_normalized (C.ctypes_buf signature)
     let normalize_signature ~signature =
-      if Noalloc.Libsecp256k1.normalize_signature ~signature then
-        Some (Bytes.copy signature)
+      let normalized_signature = C.copy signature in
+      if Noalloc.Libsecp256k1.normalize_signature ~signature:normalized_signature then
+        Some (normalized_signature)
       else
         None
   end
