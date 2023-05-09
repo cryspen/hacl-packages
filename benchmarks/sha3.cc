@@ -37,6 +37,16 @@ Hacl_Sha3_224(benchmark::State& state)
 
 BENCHMARK(Hacl_Sha3_224)->Setup(DoSetup);
 
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  sha3_224,
+                  EVP_sha3_224(),
+                  input,
+                  digest224.size(),
+                  expected_digest_sha3_224)
+  ->Setup(DoSetup);
+#endif
+
 static void
 Hacl_Sha3_256(benchmark::State& state)
 {
@@ -50,6 +60,44 @@ Hacl_Sha3_256(benchmark::State& state)
 }
 
 BENCHMARK(Hacl_Sha3_256)->Setup(DoSetup);
+
+#include "sha3.h"
+
+static void
+Digestif_sha3_256(benchmark::State& state)
+{
+  bytes digest(32, 0);
+
+  for (auto _ : state) {
+
+    sha3_ctx ctx;
+    digestif_sha3_init(&ctx,256);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha3_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha3_finalize(&ctx, digest.data(), 0x06);
+
+  }
+
+  if (digest != expected_digest_sha3_256) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha3_256)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  sha3_256,
+                  EVP_sha3_256(),
+                  input,
+                  digest256.size(),
+                  expected_digest_sha3_256)
+  ->Setup(DoSetup);
+#endif
 
 static void
 Hacl_Sha3_384(benchmark::State& state)
@@ -65,6 +113,16 @@ Hacl_Sha3_384(benchmark::State& state)
 
 BENCHMARK(Hacl_Sha3_384)->Setup(DoSetup);
 
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  sha3_384,
+                  EVP_sha3_384(),
+                  input,
+                  digest384.size(),
+                  expected_digest_sha3_384)
+  ->Setup(DoSetup);
+#endif
+
 static void
 Hacl_Sha3_512(benchmark::State& state)
 {
@@ -78,6 +136,43 @@ Hacl_Sha3_512(benchmark::State& state)
 }
 
 BENCHMARK(Hacl_Sha3_512)->Setup(DoSetup);
+
+static void
+Digestif_sha3_512(benchmark::State& state)
+{
+  bytes digest(64, 0);
+
+  for (auto _ : state) {
+
+    sha3_ctx ctx;
+    digestif_sha3_init(&ctx,512);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha3_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha3_finalize(&ctx, digest.data(), 0x06);
+
+  }
+
+  if (digest != expected_digest_sha3_512) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha3_512)->Setup(DoSetup);
+
+
+#ifndef NO_OPENSSL
+BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
+                  sha3_512,
+                  EVP_sha3_512(),
+                  input,
+                  digest512.size(),
+                  expected_digest_sha3_512)
+  ->Setup(DoSetup);
+#endif
 
 static void
 Hacl_Sha3_256_Streaming(benchmark::State& state)
@@ -109,65 +204,7 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
 
 BENCHMARK(Hacl_Sha3_256_Streaming)->Setup(DoSetup);
 
-static void
-Hacl_Sha3_shake128(benchmark::State& state)
-{
-  for (auto _ : state) {
-    Hacl_SHA3_shake128_hacl(input.size(),
-                            (uint8_t*)input.data(),
-                            digest_shake.size(),
-                            digest_shake.data());
-  }
-}
-
-BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
-
-static void
-Hacl_Sha3_shake256(benchmark::State& state)
-{
-  for (auto _ : state) {
-    Hacl_SHA3_shake256_hacl(input.size(),
-                            (uint8_t*)input.data(),
-                            digest_shake.size(),
-                            digest_shake.data());
-  }
-}
-
-BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
-
 #ifndef NO_OPENSSL
-BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
-                  sha3_224,
-                  EVP_sha3_224(),
-                  input,
-                  digest224.size(),
-                  expected_digest_sha3_224)
-  ->Setup(DoSetup);
-
-BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
-                  sha3_256,
-                  EVP_sha3_256(),
-                  input,
-                  digest256.size(),
-                  expected_digest_sha3_256)
-  ->Setup(DoSetup);
-
-BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
-                  sha3_384,
-                  EVP_sha3_384(),
-                  input,
-                  digest384.size(),
-                  expected_digest_sha3_384)
-  ->Setup(DoSetup);
-
-BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
-                  sha3_512,
-                  EVP_sha3_512(),
-                  input,
-                  digest512.size(),
-                  expected_digest_sha3_512)
-  ->Setup(DoSetup);
-
 BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   sha3_224,
                   EVP_sha3_224(),
@@ -204,5 +241,32 @@ BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   expected_digest_sha3_512)
   ->Setup(DoSetup);
 #endif
+
+static void
+Hacl_Sha3_shake128(benchmark::State& state)
+{
+  for (auto _ : state) {
+    Hacl_SHA3_shake128_hacl(input.size(),
+                            (uint8_t*)input.data(),
+                            digest_shake.size(),
+                            digest_shake.data());
+  }
+}
+
+BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
+
+static void
+Hacl_Sha3_shake256(benchmark::State& state)
+{
+  for (auto _ : state) {
+    Hacl_SHA3_shake256_hacl(input.size(),
+                            (uint8_t*)input.data(),
+                            digest_shake.size(),
+                            digest_shake.data());
+  }
+}
+
+BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
+
 
 BENCHMARK_MAIN();

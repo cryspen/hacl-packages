@@ -294,6 +294,34 @@ BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
                   expected_digest_sha2_256)
   ->Setup(DoSetup);
 
+#include "sha256.h"
+
+static void
+Digestif_sha256(benchmark::State& state)
+{
+  bytes digest(32, 0);
+
+  for (auto _ : state) {
+
+    sha256_ctx ctx;
+    digestif_sha256_init(&ctx);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha256_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha256_finalize(&ctx, digest.data());
+
+  }
+
+  if (digest != expected_digest_sha2_256) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha256)->Setup(DoSetup);
+
 #ifndef NO_OPENSSL
 BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   sha2_256,
@@ -350,6 +378,34 @@ BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
                   expected_digest_sha2_512)
   ->Setup(DoSetup);
 
+#include "sha512.h"
+
+static void
+Digestif_sha512(benchmark::State& state)
+{
+  bytes digest(64, 0);
+
+  for (auto _ : state) {
+
+    sha512_ctx ctx;
+    digestif_sha512_init(&ctx);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha512_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha512_finalize(&ctx, digest.data());
+
+  }
+
+  if (digest != expected_digest_sha2_512) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha512)->Setup(DoSetup);
+
 #ifndef NO_OPENSSL
 BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   sha2_512,
@@ -360,6 +416,7 @@ BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   expected_digest_sha2_512)
   ->Setup(DoSetup);
 #endif
+
 
 // -----------------------------------------------------------------------------
 
