@@ -47,6 +47,7 @@ module Hacl_Hash = struct
   include Hacl_Hash_Blake2_bindings.Bindings(Hacl_Hash_Blake2_stubs)
 end
 module Hacl_Spec = Hacl_Spec_bindings.Bindings(Hacl_Spec_stubs)
+module Hacl_Streaming_Types = Hacl_Streaming_Types_bindings.Bindings(Hacl_Streaming_Types_stubs)
 
 let max_uint32 = Z.((shift_left ~$1 32) - ~$1)
 let max_uint64 = Z.((shift_left ~$1 64) - ~$1)
@@ -100,7 +101,7 @@ module AEADDefs = struct
 end
 
 module HashDefs = struct
-  open Hacl_Spec
+  open Hacl_Streaming_Types
   type deprecated_alg =
     | SHA1
     | MD5 [@@deprecated]
