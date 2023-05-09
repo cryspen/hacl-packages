@@ -84,21 +84,21 @@ Hacl_Sha3_256_Streaming(benchmark::State& state)
 {
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA3_state_256* sha_state =
-      Hacl_Streaming_SHA3_create_in_256();
-    Hacl_Streaming_SHA3_init_256(sha_state);
+    Hacl_Streaming_Keccak_state* sha_state =
+      Hacl_Streaming_Keccak_malloc(Spec_Hash_Definitions_SHA3_256);
+    Hacl_Streaming_Keccak_reset(sha_state);
 
     // Update
     for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA3_update_256(sha_state,
-                                     (uint8_t*)input.data() + i,
-                                     min(chunk_len, input.size() - i));
+      Hacl_Streaming_Keccak_update(sha_state,
+                                   (uint8_t*)input.data() + i,
+                                   min(chunk_len, input.size() - i));
       i += chunk_len;
     }
 
     // Finish
-    Hacl_Streaming_SHA3_finish_256(sha_state, digest256.data());
-    Hacl_Streaming_SHA3_free_256(sha_state);
+    Hacl_Streaming_Keccak_finish(sha_state, digest256.data());
+    Hacl_Streaming_Keccak_free(sha_state);
   }
 
   if (digest256 != expected_digest_sha3_256) {
