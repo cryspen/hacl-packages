@@ -100,14 +100,20 @@ TEST(ApiSuite, ApiTest)
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
-    Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_1, chunk_1_size);
+    uint32_t update_res =
+      Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_1, chunk_1_size);
+    ASSERT_EQ(0, update_res);
     // This is optional when no intermediate results are required.
-    Hacl_Streaming_Keccak_finish(state, digest_1);
+    auto finish_res = Hacl_Streaming_Keccak_finish(state, digest_1);
+    ASSERT_EQ(Hacl_Streaming_Keccak_Success, finish_res);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
-    Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_2, chunk_2_size);
-    Hacl_Streaming_Keccak_finish(state, digest_2);
+    uint32_t update_res_2 =
+      Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_2, chunk_2_size);
+    ASSERT_EQ(0, update_res_2);
+    auto finish_res_2 = Hacl_Streaming_Keccak_finish(state, digest_2);
+    ASSERT_EQ(Hacl_Streaming_Keccak_Success, finish_res_2);
 
     // Cleanup
     Hacl_Streaming_Keccak_free(state);
