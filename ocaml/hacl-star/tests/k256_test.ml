@@ -12,7 +12,7 @@ type 'a k256_test =
   { msg : 'a; sk : 'a; k : 'a; pk : 'a; signature : 'a }
 
 type 'a libsecp256k1_test =
-  { pk : 'a; msg : 'a; signature : 'a; valid : bool }
+  { pk : 'a; msg : 'a; signature : 'a; valid_libsecp256k1 : bool; valid_k256 : bool }
 
 let k256_tests =
   [
@@ -34,37 +34,50 @@ let libsecp256k1_tests =
       pk = bytes_of_hex "04b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6ff0c9d75bfba7b31a6bca1974496eeb56de357071955d83c4b1badaa0b21832e9";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "813ef79ccefa9a56f7ba805f0e478584fe5f0dd5f567bc09b5123ccbc9832365900e75ad233fcc908509dbff5922647db37c21f4afd3203ae8dc4ae7794b0f87";
-      valid = true;
+      valid_libsecp256k1 = false;
+      valid_k256 = true;
     };
     { (* Test case id 3 *)
       pk = bytes_of_hex "04b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6ff0c9d75bfba7b31a6bca1974496eeb56de357071955d83c4b1badaa0b21832e9";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "813ef79ccefa9a56f7ba805f0e478584fe5f0dd5f567bc09b5123ccbc98323656ff18a52dcc0336f7af62400a6dd9b810732baf1ff758000d6f613a556eb31ba";
-      valid = true;
+      valid_libsecp256k1 = true;
+      valid_k256 = true;
     };
     { (* Test case id 119 *)
       pk = bytes_of_hex "04b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6ff0c9d75bfba7b31a6bca1974496eeb56de357071955d83c4b1badaa0b21832e9";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "813ef79ccefa9a56f7ba805f0e478584fe5f0dd5f567bc09b5123ccbc98323656df18a52dcc0336f7af62400a6dd9b810732baf1ff758000d6f613a556eb31ba";
-      valid = false;
+      valid_libsecp256k1 = false;
+      valid_k256 = false;
     };
     { (* Test case id 129 *)
       pk = bytes_of_hex "04b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6ff0c9d75bfba7b31a6bca1974496eeb56de357071955d83c4b1badaa0b21832e9";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "00000000000000000000000000000000000000000000000000000000000000006ff18a52dcc0336f7af62400a6dd9b810732baf1ff758000d6f613a556eb31ba";
-      valid = false;
+      valid_libsecp256k1 = false;
+      valid_k256 = false;
     };
     { (* Test case id 285 *)
       pk = bytes_of_hex "0407310f90a9eae149a08402f54194a0f7b4ac427bf8d9bd6c7681071dc47dc36226a6d37ac46d61fd600c0bf1bff87689ed117dda6b0e59318ae010a197a26ca0";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "000000000000000000000000000000014551231950b75fc4402da1722fc9baebfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413e";
-      valid = true;
+      valid_libsecp256k1 = false;
+      valid_k256 = true;
     };
     { (* Test case id 286 *)
       pk = bytes_of_hex "0407310f90a9eae149a08402f54194a0f7b4ac427bf8d9bd6c7681071dc47dc36226a6d37ac46d61fd600c0bf1bff87689ed117dda6b0e59318ae010a197a26ca0";
       msg = bytes_of_hex "313233343030";
       signature = bytes_of_hex "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2cfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413e";
-      valid = false;
+      valid_libsecp256k1 = false;
+      valid_k256 = false;
+    };
+    { (* Test case id 375 *)
+      pk = bytes_of_hex "04d12e6c66b67734c3c84d2601cf5d35dc097e27637f0aca4a4fdb74b6aadd3bb93f5bdff88bd5736df898e699006ed750f11cf07c5866cd7ad70c7121ffffffff";
+      msg = bytes_of_hex "4d657373616765";
+      signature = bytes_of_hex "592c41e16517f12fcabd98267674f974b588e9f35d35406c1a7bb2ed1d19b7b8c19a5f942607c3551484ff0dc97281f0cdc82bc48e2205a0645c0cf3d7f59da0";
+      valid_libsecp256k1 = false;
+      valid_k256 = true;
     };
   ]
 
@@ -74,13 +87,16 @@ let tests_wycheproof =
         let msg = SHA2_256.hash v.msg in
         let pk = Option.get (K256.uncompressed_to_raw v.pk) in
         assert (K256.valid_pk ~pk);
-        Alcotest.(check bool "verify" v.valid
+        Alcotest.(check bool "verify" v.valid_k256
                     (K256.verify ~pk ~msg ~signature:v.signature));
-        match K256.Libsecp256k1.normalize_signature ~signature:v.signature with
-        | Some signature ->
-          Alcotest.(check bool "verify" v.valid
-                      (K256.Libsecp256k1.verify ~pk ~msg ~signature))
-        | None -> Alcotest.fail "Low-S normalization error"
+          Alcotest.(check bool "verify" v.valid_libsecp256k1
+                      (K256.Libsecp256k1.verify ~pk ~msg ~signature:v.signature));
+        if v.valid_k256 && not v.valid_libsecp256k1 then
+          match K256.Libsecp256k1.normalize_signature ~signature:v.signature with
+          | Some signature ->
+            Alcotest.(check bool "verify" true
+                        (K256.Libsecp256k1.verify ~pk ~msg ~signature))
+          | None -> Alcotest.fail "Low-S normalization error"
       ) libsecp256k1_tests in
   [ ("Verify", `Quick, test_verify) ]
 
