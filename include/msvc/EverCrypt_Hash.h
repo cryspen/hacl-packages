@@ -35,7 +35,7 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "Hacl_Spec.h"
+#include "Hacl_Streaming_Types.h"
 #include "Hacl_Krmllib.h"
 #include "Hacl_Hash_SHA3.h"
 #include "Hacl_Hash_SHA2.h"
@@ -133,7 +133,13 @@ EverCrypt_Hash_Incremental_hash(
 
 #define SHA2_512_HASH_LEN ((uint32_t)64U)
 
+#define SHA3_224_HASH_LEN ((uint32_t)28U)
+
 #define SHA3_256_HASH_LEN ((uint32_t)32U)
+
+#define SHA3_384_HASH_LEN ((uint32_t)48U)
+
+#define SHA3_512_HASH_LEN ((uint32_t)64U)
 
 #define BLAKE2S_HASH_LEN ((uint32_t)32U)
 

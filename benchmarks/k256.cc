@@ -357,27 +357,17 @@ BENCHMARK(OpenSSL_K256_ECDSA_Verify_Normalized)->Setup(DoSetup);
 static void
 HACL_K256_ECDH(benchmark::State& state)
 {
-  bytes pk_raw = hex_to_bytes(
+  bytes public_key = hex_to_bytes(
     "d8096af8a11e0b80037e1ee68246b5dcbb0aeb1cf1244fd767db80f3fa27da2b396812ea"
     "1686e7472e9692eaf3e958e50e9500d3b4c77243db1f2acd67ba9cc4");
-  bytes pk_compressed(33);
-  Hacl_K256_ECDSA_public_key_compressed_from_raw(pk_compressed.data(),
-                                                 pk_raw.data());
-  vector<uint64_t> public_key(15);
-  if (!Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data())) {
-    state.SkipWithError("Invalid public key");
-    return;
-  }
 
   bytes private_key = hex_to_bytes(
     "f4b7ff7cccc98813a69fae3df222bfe3f4e28f764bf91b4a10d8096ce446b254");
 
   bytes shared(64);
-  vector<uint64_t> shared_projective(15);
+
   for (auto _ : state) {
-    Hacl_EC_K256_point_mul(
-      private_key.data(), public_key.data(), shared_projective.data());
-    Hacl_EC_K256_point_compress(shared_projective.data(), shared.data());
+    Hacl_K256_ECDSA_ecdh(shared.data(), public_key.data(), private_key.data());
   }
 }
 
@@ -414,35 +404,6 @@ OpenSSL_K256_ECDH(benchmark::State& state)
 
 BENCHMARK(OpenSSL_K256_ECDH)->Setup(DoSetup);
 #endif
-
-// -----------------------------------------------------------------------------
-
-static void
-HACL_K256_ECDH_NoCompress(benchmark::State& state)
-{
-  bytes pk_raw = hex_to_bytes(
-    "d8096af8a11e0b80037e1ee68246b5dcbb0aeb1cf1244fd767db80f3fa27da2b396812ea"
-    "1686e7472e9692eaf3e958e50e9500d3b4c77243db1f2acd67ba9cc4");
-  bytes pk_compressed(33);
-  Hacl_K256_ECDSA_public_key_compressed_from_raw(pk_compressed.data(),
-                                                 pk_raw.data());
-  vector<uint64_t> public_key(15);
-  if (!Hacl_EC_K256_point_decompress(pk_compressed.data(), public_key.data())) {
-    state.SkipWithError("Invalid public key");
-    return;
-  }
-
-  bytes private_key = hex_to_bytes(
-    "f4b7ff7cccc98813a69fae3df222bfe3f4e28f764bf91b4a10d8096ce446b254");
-
-  vector<uint64_t> shared_projective(15);
-  for (auto _ : state) {
-    Hacl_EC_K256_point_mul(
-      private_key.data(), public_key.data(), shared_projective.data());
-  }
-}
-
-BENCHMARK(HACL_K256_ECDH_NoCompress)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
