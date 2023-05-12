@@ -52,7 +52,7 @@ operator<<(ostream& os, const TestCase& test)
 
 // -----------------------------------------------------------------------------
 
-const uint32_t POLY1305_KEY_SIZE = 32;
+// const uint32_t POLY1305_KEY_SIZE = 32;
 const uint32_t POLY1305_TAG_SIZE = 16;
 
 void

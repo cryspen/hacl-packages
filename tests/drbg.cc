@@ -167,7 +167,8 @@ TEST(DrbgSuite, SmokeTest)
                                    personalization.data());
 
         // This is only to cover all functions.
-        bool _ = Hacl_HMAC_DRBG_uu___is_State(hash, state);
+        bool is_state = Hacl_HMAC_DRBG_uu___is_State(hash, state);
+        EXPECT_TRUE(is_state);
 
         // Generate
         bytes output = bytes(count);
@@ -218,7 +219,7 @@ TEST_P(DrbgNRSuite, KAT)
   auto test = GetParam();
 
   bool skip = false;
-  Spec_Hash_Definitions_hash_alg hash;
+  Spec_Hash_Definitions_hash_alg hash = Spec_Hash_Definitions_SHA2_256;
   cavp_to_hash(test.hash, skip, hash);
   if (skip) {
     cout << "Skipping \"" << test.hash << "\"" << endl;

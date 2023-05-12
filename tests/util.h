@@ -72,7 +72,9 @@ chunk(bytes data, size_t chunk_size)
   auto end = data.end();
 
   while (start != end) {
-    auto next = distance(start, end) >= chunk_size ? start + chunk_size : end;
+    auto next = static_cast<size_t>(distance(start, end)) >= chunk_size
+                  ? start + chunk_size
+                  : end;
 
     out.emplace_back(start, next);
     start = next;
@@ -220,7 +222,7 @@ generate_p256_keypair(uint8_t* sk, uint8_t* pk)
 void
 print_hex_ln(size_t bytes_len, uint8_t* bytes)
 {
-  for (int i = 0; i < bytes_len; ++i) {
+  for (size_t i = 0; i < bytes_len; ++i) {
     printf("%02x", bytes[i]);
   }
 

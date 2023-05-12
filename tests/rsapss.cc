@@ -405,7 +405,7 @@ TEST_P(RsaPssVerifySuite, Group)
   auto group = GetParam();
 
   for (auto test : group.tests) {
-    bool got;
+    bool got = false;
     verify(group.e, group.n, group.saltLen, group.a, test.msg, test.sgnt, &got);
 
     EXPECT_EQ(test.expected, got) << "tcId=" << test.tcId;

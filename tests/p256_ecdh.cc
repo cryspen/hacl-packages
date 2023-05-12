@@ -113,7 +113,6 @@ TEST_P(P256EcdhWycheproof, TryWycheproof)
   const TestCase& test_case(GetParam());
 
   // Stupid const
-  uint8_t* private_key = const_cast<uint8_t*>(test_case.private_key.data());
   uint8_t* public_key = const_cast<uint8_t*>(test_case.public_key.data());
 
   // Convert public key first

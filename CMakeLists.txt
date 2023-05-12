@@ -88,6 +88,8 @@ include(build/config.cmake)
 # TODO: Set flags for MSVC
 if(NOT MSVC)
     add_compile_options(
+        -Werror
+
         # -Wall
         # -Wextra
         # -pedantic
@@ -97,6 +99,7 @@ if(NOT MSVC)
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
+
         # $<$<CONFIG:RELEASE>:-g>
         # $<$<CONFIG:RELEASE>:-Wno-deprecated-declarations>
     )
@@ -189,10 +192,12 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
 
     if(NOT SOURCES_VEC128_LEN EQUAL 0)
         set(HACL_VEC128_O ON)
+
         if(TOOLCHAIN_CAN_COMPILE_VALE)
             # HPKE requires vale and vec128
-            list (APPEND SOURCES_vec128 ${SOURCES_vec128_vale})
+            list(APPEND SOURCES_vec128 ${SOURCES_vec128_vale})
         endif(TOOLCHAIN_CAN_COMPILE_VALE)
+
         add_library(hacl_vec128 OBJECT ${SOURCES_vec128})
         target_include_directories(hacl_vec128 PRIVATE)
 
@@ -243,10 +248,12 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
 
     if(NOT SOURCES_VEC256_LEN EQUAL 0)
         set(HACL_VEC256_O ON)
+
         if(TOOLCHAIN_CAN_COMPILE_VALE)
             # HPKE requires vale and vec256
-            list (APPEND SOURCES_vec256 ${SOURCES_vec256_vale})
+            list(APPEND SOURCES_vec256 ${SOURCES_vec256_vale})
         endif(TOOLCHAIN_CAN_COMPILE_VALE)
+
         add_library(hacl_vec256 OBJECT ${SOURCES_vec256})
         target_include_directories(hacl_vec256 PRIVATE)
 
@@ -426,14 +433,13 @@ if(ENABLE_BENCHMARKS)
     target_include_directories(digestif PUBLIC ${PROJECT_SOURCE_DIR}/third-party/digestif)
 endif(ENABLE_BENCHMARKS)
 
-
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
 if(ENABLE_TESTS)
     # Get gtests
     include(FetchContent)
     FetchContent_Declare(googletest
-	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     )
 
@@ -443,12 +449,13 @@ if(ENABLE_TESTS)
 
     # Get nlohmann json
     FetchContent_Declare(json
-	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/nlohmann/json/archive/refs/tags/v3.10.3.zip
     )
     FetchContent_MakeAvailable(json)
 
     foreach(TEST_FILE IN LISTS TEST_SOURCES)
+        # set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=bugprone-*)
         get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
         add_executable(${TEST_NAME}
             ${TEST_FILE}
@@ -460,9 +467,14 @@ if(ENABLE_TESTS)
             target_link_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
         endif()
 
+        # We need a modern C++ for designated initializers.
         if(MSVC)
-            # MSVC needs a modern C++ for designated initializers.
             target_compile_options(${TEST_NAME} PRIVATE /std:c++20)
+        else(MSVC)
+            target_compile_options(${TEST_NAME} PRIVATE
+                -Werror -Wall -Wextra -pedantic
+                -std=c++20
+            )
         endif(MSVC)
 
         add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
@@ -487,13 +499,14 @@ endif()
 # Benchmarks
 if(ENABLE_BENCHMARKS)
     message(STATUS "Building benchmarks")
+
     # find_package(benchmark REQUIRED)
     include(FetchContent)
     set(CMAKE_C_STANDARD 11)
 
     # We need gtest as well
     FetchContent_Declare(googletest
-	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
         URL https://github.com/google/googletest/archive/refs/tags/v1.13.0.zip
     )
 
@@ -501,10 +514,10 @@ if(ENABLE_BENCHMARKS)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
 
+    # The latest release 1.7.1 is broken due to https://github.com/google/benchmark/pull/1517
     FetchContent_Populate(benchmark
-        GIT_REPOSITORY  https://github.com/google/benchmark.git
-        # The latest release 1.7.1 is broken due to https://github.com/google/benchmark/pull/1517
-        GIT_TAG         b177433f3ee2513b1075140c723d73ab8901790f
+        GIT_REPOSITORY https://github.com/google/benchmark.git
+        GIT_TAG b177433f3ee2513b1075140c723d73ab8901790f
     )
     add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
 
@@ -520,6 +533,7 @@ if(ENABLE_BENCHMARKS)
                 target_include_directories(${BENCH_NAME} PUBLIC $ENV{OPENSSL_HOME}/include/)
                 target_link_directories(${BENCH_NAME} PRIVATE $ENV{OPENSSL_HOME}/lib)
             endif()
+
             target_link_libraries(${BENCH_NAME} PRIVATE crypto)
         else()
             target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
@@ -530,6 +544,7 @@ if(ENABLE_BENCHMARKS)
                 target_include_directories(${BENCH_NAME} PUBLIC $ENV{LIBTOMCRYPT_HOME}/include/)
                 target_link_directories(${BENCH_NAME} PRIVATE $ENV{LIBTOMCRYPT_HOME}/lib)
             endif()
+
             target_link_libraries(${BENCH_NAME} PRIVATE tomcrypt)
             target_compile_definitions(${BENCH_NAME} PUBLIC LIBTOMCRYPT)
         endif(ENABLE_LIBTOMCRYPT_BENCHMARKS)

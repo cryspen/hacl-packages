@@ -53,11 +53,11 @@ typedef uint32_t (*test_decrypt)(uint8_t*,
 bool
 print_test(test_encrypt aead_encrypt,
            test_decrypt aead_decrypt,
-           int in_len,
+           size_t in_len,
            uint8_t* in,
            uint8_t* key,
            uint8_t* nonce,
-           int aad_len,
+           size_t aad_len,
            uint8_t* aad,
            uint8_t* exp_mac,
            uint8_t* exp_cipher)
@@ -72,7 +72,7 @@ print_test(test_encrypt aead_encrypt,
   bool ok = compare_and_print(in_len, ciphertext, exp_cipher);
   ok = ok && compare_and_print(16, mac, exp_mac);
 
-  int res = (*aead_decrypt)(
+  uint32_t res = (*aead_decrypt)(
     key, nonce, aad_len, aad, in_len, plaintext, exp_cipher, exp_mac);
   ok = ok && (res == 0);
   ok = ok && compare_and_print(in_len, plaintext, in);
@@ -254,7 +254,7 @@ TEST_P(Chacha20Poly1305Wycheproof, TryWycheproof)
     EXPECT_EQ(std::vector<uint8_t>(mac, mac + 16), test_case.tag);
   }
 
-  int res = Hacl_Chacha20Poly1305_32_aead_decrypt(
+  uint32_t res = Hacl_Chacha20Poly1305_32_aead_decrypt(
     key, iv, test_case.aad.size(), aad, msg_size, plaintext.data(), ct, tag);
   EXPECT_EQ(res, test_case.valid ? 0 : 1);
 

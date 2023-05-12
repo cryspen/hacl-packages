@@ -131,7 +131,7 @@ TEST_P(P256EcdsaWycheproof, TryWycheproof)
   // Parse DER signature.
   // FIXME: This should really be in the HACL* libraray.
   //        The parsing here is opportunistic and not robust.
-  size_t sig_pointer = 0;
+  // size_t sig_pointer = 0;
   if (test_case.valid) {
     EXPECT_TRUE(test_case.sig.size() >= 2);
   }

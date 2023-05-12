@@ -151,6 +151,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t k[HACL_NACL_CRYPTO_BOX_BEFORENMBYTES];
     // Precompute key `k`.
     uint32_t res = Hacl_NaCl_crypto_box_beforenm(k, bob_pk, alice_sk);
+    ASSERT_EQ(0, res);
 
     const char* plaintext = "Hello, World!";
     const size_t plaintext_size = strlen(plaintext);
@@ -195,6 +196,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t k[HACL_NACL_CRYPTO_BOX_BEFORENMBYTES];
     // Precompute key `k`.
     uint32_t res = Hacl_NaCl_crypto_box_beforenm(k, bob_pk, alice_sk);
+    EXPECT_EQ(0, res);
 
     const char* plaintext = "Hello, World!";
     const size_t plaintext_size = strlen(plaintext);

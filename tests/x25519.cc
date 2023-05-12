@@ -41,7 +41,7 @@ TEST(x25519Test, HaclTest)
   hacl_init_cpu_features();
   EverCrypt_AutoConfig2_init();
 
-  for (int i = 0; i < sizeof(vectors) / sizeof(curve25519_test_vector); ++i) {
+  for (unsigned long i = 0; i < sizeof(vectors) / sizeof(curve25519_test_vector); ++i) {
     uint8_t comp[32] = { 0 };
     Hacl_Curve25519_51_ecdh(comp, vectors[i].scalar, vectors[i].public_key);
     EXPECT_TRUE(compare_and_print(32, comp, vectors[i].secret));
