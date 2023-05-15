@@ -6,7 +6,7 @@ This repository contains ready-to-use crypto packages developed by [Cryspen] on 
 In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
 as well as Rust, OCaml, and JavaScript bindings for this library.
 
-Currently, we are in the process of adding more usable APIs, [providing extensive documentation](https://tech.cryspen.com/hacl-packages/), and further optimizing the algorithms.
+Currently, we are in the process of adding more usable APIs, [providing extensive documentation](https://cryspen.com/hacl-packages/), and further optimizing the algorithms.
 
 ## What is HACL\* and why should you use HACL Packages?
 

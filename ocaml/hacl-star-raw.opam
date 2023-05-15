@@ -11,7 +11,7 @@ which `hacl-star-raw` is a dependency.
 maintainer: "Victor Dumitrescu <victor.dumitrescu@nomadic-labs.com>"
 authors: [ "Project Everest" ]
 license: "Apache-2.0"
-homepage: "https://tech.cryspen.com/hacl-packages/"
+homepage: "https://cryspen.com/hacl-packages/"
 bug-reports: "https://github.com/cryspen/hacl-packages/issues"
 depends: [
   "ocaml" { >= "4.08.0" }

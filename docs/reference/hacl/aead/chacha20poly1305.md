@@ -78,5 +78,5 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 ````
 `````
 
-[hacl packages book]: https://tech.cryspen.com/hacl-packages/algorithms.html
+[hacl packages book]: https://cryspen.com/hacl-packages/algorithms.html
 [rfc 8439]: https://www.rfc-editor.org/rfc/rfc8439.html
