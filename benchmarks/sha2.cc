@@ -8,14 +8,6 @@
 #include "EverCrypt_Hash.h"
 #include "Hacl_Streaming_SHA2.h"
 
-#ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Hash_Blake2s_128.h"
-#endif
-
-#ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_Hash_Blake2b_256.h"
-#endif
-
 #include "util.h"
 
 #define HACL_HASH_SHA2_224_DIGEST_LENGTH 28
@@ -51,6 +43,29 @@ HACL_Sha2_oneshot(benchmark::State& state, Args&&... args)
 
   for (auto _ : state) {
     hash((uint8_t*)input.data(), input.size(), digest.data());
+  }
+
+  if (digest != expected_digest) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+
+template<class... Args>
+void
+HACL_Sha2_new_oneshot(benchmark::State& state, Args&&... args)
+{
+  auto args_tuple = std::make_tuple(std::move(args)...);
+
+  auto digest_len = std::get<0>(args_tuple);
+  auto expected_digest = std::get<1>(args_tuple);
+  auto hash = std::get<2>(args_tuple);
+
+  bytes digest(digest_len, 0);
+
+  for (auto _ : state) {
+    hash(digest.data(), input.size(), (uint8_t*)input.data());
   }
 
   if (digest != expected_digest) {
@@ -159,7 +174,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_224,
                   HACL_HASH_SHA2_224_DIGEST_LENGTH,
                   expected_digest_sha2_224,
-                  Hacl_Hash_SHA2_hash_224)
+                  Hacl_Streaming_SHA2_sha224)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -182,7 +197,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_256,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
-                  Hacl_Hash_SHA2_hash_256)
+                  Hacl_Streaming_SHA2_sha256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -205,7 +220,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_384,
                   HACL_HASH_SHA2_384_DIGEST_LENGTH,
                   expected_digest_sha2_384,
-                  Hacl_Hash_SHA2_hash_384)
+                  Hacl_Streaming_SHA2_sha384)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -228,7 +243,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_512,
                   HACL_HASH_SHA2_512_DIGEST_LENGTH,
                   expected_digest_sha2_512,
-                  Hacl_Hash_SHA2_hash_512)
+                  Hacl_Streaming_SHA2_sha512)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
