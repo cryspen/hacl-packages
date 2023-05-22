@@ -148,7 +148,8 @@ module Hash : sig
   end
 end
 (** Agile, multiplexing hashing interface, exposing 4 variants of SHA-2
-    (SHA-224, SHA-256, SHA-384, SHA-512), BLAKE2, and 2 legacy algorithms (SHA-1, MD5).
+    (SHA-224, SHA-256, SHA-384, SHA-512), 4 variants of SHA-3 (SHA3-224,
+    SHA3-256, SHA3-384, SHA3-512), BLAKE2, and 2 legacy algorithms (SHA-1, MD5).
     It offers both direct hashing and a streaming interface.
 
     {i Note:} The agile BLAKE2 interface is NOT currently multiplexing and it only exposes the portable C
@@ -156,10 +157,10 @@ end
     in {{!Hacl.blake2}Hacl}.
 
     For [digest], its size must match the size of the digest produced by the algorithm being used:
-    - SHA-224: 28 bytes
-    - SHA-256: 32 bytes
-    - SHA-384: 48 bytes
-    - SHA-512: 64 bytes
+    - SHA-224, SHA3-224: 28 bytes
+    - SHA-256, SHA3-256: 32 bytes
+    - SHA-384, SHA3-384: 48 bytes
+    - SHA-512, SHA3-512: 64 bytes
     - BLAKE2b: <= 64 bytes
     - BLAKE2s: <= 32 bytes
 
@@ -172,7 +173,6 @@ end
 (** {2:sha2 SHA-2}
 Multiplexing interfaces for SHA-224 and SHA-256 which use {{!AutoConfig2.SHAEXT}Intel SHA extensions} when available.
 *)
-
 
 (** {1:mac MACs}
 Message authentication codes *)
