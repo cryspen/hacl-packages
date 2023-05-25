@@ -281,11 +281,11 @@ def update(args):
 
     # Update OCaml bindings
     def copy_ocaml_randombuffer_lib():
-        src1 = os.path.join(hacl_dist,"lib/ml/Lib_RandomBuffer_System_bindings.ml")
+        src1 = os.path.join(hacl_home,"lib/ml/Lib_RandomBuffer_System_bindings.ml")
         dest1 = os.path.join("ocaml", "lib/Lib_RandomBuffer_System_bindings.ml")
         shutil.copyfile(src1, dest1)
-        src1 = os.path.join(hacl_dist,"lib/ml/Lib_RandomBuffer_System_gen.ml")
-        dest1 = os.path.join("ocaml", "lib/Lib_RandomBuffer_System_gen.ml")
+        src2 = os.path.join(hacl_home,"lib/ml/Lib_RandomBuffer_System_gen.ml")
+        dest2 = os.path.join("ocaml", "lib_gen/Lib_RandomBuffer_System_gen.ml")
         shutil.copyfile(src2, dest2)
 
     def copy_ocaml_dir(directory):
