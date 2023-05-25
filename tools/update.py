@@ -207,7 +207,6 @@ def update_karamel(new_dist_dir):
     shutil.copytree(os.path.join(new_dist_dir, "karamel/include"), "karamel/include")
     shutil.copytree(os.path.join(new_dist_dir, "karamel/krmllib"), "karamel/krmllib")
 
-
 def update_vale(new_dist_dir):
     new_dist_dir = Path(new_dist_dir)
 
@@ -281,6 +280,14 @@ def update(args):
     update_hacl(files, includes, editions)
 
     # Update OCaml bindings
+    def copy_ocaml_randombuffer_lib():
+        src1 = os.path.join(hacl_dist,"lib/ml/Lib_RandomBuffer_System_bindings.ml")
+        dest1 = os.path.join("ocaml", "lib/Lib_RandomBuffer_System_bindings.ml")
+        shutil.copyfile(src1, dest1)
+        src1 = os.path.join(hacl_dist,"lib/ml/Lib_RandomBuffer_System_gen.ml")
+        dest1 = os.path.join("ocaml", "lib/Lib_RandomBuffer_System_gen.ml")
+        shutil.copyfile(src2, dest2)
+
     def copy_ocaml_dir(directory):
         src = os.path.join(editions[0][1], directory)
         dest = os.path.join("ocaml", directory)
@@ -294,6 +301,7 @@ def update(args):
     copy_ocaml_dir("lib")
     copy_ocaml_dir("lib_gen")
     copy_ocaml_file("ctypes.depend")
+    copy_ocaml_randombuffer_lib()
 
     update_karamel(hacl_dist)
     if not args.no_vale:
