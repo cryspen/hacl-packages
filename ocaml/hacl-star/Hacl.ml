@@ -80,25 +80,25 @@ module Ed25519 : EdDSA =
 module SHA2_224 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = Agile HashDefs.SHA2_224
-    let hash = Hacl_Hash.hacl_Hash_SHA2_hash_224
+    let hash = Hacl_Hash.hacl_Streaming_SHA2_hash_224
 end)
 
 module SHA2_256 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = Agile HashDefs.SHA2_256
-    let hash = Hacl_Hash.hacl_Hash_SHA2_hash_256
+    let hash = Hacl_Hash.hacl_Streaming_SHA2_hash_256
 end)
 
 module SHA2_384 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = Agile HashDefs.SHA2_384
-    let hash = Hacl_Hash.hacl_Hash_SHA2_hash_384
+    let hash = Hacl_Hash.hacl_Streaming_SHA2_hash_384
 end)
 
 module SHA2_512 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = Agile HashDefs.SHA2_512
-    let hash = Hacl_Hash.hacl_Hash_SHA2_hash_512
+    let hash = Hacl_Hash.hacl_Streaming_SHA2_hash_512
 end)
 
 module SHA3_224 : HashFunction =
