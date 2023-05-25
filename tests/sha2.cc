@@ -14,7 +14,7 @@
 #include "Hacl_Hash_Base.h"
 #include "Hacl_Hash_SHA2.h"
 #include "Hacl_Spec.h"
-#include "Hacl_Streaming_SHA2.h"
+#include "Hacl_Hash_SHA2.h"
 #include "config.h"
 #include "evercrypt.h"
 #include "util.h"
@@ -80,7 +80,7 @@ TEST(ApiSuite, ApiTest)
 
     uint8_t digest[HACL_HASH_SHA2_256_DIGEST_LENGTH];
 
-    Hacl_Hash_SHA2_hash_256((uint8_t*)message, message_size, digest);
+    Hacl_Streaming_SHA2_hash_256((uint8_t*)message, message_size, digest);
     // END OneShot
 
     bytes expected_digest = from_hex(
@@ -158,13 +158,13 @@ TEST_P(Sha2KAT, TryKAT)
 
   bytes digest(test.md.size(), 0);
   if (test.md.size() == 224 / 8) {
-    Hacl_Hash_SHA2_hash_224(test.msg.data(), test.msg.size(), digest.data());
+    Hacl_Streaming_SHA2_hash_224(test.msg.data(), test.msg.size(), digest.data());
   } else if (test.md.size() == 256 / 8) {
-    Hacl_Hash_SHA2_hash_256(test.msg.data(), test.msg.size(), digest.data());
+    Hacl_Streaming_SHA2_hash_256(test.msg.data(), test.msg.size(), digest.data());
   } else if (test.md.size() == 384 / 8) {
-    Hacl_Hash_SHA2_hash_384(test.msg.data(), test.msg.size(), digest.data());
+    Hacl_Streaming_SHA2_hash_384(test.msg.data(), test.msg.size(), digest.data());
   } else if (test.md.size() == 512 / 8) {
-    Hacl_Hash_SHA2_hash_512(test.msg.data(), test.msg.size(), digest.data());
+    Hacl_Streaming_SHA2_hash_512(test.msg.data(), test.msg.size(), digest.data());
   }
 
   EXPECT_EQ(test.md, digest) << bytes_to_hex(test.md) << endl
