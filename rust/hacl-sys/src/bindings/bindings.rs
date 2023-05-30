@@ -498,7 +498,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 32 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha256(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Streaming_SHA2_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_create_in_224() -> *mut Hacl_Streaming_MD_state_32;
@@ -522,7 +522,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 28 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha224(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Streaming_SHA2_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_create_in_512() -> *mut Hacl_Streaming_MD_state_64;
@@ -554,7 +554,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 64 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha512(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Streaming_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Streaming_SHA2_create_in_384() -> *mut Hacl_Streaming_MD_state_64;
@@ -578,7 +578,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 48 bytes."]
-    pub fn Hacl_Streaming_SHA2_sha384(input: *mut u8, input_len: u32, dst: *mut u8);
+    pub fn Hacl_Streaming_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
