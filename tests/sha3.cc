@@ -105,7 +105,7 @@ TEST(ApiSuite, ApiTest)
     ASSERT_EQ(0, update_res);
     // This is optional when no intermediate results are required.
     auto finish_res = Hacl_Streaming_Keccak_finish(state, digest_1);
-    ASSERT_EQ(Hacl_Streaming_Keccak_Success, finish_res);
+    ASSERT_EQ(Hacl_Streaming_Types_Success, finish_res);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
@@ -113,7 +113,7 @@ TEST(ApiSuite, ApiTest)
       Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_2, chunk_2_size);
     ASSERT_EQ(0, update_res_2);
     auto finish_res_2 = Hacl_Streaming_Keccak_finish(state, digest_2);
-    ASSERT_EQ(Hacl_Streaming_Keccak_Success, finish_res_2);
+    ASSERT_EQ(Hacl_Streaming_Types_Success, finish_res_2);
 
     // Cleanup
     Hacl_Streaming_Keccak_free(state);

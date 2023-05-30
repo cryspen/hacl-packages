@@ -15,4 +15,3 @@
 #include "hacl/Hacl_P256.h"
 #include "hacl/Hacl_RSAPSS.h"
 #include "hacl/Hacl_Spec.h"
-#include "hacl/Hacl_Streaming_SHA2.h"

@@ -1,3 +1,4 @@
+
 use std::{env, path::Path, process::Command};
 
 #[cfg(all(not(windows), not(nobindgen)))]
@@ -40,14 +41,14 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
         .allowlist_type("Hacl_Streaming_SHA2_state.*")
-        .allowlist_type("Hacl_Streaming_SHA3_state.*")
+        .allowlist_type("Hacl_Streaming_Keccak_state.*")
         .allowlist_type("Hacl_HMAC_DRBG_.*")
         // Block everything we don't need or define ourselves.
         .blocklist_type("EverCrypt_AEAD_state_s.*")
         // These functions currently use FFI-unsafe u128
         .blocklist_type("FStar_UInt128_uint128")
-        .blocklist_function("Hacl_Hash_SHA2_update_last_384")
-        .blocklist_function("Hacl_Hash_SHA2_update_last_512")
+        .blocklist_function("Hacl_Streaming_SHA2_update_last_384")
+        .blocklist_function("Hacl_Streaming_SHA2_update_last_512")
         .blocklist_function("Hacl_Blake2b_32_blake2b_update_multi")
         .blocklist_function("Hacl_Blake2b_32_blake2b_update_last")
         .blocklist_function("Hacl_Blake2b_256_blake2b_update_multi")

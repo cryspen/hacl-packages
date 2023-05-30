@@ -194,10 +194,6 @@
             {
                 "file": "Hacl_SHA2_Vec256.c",
                 "features": "vec256"
-            },
-            {
-                "file": "Hacl_Streaming_SHA2.c",
-                "features": "std"
             }
         ],
         "sha1": [
