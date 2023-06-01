@@ -114,6 +114,10 @@ module HashDefs = struct
     | SHA2_512
     | BLAKE2b
     | BLAKE2s
+    | SHA3_224
+    | SHA3_256
+    | SHA3_384
+    | SHA3_512
     | Legacy of deprecated_alg
   let alg_definition = function
     | SHA2_224 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA2_224
@@ -122,6 +126,10 @@ module HashDefs = struct
     | SHA2_512 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA2_512
     | BLAKE2b -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_Blake2B
     | BLAKE2s -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_Blake2S
+    | SHA3_224 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_224
+    | SHA3_256 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_256
+    | SHA3_384 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_384
+    | SHA3_512 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_512
     | Legacy SHA1 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA1
     | Legacy MD5 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_MD5
   let digest_len alg =

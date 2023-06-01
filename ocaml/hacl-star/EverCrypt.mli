@@ -133,6 +133,21 @@ module Hash : sig
   (** Versions of these functions which write their output in a buffer passed in as
       an argument *)
   module Noalloc : sig
+    (** For [digest], its size must match the size of the digest produced by
+        the algorithm being used:
+        - SHA-224, SHA3-224: 28 bytes
+        - SHA-256, SHA3-256: 32 bytes
+        - SHA-384, SHA3-384: 48 bytes
+        - SHA-512, SHA3-512: 64 bytes
+        - BLAKE2b: <= 64 bytes
+        - BLAKE2s: <= 32 bytes
+
+        {b The {{!SharedDefs.HashDefs.deprecated_alg}legacy algorithms}
+        (marked [deprecated]) should NOT be used for cryptographic purposes.}
+        For these, the size of the digest is:
+        - SHA-1: 20 bytes
+        - MD5: 16 bytes
+    *)
 
     (** {1 Direct interface} *)
 
@@ -148,39 +163,19 @@ module Hash : sig
   end
 end
 (** Agile, multiplexing hashing interface, exposing 4 variants of SHA-2
-    (SHA-224, SHA-256, SHA-384, SHA-512), BLAKE2, and 2 legacy algorithms (SHA-1, MD5).
-    It offers both direct hashing and a streaming interface.
-
-    {i Note:} The agile BLAKE2 interface is NOT currently multiplexing and it only exposes the portable C
-    implementations of BLAKE2b and BLAKE2s. Optimised, platform-specific versions are aviailable
-    in {{!Hacl.blake2}Hacl}.
-
-    For [digest], its size must match the size of the digest produced by the algorithm being used:
-    - SHA-224: 28 bytes
-    - SHA-256: 32 bytes
-    - SHA-384: 48 bytes
-    - SHA-512: 64 bytes
-    - BLAKE2b: <= 64 bytes
-    - BLAKE2s: <= 32 bytes
-
-    {b The {{!SharedDefs.HashDefs.deprecated_alg}legacy algorithms} (marked [deprecated]) should NOT be used for cryptographic purposes. }
-    For these, the size of the digest is:
-    - SHA-1: 20 bytes
-    - MD5: 16 bytes
+    (SHA-224, SHA-256, SHA-384, SHA-512), 4 variants of SHA-3 (SHA3-224,
+    SHA3-256, SHA3-384, SHA3-512), BLAKE2 (both BLAKE2b and BLAKE2s),
+    and 2 legacy algorithms (SHA-1, MD5). It offers both direct hashing
+    and a streaming interface.
 *)
-
-(** {2:sha2 SHA-2}
-Multiplexing interfaces for SHA-224 and SHA-256 which use {{!AutoConfig2.SHAEXT}Intel SHA extensions} when available.
-*)
-
 
 (** {1:mac MACs}
 Message authentication codes *)
 
 (** {2 HMAC}
-    Portable HMAC implementations. They can use optimised assembly implementations for the
-    underlying hash function, if such an implementation exists and
-    {{!AutoConfig2.SHAEXT}Intel SHA extensions} are available (see {!sha2}).
+    Portable HMAC implementations. They can use optimised assembly
+    implementations for the underlying hash function, if such an implementation
+    exists and {{!AutoConfig2.SHAEXT}Intel SHA extensions} are available.
 *)
 
 module HMAC : sig
@@ -223,9 +218,9 @@ module Poly1305 : MAC
 (** {2:hkdf HKDF}
     HMAC-based key derivation function
 
-    Portable HKDF implementations. They can use optimised assembly implementations for the
-    underlying hash function, if such an implementation exists and
-    {{!AutoConfig2.SHAEXT}Intel SHA extensions} are available (see {!sha2}).
+    Portable HKDF implementations. They can use optimised assembly
+    implementations for the underlying hash function, if such an implementation
+    exists and {{!AutoConfig2.SHAEXT}Intel SHA extensions} are available.
 *)
 
 module HKDF : sig

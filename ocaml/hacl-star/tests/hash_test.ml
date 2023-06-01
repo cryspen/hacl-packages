@@ -156,6 +156,10 @@ let alg_definition = function
   | SHA2_512 -> HashDefs.SHA2_512
   | BLAKE2b -> HashDefs.BLAKE2b
   | BLAKE2s -> HashDefs.BLAKE2s
+  | SHA3_224 -> HashDefs.SHA3_224
+  | SHA3_256 -> HashDefs.SHA3_256
+  | SHA3_384 -> HashDefs.SHA3_384
+  | SHA3_512 -> HashDefs.SHA3_512
   | SHA1 -> HashDefs.Legacy HashDefs.SHA1
   | MD5 -> HashDefs.Legacy HashDefs.MD5
   | _ -> failwith "Algorithm not supported in agile Hashing API"
@@ -311,6 +315,10 @@ let _ =
   test_agile test_sha2_256;
   test_agile test_sha2_384;
   test_agile test_sha2_512;
+  test_agile test_sha3_224;
+  test_agile test_sha3_256;
+  test_agile test_sha3_384;
+  test_agile test_sha3_512;
   test_agile test_blake2b;
   test_agile test_blake2s;
 
