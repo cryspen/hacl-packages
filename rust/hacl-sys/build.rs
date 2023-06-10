@@ -1,4 +1,3 @@
-
 use std::{env, path::Path, process::Command};
 
 #[cfg(all(not(windows), not(nobindgen)))]
@@ -184,10 +183,12 @@ fn main() {
     let hacl_path = if !mach_build {
         // Copy all of the code into out to prepare build
         let c_out_dir = out_dir.join("c");
-        println!(" >>> Copying HACL C file");
-        println!("     from {}", home_dir.join(".c").display());
-        println!("     to {}", c_out_dir.display());
-        copy_hacl_to_out(&c_out_dir);
+        if !c_out_dir.join("build").join("installed").exists() {
+            println!(" >>> Copying HACL C file");
+            println!("     from {}", home_dir.join(".c").display());
+            println!("     to {}", c_out_dir.display());
+            copy_hacl_to_out(&c_out_dir);
+        }
         build_hacl_c(&c_out_dir, cross_target);
 
         c_out_dir.join("build").join("installed")
@@ -206,7 +207,8 @@ fn main() {
     let library_name = "hacl_static";
 
     // Set re-run trigger
-    println!("cargo:rerun-if-changed=wrapper.h");
+    // println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=build.rs");
     // We should re-run if the library changed. But this triggers the build
     // to re-run every time right now.
     // println!(
