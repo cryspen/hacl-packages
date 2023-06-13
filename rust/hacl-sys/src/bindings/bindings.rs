@@ -62,10 +62,8 @@ extern "C" {
         mac: *mut u8,
     ) -> u32;
 }
-pub type __m128i = [::std::os::raw::c_longlong; 2usize];
-pub type Lib_IntVector_Intrinsics_vec128 = __m128i;
-pub type __m256i = [::std::os::raw::c_longlong; 4usize];
-pub type Lib_IntVector_Intrinsics_vec256 = __m256i;
+pub type uint32x4_t = [u32; 4usize];
+pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
 extern "C" {
     #[doc = "Encrypt a message `m` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the message.\n@param m Pointer to `mlen` bytes of memory where the message is read from.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is written to.\n@param mac Pointer to 16 bytes of memory where the mac is written to."]
     pub fn Hacl_Chacha20Poly1305_256_aead_encrypt(
@@ -446,6 +444,7 @@ extern "C" {
         -> bool;
 }
 pub type Spec_Hash_Definitions_hash_alg = u8;
+pub type Hacl_Streaming_Types_error_code = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hacl_Streaming_MD_state_32_s {
@@ -486,7 +485,7 @@ extern "C" {
         p: *mut Hacl_Streaming_MD_state_32,
         input: *mut u8,
         input_len: u32,
-    ) -> u32;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     #[doc = "Write the resulting hash into `dst`, an array of 32 bytes. The state remains\nvalid after a call to `finish_256`, meaning the user may feed more data into\nthe hash via `update_256`. (The finish_256 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
@@ -511,7 +510,7 @@ extern "C" {
         p: *mut Hacl_Streaming_MD_state_32,
         input: *mut u8,
         input_len: u32,
-    ) -> u32;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     #[doc = "Write the resulting hash into `dst`, an array of 28 bytes. The state remains\nvalid after a call to `finish_224`, meaning the user may feed more data into\nthe hash via `update_224`."]
@@ -542,7 +541,7 @@ extern "C" {
         p: *mut Hacl_Streaming_MD_state_64,
         input: *mut u8,
         input_len: u32,
-    ) -> u32;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     #[doc = "Write the resulting hash into `dst`, an array of 64 bytes. The state remains\nvalid after a call to `finish_512`, meaning the user may feed more data into\nthe hash via `update_512`. (The finish_512 function operates on an internal copy of\nthe state and therefore does not invalidate the client-held state `p`.)"]
@@ -567,7 +566,7 @@ extern "C" {
         p: *mut Hacl_Streaming_MD_state_64,
         input: *mut u8,
         input_len: u32,
-    ) -> u32;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     #[doc = "Write the resulting hash into `dst`, an array of 48 bytes. The state remains\nvalid after a call to `finish_384`, meaning the user may feed more data into\nthe hash via `update_384`."]
@@ -579,46 +578,6 @@ extern "C" {
 extern "C" {
     #[doc = "Hash `input`, of len `input_len`, into `dst`, an array of 48 bytes."]
     pub fn Hacl_Streaming_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_multi_224(s: *mut u32, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_multi_256(s: *mut u32, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_multi_384(s: *mut u64, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_multi_512(s: *mut u64, blocks: *mut u8, n_blocks: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_last_224(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_update_last_256(
-        s: *mut u32,
-        prev_len: u64,
-        input: *mut u8,
-        input_len: u32,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_224(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_256(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_384(input: *mut u8, input_len: u32, dst: *mut u8);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA2_hash_512(input: *mut u8, input_len: u32, dst: *mut u8);
 }
 extern "C" {
     #[doc = "Compute the public key from the private key.\n\nThe outparam `public_key`  points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32]."]
@@ -835,21 +794,20 @@ extern "C" {
         p: *mut Hacl_Streaming_Keccak_state,
         data: *mut u8,
         len: u32,
-    ) -> u32;
+    ) -> Hacl_Streaming_Types_error_code;
 }
-pub type Hacl_Streaming_Keccak_error_code = u8;
 extern "C" {
     pub fn Hacl_Streaming_Keccak_finish(
         s: *mut Hacl_Streaming_Keccak_state,
         dst: *mut u8,
-    ) -> Hacl_Streaming_Keccak_error_code;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     pub fn Hacl_Streaming_Keccak_squeeze(
         s: *mut Hacl_Streaming_Keccak_state,
         dst: *mut u8,
         l: u32,
-    ) -> Hacl_Streaming_Keccak_error_code;
+    ) -> Hacl_Streaming_Types_error_code;
 }
 extern "C" {
     pub fn Hacl_Streaming_Keccak_block_len(s: *mut Hacl_Streaming_Keccak_state) -> u32;
@@ -958,16 +916,12 @@ extern "C" {
     pub fn Hacl_Blake2s_128_blake2s_malloc() -> *mut Lib_IntVector_Intrinsics_vec128;
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_init(
-        hash: *mut Lib_IntVector_Intrinsics_vec256,
-        kk: u32,
-        nn: u32,
-    );
+    pub fn Hacl_Blake2b_256_blake2b_init(hash: *mut *mut ::std::os::raw::c_void, kk: u32, nn: u32);
 }
 extern "C" {
     pub fn Hacl_Blake2b_256_blake2b_update_key(
-        wv: *mut Lib_IntVector_Intrinsics_vec256,
-        hash: *mut Lib_IntVector_Intrinsics_vec256,
+        wv: *mut *mut ::std::os::raw::c_void,
+        hash: *mut *mut ::std::os::raw::c_void,
         kk: u32,
         k: *mut u8,
         ll: u32,
@@ -977,7 +931,7 @@ extern "C" {
     pub fn Hacl_Blake2b_256_blake2b_finish(
         nn: u32,
         output: *mut u8,
-        hash: *mut Lib_IntVector_Intrinsics_vec256,
+        hash: *mut *mut ::std::os::raw::c_void,
     );
 }
 extern "C" {
@@ -993,18 +947,18 @@ extern "C" {
 }
 extern "C" {
     pub fn Hacl_Blake2b_256_load_state256b_from_state32(
-        st: *mut Lib_IntVector_Intrinsics_vec256,
+        st: *mut *mut ::std::os::raw::c_void,
         st32: *mut u64,
     );
 }
 extern "C" {
     pub fn Hacl_Blake2b_256_store_state256b_to_state32(
         st32: *mut u64,
-        st: *mut Lib_IntVector_Intrinsics_vec256,
+        st: *mut *mut ::std::os::raw::c_void,
     );
 }
 extern "C" {
-    pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut Lib_IntVector_Intrinsics_vec256;
+    pub fn Hacl_Blake2b_256_blake2b_malloc() -> *mut *mut ::std::os::raw::c_void;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
