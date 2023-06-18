@@ -113,7 +113,7 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         run: |
-          sudo apt-get install ninja-build
+          sudo apt-get install ninja-build gcc-multilib
           rustup target add i686-unknown-linux-gnu
 
       - if: matrix.os == 'windows-latest'
