@@ -284,7 +284,7 @@ def build(args):
             print("! Cross-compilation is not supported on Windows.")
             exit(1)
         if m32:
-            print("! Cross-compilation is not supported when --m32 is set.")
+            print("! Cross-compilation is not supported when -m32 is set.")
             exit(1)
         if args.target == "x86_64-apple-darwin":
             cmake_args.extend(

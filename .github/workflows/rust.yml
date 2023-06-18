@@ -135,3 +135,7 @@ jobs:
       - name: Test Debug
         working-directory: rust
         run: cargo test -v
+
+      - name: Test Debug 32-bit
+        working-directory: rust
+        run: cargo test -v --target i686-unknown-linux-gnu

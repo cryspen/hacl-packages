@@ -70,34 +70,44 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 fn create_bindings(_: &Path, _: &Path) {}
 
 fn build_hacl_c(path: &Path, cross_target: Option<String>) {
-    println!(" >>> Building HACL C in {}", path.display());
+    eprintln!(" >>> Building HACL C in {}", path.display());
     // cmake
     let mut cmake_cmd = Command::new("cmake");
 
     // Map cross compile targets to cmake toolchain files
     let toolchain_file = cross_target
+        .clone()
         .map(|s| match s.as_str() {
-            "x86_64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake",
-            "aarch64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake",
-            _ => "",
+            "x86_64-apple-darwin" => vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"],
+            "aarch64-apple-darwin" => {
+                vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"]
+            }
+            _ => vec![],
         })
         .unwrap_or_default();
+    let mut cmake_args = cross_target
+        .map(|s| match s.as_str() {
+            "i686-unknown-linux-gnu" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
+            _ => vec![],
+        })
+        .unwrap_or_default();
+    if !toolchain_file.is_empty() {
+        cmake_args.extend_from_slice(&toolchain_file);
+    }
+    cmake_args.extend_from_slice(&[
+        "-B",
+        "build",
+        "-G",
+        "Ninja",
+        "-D",
+        "CMAKE_BUILD_TYPE=Release",
+    ]);
 
     // We always build the release version here.
     // TODO: For debugging don't use this.
-    let cmake_status = cmake_cmd
-        .current_dir(path)
-        .args(&[
-            "-B",
-            "build",
-            "-G",
-            "Ninja",
-            "-D",
-            "CMAKE_BUILD_TYPE=Release",
-            toolchain_file,
-        ])
-        .status()
-        .expect("Failed to run cmake.");
+    let cmake_cmd = cmake_cmd.current_dir(path).args(&cmake_args);
+    eprintln!(" >>> CMAKE: {cmake_cmd:?}");
+    let cmake_status = cmake_cmd.status().expect("Failed to run cmake.");
     if !cmake_status.success() {
         panic!("Failed to run cmake.")
     }
@@ -114,7 +124,7 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
 
     // install
     let install_path = path.join("build").join("installed");
-    println!(" >>> Installing HACL C into {}", install_path.display());
+    eprintln!(" >>> Installing HACL C into {}", install_path.display());
     let mut cmake_cmd = Command::new("cmake");
     let cmake_status = cmake_cmd
         .current_dir(path)
@@ -173,7 +183,7 @@ fn main() {
     let host = env::var("HOST").unwrap();
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_dir = Path::new(&out_dir);
-    println!("mach_build: {}", mach_build);
+    eprintln!("mach_build: {}", mach_build);
 
     let cross_target = if target != host { Some(target) } else { None };
 
@@ -184,9 +194,9 @@ fn main() {
         // Copy all of the code into out to prepare build
         let c_out_dir = out_dir.join("c");
         if !c_out_dir.join("build").join("installed").exists() {
-            println!(" >>> Copying HACL C file");
-            println!("     from {}", home_dir.join(".c").display());
-            println!("     to {}", c_out_dir.display());
+            eprintln!(" >>> Copying HACL C file");
+            eprintln!("     from {}", home_dir.join(".c").display());
+            eprintln!("     to {}", c_out_dir.display());
             copy_hacl_to_out(&c_out_dir);
         }
         build_hacl_c(&c_out_dir, cross_target);
