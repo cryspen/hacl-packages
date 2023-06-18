@@ -113,7 +113,7 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         run: |
-          sudo apt-get install ninja-build gcc-multilib
+          sudo apt-get install ninja-build gcc-multilib g++-multilib
           rustup target add i686-unknown-linux-gnu
 
       - if: matrix.os == 'windows-latest'
@@ -148,4 +148,6 @@ jobs:
       - name: Test Debug 32-bit
         if: matrix.os == 'windows-latest'
         working-directory: rust
-        run: cargo test -v --target i686-pc-windows-msvc
+        run: |
+          ../tools/vcbuild.cmd 32
+          cargo test -v --target i686-pc-windows-msvc
