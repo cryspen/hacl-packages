@@ -14,6 +14,8 @@ on:
       - LICENSE-APACHE
       - README.md
   workflow_dispatch:
+  merge_group:
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,6 +23,7 @@ concurrency:
 
 jobs:
   linux:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -88,6 +91,7 @@ jobs:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: macos-latest
     strategy:
       matrix:
@@ -154,6 +158,7 @@ jobs:
           name: macos_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.target }}
 
   windows:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: windows-latest
     strategy:
       matrix:
@@ -206,6 +211,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   android:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -232,6 +238,7 @@ jobs:
           name: ${{ matrix.target }}
 
   s390x-gcc:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -266,6 +273,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   default:
+    if: ${{ github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
