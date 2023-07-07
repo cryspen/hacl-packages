@@ -26,6 +26,7 @@ on:
       - LICENSE-APACHE
       - README.md
   workflow_dispatch:
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
