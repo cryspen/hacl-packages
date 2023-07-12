@@ -185,7 +185,7 @@ fn main() {
     let out_dir = Path::new(&out_dir);
     eprintln!("mach_build: {}", mach_build);
 
-    let cross_target = if target != host { Some(target) } else { None };
+    let cross_target = if target != host { Some(target.clone()) } else { None };
 
     // Get the C library and build it first.
     // This is the default behaviour. It can be disabled when working on this
@@ -215,6 +215,32 @@ fn main() {
 
     // Set library name to look up
     let library_name = "hacl_static";
+    // let library_name = match target.as_str() {
+    //     // "x86_64-apple-darwin" => cfg.set_cross_config_flags(vec!["-target", "x86_64-apple-darwin"]),
+    //     // "aarch64-apple-darwin" => {
+    //     //     cfg.set_cross_config_flags(vec!["-target", "aarch64-apple-darwin"])
+    //     // }
+    //     // "aarch64-apple-ios" => cfg.set_cross_config_flags(vec!["-target", "aarch64-apple-ios"]),
+    //     // "i686-unknown-linux-gnu" => cfg.set_cross_config_flags(vec!["-target", "ia32"]),
+    //     // "x86_64-unknown-linux-gnu" => {
+    //     //     cfg.set_cross_config_flags(vec!["-target", "x86_64-unknown-linux-gnu"])
+    //     // }
+    //     // // ARM32 v7 (e.g. raspberry pi 3)
+    //     // // TODO: set TOOLCHAIN when cross compiling
+    //     // "armv7-unknown-linux-gnueabihf" => {
+    //     //     cfg.set_cross_config_flags(vec!["-target", "arm32-none-linux-gnu"])
+    //     // }
+    //     // // ARM64 Linux
+    //     // // TODO: set TOOLCHAIN when cross compiling
+    //     // "aarch64-unknown-linux-gnu" => {
+    //     //     cfg.set_cross_config_flags(vec!["-target", "aarch64-none-linux-gnu"])
+    //     // }
+    //     // Only MSVC builds are supported on Windows.
+    //     "x86_64-pc-windows-msvc" => "hacl_static",
+    //     // TODO: Which Android versions do we want to support?
+    //     // "aarch64-linux-android" => panic!("Target '{:?}' is not supported yet.", target),
+    //     _ => panic!("Target '{:?}' is not supported yet.", target),
+    // };
 
     // Set re-run trigger
     // println!("cargo:rerun-if-changed=wrapper.h");
@@ -232,8 +258,7 @@ fn main() {
     create_bindings(&hacl_include_path, home_dir);
 
     // Link hacl library.
-    let mode = "static";
-    println!("cargo:rustc-link-lib={}={}", mode, library_name);
     println!("cargo:rustc-link-search=native={}", hacl_lib_path.display());
     println!("cargo:lib={}", hacl_lib_path.display());
+    println!("cargo:rustc-link-lib=static={library_name}");
 }

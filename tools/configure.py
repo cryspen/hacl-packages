@@ -11,7 +11,6 @@ import re
 import shutil
 import subprocess
 from glob import glob
-from os import sep as separator
 from os.path import join
 
 from tools.utils import argument, cmake_config, dep_config, json_config, subcommand
@@ -274,7 +273,7 @@ class Config:
                         "\n\t".join(
                             join("${PROJECT_SOURCE_DIR}", f)
                             for f in self.hacl_compile_feature[a]
-                        ).replace(separator, "/"),
+                        ).replace("\\", "/"),
                     )
                 )
 
@@ -282,26 +281,26 @@ class Config:
                 "set(INCLUDES\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes
-                ).replace(separator, "/")
-            )
+                ).replace("\\", "/")
+            )   
 
             out.write(
                 "set(PUBLIC_INCLUDES\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes
-                ).replace(separator, "/")
+                ).replace("\\", "/")
             )
 
             out.write(
                 "set(ALGORITHMS\n\t%s\n)\n"
-                % "\n\t".join(a for a in self.hacl_files).replace(separator, "/")
+                % "\n\t".join(a for a in self.hacl_files).replace("\\", "/")
             )
 
             out.write(
                 "set(INCLUDE_PATHS\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths
-                ).replace(separator, "/")
+                ).replace("\\", "/")
             )
 
             out.write(
@@ -310,7 +309,7 @@ class Config:
                     "\n\t".join(
                         join("${PROJECT_SOURCE_DIR}", "tests", f)
                         for f in self.test_sources
-                    ).replace(separator, "/")
+                    ).replace("\\", "/")
                 )
             )
 
@@ -320,7 +319,7 @@ class Config:
                     "\n\t".join(
                         join("${PROJECT_SOURCE_DIR}", "benchmarks", f)
                         for f in self.benchmark_sources
-                    ).replace(separator, "/")
+                    ).replace("\\", "/")
                 )
             )
 
@@ -332,20 +331,20 @@ class Config:
                         "\n\t".join(
                             join("${PROJECT_SOURCE_DIR}", f)
                             for f in self.vale_files[os]
-                        ).replace(separator, "/"),
+                        ).replace("\\", "/"),
                     )
                 )
 
             out.write(
                 "set(ALGORITHM_TEST_FILES\n\t%s\n)\n"
                 % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace(
-                    separator, "/"
+                    "\\", "/"
                 )
             )
             for a in self.tests:
                 out.write(
                     "set(TEST_FILES_%s\n\t%s\n)\n"
-                    % (a, "\n\t".join(f for f in self.tests[a]).replace(separator, "/"))
+                    % (a, "\n\t".join(f for f in self.tests[a]).replace("\\", "/"))
                 )
 
     def dep_config(self):
