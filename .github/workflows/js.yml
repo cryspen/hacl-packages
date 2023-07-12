@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - dev
       - 'hacl-star-**'
   pull_request:
   workflow_dispatch:
+  merge_group:
 
 jobs:
    default:

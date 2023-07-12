@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
     paths-ignore:
       - .gitignore
       - CLA.md
@@ -25,6 +26,7 @@ on:
       - LICENSE-APACHE
       - README.md
   workflow_dispatch:
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1,4 +1,4 @@
-# Introduction
+# HACL Packages
 
 The Cryspen HACL packages is a collection of cryptographic libraries developed
 by Cryspen on top of [HACL*].

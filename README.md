@@ -1,7 +1,5 @@
 # The Cryspen HACL Packages
 
-![][status]
-
 This repository contains ready-to-use crypto packages developed by [Cryspen] on top of [HACL*].
 In particular, it contains a portable C crypto library that selects optimized implementations for each platform,
 as well as Rust, OCaml, and JavaScript bindings for this library.
@@ -147,6 +145,7 @@ packages.
 | Signature            | Ed25519           | Portable                                |
 | Signature            | ECDSA P-256r1     | Portable                                |
 | Signature            | ECDSA P-256k1     | Portable                                |
+| Signature            | RSA-PSS           | Portable                                |
 | Hash                 | SHA2-224          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-256          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-384          | Portable                                |
