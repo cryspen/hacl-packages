@@ -282,7 +282,7 @@ class Config:
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes
                 ).replace("\\", "/")
-            )   
+            )
 
             out.write(
                 "set(PUBLIC_INCLUDES\n\t%s\n)\n"

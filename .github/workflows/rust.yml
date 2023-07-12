@@ -95,6 +95,9 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - windows-latest
+        exclude:
+          - bits: 32
+            os: "macos-latest"
 
     runs-on: ${{ matrix.os }}
 
