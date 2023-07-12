@@ -88,6 +88,7 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
     let mut cmake_args = cross_target
         .map(|s| match s.as_str() {
             "i686-unknown-linux-gnu" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
+            "i686-pc-windows-msvc" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
             _ => vec![],
         })
         .unwrap_or_default();
@@ -215,32 +216,6 @@ fn main() {
 
     // Set library name to look up
     let library_name = "hacl_static";
-    // let library_name = match target.as_str() {
-    //     // "x86_64-apple-darwin" => cfg.set_cross_config_flags(vec!["-target", "x86_64-apple-darwin"]),
-    //     // "aarch64-apple-darwin" => {
-    //     //     cfg.set_cross_config_flags(vec!["-target", "aarch64-apple-darwin"])
-    //     // }
-    //     // "aarch64-apple-ios" => cfg.set_cross_config_flags(vec!["-target", "aarch64-apple-ios"]),
-    //     // "i686-unknown-linux-gnu" => cfg.set_cross_config_flags(vec!["-target", "ia32"]),
-    //     // "x86_64-unknown-linux-gnu" => {
-    //     //     cfg.set_cross_config_flags(vec!["-target", "x86_64-unknown-linux-gnu"])
-    //     // }
-    //     // // ARM32 v7 (e.g. raspberry pi 3)
-    //     // // TODO: set TOOLCHAIN when cross compiling
-    //     // "armv7-unknown-linux-gnueabihf" => {
-    //     //     cfg.set_cross_config_flags(vec!["-target", "arm32-none-linux-gnu"])
-    //     // }
-    //     // // ARM64 Linux
-    //     // // TODO: set TOOLCHAIN when cross compiling
-    //     // "aarch64-unknown-linux-gnu" => {
-    //     //     cfg.set_cross_config_flags(vec!["-target", "aarch64-none-linux-gnu"])
-    //     // }
-    //     // Only MSVC builds are supported on Windows.
-    //     "x86_64-pc-windows-msvc" => "hacl_static",
-    //     // TODO: Which Android versions do we want to support?
-    //     // "aarch64-linux-android" => panic!("Target '{:?}' is not supported yet.", target),
-    //     _ => panic!("Target '{:?}' is not supported yet.", target),
-    // };
 
     // Set re-run trigger
     // println!("cargo:rerun-if-changed=wrapper.h");
