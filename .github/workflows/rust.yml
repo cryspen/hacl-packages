@@ -90,6 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        bits: [32, 64]
         os:
           - macos-latest
           - ubuntu-latest
@@ -118,8 +119,17 @@ jobs:
           sudo apt-get install ninja-build gcc-multilib g++-multilib
           rustup target add i686-unknown-linux-gnu
 
-      - if: matrix.os == 'windows-latest'
+      - name: Setup | Developer Command Prompt (x86)
+        if: ${{ matrix.bits == 32 && matrix.os == 'windows-latest' }}
         uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
+        with:
+          arch: x86
+
+      - name: Setup | Developer Command Prompt (x64)
+        if: ${{ matrix.bits == 64 && matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
+        with:
+          arch: x64
 
       - if: matrix.os == 'windows-latest'
         run: |
@@ -131,24 +141,27 @@ jobs:
         run: cargo update
 
       - name: Debug Build
+        if: matrix.bits == 64
         working-directory: rust
         run: cargo build -v
 
       - name: Release Build
+        if: matrix.bits == 64
         working-directory: rust
         run: cargo build --release -v
 
       - name: Test Debug
+        if: matrix.bits == 64
         working-directory: rust
         run: cargo test -v
 
       - name: Test Debug 32-bit
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.bits == 32 && matrix.os == 'ubuntu-latest' }}
         working-directory: rust
         run: cargo test -v --target i686-unknown-linux-gnu
 
       - name: Test Debug 32-bit
-        if: matrix.os == 'windows-latest'
+        if: ${{ matrix.bits == 32 && matrix.os == 'windows-latest' }}
         working-directory: rust
         run: |
           ../tools/vcbuild.cmd 32
