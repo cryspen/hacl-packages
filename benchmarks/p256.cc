@@ -286,10 +286,7 @@ HACL_P256_ECDH(benchmark::State& state)
 
 BENCHMARK(HACL_P256_ECDH)->Setup(DoSetup);
 
-extern "C" void point_mul_secp256r1(unsigned char outx[32], unsigned char outy[32],
-                        const unsigned char scalar[32],
-                        const unsigned char inx[32],
-				const unsigned char iny[32]);
+#include "ecp_secp256r1.h"
 
 static void
 ECCKiila_P256_ECDH(benchmark::State& state)
@@ -359,9 +356,6 @@ HACL_P256_S2P(benchmark::State& state)
 
 BENCHMARK(HACL_P256_S2P)->Setup(DoSetup);
 
-extern "C" void point_mul_g_secp256r1(unsigned char outx[32], unsigned char outy[32],
-				      const unsigned char scalar[32]);
-
 static void
 ECCKiila_P256_S2P(benchmark::State& state)
 {
@@ -393,14 +387,6 @@ OpenSSL_P256_S2P(benchmark::State& state)
 
 BENCHMARK(OpenSSL_P256_S2P)->Setup(DoSetup);
 #endif
-
-extern "C"
-    void
-    point_mul_two_secp256r1(unsigned char outx[32], unsigned char outy[32],
-                            const unsigned char a[32],
-                            const unsigned char b[32],
-                            const unsigned char inx[32],
-                            const unsigned char iny[32]);
 
 static void
 ECCKiila_P256_ECDH2(benchmark::State& state)
