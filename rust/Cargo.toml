@@ -8,6 +8,7 @@ documentation = "https://docs.rs/hacl/"
 description = "Crypto library using formally verified code from the HACL project"
 readme = "README.md"
 repository = "https://github.com/cryspen/hacl-packages"
+rust-version = "1.60"
 
 [lib]
 crate-type = ["staticlib", "cdylib", "lib"]
