@@ -553,4 +553,25 @@ if(ENABLE_BENCHMARKS)
             benchmark::benchmark
         )
     endforeach()
+
+    # Standalone benchmarks
+    set(BENCH_NAME p256-standalone_benchmark)
+    add_executable(${BENCH_NAME}
+    ${PROJECT_SOURCE_DIR}/benchmarks/p256-standalone.cc
+    )
+
+    # Use modern C++
+    if(NOT MSVC)
+        target_compile_options(${BENCH_NAME} PRIVATE -std=c++17)
+    else()
+        # MSVC needs a modern C++ for designated initializers.
+        target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
+    endif(NOT MSVC)
+
+    add_dependencies(${BENCH_NAME} hacl)
+    target_link_libraries(${BENCH_NAME} PRIVATE
+        hacl_static
+        ecckiila
+    )
+
 endif(ENABLE_BENCHMARKS)
