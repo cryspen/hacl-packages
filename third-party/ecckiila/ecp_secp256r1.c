@@ -22,6 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+#include "ecp_secp256r1.h"
+
 #if defined(__SIZEOF_INT128__) && !defined(PEDANTIC)
 
 #include <stdint.h>

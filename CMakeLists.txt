@@ -410,6 +410,7 @@ endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
 if(ENABLE_BENCHMARKS)
     include(${PROJECT_SOURCE_DIR}/third-party/ecckiila/config.cmake)
     add_library(ecckiila OBJECT ${SOURCES_ecckiila})
+    target_include_directories(ecckiila PUBLIC ${PROJECT_SOURCE_DIR}/third-party/ecckiila)
 endif(ENABLE_BENCHMARKS)
 
 # Add blake2 for benchmarks
