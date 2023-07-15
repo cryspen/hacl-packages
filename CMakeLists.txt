@@ -175,6 +175,7 @@ endif()
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
 # - SOURCES_vec256: Files that require vec256 hardware
+# - SOURCES_aesni_pclmul: Files that require aes-ni/pclmul hardware
 
 # Remove files that require missing toolchain features
 # and enable the features for compilation that are available.
@@ -284,6 +285,44 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     set(HACL_CAN_COMPILE_VALE 1)
 endif()
 
+if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL)
+    add_compile_options(
+        -DHACL_CAN_COMPILE_VEC128
+    )
+    set(HACL_CAN_COMPILE_AESNI_PCLMUL 1)
+
+    # # We make separate compilation units (objects) for each hardware feature
+    list(LENGTH SOURCES_aesni_pclmul SOURCES_AESNI_PCLMUL_LEN)
+
+    if(NOT SOURCES_AESNI_PCLMUL_LEN EQUAL 0)
+        set(HACL_AESNI_PCLMUL_O ON)
+        add_library(hacl_aesni_pclmul OBJECT ${SOURCES_aesni_pclmul})
+        target_include_directories(hacl_aesni_pclmul PRIVATE)
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+            add_compile_options(
+                -DHACL_CAN_COMPILE_VEC256
+            )
+
+            if(MSVC)
+            # Nothing to do here. MSVC has it covered
+            else()
+                target_compile_options(hacl_aesni_pclmul PRIVATE
+                    -msse2
+                    -msse3
+                    -msse4.1
+                    -msse4.2
+                    -maes
+                    -mpclmul
+                )
+            endif(MSVC)
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+            target_compile_options(hacl_aesni_pclmul PRIVATE
+                -march=armv8-a+crypto
+            )
+        endif()
+    endif()
+endif()
+
 if(TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     message(STATUS "Detected inline assembly support")
     set(HACL_CAN_COMPILE_INLINE_ASM 1)
@@ -348,6 +387,11 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 
+if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL AND HACL_AESNI_PCLMUL_O)
+    add_dependencies(hacl hacl_aesni_pclmul)
+    target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_aesni_pclmul>)
+endif()
+
 # # Static library
 add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
 
@@ -357,6 +401,10 @@ endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
+endif()
+
+if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL AND HACL_AESNI_PCLMUL_O)
+    target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_aesni_pclmul>)
 endif()
 
 # Install
@@ -399,12 +447,13 @@ install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
 # # Install config.h
 install(FILES build/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 
-# The CPU detection is used for testing and benchmarking
-if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
-    # CPU feature detection for tests
-    add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
-    target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
-endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+# CPU feature detection for tests
+add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
+target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
+add_dependencies(hacl hacl_cpu_features)
+target_link_libraries(hacl PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
+add_dependencies(hacl_static hacl_cpu_features)
+target_link_libraries(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_cpu_features>)
 
 # Add ecckiila for benchmarks
 if(ENABLE_BENCHMARKS)
@@ -426,6 +475,11 @@ if(ENABLE_BENCHMARKS)
     target_include_directories(digestif PUBLIC ${PROJECT_SOURCE_DIR}/third-party/digestif)
 endif(ENABLE_BENCHMARKS)
 
+# Add bearssl for benchmarks
+if(ENABLE_BENCHMARKS)
+    include(${PROJECT_SOURCE_DIR}/third-party/bearssl/config.cmake)
+    add_library(bearssl OBJECT ${SOURCES_bearssl})
+endif(ENABLE_BENCHMARKS)
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
@@ -465,11 +519,10 @@ if(ENABLE_TESTS)
             target_compile_options(${TEST_NAME} PRIVATE /std:c++20)
         endif(MSVC)
 
-        add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
+        add_dependencies(${TEST_NAME} hacl)
         target_link_libraries(${TEST_NAME} PRIVATE
             gtest_main
             hacl_static
-            hacl_cpu_features
             nlohmann_json::nlohmann_json
         )
         target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
@@ -542,13 +595,13 @@ if(ENABLE_BENCHMARKS)
             target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
         endif(NOT MSVC)
 
-        add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
+        add_dependencies(${BENCH_NAME} hacl)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
             ecckiila
             blake2
             digestif
-            hacl_cpu_features
+            bearssl
             benchmark::benchmark
         )
     endforeach()

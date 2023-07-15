@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Spec_H
-#define __internal_Hacl_Spec_H
+#ifndef __internal_Hacl_Lib_H
+#define __internal_Hacl_Lib_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,26 +35,35 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "../Hacl_Spec.h"
+typedef struct Lib_Transposition64x8_uint64x2_s
+{
+  uint64_t fst;
+  uint64_t snd;
+}
+Lib_Transposition64x8_uint64x2;
 
-#define Spec_Cipher_Expansion_Hacl_CHACHA20 0
-#define Spec_Cipher_Expansion_Vale_AES128 1
-#define Spec_Cipher_Expansion_Vale_AES256 2
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_M32_AES128 5
-#define Spec_Cipher_Expansion_M32_AES256 6
+typedef struct Lib_Transposition64x8_uint64x4_s
+{
+  Lib_Transposition64x8_uint64x2 fst;
+  Lib_Transposition64x8_uint64x2 snd;
+}
+Lib_Transposition64x8_uint64x4;
 
-typedef uint8_t Spec_Cipher_Expansion_impl;
+typedef struct Lib_Transposition64x8_uint64x8_s
+{
+  Lib_Transposition64x8_uint64x4 fst;
+  Lib_Transposition64x8_uint64x4 snd;
+}
+Lib_Transposition64x8_uint64x8;
 
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
+uint64_t Lib_Transposition64x8_transpose_bits64(uint64_t x);
 
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+Lib_Transposition64x8_uint64x8
+Lib_Transposition64x8_transpose_bits64x8(Lib_Transposition64x8_uint64x8 a);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Spec_H_DEFINED
+#define __internal_Hacl_Lib_H_DEFINED
 #endif

@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Spec_H
-#define __internal_Hacl_Spec_H
+#ifndef __internal_Hacl_AES_128_BitSlice_H
+#define __internal_Hacl_AES_128_BitSlice_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,26 +35,49 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "../Hacl_Spec.h"
+#include "internal/Hacl_Lib.h"
+#include "../Hacl_AES_128_BitSlice.h"
 
-#define Spec_Cipher_Expansion_Hacl_CHACHA20 0
-#define Spec_Cipher_Expansion_Vale_AES128 1
-#define Spec_Cipher_Expansion_Vale_AES256 2
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_M32_AES128 5
-#define Spec_Cipher_Expansion_M32_AES256 6
+void Hacl_Impl_AES_CoreBitSlice_store_block0(uint8_t *out, uint64_t *inp);
 
-typedef uint8_t Spec_Cipher_Expansion_impl;
+void Hacl_Impl_AES_CoreBitSlice_load_key1(uint64_t *out, uint8_t *k);
 
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
+void Hacl_Impl_AES_CoreBitSlice_load_nonce(uint64_t *out, uint8_t *nonce1);
 
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+void Hacl_Impl_AES_CoreBitSlice_load_state(uint64_t *out, uint64_t *nonce1, uint32_t counter);
+
+void Hacl_Impl_AES_CoreBitSlice_xor_state_key1(uint64_t *st, uint64_t *ost);
+
+void Hacl_Impl_AES_CoreBitSlice_aes_enc(uint64_t *st, uint64_t *key);
+
+void Hacl_Impl_AES_CoreBitSlice_aes_enc_last(uint64_t *st, uint64_t *key);
+
+void
+Hacl_Impl_AES_CoreBitSlice_aes_keygen_assist(uint64_t *next, uint64_t *prev, uint8_t rcon1);
+
+void Hacl_Impl_AES_CoreBitSlice_key_expansion_step(uint64_t *next, uint64_t *prev);
+
+void
+Hacl_Impl_AES_Generic_aes128_ctr_bitslice(
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *inp,
+  uint64_t *ctx,
+  uint32_t counter
+);
+
+void
+Hacl_Impl_AES_Generic_aes256_ctr_bitslice(
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *inp,
+  uint64_t *ctx,
+  uint32_t counter
+);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Spec_H_DEFINED
+#define __internal_Hacl_AES_128_BitSlice_H_DEFINED
 #endif

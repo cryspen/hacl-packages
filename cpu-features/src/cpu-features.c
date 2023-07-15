@@ -35,6 +35,28 @@
 #error "Unsupported OS"
 #endif
 
+#include <stdlib.h>
+#if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&  \
+  defined(__GLIBC__) && defined(__GLIBC_PREREQ)
+#if __GLIBC_PREREQ(2, 16)
+#include <asm/hwcap.h>
+#include <sys/auxv.h>
+#define GETAUXVAL_FUNC
+#ifndef HWCAP_ASIMD
+#define HWCAP_ASIMD (1 << 1)
+#endif
+#ifndef HWCAP_AES
+#define HWCAP_AES (1 << 3)
+#endif
+#ifndef HWCAP_PMULL
+#define HWCAP_PMULL (1 << 4)
+#endif
+#ifndef HWCAP_SHA2
+#define HWCAP_SHA2 (1 << 6)
+#endif
+#endif
+#endif
+
 // === x86 | x64
 
 #if (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS)) &&            \
@@ -116,6 +138,8 @@ static unsigned int _bmi2 = 0;
 static unsigned int _pclmul = 0;
 static unsigned int _movbe = 0;
 static unsigned int _cmov = 0;
+// AArch64-specific variables
+static unsigned int _asimd = 0;
 
 // API
 
@@ -124,7 +148,9 @@ hacl_vec128_support()
 {
 #if defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)
   return _sse && _sse2 && _sse3 && _sse41 && _sse41 && _cmov;
-#elif defined(CPU_FEATURES_ARM64) || defined(CPU_FEATURES_POWERZ)
+#elif defined(CPU_FEATURES_ARM64)
+  return _asimd;
+#elif defined(CPU_FEATURES_POWERZ)
   return 1;
 #else
   return 0;
@@ -135,6 +161,12 @@ unsigned int
 hacl_vec256_support()
 {
   return _avx && _avx2;
+}
+
+unsigned int
+hacl_aesgcm_support()
+{
+  return hacl_vec128_support() && _aes && _pclmul;
 }
 
 unsigned int
@@ -186,15 +218,37 @@ hacl_init_cpu_features()
   _sse42 = (ecx & ECX_SSE4_2) != 0;
 #endif
 
+#if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&    \
+  defined(GETAUXVAL_FUNC)
+  unsigned long hwcap = getauxval(AT_HWCAP);
+  _asimd = ((hwcap & HWCAP_ASIMD) != 0) ? 1 : 0;
+  _aes = ((hwcap & HWCAP_AES) != 0) ? 1 : 0;
+  _pclmul = ((hwcap & HWCAP_PMULL) != 0) ? 1 : 0;
+  _sha = ((hwcap & HWCAP_SHA2) != 0) ? 1 : 0;
+#endif
+
 #if defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_ARM64)
+  int err;
   int64_t ret = 0;
   size_t size = sizeof(ret);
 
-  sysctlbyname("hw.optional.neon", &ret, &size, NULL, 0);
-  if (ret == 1) {
-    _aes = 1;
-    _sha = 1;
-  }
+  err = sysctlbyname("hw.optional.AdvSIMD", &ret, &size, NULL, 0);
+  _asimd = (err == 0 && ret > 0) ? 1 : 0;
+
+  ret = 0;
+  size = sizeof(ret);
+  err = sysctlbyname("hw.optional.arm.FEAT_AES", &ret, &size, NULL, 0);
+  _aes = (err == 0 && ret > 0) ? 1 : 0;
+
+  ret = 0;
+  size = sizeof(ret);
+  err = sysctlbyname("hw.optional.arm.FEAT_PMULL", &ret, &size, NULL, 0);
+  _pclmul = (err == 0 && ret > 0) ? 1 : 0;
+
+  ret = 0;
+  size = sizeof(ret);
+  err = sysctlbyname("hw.optional.arm.FEAT_SHA256", &ret, &size, NULL, 0);
+  _sha = (err == 0 && ret > 0) ? 1 : 0;
 #endif
 }
 

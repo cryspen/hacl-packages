@@ -26,8 +26,13 @@
 #include "EverCrypt_AEAD.h"
 
 #include "internal/Vale.h"
+#ifdef HACL_CAN_COMPILE_AESNI_PCLMUL
+#include "Hacl_AES_128_GCM_NI.h"
+#endif
+#include "Hacl_AES_128_GCM_M32.h"
 #include "internal/Hacl_Spec.h"
 #include "config.h"
+#include "hacl-cpu-features.h"
 
 /**
 Both encryption and decryption require a state that holds the key.
@@ -63,10 +68,14 @@ Spec_Agile_AEAD_alg EverCrypt_AEAD_alg_of_state(EverCrypt_AEAD_state_s *s)
         return Spec_Agile_AEAD_CHACHA20_POLY1305;
       }
     case Spec_Cipher_Expansion_Vale_AES128:
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
+    case Spec_Cipher_Expansion_M32_AES128:
       {
         return Spec_Agile_AEAD_AES128_GCM;
       }
     case Spec_Cipher_Expansion_Vale_AES256:
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES256:
+    case Spec_Cipher_Expansion_M32_AES256:
       {
         return Spec_Agile_AEAD_AES256_GCM;
       }
@@ -93,12 +102,12 @@ create_in_chacha20_poly1305(EverCrypt_AEAD_state_s **dst, uint8_t *k)
 static EverCrypt_Error_error_code
 create_in_aes128_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)480U, sizeof (uint8_t));
@@ -112,8 +121,31 @@ create_in_aes128_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
     *dst = p;
     return EverCrypt_Error_Success;
   }
+  else
+  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)352U, sizeof (uint8_t));
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx, k);
+    EverCrypt_AEAD_state_s
+    *p = (EverCrypt_AEAD_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_AEAD_state_s));
+    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES128, .ek = ek });
+    *dst = p;
+    return EverCrypt_Error_Success;
+  }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  {
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+    Hacl_AES_128_GCM_M32_aes128_gcm_init(aes_gcm_ctx, k);
+    EverCrypt_AEAD_state_s
+    *p = (EverCrypt_AEAD_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_AEAD_state_s));
+    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_M32_AES128, .ek = ek });
+    *dst = p;
+    return EverCrypt_Error_Success;
+  }
 }
 
 static EverCrypt_Error_error_code
@@ -307,6 +339,78 @@ encrypt_aes128_gcm(
 }
 
 static EverCrypt_Error_error_code
+encrypt_aes128_gcm_aesni_pclmul(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+)
+{
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+  Hacl_AES_128_GCM_NI_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+  memcpy(cipher, out, plain_len);
+  memcpy(tag, out + plain_len, 16);
+  KRML_HOST_FREE(out);
+  return EverCrypt_Error_Success;
+  #else
+  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
+    __FILE__,
+    __LINE__,
+    "statically unreachable");
+  KRML_HOST_EXIT(255U);
+  #endif
+}
+
+static EverCrypt_Error_error_code
+encrypt_aes128_gcm_m32(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+)
+{
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+  uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+  Hacl_AES_128_GCM_M32_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+  memcpy(cipher, out, plain_len);
+  memcpy(tag, out + plain_len, 16);
+  KRML_HOST_FREE(out);
+  return EverCrypt_Error_Success;
+}
+
+static EverCrypt_Error_error_code
 encrypt_aes256_gcm(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
@@ -487,6 +591,14 @@ EverCrypt_AEAD_encrypt(
         }
         EverCrypt_Chacha20Poly1305_aead_encrypt(ek, iv, ad_len, ad, plain_len, plain, cipher, tag);
         return EverCrypt_Error_Success;
+      }
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
+      {
+        return encrypt_aes128_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
+      }
+    case Spec_Cipher_Expansion_M32_AES128:
+      {
+        return encrypt_aes128_gcm_m32(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
       }
     default:
       {
@@ -1283,6 +1395,86 @@ decrypt_aes128_gcm(
 }
 
 static EverCrypt_Error_error_code
+decrypt_aes128_gcm_aesni_pclmul(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *cipher,
+  uint32_t cipher_len,
+  uint8_t *tag,
+  uint8_t *dst
+)
+{
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_128_GCM_NI_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
+  #else
+  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
+    __FILE__,
+    __LINE__,
+    "statically unreachable");
+  KRML_HOST_EXIT(255U);
+  #endif
+}
+
+static EverCrypt_Error_error_code
+decrypt_aes128_gcm_m32(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *cipher,
+  uint32_t cipher_len,
+  uint8_t *tag,
+  uint8_t *dst
+)
+{
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_128_GCM_M32_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
+}
+
+static EverCrypt_Error_error_code
 decrypt_aes256_gcm(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
@@ -1511,6 +1703,14 @@ EverCrypt_AEAD_decrypt(
     case Spec_Cipher_Expansion_Hacl_CHACHA20:
       {
         return decrypt_chacha20_poly1305(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
+      {
+        return decrypt_aes128_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_M32_AES128:
+      {
+        return decrypt_aes128_gcm_m32(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
       }
     default:
       {

@@ -53,6 +53,10 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Chacha20Poly1305.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Poly1305.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AEAD.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Lib.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Gf128_PreComp.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_BitSlice.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_GCM_M32.c
 )
 set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_256.c
@@ -86,7 +90,6 @@ set(SOURCES_vec128
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP128_SHA256.c
 )
 set(SOURCES_m32
-	
 )
 set(SOURCES_vale
 	${PROJECT_SOURCE_DIR}/src/Hacl_Curve25519_64.c
@@ -102,6 +105,11 @@ set(SOURCES_vec256_vale
 set(SOURCES_std_vale
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP32_SHA256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve64_CP32_SHA512.c
+)
+set(SOURCES_aesni_pclmul
+	${PROJECT_SOURCE_DIR}/src/Hacl_Gf128_NI.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_NI.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_GCM_NI.c
 )
 set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_NaCl.h
@@ -361,6 +369,14 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Chacha20Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Lib.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_AES_128_BitSlice.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Gf128_PreComp.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_BitSlice.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_GCM_M32.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Gf128_NI.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_NI.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_GCM_NI.h
 )
 set(ALGORITHMS
 	nacl
@@ -392,6 +408,7 @@ set(INCLUDE_PATHS
 	${PROJECT_SOURCE_DIR}/karamel/include
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal
 	${PROJECT_SOURCE_DIR}/vale/include
+	${PROJECT_SOURCE_DIR}/cpu-features/include
 )
 set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/detection.cc
@@ -435,6 +452,7 @@ set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/drbg.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/hmac.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/rsapss.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/aesgcm.cc
 )
 set(VALE_SOURCES_osx
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-darwin.S

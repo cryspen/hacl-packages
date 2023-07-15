@@ -6,6 +6,9 @@
     "vale_include_paths": [
         "vale/include"
     ],
+    "cpu_features_include_paths": [
+        "cpu-features/include"
+    ],
     "hacl_sources": {
         "nacl": [
             {
@@ -19,7 +22,36 @@
                 "features": "std"
             }
         ],
-        "aesgcm": [],
+        "aesgcm": [
+            {
+                "file": "Hacl_Lib.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Gf128_PreComp.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_AES_128_BitSlice.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_AES_128_GCM_M32.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_Gf128_NI.c",
+                "features": "aesni_pclmul"
+            },
+            {
+                "file": "Hacl_AES_128_NI.c",
+                "features": "aesni_pclmul"
+            },
+            {
+                "file": "Hacl_AES_128_GCM_NI.c",
+                "features": "aesni_pclmul"
+            }
+        ],
         "drbg": [
             {
                 "file": "Hacl_HMAC_DRBG.c",
@@ -552,6 +584,9 @@
         ],
         "rsapss": [
             "rsapss.cc"
+        ],
+        "aesgcm": [
+            "aesgcm.cc"
         ]
     }
 }
