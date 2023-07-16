@@ -118,7 +118,7 @@ pub fn sign(
     let key_size_bits = (key_len as u32) * 8;
 
     unsafe {
-        let skey = Hacl_RSAPSS_new_rsapss_load_skey(
+        let s_key = Hacl_RSAPSS_new_rsapss_load_skey(
             key_size_bits,
             E_BITS,
             key_size_bits,
@@ -132,15 +132,17 @@ pub fn sign(
             key_size_bits,
             E_BITS,
             key_size_bits,
-            skey,
+            s_key,
             salt.len() as u32,
             salt.as_ptr() as _,
             msg.len() as u32,
             msg.as_ptr() as _,
             signature.as_mut_ptr(),
         ) {
+            free(s_key);
             return Err(Error::SigningError);
         }
+        free(s_key);
     }
     Ok(signature)
 }

@@ -11,3 +11,8 @@ pub struct EverCrypt_AEAD_state_s {
     r#impl: u8,
     ek: *mut u8,
 }
+
+/// Free a raw C pointer.
+pub unsafe fn free(p: *mut u64) {
+    libc::free(p as *mut libc::c_void);
+}
