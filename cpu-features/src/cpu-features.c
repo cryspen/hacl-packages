@@ -232,6 +232,7 @@ hacl_init_cpu_features()
   int64_t ret = 0;
   size_t size = sizeof(ret);
 
+  // Check for general support of Advanced SIMD instructions
   err = sysctlbyname("hw.optional.AdvSIMD", &ret, &size, NULL, 0);
   _asimd = (err == 0 && ret > 0) ? 1 : 0;
 

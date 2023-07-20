@@ -84,6 +84,42 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 # Read config from file
 include(build/config.cmake)
 
+# x64
+# Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+    message(STATUS "Detected an x64 architecture")
+    set(ARCHITECTURE intel)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X64})
+
+# x86
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86")
+    message(STATUS "Detected an x86 architecture")
+    set(ARCHITECTURE intel)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X86})
+
+# arm64
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+    message(STATUS "Detected an arm64 architecture")
+    set(ARCHITECTURE arm)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_ARM64})
+
+# arm32
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armel|armhf|armv7|arm32v7")
+    message(STATUS "Detected an arm32 architecture")
+    set(ARCHITECTURE arm)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_ARM32})
+
+# s390x
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+    message(STATUS "Detected an s390x (systemz) architecture")
+    set(ARCHITECTURE arm)
+    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_SYSTEMZ})
+
+# unsupported architecture
+else()
+    message(FATAL_ERROR "Unsupported architecture ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
 # Configure different targets
 # TODO: Set flags for MSVC
 if(NOT MSVC)
@@ -197,7 +233,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
         add_library(hacl_vec128 OBJECT ${SOURCES_vec128})
         target_include_directories(hacl_vec128 PRIVATE)
 
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
+        if(ARCHITECTURE MATCHES intel)
             if(MSVC)
             # Nothing to do here. MSVC has it covered
             else()
@@ -208,7 +244,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC128)
                     -msse4.2
                 )
             endif(MSVC)
-        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+        elseif(HACL_TARGET_ARCHITECTURE MATCHES ${HACL_ARCHITECTURE_ARM64})
             target_compile_options(hacl_vec128 PRIVATE
                 -march=armv8-a+simd
             )
@@ -252,7 +288,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256)
         target_include_directories(hacl_vec256 PRIVATE)
 
         # We really should only get here on x86 architectures. But let's make sure.
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86|x86_64|amd64|AMD64")
+        if(ARCHITECTURE MATCHES intel)
             if(MSVC)
                 target_compile_options(hacl_vec256 PRIVATE
                     /arch:AVX
@@ -285,10 +321,7 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     set(HACL_CAN_COMPILE_VALE 1)
 endif()
 
-if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL)
-    add_compile_options(
-        -DHACL_CAN_COMPILE_VEC128
-    )
+if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL AND TOOLCHAIN_CAN_COMPILE_VEC128 AND ((ARCHITECTURE MATCHES intel AND TOOLCHAIN_CAN_COMPILE_VEC256) OR HACL_TARGET_ARCHITECTURE MATCHES ${HACL_ARCHITECTURE_ARM64}))
     set(HACL_CAN_COMPILE_AESNI_PCLMUL 1)
 
     # # We make separate compilation units (objects) for each hardware feature
@@ -298,11 +331,7 @@ if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL)
         set(HACL_AESNI_PCLMUL_O ON)
         add_library(hacl_aesni_pclmul OBJECT ${SOURCES_aesni_pclmul})
         target_include_directories(hacl_aesni_pclmul PRIVATE)
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86_64|amd64|AMD64")
-            add_compile_options(
-                -DHACL_CAN_COMPILE_VEC256
-            )
-
+        if(ARCHITECTURE MATCHES intel)
             if(MSVC)
             # Nothing to do here. MSVC has it covered
             else()
@@ -315,7 +344,7 @@ if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL)
                     -mpclmul
                 )
             endif(MSVC)
-        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
+        elseif(HACL_TARGET_ARCHITECTURE MATCHES ${HACL_ARCHITECTURE_ARM64})
             target_compile_options(hacl_aesni_pclmul PRIVATE
                 -march=armv8-a+crypto
             )
@@ -331,42 +360,6 @@ endif()
 if(TOOLCHAIN_CAN_COMPILE_INTRINSICS)
     message(STATUS "Detected intrinsics support")
     set(HACL_CAN_COMPILE_INTRINSICS 1)
-endif()
-
-# x64
-# Set the architecture here. These come from the CMAKE_TOOLCHAIN_FILE
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
-    message(STATUS "Detected an x64 architecture")
-    set(ARCHITECTURE intel)
-    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X64})
-
-# x86
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i586|i686|i86pc|ia32|x86")
-    message(STATUS "Detected an x86 architecture")
-    set(ARCHITECTURE intel)
-    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_X86})
-
-# arm64
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm64v8")
-    message(STATUS "Detected an arm64 architecture")
-    set(ARCHITECTURE arm)
-    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_ARM64})
-
-# arm32
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armel|armhf|armv7|arm32v7")
-    message(STATUS "Detected an arm32 architecture")
-    set(ARCHITECTURE arm)
-    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_ARM32})
-
-# s390x
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
-    message(STATUS "Detected an s390x (systemz) architecture")
-    set(ARCHITECTURE arm)
-    set(HACL_TARGET_ARCHITECTURE ${HACL_ARCHITECTURE_SYSTEMZ})
-
-# unsupported architecture
-else()
-    message(FATAL_ERROR "Unsupported architecture ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
 # Write configuration
@@ -447,7 +440,7 @@ install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
 # # Install config.h
 install(FILES build/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 
-# CPU feature detection for tests
+# CPU feature detection
 add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
 target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 add_dependencies(hacl hacl_cpu_features)
