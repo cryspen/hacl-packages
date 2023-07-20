@@ -159,6 +159,7 @@ fn copy_hacl_to_out(out_dir: &Path) {
     copy(&local_c_path.join("vale"), &out_dir, &options).unwrap();
     copy(&local_c_path.join("karamel"), &out_dir, &options).unwrap();
     copy(&local_c_path.join("include"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("cpu-features"), &out_dir, &options).unwrap();
 
     let options = file::CopyOptions::new().overwrite(true);
     file::copy(

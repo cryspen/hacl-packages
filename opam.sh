@@ -14,6 +14,7 @@ cp include/* opam/hacl-star-raw/include/ | true
 cp -r include/internal opam/hacl-star-raw/include/internal
 cp -r vale opam/hacl-star-raw
 cp -r karamel opam/hacl-star-raw
+cp -r cpu-features opam/hacl-star-raw
 
 cp CMakeLists.txt opam/hacl-star-raw
 
