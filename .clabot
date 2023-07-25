@@ -7,7 +7,9 @@
     "duesee": "Cryspen",
     "pnmadelaine": "Inria - Prosecco",
     "addressxception": "InfernoRed",
-    "bkmgit": ""
+    "bkmgit": "",
+    "mamonet": "",
+    "emillon": ""
   },
   "contributors": [
     "franziskuskiefer",
@@ -17,6 +19,8 @@
     "pnmadelaine",
     "addressxception",
     "bkmgit",
-    "mgstoyanov"
+    "mgstoyanov",
+    "mamonet",
+    "emillon"
   ]
 }
