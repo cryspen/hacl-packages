@@ -42,8 +42,8 @@ extern "C" {
 #define Spec_Cipher_Expansion_Vale_AES256 2
 #define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
 #define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_M32_AES128 5
-#define Spec_Cipher_Expansion_M32_AES256 6
+#define Spec_Cipher_Expansion_CT64_AES128 5
+#define Spec_Cipher_Expansion_CT64_AES256 6
 
 typedef uint8_t Spec_Cipher_Expansion_impl;
 

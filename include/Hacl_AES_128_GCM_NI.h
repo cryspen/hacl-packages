@@ -36,7 +36,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 #include "Hacl_Gf128_NI.h"
-#include "Hacl_AES_128_NI.h"
+#include "Hacl_AES_128_CTR32_NI.h"
 #include "libintvector.h"
 
 typedef Lib_IntVector_Intrinsics_vec128 *Hacl_AES_128_GCM_NI_aes_gcm_ctx;

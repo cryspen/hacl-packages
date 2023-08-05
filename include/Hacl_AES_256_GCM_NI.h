@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_AES_128_NI_H
-#define __Hacl_AES_128_NI_H
+#ifndef __Hacl_AES_256_GCM_NI_H
+#define __Hacl_AES_256_GCM_NI_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,47 +35,41 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
+#include "Hacl_Gf128_NI.h"
+#include "Hacl_AES_256_CTR32_NI.h"
 #include "libintvector.h"
 
-typedef Lib_IntVector_Intrinsics_vec128 *Hacl_AES_128_NI_aes_ctx;
+typedef Lib_IntVector_Intrinsics_vec128 *Hacl_AES_256_GCM_NI_aes_gcm_ctx;
 
-typedef uint8_t *Hacl_AES_128_NI_skey;
-
-void
-Hacl_AES_128_NI_aes128_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key, uint8_t *nonce);
-
-void Hacl_AES_128_NI_aes128_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *nonce);
+void Hacl_AES_256_GCM_NI_aes256_gcm_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key);
 
 void
-Hacl_AES_128_NI_aes128_key_block(
-  uint8_t *kb,
+Hacl_AES_256_GCM_NI_aes256_gcm_encrypt(
   Lib_IntVector_Intrinsics_vec128 *ctx,
-  uint32_t counter
-);
-
-void
-Hacl_AES_128_NI_aes128_ctr_encrypt(
   uint32_t len,
   uint8_t *out,
-  uint8_t *inp,
-  uint8_t *k,
-  uint8_t *n,
-  uint32_t c
+  uint8_t *text,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
 );
 
-void
-Hacl_AES_128_NI_aes128_ctr_decrypt(
+bool
+Hacl_AES_256_GCM_NI_aes256_gcm_decrypt(
+  Lib_IntVector_Intrinsics_vec128 *ctx,
   uint32_t len,
   uint8_t *out,
-  uint8_t *inp,
-  uint8_t *k,
-  uint8_t *n,
-  uint32_t c
+  uint8_t *cipher,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
 );
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Hacl_AES_128_NI_H_DEFINED
+#define __Hacl_AES_256_GCM_NI_H_DEFINED
 #endif

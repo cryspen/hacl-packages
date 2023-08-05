@@ -117,22 +117,8 @@ TEST_P(AesGcmSuite, KAT)
   } else {
     FAIL() << "Unexpected keySize.";
   }
-
-  if (res != EverCrypt_Error_Success) {
-    if (!EverCrypt_AutoConfig2_has_aesni() ||
-        !EverCrypt_AutoConfig2_has_pclmulqdq() ||
-        !EverCrypt_AutoConfig2_has_avx() || !EverCrypt_AutoConfig2_has_sse() ||
-        !EverCrypt_AutoConfig2_has_movbe()) {
-      cout << "Skipping failed `EverCrypt_AEAD_create_in(...)` due to missing "
-              "features."
-           << endl;
-      return;
-    } else {
-      FAIL() << "`EverCrypt_AEAD_create_in(...)` failed unexpectedly with "
-                "error code \""
-             << res << "\".";
-    }
-  }
+  // Should always work.
+  ASSERT_EQ(res, EverCrypt_Error_Success);
 
   encrypt_decrypt(
     state, test.iv, test.aad, test.msg, test.ct, test.tag, test.valid);

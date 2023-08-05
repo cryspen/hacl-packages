@@ -321,7 +321,9 @@ if(TOOLCHAIN_CAN_COMPILE_VALE)
     set(HACL_CAN_COMPILE_VALE 1)
 endif()
 
-if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL AND TOOLCHAIN_CAN_COMPILE_VEC128 AND ((ARCHITECTURE MATCHES intel AND TOOLCHAIN_CAN_COMPILE_VEC256) OR HACL_TARGET_ARCHITECTURE MATCHES ${HACL_ARCHITECTURE_ARM64}))
+if(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL AND TOOLCHAIN_CAN_COMPILE_VEC128 AND
+  ((ARCHITECTURE MATCHES intel AND TOOLCHAIN_CAN_COMPILE_VEC256) OR
+  HACL_TARGET_ARCHITECTURE MATCHES ${HACL_ARCHITECTURE_ARM64}))
     set(HACL_CAN_COMPILE_AESNI_PCLMUL 1)
 
     # # We make separate compilation units (objects) for each hardware feature
@@ -440,7 +442,7 @@ install(DIRECTORY vale/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vale
 # # Install config.h
 install(FILES build/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hacl)
 
-# CPU feature detection
+# CPU feature detection for tests
 add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
 target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 add_dependencies(hacl hacl_cpu_features)

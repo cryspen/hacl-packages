@@ -23,7 +23,7 @@
  */
 
 
-#include "internal/Hacl_AES_128_BitSlice.h"
+#include "internal/Hacl_AES_128_CTR32_BitSlice.h"
 
 #include "internal/Hacl_Lib.h"
 
@@ -639,7 +639,7 @@ Hacl_Impl_AES_Generic_aes256_ctr_bitslice(
   }
 }
 
-void Hacl_AES_128_BitSlice_aes128_init(uint64_t *ctx, uint8_t *key, uint8_t *nonce)
+void Hacl_AES_128_CTR32_BitSlice_aes128_init(uint64_t *ctx, uint8_t *key, uint8_t *nonce)
 {
   uint64_t *kex = ctx + (uint32_t)8U;
   uint64_t *n = ctx;
@@ -778,13 +778,13 @@ void Hacl_AES_128_BitSlice_aes128_init(uint64_t *ctx, uint8_t *key, uint8_t *non
   Hacl_Impl_AES_CoreBitSlice_load_nonce(n, nonce);
 }
 
-void Hacl_AES_128_BitSlice_aes128_set_nonce(uint64_t *ctx, uint8_t *nonce)
+void Hacl_AES_128_CTR32_BitSlice_aes128_set_nonce(uint64_t *ctx, uint8_t *nonce)
 {
   uint64_t *n = ctx;
   Hacl_Impl_AES_CoreBitSlice_load_nonce(n, nonce);
 }
 
-void Hacl_AES_128_BitSlice_aes128_key_block(uint8_t *kb, uint64_t *ctx, uint32_t counter)
+void Hacl_AES_128_CTR32_BitSlice_aes128_key_block(uint8_t *kb, uint64_t *ctx, uint32_t counter)
 {
   uint64_t *kex = ctx + (uint32_t)8U;
   uint64_t *n = ctx;
@@ -806,7 +806,7 @@ void Hacl_AES_128_BitSlice_aes128_key_block(uint8_t *kb, uint64_t *ctx, uint32_t
 }
 
 inline void
-Hacl_AES_128_BitSlice_aes128_ctr_encrypt(
+Hacl_AES_128_CTR32_BitSlice_aes128_ctr_encrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,
@@ -955,7 +955,7 @@ Hacl_AES_128_BitSlice_aes128_ctr_encrypt(
 }
 
 inline void
-Hacl_AES_128_BitSlice_aes128_ctr_decrypt(
+Hacl_AES_128_CTR32_BitSlice_aes128_ctr_decrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,

@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Spec_H
-#define __internal_Hacl_Spec_H
+#ifndef __Hacl_AES_128_GCM_CT64_H
+#define __Hacl_AES_128_GCM_CT64_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,26 +35,42 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "../Hacl_Spec.h"
+#include "Hacl_Gf128_CT64.h"
+#include "Hacl_AES_128_CTR32_BitSlice.h"
 
-#define Spec_Cipher_Expansion_Hacl_CHACHA20 0
-#define Spec_Cipher_Expansion_Vale_AES128 1
-#define Spec_Cipher_Expansion_Vale_AES256 2
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_CT64_AES128 5
-#define Spec_Cipher_Expansion_CT64_AES256 6
+extern uint32_t Hacl_AES_128_GCM_CT64_aes_gcm_ctx_len;
 
-typedef uint8_t Spec_Cipher_Expansion_impl;
+typedef uint64_t *Hacl_AES_128_GCM_CT64_aes_gcm_ctx;
 
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
+void Hacl_AES_128_GCM_CT64_aes128_gcm_init(uint64_t *ctx, uint8_t *key);
 
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+void
+Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(
+  uint64_t *ctx,
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *text,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
+);
+
+bool
+Hacl_AES_128_GCM_CT64_aes128_gcm_decrypt(
+  uint64_t *ctx,
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *cipher,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
+);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Spec_H_DEFINED
+#define __Hacl_AES_128_GCM_CT64_H_DEFINED
 #endif

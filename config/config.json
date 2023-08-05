@@ -28,15 +28,23 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_Gf128_PreComp.c",
+                "file": "Hacl_Gf128_CT64.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_AES_128_BitSlice.c",
+                "file": "Hacl_AES_128_CTR32_BitSlice.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_AES_128_GCM_M32.c",
+                "file": "Hacl_AES_128_GCM_CT64.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_AES_256_CTR32_BitSlice.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_AES_256_GCM_CT64.c",
                 "features": "std"
             },
             {
@@ -44,11 +52,19 @@
                 "features": "aesni_pclmul"
             },
             {
-                "file": "Hacl_AES_128_NI.c",
+                "file": "Hacl_AES_128_CTR32_NI.c",
                 "features": "aesni_pclmul"
             },
             {
                 "file": "Hacl_AES_128_GCM_NI.c",
+                "features": "aesni_pclmul"
+            },
+            {
+                "file": "Hacl_AES_256_CTR32_NI.c",
+                "features": "aesni_pclmul"
+            },
+            {
+                "file": "Hacl_AES_256_GCM_NI.c",
                 "features": "aesni_pclmul"
             }
         ],

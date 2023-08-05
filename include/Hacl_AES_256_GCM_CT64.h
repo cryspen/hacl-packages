@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_AES_128_BitSlice_H
-#define __internal_Hacl_AES_128_BitSlice_H
+#ifndef __Hacl_AES_256_GCM_CT64_H
+#define __Hacl_AES_256_GCM_CT64_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,49 +35,42 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Lib.h"
-#include "../Hacl_AES_128_BitSlice.h"
+#include "Hacl_Gf128_CT64.h"
+#include "Hacl_AES_256_CTR32_BitSlice.h"
 
-void Hacl_Impl_AES_CoreBitSlice_store_block0(uint8_t *out, uint64_t *inp);
+extern uint32_t Hacl_AES_256_GCM_CT64_aes_gcm_ctx_len;
 
-void Hacl_Impl_AES_CoreBitSlice_load_key1(uint64_t *out, uint8_t *k);
+typedef uint64_t *Hacl_AES_256_GCM_CT64_aes_gcm_ctx;
 
-void Hacl_Impl_AES_CoreBitSlice_load_nonce(uint64_t *out, uint8_t *nonce1);
-
-void Hacl_Impl_AES_CoreBitSlice_load_state(uint64_t *out, uint64_t *nonce1, uint32_t counter);
-
-void Hacl_Impl_AES_CoreBitSlice_xor_state_key1(uint64_t *st, uint64_t *ost);
-
-void Hacl_Impl_AES_CoreBitSlice_aes_enc(uint64_t *st, uint64_t *key);
-
-void Hacl_Impl_AES_CoreBitSlice_aes_enc_last(uint64_t *st, uint64_t *key);
+void Hacl_AES_256_GCM_CT64_aes256_gcm_init(uint64_t *ctx, uint8_t *key);
 
 void
-Hacl_Impl_AES_CoreBitSlice_aes_keygen_assist(uint64_t *next, uint64_t *prev, uint8_t rcon1);
-
-void Hacl_Impl_AES_CoreBitSlice_key_expansion_step(uint64_t *next, uint64_t *prev);
-
-void
-Hacl_Impl_AES_Generic_aes128_ctr_bitslice(
+Hacl_AES_256_GCM_CT64_aes256_gcm_encrypt(
+  uint64_t *ctx,
   uint32_t len,
   uint8_t *out,
-  uint8_t *inp,
-  uint64_t *ctx,
-  uint32_t counter
+  uint8_t *text,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
 );
 
-void
-Hacl_Impl_AES_Generic_aes256_ctr_bitslice(
+bool
+Hacl_AES_256_GCM_CT64_aes256_gcm_decrypt(
+  uint64_t *ctx,
   uint32_t len,
   uint8_t *out,
-  uint8_t *inp,
-  uint64_t *ctx,
-  uint32_t counter
+  uint8_t *cipher,
+  uint32_t aad_len,
+  uint8_t *aad,
+  uint32_t iv_len,
+  uint8_t *iv
 );
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_AES_128_BitSlice_H_DEFINED
+#define __Hacl_AES_256_GCM_CT64_H_DEFINED
 #endif

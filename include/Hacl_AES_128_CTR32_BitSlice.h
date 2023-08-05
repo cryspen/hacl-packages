@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_AES_128_BitSlice_H
-#define __Hacl_AES_128_BitSlice_H
+#ifndef __Hacl_AES_128_CTR32_BitSlice_H
+#define __Hacl_AES_128_CTR32_BitSlice_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,18 +35,19 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-typedef uint64_t *Hacl_AES_128_BitSlice_aes_ctx;
+typedef uint64_t *Hacl_AES_128_CTR32_BitSlice_aes_ctx;
 
-typedef uint8_t *Hacl_AES_128_BitSlice_skey;
+typedef uint8_t *Hacl_AES_128_CTR32_BitSlice_skey;
 
-void Hacl_AES_128_BitSlice_aes128_init(uint64_t *ctx, uint8_t *key, uint8_t *nonce);
+void Hacl_AES_128_CTR32_BitSlice_aes128_init(uint64_t *ctx, uint8_t *key, uint8_t *nonce);
 
-void Hacl_AES_128_BitSlice_aes128_set_nonce(uint64_t *ctx, uint8_t *nonce);
-
-void Hacl_AES_128_BitSlice_aes128_key_block(uint8_t *kb, uint64_t *ctx, uint32_t counter);
+void Hacl_AES_128_CTR32_BitSlice_aes128_set_nonce(uint64_t *ctx, uint8_t *nonce);
 
 void
-Hacl_AES_128_BitSlice_aes128_ctr_encrypt(
+Hacl_AES_128_CTR32_BitSlice_aes128_key_block(uint8_t *kb, uint64_t *ctx, uint32_t counter);
+
+void
+Hacl_AES_128_CTR32_BitSlice_aes128_ctr_encrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,
@@ -56,7 +57,7 @@ Hacl_AES_128_BitSlice_aes128_ctr_encrypt(
 );
 
 void
-Hacl_AES_128_BitSlice_aes128_ctr_decrypt(
+Hacl_AES_128_CTR32_BitSlice_aes128_ctr_decrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,
@@ -69,5 +70,5 @@ Hacl_AES_128_BitSlice_aes128_ctr_decrypt(
 }
 #endif
 
-#define __Hacl_AES_128_BitSlice_H_DEFINED
+#define __Hacl_AES_128_CTR32_BitSlice_H_DEFINED
 #endif

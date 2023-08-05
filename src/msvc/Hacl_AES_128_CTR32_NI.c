@@ -23,10 +23,14 @@
  */
 
 
-#include "Hacl_AES_128_NI.h"
+#include "Hacl_AES_128_CTR32_NI.h"
 
 void
-Hacl_AES_128_NI_aes128_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key, uint8_t *nonce)
+Hacl_AES_128_CTR32_NI_aes128_init(
+  Lib_IntVector_Intrinsics_vec128 *ctx,
+  uint8_t *key,
+  uint8_t *nonce
+)
 {
   Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
   Lib_IntVector_Intrinsics_vec128 *n = ctx;
@@ -278,7 +282,8 @@ Hacl_AES_128_NI_aes128_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key, 
   n[0U] = Lib_IntVector_Intrinsics_vec128_load128_le(nb);
 }
 
-void Hacl_AES_128_NI_aes128_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *nonce)
+void
+Hacl_AES_128_CTR32_NI_aes128_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *nonce)
 {
   Lib_IntVector_Intrinsics_vec128 *n = ctx;
   uint8_t nb[16U] = { 0U };
@@ -287,7 +292,7 @@ void Hacl_AES_128_NI_aes128_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint
 }
 
 void
-Hacl_AES_128_NI_aes128_key_block(
+Hacl_AES_128_CTR32_NI_aes128_key_block(
   uint8_t *kb,
   Lib_IntVector_Intrinsics_vec128 *ctx,
   uint32_t counter
@@ -296,14 +301,13 @@ Hacl_AES_128_NI_aes128_key_block(
   Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
   Lib_IntVector_Intrinsics_vec128 *n = ctx;
   KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 st[4U] KRML_POST_ALIGN(16) = { 0U };
-  uint32_t counter1 = counter;
-  uint32_t counter0 = htobe32(counter1);
-  uint32_t counter11 = htobe32(counter1 + (uint32_t)1U);
-  uint32_t counter2 = htobe32(counter1 + (uint32_t)2U);
-  uint32_t counter3 = htobe32(counter1 + (uint32_t)3U);
+  uint32_t counter0 = htobe32(counter);
+  uint32_t counter1 = htobe32(counter + (uint32_t)1U);
+  uint32_t counter2 = htobe32(counter + (uint32_t)2U);
+  uint32_t counter3 = htobe32(counter + (uint32_t)3U);
   Lib_IntVector_Intrinsics_vec128 nonce0 = n[0U];
   st[0U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter0, (uint32_t)3U);
-  st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter11, (uint32_t)3U);
+  st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter1, (uint32_t)3U);
   st[2U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter2, (uint32_t)3U);
   st[3U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter3, (uint32_t)3U);
   uint32_t klen = (uint32_t)1U;
@@ -331,7 +335,7 @@ Hacl_AES_128_NI_aes128_key_block(
 }
 
 inline void
-Hacl_AES_128_NI_aes128_ctr_encrypt(
+Hacl_AES_128_CTR32_NI_aes128_ctr_encrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,
@@ -598,11 +602,10 @@ Hacl_AES_128_NI_aes128_ctr_encrypt(
     KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 st[4U] KRML_POST_ALIGN(16) = { 0U };
     Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
     Lib_IntVector_Intrinsics_vec128 *n1 = ctx;
-    uint32_t counter = ctr;
-    uint32_t counter0 = htobe32(counter);
-    uint32_t counter1 = htobe32(counter + (uint32_t)1U);
-    uint32_t counter2 = htobe32(counter + (uint32_t)2U);
-    uint32_t counter3 = htobe32(counter + (uint32_t)3U);
+    uint32_t counter0 = htobe32(ctr);
+    uint32_t counter1 = htobe32(ctr + (uint32_t)1U);
+    uint32_t counter2 = htobe32(ctr + (uint32_t)2U);
+    uint32_t counter3 = htobe32(ctr + (uint32_t)3U);
     Lib_IntVector_Intrinsics_vec128 nonce0 = n1[0U];
     st[0U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter0, (uint32_t)3U);
     st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter1, (uint32_t)3U);
@@ -656,11 +659,10 @@ Hacl_AES_128_NI_aes128_ctr_encrypt(
     KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 st[4U] KRML_POST_ALIGN(16) = { 0U };
     Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
     Lib_IntVector_Intrinsics_vec128 *n1 = ctx;
-    uint32_t counter = ctr;
-    uint32_t counter0 = htobe32(counter);
-    uint32_t counter1 = htobe32(counter + (uint32_t)1U);
-    uint32_t counter2 = htobe32(counter + (uint32_t)2U);
-    uint32_t counter3 = htobe32(counter + (uint32_t)3U);
+    uint32_t counter0 = htobe32(ctr);
+    uint32_t counter1 = htobe32(ctr + (uint32_t)1U);
+    uint32_t counter2 = htobe32(ctr + (uint32_t)2U);
+    uint32_t counter3 = htobe32(ctr + (uint32_t)3U);
     Lib_IntVector_Intrinsics_vec128 nonce0 = n1[0U];
     st[0U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter0, (uint32_t)3U);
     st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter1, (uint32_t)3U);
@@ -707,7 +709,7 @@ Hacl_AES_128_NI_aes128_ctr_encrypt(
 }
 
 inline void
-Hacl_AES_128_NI_aes128_ctr_decrypt(
+Hacl_AES_128_CTR32_NI_aes128_ctr_decrypt(
   uint32_t len,
   uint8_t *out,
   uint8_t *inp,
@@ -974,11 +976,10 @@ Hacl_AES_128_NI_aes128_ctr_decrypt(
     KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 st[4U] KRML_POST_ALIGN(16) = { 0U };
     Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
     Lib_IntVector_Intrinsics_vec128 *n1 = ctx;
-    uint32_t counter = ctr;
-    uint32_t counter0 = htobe32(counter);
-    uint32_t counter1 = htobe32(counter + (uint32_t)1U);
-    uint32_t counter2 = htobe32(counter + (uint32_t)2U);
-    uint32_t counter3 = htobe32(counter + (uint32_t)3U);
+    uint32_t counter0 = htobe32(ctr);
+    uint32_t counter1 = htobe32(ctr + (uint32_t)1U);
+    uint32_t counter2 = htobe32(ctr + (uint32_t)2U);
+    uint32_t counter3 = htobe32(ctr + (uint32_t)3U);
     Lib_IntVector_Intrinsics_vec128 nonce0 = n1[0U];
     st[0U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter0, (uint32_t)3U);
     st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter1, (uint32_t)3U);
@@ -1032,11 +1033,10 @@ Hacl_AES_128_NI_aes128_ctr_decrypt(
     KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 st[4U] KRML_POST_ALIGN(16) = { 0U };
     Lib_IntVector_Intrinsics_vec128 *kex = ctx + (uint32_t)1U;
     Lib_IntVector_Intrinsics_vec128 *n1 = ctx;
-    uint32_t counter = ctr;
-    uint32_t counter0 = htobe32(counter);
-    uint32_t counter1 = htobe32(counter + (uint32_t)1U);
-    uint32_t counter2 = htobe32(counter + (uint32_t)2U);
-    uint32_t counter3 = htobe32(counter + (uint32_t)3U);
+    uint32_t counter0 = htobe32(ctr);
+    uint32_t counter1 = htobe32(ctr + (uint32_t)1U);
+    uint32_t counter2 = htobe32(ctr + (uint32_t)2U);
+    uint32_t counter3 = htobe32(ctr + (uint32_t)3U);
     Lib_IntVector_Intrinsics_vec128 nonce0 = n1[0U];
     st[0U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter0, (uint32_t)3U);
     st[1U] = Lib_IntVector_Intrinsics_vec128_insert32(nonce0, counter1, (uint32_t)3U);

@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Spec_H
-#define __internal_Hacl_Spec_H
+#ifndef __Hacl_AES_128_CTR32_NI_H
+#define __Hacl_AES_128_CTR32_NI_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,26 +35,52 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "../Hacl_Spec.h"
+#include "libintvector.h"
 
-#define Spec_Cipher_Expansion_Hacl_CHACHA20 0
-#define Spec_Cipher_Expansion_Vale_AES128 1
-#define Spec_Cipher_Expansion_Vale_AES256 2
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_CT64_AES128 5
-#define Spec_Cipher_Expansion_CT64_AES256 6
+typedef Lib_IntVector_Intrinsics_vec128 *Hacl_AES_128_CTR32_NI_aes_ctx;
 
-typedef uint8_t Spec_Cipher_Expansion_impl;
+typedef uint8_t *Hacl_AES_128_CTR32_NI_skey;
 
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
+void
+Hacl_AES_128_CTR32_NI_aes128_init(
+  Lib_IntVector_Intrinsics_vec128 *ctx,
+  uint8_t *key,
+  uint8_t *nonce
+);
 
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+void
+Hacl_AES_128_CTR32_NI_aes128_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *nonce);
+
+void
+Hacl_AES_128_CTR32_NI_aes128_key_block(
+  uint8_t *kb,
+  Lib_IntVector_Intrinsics_vec128 *ctx,
+  uint32_t counter
+);
+
+void
+Hacl_AES_128_CTR32_NI_aes128_ctr_encrypt(
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *inp,
+  uint8_t *k,
+  uint8_t *n,
+  uint32_t c
+);
+
+void
+Hacl_AES_128_CTR32_NI_aes128_ctr_decrypt(
+  uint32_t len,
+  uint8_t *out,
+  uint8_t *inp,
+  uint8_t *k,
+  uint8_t *n,
+  uint32_t c
+);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Spec_H_DEFINED
+#define __Hacl_AES_128_CTR32_NI_H_DEFINED
 #endif

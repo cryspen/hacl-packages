@@ -12,7 +12,7 @@
 #ifdef HACL_CAN_COMPILE_AESNI_PCLMUL
 #include "Hacl_AES_128_GCM_NI.h"
 #endif
-#include "Hacl_AES_128_GCM_M32.h"
+#include "Hacl_AES_128_GCM_CT64.h"
 #include "EverCrypt_AEAD.h"
 #include "../third-party/bearssl/bearssl_block.h"
 #include "../third-party/bearssl/bearssl_hash.h"
@@ -56,35 +56,35 @@ BENCHMARK(HACL_AES_128_GCM_NI_aad)->Setup(DoSetup)->Apply(Range);
 #endif
 
 static void
-HACL_AES_128_GCM_M32_encrypt(benchmark::State& state)
+HACL_AES_128_GCM_CT64_encrypt(benchmark::State& state)
 {
   bytes plaintext(state.range(0), 0x37);
   bytes ciphertext(state.range(0) + 16, 0);
   
   for (auto _ : state) {
     uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
-    Hacl_AES_128_GCM_M32_aes128_gcm_init(ctx, key.data());
-    Hacl_AES_128_GCM_M32_aes128_gcm_encrypt(ctx, plaintext.size(), ciphertext.data(), plaintext.data(), 0, NULL, nonce.size(), nonce.data());
+    Hacl_AES_128_GCM_CT64_aes128_gcm_init(ctx, key.data());
+    Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(ctx, plaintext.size(), ciphertext.data(), plaintext.data(), 0, NULL, nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
   }
 }
 
-BENCHMARK(HACL_AES_128_GCM_M32_encrypt)->Setup(DoSetup)->Apply(Range);
+BENCHMARK(HACL_AES_128_GCM_CT64_encrypt)->Setup(DoSetup)->Apply(Range);
 
 static void
-HACL_AES_128_GCM_M32_aad(benchmark::State& state)
+HACL_AES_128_GCM_CT64_aad(benchmark::State& state)
 {
   bytes aad(state.range(0), 0x37);
   
   for (auto _ : state) {
     uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
-    Hacl_AES_128_GCM_M32_aes128_gcm_init(ctx, key.data());
-    Hacl_AES_128_GCM_M32_aes128_gcm_encrypt(ctx, 0, mac.data(), NULL, aad.size(), aad.data(), nonce.size(), nonce.data());
+    Hacl_AES_128_GCM_CT64_aes128_gcm_init(ctx, key.data());
+    Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(ctx, 0, mac.data(), NULL, aad.size(), aad.data(), nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
   }
 }
 
-BENCHMARK(HACL_AES_128_GCM_M32_aad)->Setup(DoSetup)->Apply(Range);
+BENCHMARK(HACL_AES_128_GCM_CT64_aad)->Setup(DoSetup)->Apply(Range);
 
 static void
 EverCrypt_AES128_GCM_encrypt(benchmark::State& state)

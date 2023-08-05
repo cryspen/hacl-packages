@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Spec_H
-#define __internal_Hacl_Spec_H
+#ifndef __Hacl_Gf128_CT64_H
+#define __Hacl_Gf128_CT64_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,26 +35,20 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "../Hacl_Spec.h"
+void Hacl_Gf128_CT64_gcm_init(uint64_t *ctx, uint8_t *key);
 
-#define Spec_Cipher_Expansion_Hacl_CHACHA20 0
-#define Spec_Cipher_Expansion_Vale_AES128 1
-#define Spec_Cipher_Expansion_Vale_AES256 2
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES128 3
-#define Spec_Cipher_Expansion_AESNI_PCLMUL_AES256 4
-#define Spec_Cipher_Expansion_CT64_AES128 5
-#define Spec_Cipher_Expansion_CT64_AES256 6
+void Hacl_Gf128_CT64_gcm_update_blocks(uint64_t *ctx, uint32_t len, uint8_t *text);
 
-typedef uint8_t Spec_Cipher_Expansion_impl;
+extern void
+(*Hacl_Gf128_CT64_gcm_update_blocks_padded)(uint64_t *x0, uint32_t x1, uint8_t *x2);
 
-#define Spec_Frodo_Params_SHAKE128 0
-#define Spec_Frodo_Params_AES128 1
+void Hacl_Gf128_CT64_gcm_emit(uint8_t *tag, uint64_t *ctx);
 
-typedef uint8_t Spec_Frodo_Params_frodo_gen_a;
+void Hacl_Gf128_CT64_ghash(uint8_t *tag, uint32_t len, uint8_t *text, uint8_t *key);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Spec_H_DEFINED
+#define __Hacl_Gf128_CT64_H_DEFINED
 #endif

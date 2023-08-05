@@ -54,9 +54,11 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Poly1305.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AEAD.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Lib.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Gf128_PreComp.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_BitSlice.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_GCM_M32.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Gf128_CT64.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_CTR32_BitSlice.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_GCM_CT64.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_256_CTR32_BitSlice.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_256_GCM_CT64.c
 )
 set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_256.c
@@ -108,8 +110,10 @@ set(SOURCES_std_vale
 )
 set(SOURCES_aesni_pclmul
 	${PROJECT_SOURCE_DIR}/src/Hacl_Gf128_NI.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_NI.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_CTR32_NI.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_AES_128_GCM_NI.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_256_CTR32_NI.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_AES_256_GCM_NI.c
 )
 set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_NaCl.h
@@ -370,13 +374,17 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Lib.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_AES_128_BitSlice.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Gf128_PreComp.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_BitSlice.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_GCM_M32.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_AES_128_CTR32_BitSlice.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Gf128_CT64.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_CTR32_BitSlice.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_GCM_CT64.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_256_CTR32_BitSlice.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_256_GCM_CT64.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Gf128_NI.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_NI.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_CTR32_NI.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AES_128_GCM_NI.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_256_CTR32_NI.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_AES_256_GCM_NI.h
 )
 set(ALGORITHMS
 	nacl

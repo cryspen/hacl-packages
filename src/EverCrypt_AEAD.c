@@ -28,8 +28,10 @@
 #include "internal/Vale.h"
 #ifdef HACL_CAN_COMPILE_AESNI_PCLMUL
 #include "Hacl_AES_128_GCM_NI.h"
+#include "Hacl_AES_256_GCM_NI.h"
 #endif
-#include "Hacl_AES_128_GCM_M32.h"
+#include "Hacl_AES_128_GCM_CT64.h"
+#include "Hacl_AES_256_GCM_CT64.h"
 #include "internal/Hacl_Spec.h"
 #include "config.h"
 #include "hacl-cpu-features.h"
@@ -69,13 +71,13 @@ Spec_Agile_AEAD_alg EverCrypt_AEAD_alg_of_state(EverCrypt_AEAD_state_s *s)
       }
     case Spec_Cipher_Expansion_Vale_AES128:
     case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
-    case Spec_Cipher_Expansion_M32_AES128:
+    case Spec_Cipher_Expansion_CT64_AES128:
       {
         return Spec_Agile_AEAD_AES128_GCM;
       }
     case Spec_Cipher_Expansion_Vale_AES256:
     case Spec_Cipher_Expansion_AESNI_PCLMUL_AES256:
-    case Spec_Cipher_Expansion_M32_AES256:
+    case Spec_Cipher_Expansion_CT64_AES256:
       {
         return Spec_Agile_AEAD_AES256_GCM;
       }
@@ -122,10 +124,11 @@ create_in_aes128_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
     return EverCrypt_Error_Success;
   }
   else
-  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  #endif
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
   if (hacl_aesgcm_support() != 0)
   {
-    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)352U, sizeof (uint8_t));
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)288U, sizeof (uint8_t));
     Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
     Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx, k);
     EverCrypt_AEAD_state_s
@@ -137,12 +140,12 @@ create_in_aes128_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
   else
   #endif
   {
-    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)928U, sizeof (uint8_t));
     uint64_t *aes_gcm_ctx = (uint64_t *)ek;
-    Hacl_AES_128_GCM_M32_aes128_gcm_init(aes_gcm_ctx, k);
+    Hacl_AES_128_GCM_CT64_aes128_gcm_init(aes_gcm_ctx, k);
     EverCrypt_AEAD_state_s
     *p = (EverCrypt_AEAD_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_AEAD_state_s));
-    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_M32_AES128, .ek = ek });
+    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_CT64_AES128, .ek = ek });
     *dst = p;
     return EverCrypt_Error_Success;
   }
@@ -151,12 +154,12 @@ create_in_aes128_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
 static EverCrypt_Error_error_code
 create_in_aes256_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)544U, sizeof (uint8_t));
@@ -170,8 +173,32 @@ create_in_aes256_gcm(EverCrypt_AEAD_state_s **dst, uint8_t *k)
     *dst = p;
     return EverCrypt_Error_Success;
   }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)352U, sizeof (uint8_t));
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_256_GCM_NI_aes256_gcm_init(aes_gcm_ctx, k);
+    EverCrypt_AEAD_state_s
+    *p = (EverCrypt_AEAD_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_AEAD_state_s));
+    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES256, .ek = ek });
+    *dst = p;
+    return EverCrypt_Error_Success;
+  }
+  else
+  #endif
+  {
+    uint8_t *ek = (uint8_t *)KRML_HOST_CALLOC((uint32_t)1184U, sizeof (uint8_t));
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+    Hacl_AES_256_GCM_CT64_aes256_gcm_init(aes_gcm_ctx, k);
+    EverCrypt_AEAD_state_s
+    *p = (EverCrypt_AEAD_state_s *)KRML_HOST_MALLOC(sizeof (EverCrypt_AEAD_state_s));
+    p[0U] = ((EverCrypt_AEAD_state_s){ .impl = Spec_Cipher_Expansion_CT64_AES256, .ek = ek });
+    *dst = p;
+    return EverCrypt_Error_Success;
+  }
 }
 
 /**
@@ -379,7 +406,7 @@ encrypt_aes128_gcm_aesni_pclmul(
 }
 
 static EverCrypt_Error_error_code
-encrypt_aes128_gcm_m32(
+encrypt_aes128_gcm_ct64(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
   uint32_t iv_len,
@@ -403,7 +430,7 @@ encrypt_aes128_gcm_m32(
   uint8_t *ek = scrut.ek;
   uint64_t *aes_gcm_ctx = (uint64_t *)ek;
   uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
-  Hacl_AES_128_GCM_M32_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+  Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
   memcpy(cipher, out, plain_len);
   memcpy(tag, out + plain_len, 16);
   KRML_HOST_FREE(out);
@@ -534,6 +561,78 @@ encrypt_aes256_gcm(
   #endif
 }
 
+static EverCrypt_Error_error_code
+encrypt_aes256_gcm_aesni_pclmul(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+)
+{
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+  Hacl_AES_256_GCM_NI_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+  memcpy(cipher, out, plain_len);
+  memcpy(tag, out + plain_len, 16);
+  KRML_HOST_FREE(out);
+  return EverCrypt_Error_Success;
+  #else
+  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
+    __FILE__,
+    __LINE__,
+    "statically unreachable");
+  KRML_HOST_EXIT(255U);
+  #endif
+}
+
+static EverCrypt_Error_error_code
+encrypt_aes256_gcm_ct64(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+)
+{
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+  uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+  Hacl_AES_256_GCM_CT64_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+  memcpy(cipher, out, plain_len);
+  memcpy(tag, out + plain_len, 16);
+  KRML_HOST_FREE(out);
+  return EverCrypt_Error_Success;
+}
+
 /**
 Encrypt and authenticate a message (`plain`) with associated data (`ad`).
 
@@ -579,9 +678,25 @@ EverCrypt_AEAD_encrypt(
       {
         return encrypt_aes128_gcm(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
       }
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
+      {
+        return encrypt_aes128_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
+      }
+    case Spec_Cipher_Expansion_CT64_AES128:
+      {
+        return encrypt_aes128_gcm_ct64(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
+      }
     case Spec_Cipher_Expansion_Vale_AES256:
       {
         return encrypt_aes256_gcm(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
+      }
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES256:
+      {
+        return encrypt_aes256_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
+      }
+    case Spec_Cipher_Expansion_CT64_AES256:
+      {
+        return encrypt_aes256_gcm_ct64(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
       }
     case Spec_Cipher_Expansion_Hacl_CHACHA20:
       {
@@ -592,14 +707,6 @@ EverCrypt_AEAD_encrypt(
         EverCrypt_Chacha20Poly1305_aead_encrypt(ek, iv, ad_len, ad, plain_len, plain, cipher, tag);
         return EverCrypt_Error_Success;
       }
-    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
-      {
-        return encrypt_aes128_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
-      }
-    case Spec_Cipher_Expansion_M32_AES128:
-      {
-        return encrypt_aes128_gcm_m32(s, iv, iv_len, ad, ad_len, plain, plain_len, cipher, tag);
-      }
     default:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
@@ -609,12 +716,9 @@ EverCrypt_AEAD_encrypt(
 }
 
 /**
-WARNING: this function doesn't perform any dynamic
-  hardware check. You MUST make sure your hardware supports the
-  implementation of AESGCM. Besides, this function was not designed
-  for cross-compilation: if you compile it on a system which doesn't
-  support Vale, it will compile it to a function which makes the
-  program exit.
+WARNING: this function doesn't perform any dynamic hardware
+  check. You need to configure particular flags to control hardware
+  fetures that this function uses on target processor architecture.
 */
 EverCrypt_Error_error_code
 EverCrypt_AEAD_encrypt_expand_aes128_gcm_no_check(
@@ -742,23 +846,68 @@ EverCrypt_AEAD_encrypt_expand_aes128_gcm_no_check(
       (uint32_t)(uint64_t)plain_len % (uint32_t)16U * sizeof (uint8_t));
     r = EverCrypt_Error_Success;
   }
-  return EverCrypt_Error_Success;
+  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  uint8_t ek[288U] = { 0U };
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES128, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  EverCrypt_Error_error_code r;
+  if (s == NULL)
+  {
+    r = EverCrypt_Error_InvalidKey;
+  }
+  else if (iv_len == (uint32_t)0U)
+  {
+    r = EverCrypt_Error_InvalidIVLength;
+  }
+  else
+  {
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+    uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+    Hacl_AES_128_GCM_NI_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+    memcpy(cipher, out, plain_len);
+    memcpy(tag, out + plain_len, 16);
+    KRML_HOST_FREE(out);
+    r = EverCrypt_Error_Success;
+  }
   #else
-  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
-    __FILE__,
-    __LINE__,
-    "EverCrypt was compiled on a system which doesn\'t support Vale");
-  KRML_HOST_EXIT(255U);
+  uint8_t ek[928U] = { 0U };
+  uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+  Hacl_AES_128_GCM_CT64_aes128_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES128, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  EverCrypt_Error_error_code r;
+  if (s == NULL)
+  {
+    r = EverCrypt_Error_InvalidKey;
+  }
+  else if (iv_len == (uint32_t)0U)
+  {
+    r = EverCrypt_Error_InvalidIVLength;
+  }
+  else
+  {
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+    uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+    Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+    memcpy(cipher, out, plain_len);
+    memcpy(tag, out + plain_len, 16);
+    KRML_HOST_FREE(out);
+    r = EverCrypt_Error_Success;
+  }
   #endif
+  return EverCrypt_Error_Success;
 }
 
 /**
-WARNING: this function doesn't perform any dynamic
-  hardware check. You MUST make sure your hardware supports the
-  implementation of AESGCM. Besides, this function was not designed
-  for cross-compilation: if you compile it on a system which doesn't
-  support Vale, it will compile it to a function which makes the
-  program exit.
+WARNING: this function doesn't perform any dynamic hardware
+  check. You need to configure particular flags to control hardware
+  fetures that this function uses on target processor architecture.
 */
 EverCrypt_Error_error_code
 EverCrypt_AEAD_encrypt_expand_aes256_gcm_no_check(
@@ -886,14 +1035,62 @@ EverCrypt_AEAD_encrypt_expand_aes256_gcm_no_check(
       (uint32_t)(uint64_t)plain_len % (uint32_t)16U * sizeof (uint8_t));
     r = EverCrypt_Error_Success;
   }
-  return EverCrypt_Error_Success;
+  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  uint8_t ek[352U] = { 0U };
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  Hacl_AES_256_GCM_NI_aes256_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES256, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  EverCrypt_Error_error_code r;
+  if (s == NULL)
+  {
+    r = EverCrypt_Error_InvalidKey;
+  }
+  else if (iv_len == (uint32_t)0U)
+  {
+    r = EverCrypt_Error_InvalidIVLength;
+  }
+  else
+  {
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+    uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+    Hacl_AES_256_GCM_NI_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+    memcpy(cipher, out, plain_len);
+    memcpy(tag, out + plain_len, 16);
+    KRML_HOST_FREE(out);
+    r = EverCrypt_Error_Success;
+  }
   #else
-  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
-    __FILE__,
-    __LINE__,
-    "EverCrypt was compiled on a system which doesn\'t support Vale");
-  KRML_HOST_EXIT(255U);
+  uint8_t ek[1184U] = { 0U };
+  uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+  Hacl_AES_256_GCM_CT64_aes256_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES256, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  EverCrypt_Error_error_code r;
+  if (s == NULL)
+  {
+    r = EverCrypt_Error_InvalidKey;
+  }
+  else if (iv_len == (uint32_t)0U)
+  {
+    r = EverCrypt_Error_InvalidIVLength;
+  }
+  else
+  {
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+    uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+    Hacl_AES_256_GCM_CT64_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+    memcpy(cipher, out, plain_len);
+    memcpy(tag, out + plain_len, 16);
+    KRML_HOST_FREE(out);
+    r = EverCrypt_Error_Success;
+  }
   #endif
+  return EverCrypt_Error_Success;
 }
 
 EverCrypt_Error_error_code
@@ -909,12 +1106,12 @@ EverCrypt_AEAD_encrypt_expand_aes128_gcm(
   uint8_t *tag
 )
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t ek[480U] = { 0U };
@@ -1029,10 +1226,70 @@ EverCrypt_AEAD_encrypt_expand_aes128_gcm(
         (uint32_t)(uint64_t)plain_len % (uint32_t)16U * sizeof (uint8_t));
       r = EverCrypt_Error_Success;
     }
-    return EverCrypt_Error_Success;
   }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t ek[288U] = { 0U };
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES128, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    EverCrypt_Error_error_code r;
+    if (s == NULL)
+    {
+      r = EverCrypt_Error_InvalidKey;
+    }
+    else if (iv_len == (uint32_t)0U)
+    {
+      r = EverCrypt_Error_InvalidIVLength;
+    }
+    else
+    {
+      EverCrypt_AEAD_state_s scrut = *s;
+      uint8_t *ek0 = scrut.ek;
+      Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+      uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+      Hacl_AES_128_GCM_NI_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+      memcpy(cipher, out, plain_len);
+      memcpy(tag, out + plain_len, 16);
+      KRML_HOST_FREE(out);
+      r = EverCrypt_Error_Success;
+    }
+  }
+  else
+  #endif
+  {
+    uint8_t ek[928U] = { 0U };
+    uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+    Hacl_AES_128_GCM_CT64_aes128_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES128, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    EverCrypt_Error_error_code r;
+    if (s == NULL)
+    {
+      r = EverCrypt_Error_InvalidKey;
+    }
+    else if (iv_len == (uint32_t)0U)
+    {
+      r = EverCrypt_Error_InvalidIVLength;
+    }
+    else
+    {
+      EverCrypt_AEAD_state_s scrut = *s;
+      uint8_t *ek0 = scrut.ek;
+      uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+      uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+      Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+      memcpy(cipher, out, plain_len);
+      memcpy(tag, out + plain_len, 16);
+      KRML_HOST_FREE(out);
+      r = EverCrypt_Error_Success;
+    }
+  }
+  return EverCrypt_Error_Success;
 }
 
 EverCrypt_Error_error_code
@@ -1048,12 +1305,12 @@ EverCrypt_AEAD_encrypt_expand_aes256_gcm(
   uint8_t *tag
 )
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t ek[544U] = { 0U };
@@ -1168,10 +1425,70 @@ EverCrypt_AEAD_encrypt_expand_aes256_gcm(
         (uint32_t)(uint64_t)plain_len % (uint32_t)16U * sizeof (uint8_t));
       r = EverCrypt_Error_Success;
     }
-    return EverCrypt_Error_Success;
   }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t ek[352U] = { 0U };
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_256_GCM_NI_aes256_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES256, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    EverCrypt_Error_error_code r;
+    if (s == NULL)
+    {
+      r = EverCrypt_Error_InvalidKey;
+    }
+    else if (iv_len == (uint32_t)0U)
+    {
+      r = EverCrypt_Error_InvalidIVLength;
+    }
+    else
+    {
+      EverCrypt_AEAD_state_s scrut = *s;
+      uint8_t *ek0 = scrut.ek;
+      Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+      uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+      Hacl_AES_256_GCM_NI_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+      memcpy(cipher, out, plain_len);
+      memcpy(tag, out + plain_len, 16);
+      KRML_HOST_FREE(out);
+      r = EverCrypt_Error_Success;
+    }
+  }
+  else
+  #endif
+  {
+    uint8_t ek[1184U] = { 0U };
+    uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+    Hacl_AES_256_GCM_CT64_aes256_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES256, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    EverCrypt_Error_error_code r;
+    if (s == NULL)
+    {
+      r = EverCrypt_Error_InvalidKey;
+    }
+    else if (iv_len == (uint32_t)0U)
+    {
+      r = EverCrypt_Error_InvalidIVLength;
+    }
+    else
+    {
+      EverCrypt_AEAD_state_s scrut = *s;
+      uint8_t *ek0 = scrut.ek;
+      uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+      uint8_t* out = (uint8_t*)KRML_HOST_MALLOC(plain_len + 16);
+      Hacl_AES_256_GCM_CT64_aes256_gcm_encrypt(aes_gcm_ctx, plain_len, out, plain, ad_len, ad, iv_len, iv);
+      memcpy(cipher, out, plain_len);
+      memcpy(tag, out + plain_len, 16);
+      KRML_HOST_FREE(out);
+      r = EverCrypt_Error_Success;
+    }
+  }
+  return EverCrypt_Error_Success;
 }
 
 EverCrypt_Error_error_code
@@ -1439,7 +1756,7 @@ decrypt_aes128_gcm_aesni_pclmul(
 }
 
 static EverCrypt_Error_error_code
-decrypt_aes128_gcm_m32(
+decrypt_aes128_gcm_ct64(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
   uint32_t iv_len,
@@ -1465,7 +1782,7 @@ decrypt_aes128_gcm_m32(
   uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
   memcpy(in, cipher, cipher_len);
   memcpy(in + cipher_len, tag, 16);
-  bool r = Hacl_AES_128_GCM_M32_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  bool r = Hacl_AES_128_GCM_CT64_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
   KRML_HOST_FREE(in);
   if (r)
   {
@@ -1609,6 +1926,86 @@ decrypt_aes256_gcm(
 }
 
 static EverCrypt_Error_error_code
+decrypt_aes256_gcm_aesni_pclmul(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *cipher,
+  uint32_t cipher_len,
+  uint8_t *tag,
+  uint8_t *dst
+)
+{
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_256_GCM_NI_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
+  #else
+  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
+    __FILE__,
+    __LINE__,
+    "statically unreachable");
+  KRML_HOST_EXIT(255U);
+  #endif
+}
+
+static EverCrypt_Error_error_code
+decrypt_aes256_gcm_ct64(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *cipher,
+  uint32_t cipher_len,
+  uint8_t *tag,
+  uint8_t *dst
+)
+{
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_256_GCM_CT64_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
+}
+
+static EverCrypt_Error_error_code
 decrypt_chacha20_poly1305(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
@@ -1696,21 +2093,29 @@ EverCrypt_AEAD_decrypt(
       {
         return decrypt_aes128_gcm(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
       }
-    case Spec_Cipher_Expansion_Vale_AES256:
-      {
-        return decrypt_aes256_gcm(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
-      }
-    case Spec_Cipher_Expansion_Hacl_CHACHA20:
-      {
-        return decrypt_chacha20_poly1305(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
-      }
     case Spec_Cipher_Expansion_AESNI_PCLMUL_AES128:
       {
         return decrypt_aes128_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
       }
-    case Spec_Cipher_Expansion_M32_AES128:
+    case Spec_Cipher_Expansion_CT64_AES128:
       {
-        return decrypt_aes128_gcm_m32(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+        return decrypt_aes128_gcm_ct64(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_Vale_AES256:
+      {
+        return decrypt_aes256_gcm(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_AESNI_PCLMUL_AES256:
+      {
+        return decrypt_aes256_gcm_aesni_pclmul(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_CT64_AES256:
+      {
+        return decrypt_aes256_gcm_ct64(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
+      }
+    case Spec_Cipher_Expansion_Hacl_CHACHA20:
+      {
+        return decrypt_chacha20_poly1305(s, iv, iv_len, ad, ad_len, cipher, cipher_len, tag, dst);
       }
     default:
       {
@@ -1721,12 +2126,9 @@ EverCrypt_AEAD_decrypt(
 }
 
 /**
-WARNING: this function doesn't perform any dynamic
-  hardware check. You MUST make sure your hardware supports the
-  implementation of AESGCM. Besides, this function was not designed
-  for cross-compilation: if you compile it on a system which doesn't
-  support Vale, it will compile it to a function which makes the
-  program exit.
+WARNING: this function doesn't perform any dynamic hardware
+  check. You need to configure particular flags to control hardware
+  fetures that this function uses on target processor architecture.
 */
 EverCrypt_Error_error_code
 EverCrypt_AEAD_decrypt_expand_aes128_gcm_no_check(
@@ -1860,22 +2262,67 @@ EverCrypt_AEAD_decrypt_expand_aes128_gcm_no_check(
     return EverCrypt_Error_Success;
   }
   return EverCrypt_Error_AuthenticationFailure;
+  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  uint8_t ek[288U] = { 0U };
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES128, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek0 = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_128_GCM_NI_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
   #else
-  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
-    __FILE__,
-    __LINE__,
-    "EverCrypt was compiled on a system which doesn\'t support Vale");
-  KRML_HOST_EXIT(255U);
+  uint8_t ek[928U] = { 0U };
+  uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+  Hacl_AES_128_GCM_CT64_aes128_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES128, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek0 = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_128_GCM_CT64_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
   #endif
 }
 
 /**
-WARNING: this function doesn't perform any dynamic
-  hardware check. You MUST make sure your hardware supports the
-  implementation of AESGCM. Besides, this function was not designed
-  for cross-compilation: if you compile it on a system which doesn't
-  support Vale, it will compile it to a function which makes the
-  program exit.
+WARNING: this function doesn't perform any dynamic hardware
+  check. You need to configure particular flags to control hardware
+  fetures that this function uses on target processor architecture.
 */
 EverCrypt_Error_error_code
 EverCrypt_AEAD_decrypt_expand_aes256_gcm_no_check(
@@ -2009,12 +2456,60 @@ EverCrypt_AEAD_decrypt_expand_aes256_gcm_no_check(
     return EverCrypt_Error_Success;
   }
   return EverCrypt_Error_AuthenticationFailure;
+  #elif HACL_CAN_COMPILE_AESNI_PCLMUL
+  uint8_t ek[352U] = { 0U };
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+  Hacl_AES_256_GCM_NI_aes256_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES256, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek0 = scrut.ek;
+  Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_256_GCM_NI_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
   #else
-  KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n",
-    __FILE__,
-    __LINE__,
-    "EverCrypt was compiled on a system which doesn\'t support Vale");
-  KRML_HOST_EXIT(255U);
+  uint8_t ek[1184U] = { 0U };
+  uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+  Hacl_AES_256_GCM_CT64_aes256_gcm_init(aes_gcm_ctx0, k);
+  EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES256, .ek = ek };
+  EverCrypt_AEAD_state_s *s = &p;
+  if (s == NULL)
+  {
+    return EverCrypt_Error_InvalidKey;
+  }
+  if (iv_len == (uint32_t)0U)
+  {
+    return EverCrypt_Error_InvalidIVLength;
+  }
+  EverCrypt_AEAD_state_s scrut = *s;
+  uint8_t *ek0 = scrut.ek;
+  uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+  uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+  memcpy(in, cipher, cipher_len);
+  memcpy(in + cipher_len, tag, 16);
+  bool r = Hacl_AES_256_GCM_CT64_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+  KRML_HOST_FREE(in);
+  if (r)
+  {
+    return EverCrypt_Error_Success;
+  }
+  return EverCrypt_Error_AuthenticationFailure;
   #endif
 }
 
@@ -2031,12 +2526,12 @@ EverCrypt_AEAD_decrypt_expand_aes128_gcm(
   uint8_t *dst
 )
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t ek[480U] = { 0U };
@@ -2164,8 +2659,68 @@ EverCrypt_AEAD_decrypt_expand_aes128_gcm(
       }
     }
   }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t ek[288U] = { 0U };
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_128_GCM_NI_aes128_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES128, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    if (s == NULL)
+    {
+      return EverCrypt_Error_InvalidKey;
+    }
+    if (iv_len == (uint32_t)0U)
+    {
+      return EverCrypt_Error_InvalidIVLength;
+    }
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+    uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+    memcpy(in, cipher, cipher_len);
+    memcpy(in + cipher_len, tag, 16);
+    bool r = Hacl_AES_128_GCM_NI_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+    KRML_HOST_FREE(in);
+    if (r)
+    {
+      return EverCrypt_Error_Success;
+    }
+    return EverCrypt_Error_AuthenticationFailure;
+  }
+  else
+  #endif
+  {
+    uint8_t ek[928U] = { 0U };
+    uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+    Hacl_AES_128_GCM_CT64_aes128_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES128, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    if (s == NULL)
+    {
+      return EverCrypt_Error_InvalidKey;
+    }
+    if (iv_len == (uint32_t)0U)
+    {
+      return EverCrypt_Error_InvalidIVLength;
+    }
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+    uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+    memcpy(in, cipher, cipher_len);
+    memcpy(in + cipher_len, tag, 16);
+    bool r = Hacl_AES_128_GCM_CT64_aes128_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+    KRML_HOST_FREE(in);
+    if (r)
+    {
+      return EverCrypt_Error_Success;
+    }
+    return EverCrypt_Error_AuthenticationFailure;
+  }
 }
 
 EverCrypt_Error_error_code
@@ -2181,12 +2736,12 @@ EverCrypt_AEAD_decrypt_expand_aes256_gcm(
   uint8_t *dst
 )
 {
+  #if HACL_CAN_COMPILE_VALE
   bool has_pclmulqdq = EverCrypt_AutoConfig2_has_pclmulqdq();
   bool has_avx = EverCrypt_AutoConfig2_has_avx();
   bool has_sse = EverCrypt_AutoConfig2_has_sse();
   bool has_movbe = EverCrypt_AutoConfig2_has_movbe();
   bool has_aesni = EverCrypt_AutoConfig2_has_aesni();
-  #if HACL_CAN_COMPILE_VALE
   if (has_aesni && has_pclmulqdq && has_avx && has_sse && has_movbe)
   {
     uint8_t ek[544U] = { 0U };
@@ -2314,8 +2869,68 @@ EverCrypt_AEAD_decrypt_expand_aes256_gcm(
       }
     }
   }
+  else
   #endif
-  return EverCrypt_Error_UnsupportedAlgorithm;
+  #if HACL_CAN_COMPILE_AESNI_PCLMUL
+  if (hacl_aesgcm_support() != 0)
+  {
+    uint8_t ek[352U] = { 0U };
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx0 = (Lib_IntVector_Intrinsics_vec128 *)ek;
+    Hacl_AES_256_GCM_NI_aes256_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_AESNI_PCLMUL_AES256, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    if (s == NULL)
+    {
+      return EverCrypt_Error_InvalidKey;
+    }
+    if (iv_len == (uint32_t)0U)
+    {
+      return EverCrypt_Error_InvalidIVLength;
+    }
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    Lib_IntVector_Intrinsics_vec128 *aes_gcm_ctx = (Lib_IntVector_Intrinsics_vec128 *)ek0;
+    uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+    memcpy(in, cipher, cipher_len);
+    memcpy(in + cipher_len, tag, 16);
+    bool r = Hacl_AES_256_GCM_NI_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+    KRML_HOST_FREE(in);
+    if (r)
+    {
+      return EverCrypt_Error_Success;
+    }
+    return EverCrypt_Error_AuthenticationFailure;
+  }
+  else
+  #endif
+  {
+    uint8_t ek[1184U] = { 0U };
+    uint64_t *aes_gcm_ctx0 = (uint64_t *)ek;
+    Hacl_AES_256_GCM_CT64_aes256_gcm_init(aes_gcm_ctx0, k);
+    EverCrypt_AEAD_state_s p = { .impl = Spec_Cipher_Expansion_CT64_AES256, .ek = ek };
+    EverCrypt_AEAD_state_s *s = &p;
+    if (s == NULL)
+    {
+      return EverCrypt_Error_InvalidKey;
+    }
+    if (iv_len == (uint32_t)0U)
+    {
+      return EverCrypt_Error_InvalidIVLength;
+    }
+    EverCrypt_AEAD_state_s scrut = *s;
+    uint8_t *ek0 = scrut.ek;
+    uint64_t *aes_gcm_ctx = (uint64_t *)ek0;
+    uint8_t* in = (uint8_t*)KRML_HOST_MALLOC(cipher_len + 16);
+    memcpy(in, cipher, cipher_len);
+    memcpy(in + cipher_len, tag, 16);
+    bool r = Hacl_AES_256_GCM_CT64_aes256_gcm_decrypt(aes_gcm_ctx, cipher_len, dst, in, ad_len, ad, iv_len, iv);
+    KRML_HOST_FREE(in);
+    if (r)
+    {
+      return EverCrypt_Error_Success;
+    }
+    return EverCrypt_Error_AuthenticationFailure;
+  }
 }
 
 EverCrypt_Error_error_code
