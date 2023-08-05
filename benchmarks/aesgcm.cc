@@ -30,7 +30,7 @@ HACL_AES_128_GCM_NI_encrypt(benchmark::State& state)
   bytes ciphertext(state.range(0) + 16, 0);
   
   for (auto _ : state) {
-    Lib_IntVector_Intrinsics_vec128 *ctx = (Lib_IntVector_Intrinsics_vec128 *)KRML_HOST_CALLOC((uint32_t)352U, sizeof (uint8_t));
+    Lib_IntVector_Intrinsics_vec128 *ctx = (Lib_IntVector_Intrinsics_vec128 *)KRML_HOST_CALLOC((uint32_t)288U, sizeof (uint8_t));
     Hacl_AES_128_GCM_NI_aes128_gcm_init(ctx, key.data());
     Hacl_AES_128_GCM_NI_aes128_gcm_encrypt(ctx, plaintext.size(), ciphertext.data(), plaintext.data(), 0, NULL, nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
@@ -45,7 +45,7 @@ HACL_AES_128_GCM_NI_aad(benchmark::State& state)
   bytes aad(state.range(0), 0x37);
   
   for (auto _ : state) {
-    Lib_IntVector_Intrinsics_vec128 *ctx = (Lib_IntVector_Intrinsics_vec128 *)KRML_HOST_CALLOC((uint32_t)352U, sizeof (uint8_t));
+    Lib_IntVector_Intrinsics_vec128 *ctx = (Lib_IntVector_Intrinsics_vec128 *)KRML_HOST_CALLOC((uint32_t)288U, sizeof (uint8_t));
     Hacl_AES_128_GCM_NI_aes128_gcm_init(ctx, key.data());
     Hacl_AES_128_GCM_NI_aes128_gcm_encrypt(ctx, 0, mac.data(), NULL, aad.size(), aad.data(), nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
@@ -62,7 +62,7 @@ HACL_AES_128_GCM_CT64_encrypt(benchmark::State& state)
   bytes ciphertext(state.range(0) + 16, 0);
   
   for (auto _ : state) {
-    uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
+    uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)928U, sizeof (uint8_t));
     Hacl_AES_128_GCM_CT64_aes128_gcm_init(ctx, key.data());
     Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(ctx, plaintext.size(), ciphertext.data(), plaintext.data(), 0, NULL, nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
@@ -77,7 +77,7 @@ HACL_AES_128_GCM_CT64_aad(benchmark::State& state)
   bytes aad(state.range(0), 0x37);
   
   for (auto _ : state) {
-    uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)3168U, sizeof (uint8_t));
+    uint64_t *ctx = (uint64_t *)KRML_HOST_CALLOC((uint32_t)928U, sizeof (uint8_t));
     Hacl_AES_128_GCM_CT64_aes128_gcm_init(ctx, key.data());
     Hacl_AES_128_GCM_CT64_aes128_gcm_encrypt(ctx, 0, mac.data(), NULL, aad.size(), aad.data(), nonce.size(), nonce.data());
     KRML_HOST_FREE(ctx);
