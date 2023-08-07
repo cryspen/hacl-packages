@@ -95,25 +95,27 @@ jobs:
           dune build @doc --only-packages=hacl-star
           cp -r _build/default/_doc/_html/* ../build/ocaml/main/
 
-      - name: Build | OCaml API Reference for Tags
-        run: |
-          mkdir -p build/ocaml
-          for branch in $(git for-each-ref --format='%(refname)' refs/tags/); do
-            if [[ "$branch" == *"ocaml-"* ]]; then
-              rm -rf opam
-              tag=$(echo $branch | cut -d'/' -f 3)
-              git checkout $tag
-              echo "Building documentation for $tag"
-              mkdir -p build/ocaml/$tag
-              ./opam.sh
-              cd opam
-              eval $(opam env)
-              opam install . --yes
-              dune build @doc --only-packages=hacl-star
-              cp -r _build/default/_doc/_html/* ../build/ocaml/$tag/
-              cd ../
-            fi
-          done
+      # TODO: #423 ctypes.stubs need to be added to old tags to build documentation.
+      #       https://github.com/cryspen/hacl-packages/commit/81303b83a54a92d3b5f54f1b8ddbea60438cc2bf
+      # - name: Build | OCaml API Reference for Tags
+      #   run: |
+      #     mkdir -p build/ocaml
+      #     for branch in $(git for-each-ref --format='%(refname)' refs/tags/); do
+      #       if [[ "$branch" == *"ocaml-"* ]]; then
+      #         rm -rf opam
+      #         tag=$(echo $branch | cut -d'/' -f 3)
+      #         git checkout $tag
+      #         echo "Building documentation for $tag"
+      #         mkdir -p build/ocaml/$tag
+      #         ./opam.sh
+      #         cd opam
+      #         eval $(opam env)
+      #         opam install . --yes
+      #         dune build @doc --only-packages=hacl-star
+      #         cp -r _build/default/_doc/_html/* ../build/ocaml/$tag/
+      #         cd ../
+      #       fi
+      #     done
 
       - name: Build | JS API Reference
         run: |
