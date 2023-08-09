@@ -18,7 +18,7 @@
 #elif defined(__arm64__) || defined(__arm64) || defined(__aarch64__)
 #define CPU_FEATURES_ARM64
 #elif defined(__s390x__)
-#define CPU_FEATURES_POWERZ
+#define CPU_FEATURES_S390X
 #else
 #error "Unsupported CPU"
 #endif
@@ -27,15 +27,23 @@
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #define CPU_FEATURES_MACOS
-#elif defined(__GNUC__)
+#elif defined(__linux__)
 #define CPU_FEATURES_LINUX
-#elif defined(_MSC_VER)
+#elif defined(_WIN32)
 #define CPU_FEATURES_WINDOWS
 #else
 #error "Unsupported OS"
 #endif
 
-#include <stdlib.h>
+#if defined(CPU_FEATURES_WINDOWS)
+#if defined(_MSC_VER)
+#include <intrin.h>
+#define CPU_FEATURES_MSVC
+#else
+#define CPU_FEATURES_NON_MSVC
+#endif
+#endif
+
 #if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&  \
   defined(__GLIBC__) && defined(__GLIBC_PREREQ)
 #if __GLIBC_PREREQ(2, 16)
@@ -59,8 +67,8 @@
 
 // === x86 | x64
 
-#if (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS)) &&            \
-  defined(CPU_FEATURES_X64) && !defined(CPU_FEATURES_POWERZ)
+#if (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS) ||     \
+  defined(CPU_FEATURES_NON_MSVC)) && defined(CPU_FEATURES_X64)
 void
 cpuid(unsigned long leaf,
       unsigned long* eax,
@@ -74,7 +82,8 @@ cpuid(unsigned long leaf,
           : "0"(leaf));
 }
 
-#elif defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_X86)
+#elif (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_NON_MSVC)) &&   \
+  defined(CPU_FEATURES_X86)
 /* XXX: Find a 32-bit CPU to actually test this */
 void
 cpuid(unsigned long leaf,
@@ -150,7 +159,7 @@ hacl_vec128_support()
   return _sse && _sse2 && _sse3 && _sse41 && _sse41 && _cmov;
 #elif defined(CPU_FEATURES_ARM64)
   return _asimd;
-#elif defined(CPU_FEATURES_POWERZ)
+#elif defined(CPU_FEATURES_S390X)
   return 1;
 #else
   return 0;
@@ -190,12 +199,27 @@ vale_sha2_support()
 void
 hacl_init_cpu_features()
 {
-  // TODO: Make this work for Windows.
-#if (defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)) &&                \
-  (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS))
+#if (defined(CPU_FEATURES_X64) || defined(CPU_FEATURES_X86)) &&         \
+  (defined(CPU_FEATURES_LINUX) || defined(CPU_FEATURES_MACOS) ||        \
+  defined(CPU_FEATURES_WINDOWS))
   unsigned long eax, ebx, ecx, edx, eax_sub, ebx_sub, ecx_sub, edx_sub;
+#if defined(CPU_FEATURES_MSVC)
+  int cpu_info[4];
+  int cpu_info_sub[4];
+  __cpuidex(cpu_info, 1, 0);
+  __cpuidex(cpu_info_sub, 7, 0);
+  eax = cpu_info[0];
+  ebx = cpu_info[1];
+  ecx = cpu_info[2];
+  edx = cpu_info[3];
+  eax_sub = cpu_info_sub[0];
+  ebx_sub = cpu_info_sub[1];
+  ecx_sub = cpu_info_sub[2];
+  edx_sub = cpu_info_sub[3];
+#else
   cpuid(1, &eax, &ebx, &ecx, &edx);
   cpuid(7, &eax_sub, &ebx_sub, &ecx_sub, &edx_sub);
+#endif
 
   _aes = (ecx & ECX_AESNI) != 0;
   _avx = (ecx & ECX_AVX) != 0;
@@ -216,23 +240,20 @@ hacl_init_cpu_features()
   _ssse3 = (ecx & ECX_SSSE3) != 0;
   _sse41 = (ecx & ECX_SSE4_1) != 0;
   _sse42 = (ecx & ECX_SSE4_2) != 0;
-#endif
 
-#if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&    \
+#elif defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&    \
   defined(GETAUXVAL_FUNC)
   unsigned long hwcap = getauxval(AT_HWCAP);
   _asimd = ((hwcap & HWCAP_ASIMD) != 0) ? 1 : 0;
   _aes = ((hwcap & HWCAP_AES) != 0) ? 1 : 0;
   _pclmul = ((hwcap & HWCAP_PMULL) != 0) ? 1 : 0;
   _sha = ((hwcap & HWCAP_SHA2) != 0) ? 1 : 0;
-#endif
 
-#if defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_ARM64)
+#elif defined(CPU_FEATURES_MACOS) && defined(CPU_FEATURES_ARM64)
   int err;
   int64_t ret = 0;
   size_t size = sizeof(ret);
 
-  // Check for general support of Advanced SIMD instructions
   err = sysctlbyname("hw.optional.AdvSIMD", &ret, &size, NULL, 0);
   _asimd = (err == 0 && ret > 0) ? 1 : 0;
 
