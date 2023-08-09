@@ -44,6 +44,7 @@
 #endif
 #endif
 
+#include <stdlib.h>
 #if defined(CPU_FEATURES_LINUX) && defined(CPU_FEATURES_ARM64) &&  \
   defined(__GLIBC__) && defined(__GLIBC_PREREQ)
 #if __GLIBC_PREREQ(2, 16)
