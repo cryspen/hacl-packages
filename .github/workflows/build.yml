@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   linux:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -92,12 +92,12 @@ jobs:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
-        version: [11, 12, 13, 14]
+        version: [11, 12, 13, 14, 15]
         bits: [64]
         target: ["", "aarch64-apple-ios", "aarch64-apple-darwin"]
         exclude:
@@ -105,6 +105,10 @@ jobs:
             version: 13
           - compiler: gcc
             version: 14
+          - compiler: gcc
+            version: 15
+          - compiler: clang
+            version: 11
 
     steps:
       - name: Setup | Install Ninja
@@ -159,7 +163,7 @@ jobs:
           name: macos_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.target }}
 
   windows:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: windows-latest
     strategy:
       matrix:
@@ -212,7 +216,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   android:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -239,7 +243,7 @@ jobs:
           name: ${{ matrix.target }}
 
   s390x-gcc:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -274,7 +278,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   default:
-    if: ${{ github.event_name == 'merge_group' }}
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
