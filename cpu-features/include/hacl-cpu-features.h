@@ -20,6 +20,8 @@ extern "C"
 
   unsigned int hacl_vec256_support();
 
+  unsigned int hacl_aesgcm_support();
+
   unsigned int vale_aesgcm_support();
 
   unsigned int vale_x25519_support();

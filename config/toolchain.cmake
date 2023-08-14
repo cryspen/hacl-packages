@@ -91,6 +91,15 @@ if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_VALE)
     endif()
 endif()
 
+## Check for aes-ni/pclmul support
+if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL)
+    # Always enable for x64 and arm64
+    set(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL FALSE)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64|aarch64|arm64|arm64v8")
+        set(TOOLCHAIN_CAN_COMPILE_AESNI_PCLMUL TRUE)
+    endif()
+endif()
+
 # Check for inline assembly support
 if(NOT DEFINED TOOLCHAIN_CAN_COMPILE_INLINE_ASM)
     set(TOOLCHAIN_CAN_COMPILE_INLINE_ASM OFF)

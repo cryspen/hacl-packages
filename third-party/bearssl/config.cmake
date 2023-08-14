@@ -1,0 +1,9 @@
+set(SOURCES_bearssl
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/enc32le.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/dec32le.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/aes_ct64.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/aes_ct64_enc.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/aes_ct64_ctr.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/ghash_ctmul64.c
+	${PROJECT_SOURCE_DIR}/third-party/bearssl/gcm.c
+)

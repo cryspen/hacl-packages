@@ -140,6 +140,8 @@ class Config:
         # If vale is compiled add the include path
         if len(self.vale_files) != 0:
             self.include_paths.extend(self.config["vale_include_paths"])
+        # Set cpu-features as include paths
+        self.include_paths.extend(self.config["cpu_features_include_paths"])
 
         # If the build directory is empty, copy the `default_config.h` there to
         # make the dependency analysis work.
