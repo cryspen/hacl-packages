@@ -555,7 +555,7 @@ static inline Lib_IntVector_Intrinsics_vec128 Lib_IntVector_Intrinsics_ni_aes_ke
   (vextq_u64(x0,x0,x1))
 
 #define Lib_IntVector_Intrinsics_vec128_shuffle32(x0, x1, x2, x3, x4)	\
-  ((uint32x4_t){((uint32x4_t)x0)[x1],((uint32x4_t)x0)[x2],((uint32x4_t)x0)[x3],((uint32x4_t)x0)[x4]})
+  ((uint32x4_t){(x0)[x1],(x0)[x2],(x0)[x3],(x0)[x4]})
 
 /*
 #define Lib_IntVector_Intrinsics_vec128_shuffle64(x0, x1, x2) \
