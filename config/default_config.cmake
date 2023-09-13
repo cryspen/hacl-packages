@@ -10,7 +10,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Base.c
-	${PROJECT_SOURCE_DIR}/src/lib_memzero0.c
+	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Blake2.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum256_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum.c
@@ -45,7 +45,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_HMAC.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Hash.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AutoConfig2.c
-	${PROJECT_SOURCE_DIR}/src/lib_memzero0.c
+	${PROJECT_SOURCE_DIR}/src/Lib_Memzero0.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Curve25519.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_HKDF.c
