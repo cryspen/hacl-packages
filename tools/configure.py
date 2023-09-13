@@ -89,7 +89,6 @@ class Config:
         # remove source_dir and .c
         source_files = list(
             map(lambda s: s[len(source_dir) + 1: -2], source_files))
-        source_files = list(map(lambda s: s.lower(), source_files))
 
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
@@ -99,8 +98,9 @@ class Config:
             # Get the file name from the path
             file_name = os.path.splitext(os.path.basename(include))[0]
             # Only add the dependency if there's a corresponding source file.
-            if file_name.lower() in source_files:
-                deps.append(join(source_dir, file_name + ".c"))
+            for s in source_files:
+                if s.lower() == file_name.lower():
+                    deps.append(join(source_dir, s + ".c"))
             # We take all includes though
             if include.endswith(".h"):
                 includes.append(include)
