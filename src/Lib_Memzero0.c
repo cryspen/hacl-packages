@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <inttypes.h>
 
+/* This is now a hand-written header */
 #include "lib_memzero0.h"
 #include "krml/internal/target.h"
 
