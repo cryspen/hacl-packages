@@ -63,7 +63,7 @@ jobs:
       - if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build
+          sudo apt-get install ninja-build clang-15
 
       - if: matrix.os == 'windows-latest'
         uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
@@ -122,7 +122,7 @@ jobs:
       - if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build gcc-multilib g++-multilib
+          sudo apt-get install ninja-build gcc-multilib g++-multilib clang-15
           rustup target add i686-unknown-linux-gnu
 
       - name: Setup | Developer Command Prompt (x86)
