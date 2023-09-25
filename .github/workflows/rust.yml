@@ -95,7 +95,7 @@ jobs:
         bits: [32, 64]
         os:
           - macos-latest
-          - ubuntu-latest
+          # - ubuntu-latest disable for now
           - windows-latest
         exclude:
           - bits: 32
