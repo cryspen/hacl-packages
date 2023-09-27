@@ -116,18 +116,18 @@ fn criterion_digest(c: &mut Criterion) {
     });
     c.bench_function("SHAKE 128", |b| {
         b.iter_batched(
-            || randombytes(PAYLOAD_SIZE),
+            || randombytes(34),
             |data| {
-                let _d: [u8; 64] = digest::shake128(&data);
+                let _d: [u8; 840] = digest::shake128(&data);
             },
             BatchSize::SmallInput,
         )
     });
     c.bench_function("SHAKE 256", |b| {
         b.iter_batched(
-            || randombytes(PAYLOAD_SIZE),
+            || randombytes(34),
             |data| {
-                let _d: [u8; 64] = digest::shake256(&data);
+                let _d: [u8; 840] = digest::shake256(&data);
             },
             BatchSize::SmallInput,
         )

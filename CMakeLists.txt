@@ -508,6 +508,9 @@ if(ENABLE_BENCHMARKS)
     )
     add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
 
+    include(${PROJECT_SOURCE_DIR}/third-party/boringssl/config.cmake)
+    add_library(boringssl_keccak OBJECT ${SOURCES_boringssl})
+
     foreach(BENCH_FILE IN LISTS BENCHMARK_SOURCES)
         get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WE)
         set(BENCH_NAME ${BENCH_NAME}_benchmark)
@@ -515,6 +518,7 @@ if(ENABLE_BENCHMARKS)
             ${BENCH_FILE}
         )
 
+        target_include_directories(${BENCH_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/third-party/boringssl/)
         if(ENABLE_OPENSSL_BENCHMARKS)
             if(DEFINED ENV{OPENSSL_HOME})
                 target_include_directories(${BENCH_NAME} PUBLIC $ENV{OPENSSL_HOME}/include/)
@@ -543,12 +547,13 @@ if(ENABLE_BENCHMARKS)
         endif(NOT MSVC)
 
         set_property(TARGET ${BENCH_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-        add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
+        add_dependencies(${BENCH_NAME} hacl hacl_cpu_features boringssl_keccak)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
             ecckiila
             blake2
             digestif
+            boringssl_keccak
             hacl_cpu_features
             benchmark::benchmark
         )

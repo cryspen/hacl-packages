@@ -101,6 +101,8 @@ void Hacl_SHA3_sha3_384(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
 void Hacl_SHA3_sha3_512(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
+void Hacl_Impl_SHA3_absorb_inner(uint32_t rateInBytes, uint8_t *block, uint64_t *s);
+
 void
 Hacl_Impl_SHA3_squeeze(
   uint64_t *s,

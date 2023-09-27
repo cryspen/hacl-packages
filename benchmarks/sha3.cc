@@ -1,6 +1,7 @@
 #include "util.h"
 
 #include "Hacl_Hash_SHA3.h"
+#include "keccak.h"
 
 const bytes input(34, 0x37);
 
@@ -242,6 +243,14 @@ BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
 static void
 Hacl_Sha3_shake128(benchmark::State& state)
 {
+  // Manual warmup
+  for(size_t i = 0; i<200; i++) {
+    Hacl_SHA3_shake128_hacl(input.size(),
+                            (uint8_t*)input.data(),
+                            digest_shake.size(),
+                            digest_shake.data());
+  }
+
   for (auto _ : state) {
     Hacl_SHA3_shake128_hacl(input.size(),
                             (uint8_t*)input.data(),
@@ -252,9 +261,40 @@ Hacl_Sha3_shake128(benchmark::State& state)
 
 BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
 
+extern "C" void BORINGSSL_keccak(uint8_t *out, size_t out_len,
+                                     const uint8_t *in, size_t in_len,
+                                     enum boringssl_keccak_config_t config);
+
+static void
+BoringSSL_Sha3_shake128(benchmark::State& state)
+{
+  // Manual warmup
+  for(size_t i = 0; i<200; i++) {
+    BORINGSSL_keccak((uint8_t*)digest_shake.data(), (size_t)digest_shake.size(), 
+                     (uint8_t*)input.data(), input.size(),
+                     boringssl_shake128);
+  }
+
+  for (auto _ : state) {
+    BORINGSSL_keccak((uint8_t*)digest_shake.data(), (size_t)digest_shake.size(), 
+                     (uint8_t*)input.data(), input.size(),
+                     boringssl_shake128);
+  }
+}
+
+BENCHMARK(BoringSSL_Sha3_shake128)->Setup(DoSetup);
+
 static void
 Hacl_Sha3_shake256(benchmark::State& state)
 {
+  // Manual warmup
+  for(size_t i = 0; i<200; i++) {
+    Hacl_SHA3_shake256_hacl(input.size(),
+                            (uint8_t*)input.data(),
+                            digest_shake.size(),
+                            digest_shake.data());
+  }
+
   for (auto _ : state) {
     Hacl_SHA3_shake256_hacl(input.size(),
                             (uint8_t*)input.data(),
@@ -264,5 +304,24 @@ Hacl_Sha3_shake256(benchmark::State& state)
 }
 
 BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
+
+static void
+BoringSSL_Sha3_shake256(benchmark::State& state)
+{
+  // Manual warmup
+  for(size_t i = 0; i<200; i++) {
+    BORINGSSL_keccak((uint8_t*)digest_shake.data(), (size_t)digest_shake.size(), 
+                     (uint8_t*)input.data(), input.size(),
+                     boringssl_shake256);
+  }
+
+  for (auto _ : state) {
+    BORINGSSL_keccak((uint8_t*)digest_shake.data(), (size_t)digest_shake.size(), 
+                     (uint8_t*)input.data(), input.size(),
+                     boringssl_shake256);
+  }
+}
+
+BENCHMARK(BoringSSL_Sha3_shake256)->Setup(DoSetup);
 
 BENCHMARK_MAIN();
