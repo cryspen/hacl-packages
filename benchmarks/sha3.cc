@@ -2,26 +2,26 @@
 
 #include "Hacl_Hash_SHA3.h"
 
-const bytes input(1000, 0x37);
+const bytes input(34, 0x37);
 
 static bytes digest224(28, 0);
 static bytes digest256(32, 0);
 static bytes digest384(48, 0);
 static bytes digest512(64, 0);
-static bytes digest_shake(42, 0);
+static bytes digest_shake(840, 0);
 
 const size_t chunk_len = 135;
 
 const bytes expected_digest_sha3_224 =
-  from_hex("286c0137d80ed1fa81c06214ae451a665d554291aca2e5a6a48cf580");
+  from_hex("350400f2c2590bca4b9d68573c66e1f01dec624217569d9e77d7d2d7");
 const bytes expected_digest_sha3_256 =
-  from_hex("7ac89d2c51ccf643bcaff3d747d79c0add61cbd46fb9439514e496154deae374");
+  from_hex("1181ca1f5bf35d540704ac42cd17f642ccb2d7d30a94a747ba283cc496ffb6a9");
 const bytes expected_digest_sha3_384 =
-  from_hex("7381e68f768394a730cdcbc9945aa8d8c701357605d48349545771f81ea94244c49"
-           "61c8a4ff6b5bfc4b98cafb31e645c");
+  from_hex("c155ca5e66ab9bc7f7ad181e386d23d1ecf6a8fb5073044e3e79dda29c3e76976e0"
+           "ca1c75f2655868da764ec39646060");
 const bytes expected_digest_sha3_512 =
-  from_hex("826308628fabfe511ccd2db232f374737785144703735ad07ebf8e31c2247608a0f"
-           "ac23c4decd9a5264411c58c0b1591d084c0004b1ec86829a12dff96354ab5");
+  from_hex("e1120a1749593f20e4fb9d815221085f73224a89d6a53456eeee63b98c30a00d345"
+           "5920ae9ee15b1fed68213949bdf4f82c47b5538c2aa2fa320731fae116a9d");
 
 static void
 Hacl_Sha3_224(benchmark::State& state)

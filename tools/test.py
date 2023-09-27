@@ -153,4 +153,4 @@ def test(args):
 
     # parse file
     config = json.loads(data)
-    run_tests(config["tests"], "Debug", algorithms=algorithms, coverage=args.coverage)
+    run_tests(config["tests"], "Release", algorithms=algorithms, coverage=args.coverage)

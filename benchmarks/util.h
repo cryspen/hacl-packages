@@ -237,10 +237,6 @@ OpenSSL_hash_streaming(benchmark::State& state, Args&&... args)
   bytes digest(digest_len, 0);
 
   for (auto _ : state) {
-    if (input != bytes(1000, 0x37)) {
-      state.SkipWithError("Incorrect input.");
-    }
-
     // Init
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     EVP_DigestInit(ctx, algorithm);

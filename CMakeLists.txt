@@ -542,6 +542,7 @@ if(ENABLE_BENCHMARKS)
             target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
         endif(NOT MSVC)
 
+        set_property(TARGET ${BENCH_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
         add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
