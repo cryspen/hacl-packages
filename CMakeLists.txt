@@ -93,7 +93,7 @@ if(NOT MSVC)
         -pedantic
         -Wconversion
         -Wsign-conversion
-        -Werror=gcc-compat
+        # -Werror=gcc-compat
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
