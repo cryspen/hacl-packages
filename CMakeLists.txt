@@ -88,17 +88,15 @@ include(build/config.cmake)
 # TODO: Set flags for MSVC
 if(NOT MSVC)
     add_compile_options(
-        # -Wall
-        # -Wextra
-        # -pedantic
-        # -Wconversion
-        # -Wsign-conversion
-        # -Werror=gcc-compat
+        -Wall
+        -Wextra
+        -pedantic
+        -Wconversion
+        -Wsign-conversion
+        -Werror=gcc-compat
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
-        # $<$<CONFIG:RELEASE>:-g>
-        # $<$<CONFIG:RELEASE>:-Wno-deprecated-declarations>
     )
 endif()
 
