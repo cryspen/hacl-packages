@@ -88,9 +88,9 @@ include(build/config.cmake)
 # TODO: Set flags for MSVC
 if(NOT MSVC)
     add_compile_options(
-        -Wall
-        -Wextra
-        -pedantic
+        # -Wall
+        # -Wextra
+        # -pedantic
         # -Wconversion
         # -Wsign-conversion
         $<$<CONFIG:DEBUG>:-g>
@@ -335,7 +335,7 @@ configure_file(config/Config.h.in config.h)
 # # Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 if(NOT MSVC)
-    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion)
+    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
