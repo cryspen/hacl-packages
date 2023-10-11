@@ -1,5 +1,5 @@
 The code was generated with the following toolchain.
 F* version: bc622701c668f6b4092760879372968265d4a4e1
-KaRaMeL version: aef72b2b5a44b338b856a177819d1bfa0d7cc5b6
-HACL* version: 1a20576fc736d51e1ab3c317b46ba81560b75786
+KaRaMeL version: 7cffd27cfefbd220e986e561e8d350f043609f76
+HACL* version: 1b30697fc2b0d8d5e2f541eccfd3fb52b45b905c
 Vale version: 0.3.19
