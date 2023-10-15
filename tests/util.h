@@ -216,6 +216,19 @@ generate_p256_keypair(uint8_t* sk, uint8_t* pk)
   std::copy(pk_bytes.begin(), pk_bytes.end(), pk);
 }
 
+// Only used in examples. Do not use otherwise.
+void
+generate_p384_keypair(uint8_t* sk, uint8_t* pk)
+{
+  bytes sk_bytes = from_hex(
+    "911540762B807060EBB1071D8B76F9C6B0C8570B2D56204B7D62448443171798EDF712E7CF55895D675FFE7B5CF35750");
+  std::copy(sk_bytes.begin(), sk_bytes.end(), sk);
+
+  bytes pk_bytes = from_hex(
+                            "B7828FF3F814932B531D3CD58947A77655CA12EE533333EE12E921C39114B752BEFDB3E45C05D6C1F8222C5C6B234E8D1F4B1BBA3434C6BAA34250744B4E109E09A55D5F3075BEC33256C94A468792C2B5650D24F85482C988B7328E825F488D");                            
+  std::copy(pk_bytes.begin(), pk_bytes.end(), pk);
+}
+
 // ANCHOR(print_hex_ln)
 void
 print_hex_ln(size_t bytes_len, uint8_t* bytes)

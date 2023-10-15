@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __Hacl_P256_H
-#define __Hacl_P256_H
+#ifndef __Hacl_P384_H
+#define __Hacl_P384_H
 
 #include <string.h>
 #include "krml/internal/types.h"
@@ -36,7 +36,7 @@
 
 /*******************************************************************************
 
- Verified C library for ECDSA and ECDH functions over the P-256 NIST curve.
+ Verified C library for ECDSA and ECDH functions over the P-384 NIST curve.
 
  This module implements signing and verification, key validation, conversions
  between various point representations, and ECDH key agreement.
@@ -66,7 +66,7 @@ Create an ECDSA signature using SHA2-256.
     • 0 < `nonce` < the order of the curve
 */
 bool
-Hacl_P256_ecdsa_sign_p256_sha2(
+Hacl_P384_ecdsa_sign_p384_sha2(
   uint8_t *signature,
   uint32_t msg_len,
   uint8_t *msg,
@@ -88,7 +88,7 @@ Create an ECDSA signature using SHA2-384.
     • 0 < `nonce` < the order of the curve
 */
 bool
-Hacl_P256_ecdsa_sign_p256_sha384(
+Hacl_P384_ecdsa_sign_p384_sha384(
   uint8_t *signature,
   uint32_t msg_len,
   uint8_t *msg,
@@ -110,7 +110,7 @@ Create an ECDSA signature using SHA2-512.
     • 0 < `nonce` < the order of the curve
 */
 bool
-Hacl_P256_ecdsa_sign_p256_sha512(
+Hacl_P384_ecdsa_sign_p384_sha512(
   uint8_t *signature,
   uint32_t msg_len,
   uint8_t *msg,
@@ -142,7 +142,7 @@ Create an ECDSA signature WITHOUT hashing first.
     • 0 < `nonce` < the order of the curve
 */
 bool
-Hacl_P256_ecdsa_sign_p256_without_hash(
+Hacl_P384_ecdsa_sign_p384_without_hash(
   uint8_t *signature,
   uint32_t msg_len,
   uint8_t *msg,
@@ -167,7 +167,7 @@ Verify an ECDSA signature using SHA2-256.
   The function also checks whether `public_key` is valid
 */
 bool
-Hacl_P256_ecdsa_verif_p256_sha2(
+Hacl_P384_ecdsa_verif_p384_sha2(
   uint32_t msg_len,
   uint8_t *msg,
   uint8_t *public_key,
@@ -187,7 +187,7 @@ Verify an ECDSA signature using SHA2-384.
   The function also checks whether `public_key` is valid
 */
 bool
-Hacl_P256_ecdsa_verif_p256_sha384(
+Hacl_P384_ecdsa_verif_p384_sha384(
   uint32_t msg_len,
   uint8_t *msg,
   uint8_t *public_key,
@@ -207,7 +207,7 @@ Verify an ECDSA signature using SHA2-512.
   The function also checks whether `public_key` is valid
 */
 bool
-Hacl_P256_ecdsa_verif_p256_sha512(
+Hacl_P384_ecdsa_verif_p384_sha512(
   uint32_t msg_len,
   uint8_t *msg,
   uint8_t *public_key,
@@ -232,7 +232,7 @@ Verify an ECDSA signature WITHOUT hashing first.
   The function also checks whether `public_key` is valid
 */
 bool
-Hacl_P256_ecdsa_verif_without_hash(
+Hacl_P384_ecdsa_verif_without_hash(
   uint32_t msg_len,
   uint8_t *msg,
   uint8_t *public_key,
@@ -259,7 +259,7 @@ Public key validation.
     • y^2 = x^3 + ax + b where a and b are the coefficients of the curve equation.
   The last extract is taken from: https://neilmadden.blog/2017/05/17/so-how-do-you-validate-nist-ecdh-public-keys/
 */
-bool Hacl_P256_validate_public_key(uint8_t *public_key);
+bool Hacl_P384_validate_public_key(uint8_t *public_key);
 
 /**
 Private key validation.
@@ -271,12 +271,12 @@ Private key validation.
   The private key is valid:
     • 0 < `private_key` < the order of the curve
 */
-bool Hacl_P256_validate_private_key(uint8_t *private_key);
+bool Hacl_P384_validate_private_key(uint8_t *private_key);
 
 /*******************************************************************************
   Parsing and Serializing public keys.
 
-  A public key is a point (x, y) on the P-256 NIST curve.
+  A public key is a point (x, y) on the P-384 NIST curve.
 
   The point can be represented in the following three ways.
     • raw          = [ x || y ], 64 bytes
@@ -296,7 +296,7 @@ Convert a public key from uncompressed to its raw form.
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
-bool Hacl_P256_uncompressed_to_raw(uint8_t *pk, uint8_t *pk_raw);
+bool Hacl_P384_uncompressed_to_raw(uint8_t *pk, uint8_t *pk_raw);
 
 /**
 Convert a public key from compressed to its raw form.
@@ -308,7 +308,7 @@ Convert a public key from compressed to its raw form.
 
   The function also checks whether (x, y) is a valid point.
 */
-bool Hacl_P256_compressed_to_raw(uint8_t *pk, uint8_t *pk_raw);
+bool Hacl_P384_compressed_to_raw(uint8_t *pk, uint8_t *pk_raw);
 
 /**
 Convert a public key from raw to its uncompressed form.
@@ -318,7 +318,7 @@ Convert a public key from raw to its uncompressed form.
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
-void Hacl_P256_raw_to_uncompressed(uint8_t *pk_raw, uint8_t *pk);
+void Hacl_P384_raw_to_uncompressed(uint8_t *pk_raw, uint8_t *pk);
 
 /**
 Convert a public key from raw to its compressed form.
@@ -328,7 +328,7 @@ Convert a public key from raw to its compressed form.
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
-void Hacl_P256_raw_to_compressed(uint8_t *pk_raw, uint8_t *pk);
+void Hacl_P384_raw_to_compressed(uint8_t *pk_raw, uint8_t *pk);
 
 
 /******************/
@@ -346,7 +346,7 @@ Compute the public key from the private key.
   The private key is valid:
     • 0 < `private_key` < the order of the curve.
 */
-bool Hacl_P256_dh_initiator(uint8_t *public_key, uint8_t *private_key);
+bool Hacl_P384_dh_initiator(uint8_t *public_key, uint8_t *private_key);
 
 /**
 Execute the diffie-hellmann key exchange.
@@ -361,8 +361,8 @@ Execute the diffie-hellmann key exchange.
   The function also checks whether `private_key` and `their_pubkey` are valid.
 */
 bool
-Hacl_P256_dh_responder(uint8_t *shared_secret, uint8_t *their_pubkey, uint8_t *private_key);
+Hacl_P384_dh_responder(uint8_t *shared_secret, uint8_t *their_pubkey, uint8_t *private_key);
 
 
-#define __Hacl_P256_H_DEFINED
+#define __Hacl_P384_H_DEFINED
 #endif

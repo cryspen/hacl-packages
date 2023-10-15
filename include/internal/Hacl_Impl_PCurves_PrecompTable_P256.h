@@ -23,21 +23,19 @@
  */
 
 
-#ifndef __internal_Hacl_P256_PrecompTable_H
-#define __internal_Hacl_P256_PrecompTable_H
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#ifndef __internal_Hacl_Impl_PCurves_PrecompTable_P256_H
+#define __internal_Hacl_Impl_PCurves_PrecompTable_P256_H
 
 #include <string.h>
 #include "krml/internal/types.h"
 #include "krml/lowstar_endianness.h"
-#include "krml/internal/target.h"
+
+#include "internal/Hacl_Krmllib.h"
+#include "lib_intrinsics.h"
 
 static const
 uint64_t
-Hacl_P256_PrecompTable_precomp_basepoint_table_w4[192U] =
+Hacl_Impl_PCurves_PrecompTable_P256_p256_basepoint_table_w4[192U] =
   {
     (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)1U,
     (uint64_t)18446744069414584320U, (uint64_t)18446744073709551615U, (uint64_t)4294967294U,
@@ -115,7 +113,7 @@ Hacl_P256_PrecompTable_precomp_basepoint_table_w4[192U] =
 
 static const
 uint64_t
-Hacl_P256_PrecompTable_precomp_g_pow2_64_table_w4[192U] =
+Hacl_Impl_PCurves_PrecompTable_P256_p256_g_pow2_64_table_w4[192U] =
   {
     (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)1U,
     (uint64_t)18446744069414584320U, (uint64_t)18446744073709551615U, (uint64_t)4294967294U,
@@ -194,7 +192,7 @@ Hacl_P256_PrecompTable_precomp_g_pow2_64_table_w4[192U] =
 
 static const
 uint64_t
-Hacl_P256_PrecompTable_precomp_g_pow2_128_table_w4[192U] =
+Hacl_Impl_PCurves_PrecompTable_P256_p256_g_pow2_128_table_w4[192U] =
   {
     (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)1U,
     (uint64_t)18446744069414584320U, (uint64_t)18446744073709551615U, (uint64_t)4294967294U,
@@ -280,7 +278,7 @@ Hacl_P256_PrecompTable_precomp_g_pow2_128_table_w4[192U] =
 
 static const
 uint64_t
-Hacl_P256_PrecompTable_precomp_g_pow2_192_table_w4[192U] =
+Hacl_Impl_PCurves_PrecompTable_P256_p256_g_pow2_192_table_w4[192U] =
   {
     (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)1U,
     (uint64_t)18446744069414584320U, (uint64_t)18446744073709551615U, (uint64_t)4294967294U,
@@ -359,7 +357,7 @@ Hacl_P256_PrecompTable_precomp_g_pow2_192_table_w4[192U] =
 
 static const
 uint64_t
-Hacl_P256_PrecompTable_precomp_basepoint_table_w5[384U] =
+Hacl_Impl_PCurves_PrecompTable_P256_p256_basepoint_table_w5[384U] =
   {
     (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)0U, (uint64_t)1U,
     (uint64_t)18446744069414584320U, (uint64_t)18446744073709551615U, (uint64_t)4294967294U,
@@ -511,9 +509,31 @@ Hacl_P256_PrecompTable_precomp_basepoint_table_w5[384U] =
     (uint64_t)13580036169519833644U
   };
 
-#if defined(__cplusplus)
+static inline void
+Hacl_Impl_PCurves_PrecompTable_P256_precomp_get_consttime(
+  uint64_t *ctx,
+  const uint64_t *table,
+  uint64_t bits_l,
+  uint64_t *tmp
+)
+{
+  KRML_HOST_IGNORE(ctx);
+  memcpy(tmp, (uint64_t *)table, (uint32_t)12U * sizeof (uint64_t));
+  KRML_MAYBE_FOR15(i0,
+    (uint32_t)0U,
+    (uint32_t)15U,
+    (uint32_t)1U,
+    uint64_t c = FStar_UInt64_eq_mask(bits_l, (uint64_t)(i0 + (uint32_t)1U));
+    const uint64_t *res_j = table + (i0 + (uint32_t)1U) * (uint32_t)12U;
+    KRML_MAYBE_FOR12(i,
+      (uint32_t)0U,
+      (uint32_t)12U,
+      (uint32_t)1U,
+      uint64_t *os = tmp;
+      uint64_t x = (c & res_j[i]) | (~c & tmp[i]);
+      os[i] = x;););
 }
-#endif
 
-#define __internal_Hacl_P256_PrecompTable_H_DEFINED
+
+#define __internal_Hacl_Impl_PCurves_PrecompTable_P256_H_DEFINED
 #endif

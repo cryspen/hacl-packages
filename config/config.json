@@ -156,6 +156,12 @@
                 "features": "std"
             }
         ],
+        "p384": [
+            {
+                "file": "Hacl_P384.c",
+                "features": "std"
+            }
+        ],
         "k256": [
             {
                 "file": "Hacl_K256_ECDSA.c",
@@ -456,6 +462,9 @@
         "p256": [
             "p256_ecdh.cc",
             "p256_ecdsa.cc"
+        ],
+        "p384": [
+            "p384_ecdh.cc"
         ],
         "k256": [
             "k256_ecdh.cc",

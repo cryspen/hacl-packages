@@ -23,6 +23,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Streaming_Poly1305_32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_P384.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_K256_ECDSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
@@ -181,9 +182,9 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/internal/Vale.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_P256.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_P256_PrecompTable.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_PCurves_PrecompTable_P256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P384.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum_K256.h
@@ -309,7 +310,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Poly1305_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P384.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
@@ -400,6 +402,7 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/blake2b.cc
 	${PROJECT_SOURCE_DIR}/tests/blake2s.cc
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdh.cc
+	${PROJECT_SOURCE_DIR}/tests/p384_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdsa.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdsa.cc
@@ -470,6 +473,7 @@ set(ALGORITHM_TEST_FILES
 	TEST_FILES_generic_field
 	TEST_FILES_blake2
 	TEST_FILES_p256
+	TEST_FILES_p384
 	TEST_FILES_k256
 	TEST_FILES_chacha20poly1305
 	TEST_FILES_ed25519
@@ -503,6 +507,9 @@ set(TEST_FILES_blake2
 set(TEST_FILES_p256
 	p256_ecdh.cc
 	p256_ecdsa.cc
+)
+set(TEST_FILES_p384
+	p384_ecdh.cc
 )
 set(TEST_FILES_k256
 	k256_ecdh.cc
