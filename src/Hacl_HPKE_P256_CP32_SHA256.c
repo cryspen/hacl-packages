@@ -39,7 +39,7 @@ Hacl_HPKE_P256_CP32_SHA256_setupBaseS(
 {
   uint8_t o_shared[32U] = { 0U };
   uint8_t *o_pkE1 = o_pkE + (uint32_t)1U;
-  bool res0 = Hacl_Impl_P256_DH_ecp256dh_i(o_pkE1, skE);
+  bool res0 = Hacl_P256_dh_initiator(o_pkE1, skE);
   uint32_t res1;
   if (res0)
   {
@@ -55,7 +55,7 @@ Hacl_HPKE_P256_CP32_SHA256_setupBaseS(
     o_pkE[0U] = (uint8_t)4U;
     uint8_t o_dh[64U] = { 0U };
     uint8_t tmp0[64U] = { 0U };
-    bool res = Hacl_Impl_P256_DH_ecp256dh_r(tmp0, pkR, skE);
+    bool res = Hacl_P256_dh_responder(tmp0, pkR, skE);
     memcpy(o_dh, tmp0, (uint32_t)64U * sizeof (uint8_t));
     uint32_t res2;
     if (res)
@@ -314,7 +314,7 @@ Hacl_HPKE_P256_CP32_SHA256_setupBaseR(
 )
 {
   uint8_t pkR[64U] = { 0U };
-  bool res0 = Hacl_Impl_P256_DH_ecp256dh_i(pkR, skR);
+  bool res0 = Hacl_P256_dh_initiator(pkR, skR);
   uint32_t res1;
   if (res0)
   {
@@ -330,7 +330,7 @@ Hacl_HPKE_P256_CP32_SHA256_setupBaseR(
     uint8_t *pkE = enc + (uint32_t)1U;
     uint8_t dh[64U] = { 0U };
     uint8_t tmp0[64U] = { 0U };
-    bool res = Hacl_Impl_P256_DH_ecp256dh_r(tmp0, pkE, skR);
+    bool res = Hacl_P256_dh_responder(tmp0, pkE, skR);
     memcpy(dh, tmp0, (uint32_t)64U * sizeof (uint8_t));
     uint32_t res11;
     if (res)
@@ -347,7 +347,7 @@ Hacl_HPKE_P256_CP32_SHA256_setupBaseR(
     {
       uint8_t *pkRm = kemcontext + (uint32_t)65U;
       uint8_t *pkR1 = pkRm + (uint32_t)1U;
-      bool res3 = Hacl_Impl_P256_DH_ecp256dh_i(pkR1, skR);
+      bool res3 = Hacl_P256_dh_initiator(pkR1, skR);
       uint32_t res2;
       if (res3)
       {
