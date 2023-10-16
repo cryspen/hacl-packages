@@ -402,8 +402,9 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/blake2b.cc
 	${PROJECT_SOURCE_DIR}/tests/blake2s.cc
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdh.cc
-	${PROJECT_SOURCE_DIR}/tests/p384_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdsa.cc
+	${PROJECT_SOURCE_DIR}/tests/p384_ecdh.cc
+	${PROJECT_SOURCE_DIR}/tests/p384_ecsa.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdsa.cc
 	${PROJECT_SOURCE_DIR}/tests/chacha20poly1305.cc
@@ -510,6 +511,7 @@ set(TEST_FILES_p256
 )
 set(TEST_FILES_p384
 	p384_ecdh.cc
+	p384_ecdsa.cc
 )
 set(TEST_FILES_k256
 	k256_ecdh.cc

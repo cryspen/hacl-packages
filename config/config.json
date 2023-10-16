@@ -464,7 +464,8 @@
             "p256_ecdsa.cc"
         ],
         "p384": [
-            "p384_ecdh.cc"
+            "p384_ecdh.cc",
+            "p384_ecdsa.cc"
         ],
         "k256": [
             "k256_ecdh.cc",

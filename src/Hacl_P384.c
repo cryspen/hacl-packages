@@ -805,7 +805,7 @@ static inline void qexp_vartime(uint64_t *out, uint64_t *a, uint64_t *b)
   }
 }
 
-static inline void p384_qinv(uint64_t *res)
+static inline void p384_qinv(uint64_t *res, uint64_t *a)
 {
   uint64_t b[6U] = { 0U };
   b[0U] = (uint64_t)0xecec196accc52971U;
@@ -814,8 +814,7 @@ static inline void p384_qinv(uint64_t *res)
   b[3U] = (uint64_t)0xffffffffffffffffU;
   b[4U] = (uint64_t)0xffffffffffffffffU;
   b[5U] = (uint64_t)0xffffffffffffffffU;
-  uint64_t tmp[6U] = { 0U };
-  qexp_vartime(res, tmp, b);
+  qexp_vartime(res, a, b);
 }
 
 static inline void point_add(uint64_t *x, uint64_t *y, uint64_t *xy)
@@ -1055,7 +1054,7 @@ ecdsa_sign_msg_as_qelem(
   from_mont(r_q, r_q);
   qmod_short(r_q, r_q);
   uint64_t kinv[6U] = { 0U };
-  p384_qinv(kinv);
+  p384_qinv(kinv, k_q);
   qmul(s_q, r_q, d_a);
   from_qmont(m_q, m_q);
   qadd(s_q, m_q, s_q);
@@ -1168,7 +1167,7 @@ ecdsa_verify_msg_as_qelem(
     return false;
   }
   uint64_t sinv[6U] = { 0U };
-  p384_qinv(sinv);
+  p384_qinv(sinv, s_q);
   uint64_t tmp1[6U] = { 0U };
   from_qmont(tmp1, m_q);
   qmul(u1, sinv, tmp1);
