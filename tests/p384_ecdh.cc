@@ -117,37 +117,38 @@ TEST_P(P384EcdhWycheproof, TryWycheproof)
   uint8_t* public_key = const_cast<uint8_t*>(test_case.public_key.data());
 
   // Convert public key first
-  uint8_t plain_public_key[64] = { 0 };
+  uint8_t plain_public_key[96] = { 0 };
   bool uncompressed_point = false;
   bool compressed_point = false;
-  if (test_case.public_key.size() >= 65) {
+  if (test_case.public_key.size() >= 97) {
     uncompressed_point =
       Hacl_P384_uncompressed_to_raw(public_key, plain_public_key);
   }
-  if (!uncompressed_point && test_case.public_key.size() >= 32) {
+  if (!uncompressed_point && test_case.public_key.size() >= 48) {
     compressed_point =
       Hacl_P384_compressed_to_raw(public_key, plain_public_key);
+    if (!compressed_point) printf("compressed_to_raw failed\n");
+
   }
   EXPECT_TRUE(uncompressed_point || compressed_point || !test_case.valid);
-
   // Convert the private key
-  uint8_t plain_private_key[32] = { 0 };
+  uint8_t plain_private_key[48] = { 0 };
   size_t sk_len = test_case.private_key.size();
-  if (sk_len > 32) {
-    sk_len = 32;
+  if (sk_len > 48) {
+    sk_len = 48;
   }
   for (size_t i = 0; i < sk_len; i++) {
-    plain_private_key[31 - i] =
+    plain_private_key[47 - i] =
       test_case.private_key[test_case.private_key.size() - 1 - i];
   }
 
-  uint8_t computed_shared[64] = { 0 };
+  uint8_t computed_shared[96] = { 0 };
   Hacl_P384_dh_responder(computed_shared, plain_public_key, plain_private_key);
   if (test_case.valid) {
-    EXPECT_EQ(std::vector<uint8_t>(computed_shared, computed_shared + 32),
+    EXPECT_EQ(std::vector<uint8_t>(computed_shared, computed_shared + 48),
               test_case.shared);
   } else {
-    EXPECT_NE(std::vector<uint8_t>(computed_shared, computed_shared + 32),
+    EXPECT_NE(std::vector<uint8_t>(computed_shared, computed_shared + 48),
               test_case.shared);
   }
 }

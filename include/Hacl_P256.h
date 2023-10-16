@@ -26,6 +26,11 @@
 #ifndef __Hacl_P256_H
 #define __Hacl_P256_H
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 #include <string.h>
 #include "krml/internal/types.h"
 #include "krml/lowstar_endianness.h"
@@ -362,6 +367,10 @@ Execute the diffie-hellmann key exchange.
 */
 bool
 Hacl_P256_dh_responder(uint8_t *shared_secret, uint8_t *their_pubkey, uint8_t *private_key);
+
+#if defined(__cplusplus)
+}
+#endif
 
 
 #define __Hacl_P256_H_DEFINED

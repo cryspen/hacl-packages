@@ -302,9 +302,9 @@ static inline void bn_sqr(uint64_t *a, uint64_t *b)
     (uint32_t)0U,
     (uint32_t)6U,
     (uint32_t)1U,
-    uint128_t res = (uint128_t)b[i] * b[i];
-    uint64_t hi = (uint64_t)(res >> (uint32_t)64U);
-    uint64_t lo = (uint64_t)res;
+    FStar_UInt128_uint128 res = FStar_UInt128_mul_wide(b[i], b[i]);
+    uint64_t hi = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(res, (uint32_t)64U));
+    uint64_t lo = FStar_UInt128_uint128_to_uint64(res);
     tmp[(uint32_t)2U * i] = lo;
     tmp[(uint32_t)2U * i + (uint32_t)1U] = hi;);
   uint64_t c1 = Hacl_Bignum_Addition_bn_add_eq_len_u64((uint32_t)12U, a, tmp, a);
@@ -428,16 +428,6 @@ static inline void p384_make_qone(uint64_t *f)
   f[3U] = (uint64_t)0x0U;
   f[4U] = (uint64_t)0x0U;
   f[5U] = (uint64_t)0x0U;
-}
-
-static inline void p384_make_qmont_R2(uint64_t *n)
-{
-  n[0U] = (uint64_t)0x2d319b2419b409a9U;
-  n[1U] = (uint64_t)0xff3d81e5df1aa419U;
-  n[2U] = (uint64_t)0xbc3e483afcb82947U;
-  n[3U] = (uint64_t)0xd40d49174aab1cc5U;
-  n[4U] = (uint64_t)0x3fb05b7a28266895U;
-  n[5U] = (uint64_t)0x0c84ee012b39bf21U;
 }
 
 static inline void fmont_reduction(uint64_t *res, uint64_t *x)
@@ -699,10 +689,7 @@ static inline void p384_finv(uint64_t *res, uint64_t *a)
   b[3U] = (uint64_t)0xffffffffffffffffU;
   b[4U] = (uint64_t)0xffffffffffffffffU;
   b[5U] = (uint64_t)0xffffffffffffffffU;
-  uint64_t tmp[6U] = { 0U };
-  from_mont(tmp, a);
-  fexp_vartime(res, tmp, b);
-  to_mont(res, res);
+  fexp_vartime(res, a, b);
 }
 
 static inline void p384_fsqrt(uint64_t *res, uint64_t *a)
@@ -714,10 +701,7 @@ static inline void p384_fsqrt(uint64_t *res, uint64_t *a)
   b[3U] = (uint64_t)0xffffffffffffffffU;
   b[4U] = (uint64_t)0xffffffffffffffffU;
   b[5U] = (uint64_t)0x3fffffffffffffffU;
-  uint64_t tmp[6U] = { 0U };
-  from_mont(tmp, a);
-  fexp_vartime(res, tmp, b);
-  to_mont(res, res);
+  fexp_vartime(res, a, b);
 }
 
 static inline uint64_t load_qelem_conditional(uint64_t *a, uint8_t *b)
@@ -781,15 +765,6 @@ static inline void from_qmont(uint64_t *a, uint64_t *b)
   qmont_reduction(a, tmp);
 }
 
-static inline void to_qmont(uint64_t *a, uint64_t *b)
-{
-  uint64_t r2modn[6U] = { 0U };
-  p384_make_qmont_R2(r2modn);
-  uint64_t tmp[12U] = { 0U };
-  bn_mul(tmp, b, r2modn);
-  qmont_reduction(a, tmp);
-}
-
 static inline void qexp_vartime(uint64_t *out, uint64_t *a, uint64_t *b)
 {
   uint64_t table[192U] = { 0U };
@@ -830,7 +805,7 @@ static inline void qexp_vartime(uint64_t *out, uint64_t *a, uint64_t *b)
   }
 }
 
-static inline void p384_qinv(uint64_t *res, uint64_t *a)
+static inline void p384_qinv(uint64_t *res)
 {
   uint64_t b[6U] = { 0U };
   b[0U] = (uint64_t)0xecec196accc52971U;
@@ -840,9 +815,7 @@ static inline void p384_qinv(uint64_t *res, uint64_t *a)
   b[4U] = (uint64_t)0xffffffffffffffffU;
   b[5U] = (uint64_t)0xffffffffffffffffU;
   uint64_t tmp[6U] = { 0U };
-  from_qmont(tmp, a);
   qexp_vartime(res, tmp, b);
-  to_qmont(res, res);
 }
 
 static inline void point_add(uint64_t *x, uint64_t *y, uint64_t *xy)
@@ -1082,7 +1055,7 @@ ecdsa_sign_msg_as_qelem(
   from_mont(r_q, r_q);
   qmod_short(r_q, r_q);
   uint64_t kinv[6U] = { 0U };
-  p384_qinv(kinv, k_q);
+  p384_qinv(kinv);
   qmul(s_q, r_q, d_a);
   from_qmont(m_q, m_q);
   qadd(s_q, m_q, s_q);
@@ -1195,7 +1168,7 @@ ecdsa_verify_msg_as_qelem(
     return false;
   }
   uint64_t sinv[6U] = { 0U };
-  p384_qinv(sinv, s_q);
+  p384_qinv(sinv);
   uint64_t tmp1[6U] = { 0U };
   from_qmont(tmp1, m_q);
   qmul(u1, sinv, tmp1);
@@ -1249,9 +1222,9 @@ Create an ECDSA signature using SHA2-256.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
 
-  The outparam `signature` (R || S) points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `signature` (R || S) points to 96 bytes of valid memory, i.e., uint8_t[96].
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The arguments `private_key` and `nonce` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The arguments `private_key` and `nonce` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `private_key` and `nonce` are valid:
     • 0 < `private_key` < the order of the curve
@@ -1270,8 +1243,8 @@ Hacl_P384_ecdsa_sign_p384_sha2(
   uint8_t mHash[32U] = { 0U };
   Hacl_Streaming_SHA2_hash_256(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_sign_msg_as_qelem(signature, m_q, private_key, nonce);
   return res;
@@ -1282,9 +1255,9 @@ Create an ECDSA signature using SHA2-384.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
 
-  The outparam `signature` (R || S) points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `signature` (R || S) points to 96 bytes of valid memory, i.e., uint8_t[96].
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The arguments `private_key` and `nonce` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The arguments `private_key` and `nonce` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `private_key` and `nonce` are valid:
     • 0 < `private_key` < the order of the curve
@@ -1303,8 +1276,8 @@ Hacl_P384_ecdsa_sign_p384_sha384(
   uint8_t mHash[48U] = { 0U };
   Hacl_Streaming_SHA2_hash_384(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_sign_msg_as_qelem(signature, m_q, private_key, nonce);
   return res;
@@ -1315,9 +1288,9 @@ Create an ECDSA signature using SHA2-512.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
 
-  The outparam `signature` (R || S) points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `signature` (R || S) points to 96 bytes of valid memory, i.e., uint8_t[96].
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The arguments `private_key` and `nonce` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The arguments `private_key` and `nonce` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `private_key` and `nonce` are valid:
     • 0 < `private_key` < the order of the curve
@@ -1336,8 +1309,8 @@ Hacl_P384_ecdsa_sign_p384_sha512(
   uint8_t mHash[64U] = { 0U };
   Hacl_Streaming_SHA2_hash_512(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_sign_msg_as_qelem(signature, m_q, private_key, nonce);
   return res;
@@ -1349,18 +1322,18 @@ Create an ECDSA signature WITHOUT hashing first.
   This function is intended to receive a hash of the input.
   For convenience, we recommend using one of the hash-and-sign combined functions above.
 
-  The argument `msg` MUST be at least 32 bytes (i.e. `msg_len >= 32`).
+  The argument `msg` MUST be at least 48 bytes (i.e. `msg_len >= 48`).
 
   NOTE: The equivalent functions in OpenSSL and Fiat-Crypto both accept inputs
-  smaller than 32 bytes. These libraries left-pad the input with enough zeroes to
-  reach the minimum 32 byte size. Clients who need behavior identical to OpenSSL
+  smaller than 48 bytes. These libraries left-pad the input with enough zeroes to
+  reach the minimum 48 byte size. Clients who need behavior identical to OpenSSL
   need to perform the left-padding themselves.
 
   The function returns `true` for successful creation of an ECDSA signature and `false` otherwise.
 
-  The outparam `signature` (R || S) points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `signature` (R || S) points to 96 bytes of valid memory, i.e., uint8_t[96].
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The arguments `private_key` and `nonce` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The arguments `private_key` and `nonce` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `private_key` and `nonce` are valid values:
     • 0 < `private_key` < the order of the curve
@@ -1376,11 +1349,11 @@ Hacl_P384_ecdsa_sign_p384_without_hash(
 )
 {
   uint64_t m_q[6U] = { 0U };
-  uint8_t mHash[32U] = { 0U };
-  memcpy(mHash, msg, (uint32_t)32U * sizeof (uint8_t));
+  uint8_t mHash[48U] = { 0U };
+  memcpy(mHash, msg, (uint32_t)48U * sizeof (uint8_t));
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_sign_msg_as_qelem(signature, m_q, private_key, nonce);
   return res;
@@ -1397,8 +1370,8 @@ Verify an ECDSA signature using SHA2-256.
   The function returns `true` if the signature is valid and `false` otherwise.
 
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The argument `public_key` (x || y) points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The arguments `signature_r` and `signature_s` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The argument `public_key` (x || y) points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The arguments `signature_r` and `signature_s` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `public_key` is valid
 */
@@ -1415,8 +1388,8 @@ Hacl_P384_ecdsa_verif_p384_sha2(
   uint8_t mHash[32U] = { 0U };
   Hacl_Streaming_SHA2_hash_256(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_verify_msg_as_qelem(m_q, public_key, signature_r, signature_s);
   return res;
@@ -1428,8 +1401,8 @@ Verify an ECDSA signature using SHA2-384.
   The function returns `true` if the signature is valid and `false` otherwise.
 
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The argument `public_key` (x || y) points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The arguments `signature_r` and `signature_s` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The argument `public_key` (x || y) points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The arguments `signature_r` and `signature_s` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `public_key` is valid
 */
@@ -1446,8 +1419,8 @@ Hacl_P384_ecdsa_verif_p384_sha384(
   uint8_t mHash[48U] = { 0U };
   Hacl_Streaming_SHA2_hash_384(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_verify_msg_as_qelem(m_q, public_key, signature_r, signature_s);
   return res;
@@ -1459,8 +1432,8 @@ Verify an ECDSA signature using SHA2-512.
   The function returns `true` if the signature is valid and `false` otherwise.
 
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The argument `public_key` (x || y) points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The arguments `signature_r` and `signature_s` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The argument `public_key` (x || y) points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The arguments `signature_r` and `signature_s` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `public_key` is valid
 */
@@ -1477,8 +1450,8 @@ Hacl_P384_ecdsa_verif_p384_sha512(
   uint8_t mHash[64U] = { 0U };
   Hacl_Streaming_SHA2_hash_512(msg, msg_len, mHash);
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_verify_msg_as_qelem(m_q, public_key, signature_r, signature_s);
   return res;
@@ -1490,13 +1463,13 @@ Verify an ECDSA signature WITHOUT hashing first.
   This function is intended to receive a hash of the input.
   For convenience, we recommend using one of the hash-and-verify combined functions above.
 
-  The argument `msg` MUST be at least 32 bytes (i.e. `msg_len >= 32`).
+  The argument `msg` MUST be at least 48 bytes (i.e. `msg_len >= 48`).
 
   The function returns `true` if the signature is valid and `false` otherwise.
 
   The argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].
-  The argument `public_key` (x || y) points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The arguments `signature_r` and `signature_s` point to 32 bytes of valid memory, i.e., uint8_t[32].
+  The argument `public_key` (x || y) points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The arguments `signature_r` and `signature_s` point to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `public_key` is valid
 */
@@ -1510,11 +1483,11 @@ Hacl_P384_ecdsa_verif_without_hash(
 )
 {
   uint64_t m_q[6U] = { 0U };
-  uint8_t mHash[32U] = { 0U };
-  memcpy(mHash, msg, (uint32_t)32U * sizeof (uint8_t));
+  uint8_t mHash[48U] = { 0U };
+  memcpy(mHash, msg, (uint32_t)48U * sizeof (uint8_t));
   KRML_HOST_IGNORE(msg_len);
-  uint8_t *mHash32 = mHash;
-  bn_from_bytes_be(m_q, mHash32);
+  uint8_t *mHash48 = mHash;
+  bn_from_bytes_be(m_q, mHash48);
   qmod_short(m_q, m_q);
   bool res = ecdsa_verify_msg_as_qelem(m_q, public_key, signature_r, signature_s);
   return res;
@@ -1530,7 +1503,7 @@ Public key validation.
 
   The function returns `true` if a public key is valid and `false` otherwise.
 
-  The argument `public_key` points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The argument `public_key` points to 96 bytes of valid memory, i.e., uint8_t[96].
 
   The public key (x || y) is valid (with respect to SP 800-56A):
     • the public key is not the “point at infinity”, represented as O.
@@ -1603,7 +1576,7 @@ Private key validation.
 
   The function returns `true` if a private key is valid and `false` otherwise.
 
-  The argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32].
+  The argument `private_key` points to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The private key is valid:
     • 0 < `private_key` < the order of the curve
@@ -1629,8 +1602,8 @@ bool Hacl_P384_validate_private_key(uint8_t *private_key)
   A public key is a point (x, y) on the P-384 NIST curve.
 
   The point can be represented in the following three ways.
-    • raw          = [ x || y ], 64 bytes
-    • uncompressed = [ 0x04 || x || y ], 65 bytes
+    • raw          = [ x || y ], 96 bytes
+    • uncompressed = [ 0x04 || x || y ], 97 bytes
     • compressed   = [ (0x02 for even `y` and 0x03 for odd `y`) || x ], 33 bytes
 
 *******************************************************************************/
@@ -1641,8 +1614,8 @@ Convert a public key from uncompressed to its raw form.
 
   The function returns `true` for successful conversion of a public key and `false` otherwise.
 
-  The outparam `pk_raw` points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The argument `pk` points to 65 bytes of valid memory, i.e., uint8_t[65].
+  The outparam `pk_raw` points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The argument `pk` points to 97 bytes of valid memory, i.e., uint8_t[97].
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
@@ -1662,7 +1635,7 @@ Convert a public key from compressed to its raw form.
 
   The function returns `true` for successful conversion of a public key and `false` otherwise.
 
-  The outparam `pk_raw` points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `pk_raw` points to 96 bytes of valid memory, i.e., uint8_t[96].
   The argument `pk` points to 33 bytes of valid memory, i.e., uint8_t[33].
 
   The function also checks whether (x, y) is a valid point.
@@ -1739,8 +1712,8 @@ bool Hacl_P384_compressed_to_raw(uint8_t *pk, uint8_t *pk_raw)
 /**
 Convert a public key from raw to its uncompressed form.
 
-  The outparam `pk` points to 65 bytes of valid memory, i.e., uint8_t[65].
-  The argument `pk_raw` points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The outparam `pk` points to 97 bytes of valid memory, i.e., uint8_t[97].
+  The argument `pk_raw` points to 96 bytes of valid memory, i.e., uint8_t[96].
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
@@ -1754,7 +1727,7 @@ void Hacl_P384_raw_to_uncompressed(uint8_t *pk_raw, uint8_t *pk)
 Convert a public key from raw to its compressed form.
 
   The outparam `pk` points to 33 bytes of valid memory, i.e., uint8_t[33].
-  The argument `pk_raw` points to 64 bytes of valid memory, i.e., uint8_t[64].
+  The argument `pk_raw` points to 96 bytes of valid memory, i.e., uint8_t[96].
 
   The function DOESN'T check whether (x, y) is a valid point.
 */
@@ -1779,8 +1752,8 @@ Compute the public key from the private key.
 
   The function returns `true` if a private key is valid and `false` otherwise.
 
-  The outparam `public_key`  points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32].
+  The outparam `public_key`  points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The argument `private_key` points to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The private key is valid:
     • 0 < `private_key` < the order of the curve.
@@ -1817,9 +1790,9 @@ Execute the diffie-hellmann key exchange.
   The function returns `true` for successful creation of an ECDH shared secret and
   `false` otherwise.
 
-  The outparam `shared_secret` points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The argument `their_pubkey` points to 64 bytes of valid memory, i.e., uint8_t[64].
-  The argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32].
+  The outparam `shared_secret` points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The argument `their_pubkey` points to 96 bytes of valid memory, i.e., uint8_t[96].
+  The argument `private_key` points to 48 bytes of valid memory, i.e., uint8_t[48].
 
   The function also checks whether `private_key` and `their_pubkey` are valid.
 */
