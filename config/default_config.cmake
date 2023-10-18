@@ -24,6 +24,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec32.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_P384.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_P521.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_K256_ECDSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_K256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_FFDHE.c
@@ -185,6 +186,7 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_PCurves_PrecompTable_P256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_P384.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P521.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_K256_PrecompTable.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum_K256.h
@@ -312,6 +314,7 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/curve25519-inline.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_P256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_P384.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_P521.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_K256_ECDSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_K256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_FFDHE.h
@@ -404,7 +407,9 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/p256_ecdsa.cc
 	${PROJECT_SOURCE_DIR}/tests/p384_ecdh.cc
-	${PROJECT_SOURCE_DIR}/tests/p384_ecsa.cc
+	${PROJECT_SOURCE_DIR}/tests/p384_ecdsa.cc
+	${PROJECT_SOURCE_DIR}/tests/p521_ecdh.cc
+	${PROJECT_SOURCE_DIR}/tests/p521_ecdsa.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdh.cc
 	${PROJECT_SOURCE_DIR}/tests/k256_ecdsa.cc
 	${PROJECT_SOURCE_DIR}/tests/chacha20poly1305.cc
@@ -512,6 +517,10 @@ set(TEST_FILES_p256
 set(TEST_FILES_p384
 	p384_ecdh.cc
 	p384_ecdsa.cc
+)
+set(TEST_FILES_p521
+	p521_ecdh.cc
+	p521_ecdsa.cc
 )
 set(TEST_FILES_k256
 	k256_ecdh.cc
