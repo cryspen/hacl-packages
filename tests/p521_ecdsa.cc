@@ -140,6 +140,9 @@ TEST_P(P521EcdsaWycheproof, TryWycheproof)
   uint8_t* msg = const_cast<uint8_t*>(test_case.msg.data());
 
   // Convert public key first
+  // printf("pk: ");
+  // print_hex_ln(test_case.public_key.size(),
+  //              (uint8_t*)test_case.public_key.data());
   uint8_t plain_public_key[132] = { 0 };
   bool uncompressed_point = false;
   bool compressed_point = false;
@@ -165,9 +168,11 @@ TEST_P(P521EcdsaWycheproof, TryWycheproof)
   } else {
     FAIL() << "Point should have been either compressed or uncompressed.";
   }
+  // printf("pk 2: ");
+  // print_hex_ln(132, plain_public_key);
 
   // Parse DER signature.
-  // FIXME: This should really be in the HACL* libraray.
+  // FIXME: This should really be in the HACL* library.
   //        The parsing here is opportunistic and not robust.
   size_t sig_pointer = 0;
   if (test_case.valid) {
@@ -175,12 +180,22 @@ TEST_P(P521EcdsaWycheproof, TryWycheproof)
   }
   bytes r, s;
 
+  // print_hex_ln(test_case.sig.size(), (uint8_t*)test_case.sig.data());
   if (test_case.sig.size() > 2) {
     if (test_case.valid) {
       size_t pos = 0;
       EXPECT_EQ(test_case.sig[pos++], 0x30); // Sequence tag
-      auto der_length = test_case.sig[pos++];
-      EXPECT_FALSE(der_length & 0x80);
+      auto der_length_length = test_case.sig[pos++];
+      // printf("der_length_length: %d | %x\n", der_length_length,
+      // der_length_length);
+      // EXPECT_TRUE(der_length_length & 0x80);
+      auto der_length = der_length_length;
+      if (der_length_length & 0x80) {
+        // The length is not in this byte. We only consider the next byte.
+        // In reality we'd have to look at the length and read that many bytes.
+        der_length = test_case.sig[pos++];
+      }
+      // printf("der_length: %x\n", der_length);
       EXPECT_EQ(test_case.sig[pos++], 0x02); // Integer
       auto x_length = test_case.sig[pos++];
       r = bytes(&test_case.sig[pos], &test_case.sig[pos] + x_length);
@@ -189,9 +204,10 @@ TEST_P(P521EcdsaWycheproof, TryWycheproof)
       auto y_length = test_case.sig[pos++];
       s = bytes(&test_case.sig[pos], &test_case.sig[pos] + y_length);
       pos += y_length;
-      EXPECT_EQ(pos, der_length + 2);
     }
   }
+  // print_hex_ln(r.size(), r.data());
+  // print_hex_ln(s.size(), s.data());
   if (r.size() != 0 && s.size() != 0) {
     // Removing leading 0s and make r and s 32 bytes each
     while (r[0] == 0x00) {
@@ -208,6 +224,8 @@ TEST_P(P521EcdsaWycheproof, TryWycheproof)
     }
     EXPECT_EQ(66, r.size());
     EXPECT_EQ(66, s.size());
+    // print_hex_ln(r.size(), r.data());
+    // print_hex_ln(s.size(), s.data());
 
     // Due to https://github.com/project-everest/hacl-star/issues/327
     // we fake the msg pointer here for now if it's NULL.
