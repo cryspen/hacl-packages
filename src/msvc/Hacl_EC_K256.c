@@ -43,7 +43,7 @@ Write the additive identity in `f`.
 */
 void Hacl_EC_K256_mk_felem_zero(uint64_t *f)
 {
-  memset(f, 0U, (uint32_t)5U * sizeof (uint64_t));
+  memset(f, 0U, 5U * sizeof (uint64_t));
 }
 
 /**
@@ -53,8 +53,8 @@ Write the multiplicative identity in `f`.
 */
 void Hacl_EC_K256_mk_felem_one(uint64_t *f)
 {
-  memset(f, 0U, (uint32_t)5U * sizeof (uint64_t));
-  f[0U] = (uint64_t)1U;
+  memset(f, 0U, 5U * sizeof (uint64_t));
+  f[0U] = 1ULL;
 }
 
 /**
@@ -83,7 +83,7 @@ Write `a - b mod p` in `out`.
 */
 void Hacl_EC_K256_felem_sub(uint64_t *a, uint64_t *b, uint64_t *out)
 {
-  Hacl_K256_Field_fsub(out, a, b, (uint64_t)2U);
+  Hacl_K256_Field_fsub(out, a, b, 2ULL);
   Hacl_K256_Field_fnormalize_weak(out, out);
 }
 
@@ -189,20 +189,20 @@ Write the base point (generator) in `p`.
 void Hacl_EC_K256_mk_base_point(uint64_t *p)
 {
   uint64_t *gx = p;
-  uint64_t *gy = p + (uint32_t)5U;
-  uint64_t *gz = p + (uint32_t)10U;
-  gx[0U] = (uint64_t)0x2815b16f81798U;
-  gx[1U] = (uint64_t)0xdb2dce28d959fU;
-  gx[2U] = (uint64_t)0xe870b07029bfcU;
-  gx[3U] = (uint64_t)0xbbac55a06295cU;
-  gx[4U] = (uint64_t)0x79be667ef9dcU;
-  gy[0U] = (uint64_t)0x7d08ffb10d4b8U;
-  gy[1U] = (uint64_t)0x48a68554199c4U;
-  gy[2U] = (uint64_t)0xe1108a8fd17b4U;
-  gy[3U] = (uint64_t)0xc4655da4fbfc0U;
-  gy[4U] = (uint64_t)0x483ada7726a3U;
-  memset(gz, 0U, (uint32_t)5U * sizeof (uint64_t));
-  gz[0U] = (uint64_t)1U;
+  uint64_t *gy = p + 5U;
+  uint64_t *gz = p + 10U;
+  gx[0U] = 0x2815b16f81798ULL;
+  gx[1U] = 0xdb2dce28d959fULL;
+  gx[2U] = 0xe870b07029bfcULL;
+  gx[3U] = 0xbbac55a06295cULL;
+  gx[4U] = 0x79be667ef9dcULL;
+  gy[0U] = 0x7d08ffb10d4b8ULL;
+  gy[1U] = 0x48a68554199c4ULL;
+  gy[2U] = 0xe1108a8fd17b4ULL;
+  gy[3U] = 0xc4655da4fbfc0ULL;
+  gy[4U] = 0x483ada7726a3ULL;
+  memset(gz, 0U, 5U * sizeof (uint64_t));
+  gz[0U] = 1ULL;
 }
 
 /**
@@ -264,32 +264,14 @@ void Hacl_EC_K256_point_mul(uint8_t *scalar, uint64_t *p, uint64_t *out)
 {
   uint64_t scalar_q[4U] = { 0U };
   KRML_MAYBE_FOR4(i,
-    (uint32_t)0U,
-    (uint32_t)4U,
-    (uint32_t)1U,
+    0U,
+    4U,
+    1U,
     uint64_t *os = scalar_q;
-    uint64_t u = load64_be(scalar + ((uint32_t)4U - i - (uint32_t)1U) * (uint32_t)8U);
+    uint64_t u = load64_be(scalar + (4U - i - 1U) * 8U);
     uint64_t x = u;
     os[i] = x;);
   Hacl_Impl_K256_PointMul_point_mul(out, scalar_q, p);
-}
-
-/**
-Checks whether `p` is equal to `q` (point equality).
-
-  The function returns `true` if `p` is equal to `q` and `false` otherwise.
-
-  The arguments `p` and `q` are meant to be 15 limbs in size, i.e., uint64_t[15].
-
-  Before calling this function, the caller will need to ensure that the following
-  precondition is observed.
-  • `p` and `q` are either disjoint or equal.
-
-  This function is NOT constant-time.
-*/
-bool Hacl_EC_K256_point_eq(uint64_t *p, uint64_t *q)
-{
-  return Hacl_Impl_K256_Point_point_eq_vartime(p, q);
 }
 
 /**
@@ -307,19 +289,7 @@ Convert a point from projective coordinates to its raw form.
 */
 void Hacl_EC_K256_point_store(uint64_t *p, uint8_t *out)
 {
-  uint64_t px[5U] = { 0U };
-  uint64_t py[5U] = { 0U };
-  uint64_t *x1 = p;
-  uint64_t *y1 = p + (uint32_t)5U;
-  uint64_t *z1 = p + (uint32_t)10U;
-  uint64_t zinv[5U] = { 0U };
-  Hacl_Impl_K256_Finv_finv(zinv, z1);
-  Hacl_K256_Field_fmul(px, x1, zinv);
-  Hacl_K256_Field_fmul(py, y1, zinv);
-  Hacl_K256_Field_fnormalize(px, px);
-  Hacl_K256_Field_fnormalize(py, py);
-  Hacl_K256_Field_store_felem(out, px);
-  Hacl_K256_Field_store_felem(out + (uint32_t)32U, py);
+  Hacl_Impl_K256_Point_point_store(out, p);
 }
 
 /**
@@ -335,19 +305,22 @@ Convert a point to projective coordinates from its raw form.
 */
 void Hacl_EC_K256_point_load(uint8_t *b, uint64_t *out)
 {
-  uint64_t px[5U] = { 0U };
-  uint64_t py[5U] = { 0U };
+  uint64_t p_aff[10U] = { 0U };
+  uint64_t *px = p_aff;
+  uint64_t *py = p_aff + 5U;
   uint8_t *pxb = b;
-  uint8_t *pyb = b + (uint32_t)32U;
+  uint8_t *pyb = b + 32U;
   Hacl_K256_Field_load_felem(px, pxb);
   Hacl_K256_Field_load_felem(py, pyb);
+  uint64_t *x = p_aff;
+  uint64_t *y = p_aff + 5U;
   uint64_t *x1 = out;
-  uint64_t *y1 = out + (uint32_t)5U;
-  uint64_t *z1 = out + (uint32_t)10U;
-  memcpy(x1, px, (uint32_t)5U * sizeof (uint64_t));
-  memcpy(y1, py, (uint32_t)5U * sizeof (uint64_t));
-  memset(z1, 0U, (uint32_t)5U * sizeof (uint64_t));
-  z1[0U] = (uint64_t)1U;
+  uint64_t *y1 = out + 5U;
+  uint64_t *z1 = out + 10U;
+  memcpy(x1, x, 5U * sizeof (uint64_t));
+  memcpy(y1, y, 5U * sizeof (uint64_t));
+  memset(z1, 0U, 5U * sizeof (uint64_t));
+  z1[0U] = 1ULL;
 }
 
 /**
@@ -358,95 +331,15 @@ Check whether a point is valid.
   The argument `b` points to 64 bytes of valid memory, i.e., uint8_t[64].
 
   The point (x || y) is valid:
-    • x < prime
-    • y < prime
+    • x < prime and y < prime
     • (x, y) is on the curve.
 
   This function is NOT constant-time.
 */
 bool Hacl_EC_K256_is_point_valid(uint8_t *b)
 {
-  uint64_t px[5U] = { 0U };
-  uint64_t py[5U] = { 0U };
-  uint8_t *pxb = b;
-  uint8_t *pyb = b + (uint32_t)32U;
-  bool is_x_valid = Hacl_K256_Field_load_felem_lt_prime_vartime(px, pxb);
-  bool is_y_valid = Hacl_K256_Field_load_felem_lt_prime_vartime(py, pyb);
-  if (is_x_valid && is_y_valid)
-  {
-    uint64_t y2_exp[5U] = { 0U };
-    uint64_t b1[5U] = { 0U };
-    b1[0U] = (uint64_t)0x7U;
-    b1[1U] = (uint64_t)0U;
-    b1[2U] = (uint64_t)0U;
-    b1[3U] = (uint64_t)0U;
-    b1[4U] = (uint64_t)0U;
-    Hacl_K256_Field_fsqr(y2_exp, px);
-    Hacl_K256_Field_fmul(y2_exp, y2_exp, px);
-    Hacl_K256_Field_fadd(y2_exp, y2_exp, b1);
-    Hacl_K256_Field_fnormalize(y2_exp, y2_exp);
-    uint64_t y2_comp[5U] = { 0U };
-    Hacl_K256_Field_fsqr(y2_comp, py);
-    Hacl_K256_Field_fnormalize(y2_comp, y2_comp);
-    bool res = Hacl_K256_Field_is_felem_eq_vartime(y2_exp, y2_comp);
-    bool res0 = res;
-    return res0;
-  }
-  return false;
-}
-
-/**
-Compress a point in projective coordinates to its compressed form.
-
-  The argument `p` points to a point of 15 limbs in size, i.e., uint64_t[15].
-  The outparam `out` points to 33 bytes of valid memory, i.e., uint8_t[33].
-
-  The function first converts a given point `p` from projective to affine coordinates
-  and then writes [ 0x02 for even `y` and 0x03 for odd `y`; `x` ] in `out`.
-
-  Before calling this function, the caller will need to ensure that the following
-  precondition is observed.
-  • `p` and `out` are disjoint.
-
-  This function is NOT constant-time.
-*/
-void Hacl_EC_K256_point_compress(uint64_t *p, uint8_t *out)
-{
-  uint64_t xa[5U] = { 0U };
-  uint64_t ya[5U] = { 0U };
-  uint64_t *x1 = p;
-  uint64_t *y1 = p + (uint32_t)5U;
-  uint64_t *z1 = p + (uint32_t)10U;
-  uint64_t zinv[5U] = { 0U };
-  Hacl_Impl_K256_Finv_finv(zinv, z1);
-  Hacl_K256_Field_fmul(xa, x1, zinv);
-  Hacl_K256_Field_fmul(ya, y1, zinv);
-  Hacl_Impl_K256_Point_aff_point_compress_vartime(out, xa, ya);
-}
-
-/**
-Decompress a point in projective coordinates from its compressed form.
-
-  The function returns `true` for successful decompression of a compressed point
-  and `false` otherwise.
-
-  The argument `s` points to 33 bytes of valid memory, i.e., uint8_t[33].
-  The outparam `out` points to a point of 15 limbs in size, i.e., uint64_t[15].
-
-  Before calling this function, the caller will need to ensure that the following
-  precondition is observed.
-  • `s` and `out` are disjoint.
-
-  This function is NOT constant-time.
-*/
-bool Hacl_EC_K256_point_decompress(uint8_t *s, uint64_t *out)
-{
-  uint64_t *px = out;
-  uint64_t *py = out + (uint32_t)5U;
-  uint64_t *pz = out + (uint32_t)10U;
-  bool b = Hacl_Impl_K256_Point_aff_point_decompress_vartime(px, py, s);
-  memset(pz, 0U, (uint32_t)5U * sizeof (uint64_t));
-  pz[0U] = (uint64_t)1U;
-  return b;
+  uint64_t p[10U] = { 0U };
+  bool res = Hacl_Impl_K256_Point_aff_point_load_vartime(p, b);
+  return res;
 }
 

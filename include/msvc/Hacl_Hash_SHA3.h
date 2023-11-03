@@ -37,30 +37,48 @@ extern "C" {
 
 #include "Hacl_Streaming_Types.h"
 
-typedef Hacl_Streaming_MD_state_64 Hacl_Streaming_SHA3_state_256;
+typedef struct Hacl_Hash_SHA3_hash_buf_s
+{
+  Spec_Hash_Definitions_hash_alg fst;
+  uint64_t *snd;
+}
+Hacl_Hash_SHA3_hash_buf;
 
-Hacl_Streaming_MD_state_64 *Hacl_Streaming_SHA3_malloc_256(void);
+typedef struct Hacl_Hash_SHA3_state_t_s
+{
+  Hacl_Hash_SHA3_hash_buf block_state;
+  uint8_t *buf;
+  uint64_t total_len;
+}
+Hacl_Hash_SHA3_state_t;
 
-void Hacl_Streaming_SHA3_reset_256(Hacl_Streaming_MD_state_64 *state);
+Spec_Hash_Definitions_hash_alg Hacl_Hash_SHA3_get_alg(Hacl_Hash_SHA3_state_t *s);
 
-/**
-0 = success, 1 = max length exceeded. Due to internal limitations, there is currently an arbitrary limit of 2^64-1 bytes that can be hashed through this interface.
-*/
-uint32_t
-Hacl_Streaming_SHA3_update_256(
-  Hacl_Streaming_MD_state_64 *state,
-  uint8_t *chunk,
-  uint32_t chunk_len
-);
+Hacl_Hash_SHA3_state_t *Hacl_Hash_SHA3_malloc(Spec_Hash_Definitions_hash_alg a);
 
-void Hacl_Streaming_SHA3_digest_256(Hacl_Streaming_MD_state_64 *state, uint8_t *output);
+void Hacl_Hash_SHA3_free(Hacl_Hash_SHA3_state_t *state);
 
-void Hacl_Streaming_SHA3_free_256(Hacl_Streaming_MD_state_64 *state);
+Hacl_Hash_SHA3_state_t *Hacl_Hash_SHA3_copy(Hacl_Hash_SHA3_state_t *state);
 
-Hacl_Streaming_MD_state_64 *Hacl_Streaming_SHA3_copy_256(Hacl_Streaming_MD_state_64 *state);
+void Hacl_Hash_SHA3_reset(Hacl_Hash_SHA3_state_t *state);
+
+Hacl_Streaming_Types_error_code
+Hacl_Hash_SHA3_update(Hacl_Hash_SHA3_state_t *state, uint8_t *chunk, uint32_t chunk_len);
+
+Hacl_Streaming_Types_error_code
+Hacl_Hash_SHA3_digest(Hacl_Hash_SHA3_state_t *state, uint8_t *output);
+
+Hacl_Streaming_Types_error_code
+Hacl_Hash_SHA3_squeeze(Hacl_Hash_SHA3_state_t *s, uint8_t *dst, uint32_t l);
+
+uint32_t Hacl_Hash_SHA3_block_len(Hacl_Hash_SHA3_state_t *s);
+
+uint32_t Hacl_Hash_SHA3_hash_len(Hacl_Hash_SHA3_state_t *s);
+
+bool Hacl_Hash_SHA3_is_shake(Hacl_Hash_SHA3_state_t *s);
 
 void
-Hacl_SHA3_shake128_hacl(
+Hacl_Hash_SHA3_shake128_hacl(
   uint32_t inputByteLen,
   uint8_t *input,
   uint32_t outputByteLen,
@@ -68,25 +86,25 @@ Hacl_SHA3_shake128_hacl(
 );
 
 void
-Hacl_SHA3_shake256_hacl(
+Hacl_Hash_SHA3_shake256_hacl(
   uint32_t inputByteLen,
   uint8_t *input,
   uint32_t outputByteLen,
   uint8_t *output
 );
 
-void Hacl_SHA3_sha3_224(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_sha3_224(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
-void Hacl_SHA3_sha3_256(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_sha3_256(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
-void Hacl_SHA3_sha3_384(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_sha3_384(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
-void Hacl_SHA3_sha3_512(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_sha3_512(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
 
-void Hacl_Impl_SHA3_absorb_inner(uint32_t rateInBytes, uint8_t *block, uint64_t *s);
+void Hacl_Hash_SHA3_absorb_inner(uint32_t rateInBytes, uint8_t *block, uint64_t *s);
 
 void
-Hacl_Impl_SHA3_squeeze(
+Hacl_Hash_SHA3_squeeze0(
   uint64_t *s,
   uint32_t rateInBytes,
   uint32_t outputByteLen,
@@ -94,7 +112,7 @@ Hacl_Impl_SHA3_squeeze(
 );
 
 void
-Hacl_Impl_SHA3_keccak(
+Hacl_Hash_SHA3_keccak(
   uint32_t rate,
   uint32_t capacity,
   uint32_t inputByteLen,

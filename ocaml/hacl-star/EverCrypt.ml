@@ -114,8 +114,8 @@ module Chacha20_Poly1305 : Chacha20_Poly1305 =
     (* EverCrypt already performs these runtime checks so all `reqs` attributes in
      * this file are empty since there is no need to do them here. *)
     let reqs = []
-    let encrypt = EverCrypt_Chacha20Poly1305.everCrypt_Chacha20Poly1305_aead_encrypt
-    let decrypt = EverCrypt_Chacha20Poly1305.everCrypt_Chacha20Poly1305_aead_decrypt
+    let encrypt key iv ad_size ad pt_size pt ct tag = EverCrypt_Chacha20Poly1305.everCrypt_Chacha20Poly1305_aead_encrypt ct tag pt pt_size ad ad_size key iv
+    let decrypt key iv ad_size ad pt_size pt ct tag = EverCrypt_Chacha20Poly1305.everCrypt_Chacha20Poly1305_aead_decrypt pt ct pt_size ad ad_size key iv tag
   end)
 
 module Curve25519 : Curve25519 =

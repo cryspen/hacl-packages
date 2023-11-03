@@ -93,12 +93,9 @@ if(NOT MSVC)
         # -pedantic
         # -Wconversion
         # -Wsign-conversion
-        # -Werror=gcc-compat
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
-        # $<$<CONFIG:RELEASE>:-g>
-        # $<$<CONFIG:RELEASE>:-Wno-deprecated-declarations>
     )
 endif()
 
@@ -337,6 +334,9 @@ configure_file(config/Config.h.in config.h)
 # Now combine everything into the hacl library
 # # Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
+if(NOT MSVC)
+    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)
@@ -405,6 +405,27 @@ if(ENABLE_TESTS OR ENABLE_BENCHMARKS)
     add_library(hacl_cpu_features OBJECT ${PROJECT_SOURCE_DIR}/cpu-features/src/cpu-features.c)
     target_include_directories(hacl_cpu_features PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 endif(ENABLE_TESTS OR ENABLE_BENCHMARKS)
+
+# Add ecckiila for benchmarks
+if(ENABLE_BENCHMARKS)
+    include(${PROJECT_SOURCE_DIR}/third-party/ecckiila/config.cmake)
+    add_library(ecckiila OBJECT ${SOURCES_ecckiila})
+endif(ENABLE_BENCHMARKS)
+
+# Add blake2 for benchmarks
+if(ENABLE_BENCHMARKS)
+    include(${PROJECT_SOURCE_DIR}/third-party/blake2/config.cmake)
+    add_library(blake2 OBJECT ${SOURCES_blake2_ref})
+    target_include_directories(blake2 PUBLIC ${PROJECT_SOURCE_DIR}/third-party/blake2/ref)
+endif(ENABLE_BENCHMARKS)
+
+# Add digestif for benchmarks
+if(ENABLE_BENCHMARKS)
+    include(${PROJECT_SOURCE_DIR}/third-party/digestif/config.cmake)
+    add_library(digestif OBJECT ${SOURCES_digestif})
+    target_include_directories(digestif PUBLIC ${PROJECT_SOURCE_DIR}/third-party/digestif)
+endif(ENABLE_BENCHMARKS)
+
 
 # Testing
 # It's only one binary. Everything else is done with gtest arguments.
@@ -524,6 +545,9 @@ if(ENABLE_BENCHMARKS)
         add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
+            ecckiila
+            blake2
+            digestif
             hacl_cpu_features
             benchmark::benchmark
         )

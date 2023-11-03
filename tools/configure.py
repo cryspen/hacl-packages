@@ -11,7 +11,6 @@ import re
 import shutil
 import subprocess
 from glob import glob
-from os import sep as separator
 from os.path import join
 
 from tools.utils import argument, cmake_config, dep_config, json_config, subcommand
@@ -73,7 +72,8 @@ class Config:
         files = []
         for line in stdout.splitlines():
             # Remove object file and the c file itself
-            first_line_search = "(\w*).o: " + re.escape(join(source_dir, "(\w*).c"))
+            first_line_search = "(\w*).o: " + \
+                re.escape(join(source_dir, "(\w*).c"))
             line = re.sub(first_line_search, "", line)
             line = line.strip()
             line = line.split(" ")
@@ -87,7 +87,8 @@ class Config:
         # Get all source files in source_dir
         source_files = glob(join(source_dir, "*.c"))
         # remove source_dir and .c
-        source_files = list(map(lambda s: s[len(source_dir) + 1 : -2], source_files))
+        source_files = list(
+            map(lambda s: s[len(source_dir) + 1: -2], source_files))
 
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
@@ -97,8 +98,9 @@ class Config:
             # Get the file name from the path
             file_name = os.path.splitext(os.path.basename(include))[0]
             # Only add the dependency if there's a corresponding source file.
-            if file_name in source_files:
-                deps.append(join(source_dir, file_name + ".c"))
+            for s in source_files:
+                if s.lower() == file_name.lower():
+                    deps.append(join(source_dir, s + ".c"))
             # We take all includes though
             if include.endswith(".h"):
                 includes.append(include)
@@ -175,7 +177,8 @@ class Config:
         self.hacl_includes = []
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files, includes = self.dependencies(source_dir, a, source_file["file"])
+                files, includes = self.dependencies(
+                    source_dir, a, source_file["file"])
                 self.hacl_includes.extend(
                     includes if type(includes) == list else [includes]
                 )
@@ -237,7 +240,8 @@ class Config:
             self.hacl_compile_feature[k] = list(
                 dict.fromkeys(self.hacl_compile_feature[k])
             )
-        self.evercrypt_compile_files = list(dict.fromkeys(self.evercrypt_compile_files))
+        self.evercrypt_compile_files = list(
+            dict.fromkeys(self.evercrypt_compile_files))
         self.hacl_includes = list(dict.fromkeys(self.hacl_includes))
         # Drop Hacl_ files from evercrypt
         self.evercrypt_compile_files = [
@@ -274,7 +278,7 @@ class Config:
                         "\n\t".join(
                             join("${PROJECT_SOURCE_DIR}", f)
                             for f in self.hacl_compile_feature[a]
-                        ).replace(separator, "/"),
+                        ).replace("\\", "/"),
                     )
                 )
 
@@ -282,26 +286,26 @@ class Config:
                 "set(INCLUDES\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", a) for a in self.hacl_includes
-                ).replace(separator, "/")
+                ).replace("\\", "/")
             )
 
             out.write(
                 "set(PUBLIC_INCLUDES\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", a) for a in self.public_includes
-                ).replace(separator, "/")
+                ).replace("\\", "/")
             )
 
             out.write(
                 "set(ALGORITHMS\n\t%s\n)\n"
-                % "\n\t".join(a for a in self.hacl_files).replace(separator, "/")
+                % "\n\t".join(a for a in self.hacl_files).replace("\\", "/")
             )
 
             out.write(
                 "set(INCLUDE_PATHS\n\t%s\n)\n"
                 % "\n\t".join(
                     join("${PROJECT_SOURCE_DIR}", p) for p in self.include_paths
-                ).replace(separator, "/")
+                ).replace("\\", "/")
             )
 
             out.write(
@@ -310,7 +314,7 @@ class Config:
                     "\n\t".join(
                         join("${PROJECT_SOURCE_DIR}", "tests", f)
                         for f in self.test_sources
-                    ).replace(separator, "/")
+                    ).replace("\\", "/")
                 )
             )
 
@@ -320,7 +324,7 @@ class Config:
                     "\n\t".join(
                         join("${PROJECT_SOURCE_DIR}", "benchmarks", f)
                         for f in self.benchmark_sources
-                    ).replace(separator, "/")
+                    ).replace("\\", "/")
                 )
             )
 
@@ -332,20 +336,20 @@ class Config:
                         "\n\t".join(
                             join("${PROJECT_SOURCE_DIR}", f)
                             for f in self.vale_files[os]
-                        ).replace(separator, "/"),
+                        ).replace("\\", "/"),
                     )
                 )
 
             out.write(
                 "set(ALGORITHM_TEST_FILES\n\t%s\n)\n"
                 % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace(
-                    separator, "/"
+                    "\\", "/"
                 )
             )
             for a in self.tests:
                 out.write(
                     "set(TEST_FILES_%s\n\t%s\n)\n"
-                    % (a, "\n\t".join(f for f in self.tests[a]).replace(separator, "/"))
+                    % (a, "\n\t".join(f for f in self.tests[a]).replace("\\", "/"))
                 )
 
     def dep_config(self):

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
     paths-ignore:
       - .gitignore
       - CLA.md
@@ -14,6 +15,8 @@ on:
       - LICENSE-APACHE
       - README.md
   workflow_dispatch:
+  merge_group:
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,27 +24,23 @@ concurrency:
 
 jobs:
   linux:
-    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
-        version: [7, 8, 9, 10, 11, 12, 13, 14]
+        version: [9, 10, 11, 12, 13, 14]
         bits: [32, 64]
         edition: [""] # ignore c89 for now
-        #edition: [ c89, "" ]
         exclude:
           - compiler: gcc
-            version: 12
-          - compiler: gcc
             version: 13
           - compiler: gcc
             version: 14
-          # Not available
           - compiler: clang
-            version: 13
-          # Not available
+            version: 9
           - compiler: clang
-            version: 14
+            version: 10
 
     steps:
       - name: Setup | Update
@@ -86,7 +85,6 @@ jobs:
         with:
           bits: ${{ matrix.bits }}
           edition: ${{ matrix.edition }}
-          args: "--no-openssl" # Ubuntu 20.04 doesn't have OpenSSL3
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -94,11 +92,12 @@ jobs:
           name: linux_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.edition }}
 
   macos:
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
-        version: [11, 12, 13, 14]
+        version: [11, 12, 13, 14, 15]
         bits: [64]
         target: ["", "aarch64-apple-ios", "aarch64-apple-darwin"]
         exclude:
@@ -106,6 +105,10 @@ jobs:
             version: 13
           - compiler: gcc
             version: 14
+          - compiler: gcc
+            version: 15
+          - compiler: clang
+            version: 11
 
     steps:
       - name: Setup | Install Ninja
@@ -148,12 +151,11 @@ jobs:
           target: ${{ matrix.target }}
 
       - name: mach | Benchmark
+        if: ${{ matrix.target == '' }} # Only run benchmarks on the native build.
         uses: ./.github/actions/mach_benchmark
         with:
           bits: ${{ matrix.bits }}
           target: ${{ matrix.target }}
-          args: "--no-openssl" # FIXME: #198 For some reason openssl isn't work
-          environment: OPENSSL_HOME=/usr/local/opt/openssl@3/
 
       - name: Upload artifacts
         uses: ./.github/actions/upload_artifacts
@@ -161,6 +163,7 @@ jobs:
           name: macos_${{ matrix.compiler }}_v${{ matrix.version }}_${{ matrix.bits }}_${{ matrix.target }}
 
   windows:
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: windows-latest
     strategy:
       matrix:
@@ -213,6 +216,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   android:
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -239,6 +243,7 @@ jobs:
           name: ${{ matrix.target }}
 
   s390x-gcc:
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -273,6 +278,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   default:
+    if: ${{ github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

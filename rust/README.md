@@ -1,7 +1,6 @@
 # HACL Rust bindings
 
 [![Build & Test][github-actions-badge]][github-actions-link]
-![Rust Version][rustc-image]
 [![crates.io][hacl-crate-badge]](https://crates.io/crates/hacl)
 [![Docs][docs-badge]](https://docs.rs/hacl)
 
@@ -17,7 +16,8 @@ Please see the [top level readme] for more information about the underlying code
 | iOS         |    ✅     |
 | Linux x64   |    ✅     |
 | Linux x86   |    ✅     |
-| Windows x64 |    ❌     |
+| Windows x64 |    ✅     |
+| Windows x86 |    ✅     |
 | Arm64 Linux |    ✅     |
 | Arm32 Linux |    ✅     |
 
@@ -53,4 +53,3 @@ This will also run automatically generated binding tests from bindgen.
 [hacl-crate-badge]: https://img.shields.io/crates/v/hacl.svg?style=for-the-badge
 [docs-badge]: https://img.shields.io/badge/docs-blue.svg?style=for-the-badge
 [top level readme]: https://github.com/cryspen/hacl-packages#readme
-[rustc-image]: https://img.shields.io/badge/rustc-1.56+-blue.svg?style=for-the-badge

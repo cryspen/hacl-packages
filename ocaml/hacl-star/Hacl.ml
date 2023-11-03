@@ -10,7 +10,7 @@ module C = CBytes
 type bytes = CBytes.t
 
 module Lib_RandomBuffer_System = Lib_RandomBuffer_System_bindings.Bindings(Lib_RandomBuffer_System_stubs)
-module Hacl_Chacha20Poly1305_32 = Hacl_Chacha20Poly1305_32_bindings.Bindings(Hacl_Chacha20Poly1305_32_stubs)
+module Hacl_AEAD_Chacha20Poly1305 = Hacl_AEAD_Chacha20Poly1305_bindings.Bindings(Hacl_AEAD_Chacha20Poly1305_stubs)
 module Hacl_Curve25519_51 = Hacl_Curve25519_51_bindings.Bindings(Hacl_Curve25519_51_stubs)
 module Hacl_Ed25519 = Hacl_Ed25519_bindings.Bindings(Hacl_Ed25519_stubs)
 module Hacl_Hash_SHA3 = Hacl_Hash_SHA3_bindings.Bindings(Hacl_Hash_SHA3_stubs)
@@ -24,13 +24,13 @@ module Hacl_P256 = Hacl_P256_bindings.Bindings(Hacl_P256_stubs)
 module Hacl_K256 = Hacl_K256_ECDSA_bindings.Bindings(Hacl_K256_ECDSA_stubs)
 
 #ifdef HACL_CAN_COMPILE_VEC128
-module Hacl_Chacha20Poly1305_128 = Hacl_Chacha20Poly1305_128_bindings.Bindings(Hacl_Chacha20Poly1305_128_stubs)
+module Hacl_AEAD_Chacha20Poly1305_Simd128 = Hacl_AEAD_Chacha20Poly1305_Simd128_bindings.Bindings(Hacl_AEAD_Chacha20Poly1305_Simd128_stubs)
 module Hacl_MAC_Poly1305_Simd128 = Hacl_MAC_Poly1305_Simd128_bindings.Bindings(Hacl_MAC_Poly1305_Simd128_stubs)
 module Hacl_Hash_Blake2s_Simd128 = Hacl_Hash_Blake2s_Simd128_bindings.Bindings(Hacl_Hash_Blake2s_Simd128_stubs)
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
-module Hacl_Chacha20Poly1305_256 = Hacl_Chacha20Poly1305_256_bindings.Bindings(Hacl_Chacha20Poly1305_256_stubs)
+module Hacl_AEAD_Chacha20Poly1305_256 = Hacl_AEAD_Chacha20Poly1305_Simd256_bindings.Bindings(Hacl_AEAD_Chacha20Poly1305_Simd256_stubs)
 module Hacl_MAC_Poly1305_Simd256 = Hacl_MAC_Poly1305_Simd256_bindings.Bindings(Hacl_MAC_Poly1305_Simd256_stubs)
 module Hacl_Hash_Blake2b_Simd256 = Hacl_Hash_Blake2b_Simd256_bindings.Bindings(Hacl_Hash_Blake2b_Simd256_stubs)
 #endif
@@ -55,8 +55,8 @@ end
 module Chacha20_Poly1305_32 : Chacha20_Poly1305 =
   Make_Chacha20_Poly1305 (struct
     let reqs = []
-    let encrypt = Hacl_Chacha20Poly1305_32.hacl_Chacha20Poly1305_32_aead_encrypt
-    let decrypt = Hacl_Chacha20Poly1305_32.hacl_Chacha20Poly1305_32_aead_decrypt
+    let encrypt = Hacl_AEAD_Chacha20Poly1305.hacl_AEAD_Chacha20Poly1305_encrypt
+    let decrypt = Hacl_AEAD_Chacha20Poly1305.hacl_AEAD_Chacha20Poly1305_decrypt
   end)
 
 module Curve25519_51 : Curve25519 =
@@ -103,25 +103,25 @@ end)
 module SHA3_224 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_224
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_SHA3_sha3_224 input_len input output
+    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_224 input_len input output
 end)
 
 module SHA3_256 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_256
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_SHA3_sha3_256 input_len input output
+    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_256 input_len input output
 end)
 
 module SHA3_384 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_384
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_SHA3_sha3_384 input_len input output
+    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_384 input_len input output
 end)
 
 module SHA3_512 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_512
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_SHA3_sha3_512 input_len input output
+    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_512 input_len input output
 end)
 
 module Keccak = struct
@@ -129,17 +129,17 @@ module Keccak = struct
     let shake128 ~msg ~digest =
       (* Hacl.SHA3.shake128_hacl *)
       assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_SHA3_shake128_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
+      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake128_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
     let shake256 ~msg ~digest =
       (* Hacl.SHA3.shake256_hacl *)
       assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_SHA3_shake256_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
+      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake256_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
     let keccak ~rate ~capacity ~suffix ~msg ~digest =
       (* Hacl.Impl.SHA3.keccak *)
       assert (rate mod 8 = 0 && rate / 8 > 0 && rate <= 1600);
       assert (capacity + rate = 1600);
       assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_Impl_SHA3_keccak (UInt32.of_int rate) (UInt32.of_int capacity) (C.size_uint32 msg) (C.ctypes_buf msg) (UInt8.of_int suffix) (C.size_uint32 digest) (C.ctypes_buf digest)
+      Hacl_Hash_SHA3.hacl_Hash_SHA3_keccak (UInt32.of_int rate) (UInt32.of_int capacity) (C.size_uint32 msg) (C.ctypes_buf msg) (UInt8.of_int suffix) (C.size_uint32 digest) (C.ctypes_buf digest)
   end
   let shake128 ~msg ~size =
     let digest = C.make size in
@@ -598,8 +598,9 @@ module K256 = struct
       assert (C.size signature = size_signature);
         Hacl_K256.hacl_K256_ECDSA_secp256k1_ecdsa_is_signature_normalized (C.ctypes_buf signature)
     let normalize_signature ~signature =
-      if Noalloc.Libsecp256k1.normalize_signature ~signature then
-        Some (Bytes.copy signature)
+      let normalized_signature = C.copy signature in
+      if Noalloc.Libsecp256k1.normalize_signature ~signature:normalized_signature then
+        Some (normalized_signature)
       else
         None
   end
@@ -641,8 +642,8 @@ module Blake2s : Blake2 =
 module Chacha20_Poly1305_128 : Chacha20_Poly1305 =
   Make_Chacha20_Poly1305 (struct
     let reqs = [VEC128]
-    let encrypt = Hacl_Chacha20Poly1305_128.hacl_Chacha20Poly1305_128_aead_encrypt
-    let decrypt = Hacl_Chacha20Poly1305_128.hacl_Chacha20Poly1305_128_aead_decrypt
+    let encrypt = Hacl_AEAD_Chacha20Poly1305_Simd128.hacl_AEAD_Chacha20Poly1305_Simd128_encrypt
+    let decrypt = Hacl_AEAD_Chacha20Poly1305_Simd128.hacl_AEAD_Chacha20Poly1305_Simd128_decrypt
   end)
 
 module Poly1305_Simd128 : MAC =
@@ -681,8 +682,8 @@ module Blake2s_Simd128 : Blake2 =
 module Chacha20_Poly1305_256 : Chacha20_Poly1305 =
   Make_Chacha20_Poly1305 (struct
     let reqs = [VEC256]
-    let encrypt = Hacl_Chacha20Poly1305_256.hacl_Chacha20Poly1305_256_aead_encrypt
-    let decrypt = Hacl_Chacha20Poly1305_256.hacl_Chacha20Poly1305_256_aead_decrypt
+    let encrypt = Hacl_AEAD_Chacha20Poly1305_256.hacl_AEAD_Chacha20Poly1305_Simd256_encrypt
+    let decrypt = Hacl_AEAD_Chacha20Poly1305_256.hacl_AEAD_Chacha20Poly1305_Simd256_decrypt
   end)
 
 module Poly1305_Simd256 : MAC =

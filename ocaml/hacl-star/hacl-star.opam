@@ -1,16 +1,16 @@
 opam-version: "2.0"
 name: "hacl-star"
-version: "0.7.0"
+version: "0.7.1"
 synopsis: "OCaml API for EverCrypt/HACL*"
 description: """
 Documentation for this library can be found
-[here](https://tech.cryspen.com/hacl-packages/ocaml/main/index.html).
+[here](https://cryspen.com/hacl-packages/ocaml/main/index.html).
 """
 maintainer: "Victor Dumitrescu <victor.dumitrescu@nomadic-labs.com>"
 authors: [ "Project Everest" ]
 license: "Apache-2.0"
-homepage: "https://tech.cryspen.com/hacl-packages/"
-doc: "https://tech.cryspen.com/hacl-packages/ocaml/main/index.html"
+homepage: "https://cryspen.com/hacl-packages/"
+doc: "https://cryspen.com/hacl-packages/ocaml/main/index.html"
 bug-reports: "https://github.com/cryspen/hacl-packages/issues"
 depends: [
   "ocaml" {>= "4.08.0"}

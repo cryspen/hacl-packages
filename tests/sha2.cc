@@ -14,7 +14,7 @@
 #include "Hacl_Hash_Base.h"
 #include "Hacl_Hash_SHA2.h"
 #include "Hacl_Spec.h"
-#include "Hacl_Streaming_SHA2.h"
+#include "Hacl_Hash_SHA2.h"
 #include "config.h"
 #include "evercrypt.h"
 #include "util.h"
@@ -109,23 +109,22 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA2_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Streaming_SHA2_state_sha2_256* state =
-      Hacl_Streaming_SHA2_malloc_256();
-    Hacl_Streaming_SHA2_reset_256(state);
+    Hacl_Hash_SHA2_state_sha2_256* state =
+      Hacl_Hash_SHA2_malloc_256();
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
-    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
+    Hacl_Hash_SHA2_update_256(state, (uint8_t*)chunk_1, chunk_1_size);
     // This is optional when no intermediate results are required.
-    Hacl_Streaming_SHA2_digest_256(state, digest_1);
+    Hacl_Hash_SHA2_digest_256(state, digest_1);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
-    Hacl_Streaming_SHA2_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
-    Hacl_Streaming_SHA2_digest_256(state, digest_2);
+    Hacl_Hash_SHA2_update_256(state, (uint8_t*)chunk_2, chunk_2_size);
+    Hacl_Hash_SHA2_digest_256(state, digest_2);
 
     // Cleanup
-    Hacl_Streaming_SHA2_free_256(state);
+    Hacl_Hash_SHA2_free_256(state);
 
     print_hex_ln(HACL_HASH_SHA2_256_DIGEST_LENGTH, digest_1);
     print_hex_ln(HACL_HASH_SHA2_256_DIGEST_LENGTH, digest_2);
@@ -176,60 +175,60 @@ TEST_P(Sha2KAT, TryKAT)
 
     if (test.md.size() == 224 / 8) {
       // Init
-      Hacl_Streaming_SHA2_state_sha2_224* state =
-        Hacl_Streaming_SHA2_malloc_224();
-      Hacl_Streaming_SHA2_reset_224(state);
+      Hacl_Hash_SHA2_state_sha2_224* state =
+        Hacl_Hash_SHA2_malloc_224();
+      Hacl_Hash_SHA2_reset_224(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.msg, lengths)) {
-        Hacl_Streaming_SHA2_update_224(state, chunk.data(), chunk.size());
+        Hacl_Hash_SHA2_update_224(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_SHA2_digest_224(state, digest.data());
-      Hacl_Streaming_SHA2_free_224(state);
+      Hacl_Hash_SHA2_digest_224(state, digest.data());
+      Hacl_Hash_SHA2_free_224(state);
     } else if (test.md.size() == 256 / 8) {
       // Init
-      Hacl_Streaming_SHA2_state_sha2_224* state =
-        Hacl_Streaming_SHA2_malloc_256();
-      Hacl_Streaming_SHA2_reset_256(state);
+      Hacl_Hash_SHA2_state_sha2_224* state =
+        Hacl_Hash_SHA2_malloc_256();
+      Hacl_Hash_SHA2_reset_256(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.msg, lengths)) {
-        Hacl_Streaming_SHA2_update_256(state, chunk.data(), chunk.size());
+        Hacl_Hash_SHA2_update_256(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_SHA2_digest_256(state, digest.data());
-      Hacl_Streaming_SHA2_free_256(state);
+      Hacl_Hash_SHA2_digest_256(state, digest.data());
+      Hacl_Hash_SHA2_free_256(state);
     } else if (test.md.size() == 384 / 8) {
       // Init
-      Hacl_Streaming_SHA2_state_sha2_384* state =
-        Hacl_Streaming_SHA2_malloc_384();
-      Hacl_Streaming_SHA2_reset_384(state);
+      Hacl_Hash_SHA2_state_sha2_384* state =
+        Hacl_Hash_SHA2_malloc_384();
+      Hacl_Hash_SHA2_reset_384(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.msg, lengths)) {
-        Hacl_Streaming_SHA2_update_384(state, chunk.data(), chunk.size());
+        Hacl_Hash_SHA2_update_384(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_SHA2_digest_384(state, digest.data());
-      Hacl_Streaming_SHA2_free_384(state);
+      Hacl_Hash_SHA2_digest_384(state, digest.data());
+      Hacl_Hash_SHA2_free_384(state);
     } else if (test.md.size() == 512 / 8) {
       // Init
-      Hacl_Streaming_SHA2_state_sha2_512* state =
-        Hacl_Streaming_SHA2_malloc_512();
-      Hacl_Streaming_SHA2_reset_512(state);
+      Hacl_Hash_SHA2_state_sha2_512* state =
+        Hacl_Hash_SHA2_malloc_512();
+      Hacl_Hash_SHA2_reset_512(state);
 
       // Update
       for (auto chunk : split_by_index_list(test.msg, lengths)) {
-        Hacl_Streaming_SHA2_update_512(state, chunk.data(), chunk.size());
+        Hacl_Hash_SHA2_update_512(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_SHA2_digest_512(state, digest.data());
-      Hacl_Streaming_SHA2_free_512(state);
+      Hacl_Hash_SHA2_digest_512(state, digest.data());
+      Hacl_Hash_SHA2_free_512(state);
     }
 
     EXPECT_EQ(test.md, digest) << bytes_to_hex(test.md) << endl

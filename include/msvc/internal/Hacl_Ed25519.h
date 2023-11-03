@@ -35,10 +35,11 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Streaming_SHA2.h"
 #include "internal/Hacl_Krmllib.h"
+#include "internal/Hacl_Hash_SHA2.h"
 #include "internal/Hacl_Ed25519_PrecompTable.h"
 #include "internal/Hacl_Curve25519_51.h"
+#include "internal/Hacl_Bignum_Base.h"
 #include "internal/Hacl_Bignum25519_51.h"
 #include "../Hacl_Ed25519.h"
 

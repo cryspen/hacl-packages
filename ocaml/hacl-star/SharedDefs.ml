@@ -16,6 +16,7 @@ module type Buffer = sig
   val make : int -> bytes
   val disjoint : bytes -> bytes -> bool
   val sub : bytes -> int -> int -> bytes
+  val copy : bytes -> bytes
   val z_compare : bytes -> Z.t -> int
 end
 (** Abstract representation of buffers *)
@@ -35,6 +36,7 @@ module CBytes : Buffer with type t = Bytes.t and type buf = Bytes.t Ctypes.ocaml
   let make l = Bytes.make l '\x00'
   let disjoint b1 b2 = b1 != b2
   let sub = Bytes.sub
+  let copy = Bytes.copy
   let z_compare b z = Z.compare (Z.of_bits (Bytes.to_string b)) z
 end
 (** Representation of [Bytes.t] buffers *)
@@ -48,6 +50,7 @@ module Hacl_Hash = struct
   include Hacl_Hash_Blake2s_bindings.Bindings(Hacl_Hash_Blake2s_stubs)
 end
 module Hacl_Spec = Hacl_Spec_bindings.Bindings(Hacl_Spec_stubs)
+module Hacl_Streaming_Types = Hacl_Streaming_Types_bindings.Bindings(Hacl_Streaming_Types_stubs)
 
 let max_uint32 = Z.((shift_left ~$1 32) - ~$1)
 let max_uint64 = Z.((shift_left ~$1 64) - ~$1)
@@ -101,7 +104,7 @@ module AEADDefs = struct
 end
 
 module HashDefs = struct
-  open Hacl_Spec
+  open Hacl_Streaming_Types
   type deprecated_alg =
     | SHA1
     | MD5 [@@deprecated]
@@ -112,6 +115,10 @@ module HashDefs = struct
     | SHA2_512
     | BLAKE2b
     | BLAKE2s
+    | SHA3_224
+    | SHA3_256
+    | SHA3_384
+    | SHA3_512
     | Legacy of deprecated_alg
   let alg_definition = function
     | SHA2_224 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA2_224
@@ -120,6 +127,10 @@ module HashDefs = struct
     | SHA2_512 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA2_512
     | BLAKE2b -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_Blake2B
     | BLAKE2s -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_Blake2S
+    | SHA3_224 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_224
+    | SHA3_256 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_256
+    | SHA3_384 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_384
+    | SHA3_512 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA3_512
     | Legacy SHA1 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_SHA1
     | Legacy MD5 -> spec_Hash_Definitions_hash_alg_Spec_Hash_Definitions_MD5
   let digest_len alg =

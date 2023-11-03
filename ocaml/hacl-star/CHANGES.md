@@ -1,6 +1,10 @@
 ## 0.8.0 (Unreleased)
 - API changes for all hash functions
 
+## 0.7.1
+- Significantly faster P-256 signature verification
+- Added SHA-3 to EverCrypt hashing interface
+
 ## 0.7.0
 - Added K-256 and libsecp256k1 API
 - Removed some non-agile APIs for SHA-2, HMAC, and HKDF

@@ -8,7 +8,7 @@ let check_reqs = List.iter (fun x -> assert (has_feature x))
 module Make_Chacha20_Poly1305_generic (C: Buffer)
     (Impl : sig
        val reqs : feature list
-       val encrypt : C.buf -> C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> C.buf -> C.buf -> unit
+       val encrypt : C.buf -> C.buf -> C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> C.buf -> unit
        val decrypt : C.buf -> C.buf -> uint32 -> C.buf -> uint32 -> C.buf -> C.buf -> C.buf -> uint32
      end)
 = struct
@@ -28,15 +28,15 @@ module Make_Chacha20_Poly1305_generic (C: Buffer)
       assert (C.disjoint iv tag);
       assert (C.disjoint ct tag);
       assert (C.disjoint ad ct);
-      Impl.encrypt (C.ctypes_buf key) (C.ctypes_buf iv) (C.size_uint32 ad) (C.ctypes_buf ad)
-        (C.size_uint32 pt) (C.ctypes_buf pt) (C.ctypes_buf ct) (C.ctypes_buf tag)
+      Impl.encrypt (C.ctypes_buf ct) (C.ctypes_buf tag) (C.ctypes_buf pt) (C.size_uint32 pt)
+        (C.ctypes_buf ad) (C.size_uint32 ad) (C.ctypes_buf key) (C.ctypes_buf iv)
     let decrypt ~key ~iv ~ad ~ct ~tag ~pt =
       check_reqs Impl.reqs;
       (* code/chacha20poly1305/Hacl.Impl.Chacha20Poly1305.aead_decrypt_st *)
       check_sizes ~alg ~iv_len:(C.size iv) ~tag_len:(C.size tag)
         ~ad_len:(C.size ad)~pt_len:(C.size pt) ~ct_len:(C.size ct);
-      let result = Impl.decrypt (C.ctypes_buf key) (C.ctypes_buf iv) (C.size_uint32 ad) (C.ctypes_buf ad)
-          (C.size_uint32 pt) (C.ctypes_buf pt) (C.ctypes_buf ct) (C.ctypes_buf tag)
+      let result = Impl.decrypt (C.ctypes_buf pt) (C.ctypes_buf ct) (C.size_uint32 pt) (C.ctypes_buf ad)
+          (C.size_uint32 ad) (C.ctypes_buf key) (C.ctypes_buf iv) (C.ctypes_buf tag)
       in
       UInt32.to_int result = 0
   end

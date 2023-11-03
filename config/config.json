@@ -96,7 +96,7 @@
         ],
         "chacha20poly1305": [
             {
-                "file": "Hacl_Chacha20Poly1305_32.c",
+                "file": "Hacl_AEAD_Chacha20Poly1305.c",
                 "features": "std"
             },
             {
@@ -108,7 +108,7 @@
                 "features": "std"
             },
             {
-                "file": "Hacl_Chacha20Poly1305_128.c",
+                "file": "Hacl_AEAD_Chacha20Poly1305_Simd128.c",
                 "features": "vec128"
             },
             {
@@ -120,7 +120,7 @@
                 "features": "vec128"
             },
             {
-                "file": "Hacl_Chacha20Poly1305_256.c",
+                "file": "Hacl_AEAD_Chacha20Poly1305_Simd256.c",
                 "features": "vec256"
             },
             {
@@ -186,10 +186,6 @@
             {
                 "file": "Hacl_SHA2_Vec256.c",
                 "features": "vec256"
-            },
-            {
-                "file": "Hacl_Streaming_SHA2.c",
-                "features": "std"
             }
         ],
         "sha1": [

@@ -25,11 +25,9 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_function("EverCrypt_HMAC_.*")
         .allowlist_function("Hacl_P256_.*")
         .allowlist_function("Hacl_RSAPSS_.*")
-        .allowlist_function("Hacl_SHA3_.*")
-        .allowlist_function("Hacl_Chacha20Poly1305_.*")
+        .allowlist_function("Hacl_AEAD_Chacha20Poly1305_.*")
         .allowlist_function("Hacl_Hash_.*")
         .allowlist_function("Hacl_Streaming_.*")
-        .allowlist_function("Hacl_Hash_Blake2.*")
         .allowlist_function("Hacl_Curve25519_.*")
         .allowlist_function("Hacl_HKDF_.*")
         .allowlist_function("Hacl_HMAC_.*")
@@ -39,9 +37,8 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_var("EverCrypt_Error_.*")
         .allowlist_var("Spec_.*")
         .allowlist_type("Spec_.*")
-        .allowlist_type("Hacl_Streaming_SHA2_state.*")
-        .allowlist_type("Hacl_Streaming_SHA3_state.*")
         .allowlist_type("Hacl_HMAC_DRBG_.*")
+        .allowlist_type("Hacl_Hash_.*")
         // Block everything we don't need or define ourselves.
         .blocklist_type("EverCrypt_AEAD_state_s.*")
         // These functions currently use FFI-unsafe u128
@@ -70,34 +67,45 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 fn create_bindings(_: &Path, _: &Path) {}
 
 fn build_hacl_c(path: &Path, cross_target: Option<String>) {
-    println!(" >>> Building HACL C in {}", path.display());
+    eprintln!(" >>> Building HACL C in {}", path.display());
     // cmake
     let mut cmake_cmd = Command::new("cmake");
 
     // Map cross compile targets to cmake toolchain files
     let toolchain_file = cross_target
+        .clone()
         .map(|s| match s.as_str() {
-            "x86_64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake",
-            "aarch64-apple-darwin" => "-DCMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake",
-            _ => "",
+            "x86_64-apple-darwin" => vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"],
+            "aarch64-apple-darwin" => {
+                vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"]
+            }
+            _ => vec![],
         })
         .unwrap_or_default();
+    let mut cmake_args = cross_target
+        .map(|s| match s.as_str() {
+            "i686-unknown-linux-gnu" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
+            "i686-pc-windows-msvc" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
+            _ => vec![],
+        })
+        .unwrap_or_default();
+    if !toolchain_file.is_empty() {
+        cmake_args.extend_from_slice(&toolchain_file);
+    }
+    cmake_args.extend_from_slice(&[
+        "-B",
+        "build",
+        "-G",
+        "Ninja",
+        "-D",
+        "CMAKE_BUILD_TYPE=Release",
+    ]);
 
     // We always build the release version here.
     // TODO: For debugging don't use this.
-    let cmake_status = cmake_cmd
-        .current_dir(path)
-        .args(&[
-            "-B",
-            "build",
-            "-G",
-            "Ninja",
-            "-D",
-            "CMAKE_BUILD_TYPE=Release",
-            toolchain_file,
-        ])
-        .status()
-        .expect("Failed to run cmake.");
+    let cmake_cmd = cmake_cmd.current_dir(path).args(&cmake_args);
+    eprintln!(" >>> CMAKE: {cmake_cmd:?}");
+    let cmake_status = cmake_cmd.status().expect("Failed to run cmake.");
     if !cmake_status.success() {
         panic!("Failed to run cmake.")
     }
@@ -114,7 +122,7 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
 
     // install
     let install_path = path.join("build").join("installed");
-    println!(" >>> Installing HACL C into {}", install_path.display());
+    eprintln!(" >>> Installing HACL C into {}", install_path.display());
     let mut cmake_cmd = Command::new("cmake");
     let cmake_status = cmake_cmd
         .current_dir(path)
@@ -131,60 +139,37 @@ fn build_hacl_c(path: &Path, cross_target: Option<String>) {
     }
 }
 
-#[cfg(not(windows))]
 fn copy_hacl_to_out(out_dir: &Path) {
-    let mkdir_status = Command::new("mkdir")
-        .arg("-p")
-        .arg(out_dir.join("build"))
-        .status()
-        .expect("Failed to create build dir in out_dir.");
-    if !mkdir_status.success() {
-        panic!("Failed to create build dir in out_dir.")
-    }
+    use fs_extra::{
+        dir::{copy, create_all, CopyOptions},
+        file,
+    };
 
-    fn copy_dir(path: &Path, out_dir: &Path) {
-        let cp_status = Command::new("cp")
-            .arg("-r")
-            .arg(path)
-            .arg(out_dir)
-            .status()
-            .expect("Failed to copy hacl to out_dir.");
-        if !cp_status.success() {
-            panic!("Failed to copy hacl to out_dir.")
-        }
-    }
+    let build_dir = out_dir.join("build");
+    create_all(&build_dir, true).unwrap();
+
     let local_c_path = Path::new(".c");
-    copy_dir(&local_c_path.join("config"), &out_dir.join("config"));
-    copy_dir(&local_c_path.join("src"), &out_dir.join("src"));
-    copy_dir(&local_c_path.join("vale"), &out_dir.join("vale"));
-    copy_dir(&local_c_path.join("karamel"), &out_dir.join("karamel"));
-    copy_dir(&local_c_path.join("include"), &out_dir.join("include"));
-    copy_dir(
+    let options = CopyOptions::new().overwrite(true);
+
+    copy(&local_c_path.join("config"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("src"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("vale"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("karamel"), &out_dir, &options).unwrap();
+    copy(&local_c_path.join("include"), &out_dir, &options).unwrap();
+
+    let options = file::CopyOptions::new().overwrite(true);
+    file::copy(
         &local_c_path.join("config").join("default_config.cmake"),
         &out_dir.join("build").join("config.cmake"),
-    );
-    copy_dir(&local_c_path.join("CMakeLists.txt"), out_dir);
-}
-
-// TODO: make this work on windows.
-#[cfg(windows)]
-fn copy_hacl_to_out(out_dir: &Path) {
-    panic!("TODO: Windows build is not supported right now.");
-    // let cp_status = Command::new("cmd")
-    //     .args(&[
-    //         "/C",
-    //         "robocopy",
-    //         ".c",
-    //         &format!("{}\\.c", out_dir.to_str().unwrap()),
-    //         "/e",
-    //         "/s",
-    //     ])
-    //     .status()
-    //     .expect(&format!("Failed to copy hacl to {:?}", out_dir));
-
-    // println!("Return code {}", cp_status.code().unwrap());
-
-    // println!("Copied hacl-star to {:?}", out_dir);
+        &options,
+    )
+    .unwrap();
+    file::copy(
+        &local_c_path.join("CMakeLists.txt"),
+        out_dir.join("CMakeLists.txt"),
+        &options,
+    )
+    .unwrap();
 }
 
 fn main() {
@@ -196,9 +181,9 @@ fn main() {
     let host = env::var("HOST").unwrap();
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_dir = Path::new(&out_dir);
-    println!("mach_build: {}", mach_build);
+    eprintln!("mach_build: {}", mach_build);
 
-    let cross_target = if target != host { Some(target) } else { None };
+    let cross_target = if target != host { Some(target.clone()) } else { None };
 
     // Get the C library and build it first.
     // This is the default behaviour. It can be disabled when working on this
@@ -206,10 +191,12 @@ fn main() {
     let hacl_path = if !mach_build {
         // Copy all of the code into out to prepare build
         let c_out_dir = out_dir.join("c");
-        println!(" >>> Copying HACL C file");
-        println!("     from {}", home_dir.join(".c").display());
-        println!("     to {}", c_out_dir.display());
-        copy_hacl_to_out(&c_out_dir);
+        if !c_out_dir.join("build").join("installed").exists() {
+            eprintln!(" >>> Copying HACL C file");
+            eprintln!("     from {}", home_dir.join(".c").display());
+            eprintln!("     to {}", c_out_dir.display());
+            copy_hacl_to_out(&c_out_dir);
+        }
         build_hacl_c(&c_out_dir, cross_target);
 
         c_out_dir.join("build").join("installed")
@@ -228,7 +215,8 @@ fn main() {
     let library_name = "hacl_static";
 
     // Set re-run trigger
-    println!("cargo:rerun-if-changed=wrapper.h");
+    // println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=build.rs");
     // We should re-run if the library changed. But this triggers the build
     // to re-run every time right now.
     // println!(
@@ -242,8 +230,7 @@ fn main() {
     create_bindings(&hacl_include_path, home_dir);
 
     // Link hacl library.
-    let mode = "static";
-    println!("cargo:rustc-link-lib={}={}", mode, library_name);
     println!("cargo:rustc-link-search=native={}", hacl_lib_path.display());
     println!("cargo:lib={}", hacl_lib_path.display());
+    println!("cargo:rustc-link-lib=static={library_name}");
 }

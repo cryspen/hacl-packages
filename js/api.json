@@ -111,58 +111,9 @@
   },
   "Chacha20Poly1305": {
     "aead_encrypt": {
-      "module": "Hacl_Chacha20Poly1305_32",
-      "name": "aead_encrypt",
-      "args": [{
-          "name": "key",
-          "kind": "input",
-          "type": "buffer",
-          "size": 32,
-          "interface_index": 0,
-          "tests": [
-              "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f"
-          ]
-        },
-        {
-          "name": "nonce",
-          "kind": "input",
-          "type": "buffer",
-          "size": 12,
-          "interface_index": 1,
-          "tests": [
-              "070000004041424344454647"
-          ]
-        },
-        {
-          "name": "alen",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "aad",
-          "kind": "input",
-          "type": "buffer",
-          "size": "alen",
-          "interface_index": 2,
-          "tests": [
-              "50515253c0c1c2c3c4c5c6c7"
-          ]
-        },
-        {
-          "name": "len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "plaintext",
-          "kind": "input",
-          "type": "buffer",
-          "size": "len",
-          "interface_index": 3,
-          "tests": [
-              "4c616469657320616e642047656e746c656d656e206f662074686520636c617373206f66202739393a204966204920636f756c64206f6666657220796f75206f6e6c79206f6e652074697020666f7220746865206675747572652c2073756e73637265656e20776f756c642062652069742e"
-          ]
-        },
+      "module": "Hacl_AEAD_Chacha20Poly1305",
+      "name": "encrypt",
+      "args": [
         {
           "name": "ciphertext",
           "kind": "output",
@@ -180,16 +131,38 @@
           "tests": [
               "1ae10b594f09e26a7e902ecbd0600691"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "aead_decrypt": {
-      "module": "Hacl_Chacha20Poly1305_32",
-      "name": "aead_decrypt",
-      "args": [{
+        },
+        {
+          "name": "plaintext",
+          "kind": "input",
+          "type": "buffer",
+          "size": "len",
+          "interface_index": 3,
+          "tests": [
+              "4c616469657320616e642047656e746c656d656e206f662074686520636c617373206f66202739393a204966204920636f756c64206f6666657220796f75206f6e6c79206f6e652074697020666f7220746865206675747572652c2073756e73637265656e20776f756c642062652069742e"
+          ]
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "alen",
+          "interface_index": 2,
+          "tests": [
+              "50515253c0c1c2c3c4c5c6c7"
+          ]
+        },
+        {
+          "name": "alen",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
           "name": "key",
           "kind": "input",
           "type": "buffer",
@@ -208,27 +181,16 @@
           "tests": [
               "070000004041424344454647"
           ]
-        },
-        {
-          "name": "alen",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "aad",
-          "kind": "input",
-          "type": "buffer",
-          "size": "alen",
-          "interface_index": 2,
-          "tests": [
-              "50515253c0c1c2c3c4c5c6c7"
-          ]
-        },
-        {
-          "name": "len",
-          "kind": "input",
-          "type": "uint32"
-        },
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "aead_decrypt": {
+      "module": "Hacl_AEAD_Chacha20Poly1305",
+      "name": "decrypt",
+      "args": [
         {
           "name": "plaintext",
           "kind": "output",
@@ -246,6 +208,46 @@
           "interface_index": 3,
           "tests": [
               "d31a8d34648e60db7b86afbc53ef7ec2a4aded51296e08fea9e2b5a736ee62d63dbea45e8ca9671282fafb69da92728b1a71de0a9e060b2905d6a5b67ecd3b3692ddbd7f2d778b8c9803aee328091b58fab324e4fad675945585808b4831d7bc3ff4def08e4b7a9de576d26586cec64b6116"
+          ]
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "alen",
+          "interface_index": 2,
+          "tests": [
+              "50515253c0c1c2c3c4c5c6c7"
+          ]
+        },
+        {
+          "name": "alen",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "key",
+          "kind": "input",
+          "type": "buffer",
+          "size": 32,
+          "interface_index": 0,
+          "tests": [
+              "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f"
+          ]
+        },
+        {
+          "name": "nonce",
+          "kind": "input",
+          "type": "buffer",
+          "size": 12,
+          "interface_index": 1,
+          "tests": [
+              "070000004041424344454647"
           ]
         },
         {
@@ -407,6 +409,7 @@
   "SHA2": {
     "hash_512": {
       "module": "Hacl_Hash_SHA2",
+      "custom_module_name": true,
       "name": "hash_512",
       "args": [{
           "name": "output",
@@ -443,6 +446,7 @@
     },
     "hash_384": {
       "module": "Hacl_Hash_SHA2",
+      "custom_module_name": true,
       "name": "hash_384",
       "args": [{
           "name": "hash",
@@ -639,7 +643,7 @@
     "hash_512": {
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_512",
+      "name": "Hacl_Hash_SHA3_sha3_512",
       "args": [{
           "name": "input_len",
           "kind": "input",
@@ -676,7 +680,7 @@
     "hash_384": {
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_384",
+      "name": "Hacl_Hash_SHA3_sha3_384",
       "args": [{
           "name": "input_len",
           "kind": "input",
@@ -715,7 +719,7 @@
     "hash_256": {
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_256",
+      "name": "Hacl_Hash_SHA3_sha3_256",
       "args": [{
           "name": "input_len",
           "kind": "input",
@@ -754,7 +758,7 @@
     "hash_224": {
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_224",
+      "name": "Hacl_Hash_SHA3_sha3_224",
       "args": [{
           "name": "input_len",
           "kind": "input",

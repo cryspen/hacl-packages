@@ -15,6 +15,7 @@ For a detailed description fo the Support column, please see the [Architectures 
 | Signature            | Ed25519           | Portable                                |
 | Signature            | ECDSA P-256r1     | Portable                                |
 | Signature            | ECDSA P-256k1     | Portable                                |
+| Signature            | RSA-PSS           | Portable                                |
 | Hash                 | SHA2-224          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-256          | Portable \| SHAEXT                      |
 | Hash                 | SHA2-384          | Portable                                |
@@ -29,3 +30,5 @@ For a detailed description fo the Support column, please see the [Architectures 
 | MAC                  | HMAC              | Portable (depends on hash)              |
 | MAC                  | Poly1305          | Portable \| vec128 \| vec256 \| x64 ASM |
 | Hybrid Encryption    | Nacl              | Portable                                |
+| Hybrid Encryption    | HPKE              | Portable (depends on hash, aead, dh)    |
+| Random Generation    | HMAC-DRBG         | Portable (depends on hash)              |

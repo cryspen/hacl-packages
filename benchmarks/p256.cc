@@ -286,6 +286,32 @@ HACL_P256_ECDH(benchmark::State& state)
 
 BENCHMARK(HACL_P256_ECDH)->Setup(DoSetup);
 
+extern "C" void point_mul_secp256r1(unsigned char outx[32], unsigned char outy[32],
+                        const unsigned char scalar[32],
+                        const unsigned char inx[32],
+				const unsigned char iny[32]);
+
+static void
+ECCKiila_P256_ECDH(benchmark::State& state)
+{
+  bytes public_key = hex_to_bytes(
+    "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93"
+    "a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf");
+  bytes plain_public_key(64);
+  bytes plain_private_key = hex_to_bytes(
+    "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346");
+
+  bytes shared(64);
+  for (auto _ : state) {
+    point_mul_secp256r1(
+			shared.data(), shared.data()+32,
+			plain_private_key.data(),
+			plain_public_key.data(), plain_public_key.data()+32);
+  }
+}
+
+BENCHMARK(ECCKiila_P256_ECDH)->Setup(DoSetup);
+
 #ifndef NO_OPENSSL
 static void
 OpenSSL_P256_ECDH(benchmark::State& state)
@@ -317,5 +343,86 @@ OpenSSL_P256_ECDH(benchmark::State& state)
 
 BENCHMARK(OpenSSL_P256_ECDH)->Setup(DoSetup);
 #endif
+
+static void
+HACL_P256_S2P(benchmark::State& state)
+{
+  bytes plain_private_key = hex_to_bytes(
+    "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346");
+
+  bytes public_key(64);
+  for (auto _ : state) {
+    Hacl_P256_dh_initiator(
+			   public_key.data(), plain_private_key.data());
+  }
+}
+
+BENCHMARK(HACL_P256_S2P)->Setup(DoSetup);
+
+extern "C" void point_mul_g_secp256r1(unsigned char outx[32], unsigned char outy[32],
+				      const unsigned char scalar[32]);
+
+static void
+ECCKiila_P256_S2P(benchmark::State& state)
+{
+  bytes plain_public_key(64);
+  bytes plain_private_key = hex_to_bytes(
+    "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346");
+
+  for (auto _ : state) {
+    point_mul_g_secp256r1(
+			plain_public_key.data(), plain_public_key.data()+32,
+			plain_private_key.data());
+  }
+}
+
+BENCHMARK(ECCKiila_P256_S2P)->Setup(DoSetup);
+
+#ifndef NO_OPENSSL
+static void
+OpenSSL_P256_S2P(benchmark::State& state)
+{
+  EVP_PKEY* pk_a;
+
+  for (auto _ : state) {
+    pk_a = EVP_EC_gen("p-256");
+  }
+
+  EVP_PKEY_free(pk_a);
+}
+
+BENCHMARK(OpenSSL_P256_S2P)->Setup(DoSetup);
+#endif
+
+extern "C"
+    void
+    point_mul_two_secp256r1(unsigned char outx[32], unsigned char outy[32],
+                            const unsigned char a[32],
+                            const unsigned char b[32],
+                            const unsigned char inx[32],
+                            const unsigned char iny[32]);
+
+static void
+ECCKiila_P256_ECDH2(benchmark::State& state)
+{
+  bytes public_key = hex_to_bytes(
+    "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93"
+    "a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf");
+  bytes plain_public_key(64);
+  bytes plain_private_key = hex_to_bytes(
+    "0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346");
+
+  bytes shared(64);
+  for (auto _ : state) {
+    point_mul_two_secp256r1(
+			shared.data(), shared.data()+32,
+			plain_private_key.data(), plain_private_key.data(),
+			plain_public_key.data(), plain_public_key.data()+32);
+  }
+}
+
+BENCHMARK(ECCKiila_P256_ECDH2)->Setup(DoSetup);
+
+
 
 BENCHMARK_MAIN();

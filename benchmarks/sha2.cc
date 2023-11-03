@@ -6,7 +6,7 @@
  *    - http://opensource.org/licenses/MIT
  */
 #include "EverCrypt_Hash.h"
-#include "Hacl_Streaming_SHA2.h"
+#include "Hacl_Hash_SHA2.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
 #include "Hacl_Hash_Blake2s_Simd128.h"
@@ -251,11 +251,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_224,
                   HACL_HASH_SHA2_224_DIGEST_LENGTH,
                   expected_digest_sha2_224,
-                  Hacl_Streaming_SHA2_malloc_224,
-                  Hacl_Streaming_SHA2_reset_224,
-                  Hacl_Streaming_SHA2_update_224,
-                  Hacl_Streaming_SHA2_digest_224,
-                  Hacl_Streaming_SHA2_free_224)
+                  Hacl_Hash_SHA2_malloc_224,
+                  Hacl_Hash_SHA2_reset_224,
+                  Hacl_Hash_SHA2_update_224,
+                  Hacl_Hash_SHA2_digest_224,
+                  Hacl_Hash_SHA2_free_224)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -279,11 +279,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_256,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
-                  Hacl_Streaming_SHA2_malloc_256,
-                  Hacl_Streaming_SHA2_reset_256,
-                  Hacl_Streaming_SHA2_update_256,
-                  Hacl_Streaming_SHA2_digest_256,
-                  Hacl_Streaming_SHA2_free_256)
+                  Hacl_Hash_SHA2_malloc_256,
+                  Hacl_Hash_SHA2_reset_256,
+                  Hacl_Hash_SHA2_update_256,
+                  Hacl_Hash_SHA2_digest_256,
+                  Hacl_Hash_SHA2_free_256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -291,6 +291,34 @@ BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
                   Spec_Hash_Definitions_SHA2_256,
                   expected_digest_sha2_256)
   ->Setup(DoSetup);
+
+#include "sha256.h"
+
+static void
+Digestif_sha256(benchmark::State& state)
+{
+  bytes digest(32, 0);
+
+  for (auto _ : state) {
+
+    sha256_ctx ctx;
+    digestif_sha256_init(&ctx);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha256_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha256_finalize(&ctx, digest.data());
+
+  }
+
+  if (digest != expected_digest_sha2_256) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha256)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
@@ -307,11 +335,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_384,
                   HACL_HASH_SHA2_384_DIGEST_LENGTH,
                   expected_digest_sha2_384,
-                  Hacl_Streaming_SHA2_malloc_384,
-                  Hacl_Streaming_SHA2_reset_384,
-                  Hacl_Streaming_SHA2_update_384,
-                  Hacl_Streaming_SHA2_digest_384,
-                  Hacl_Streaming_SHA2_free_384)
+                  Hacl_Hash_SHA2_malloc_384,
+                  Hacl_Hash_SHA2_reset_384,
+                  Hacl_Hash_SHA2_update_384,
+                  Hacl_Hash_SHA2_digest_384,
+                  Hacl_Hash_SHA2_free_384)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -335,11 +363,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_512,
                   HACL_HASH_SHA2_512_DIGEST_LENGTH,
                   expected_digest_sha2_512,
-                  Hacl_Streaming_SHA2_malloc_512,
-                  Hacl_Streaming_SHA2_reset_512,
-                  Hacl_Streaming_SHA2_update_512,
-                  Hacl_Streaming_SHA2_digest_512,
-                  Hacl_Streaming_SHA2_free_512)
+                  Hacl_Hash_SHA2_malloc_512,
+                  Hacl_Hash_SHA2_reset_512,
+                  Hacl_Hash_SHA2_update_512,
+                  Hacl_Hash_SHA2_digest_512,
+                  Hacl_Hash_SHA2_free_512)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -347,6 +375,34 @@ BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
                   Spec_Hash_Definitions_SHA2_512,
                   expected_digest_sha2_512)
   ->Setup(DoSetup);
+
+#include "sha512.h"
+
+static void
+Digestif_sha512(benchmark::State& state)
+{
+  bytes digest(64, 0);
+
+  for (auto _ : state) {
+
+    sha512_ctx ctx;
+    digestif_sha512_init(&ctx);
+
+    for (auto chunk : chunk(input, chunk_len)) {
+      digestif_sha512_update(&ctx, chunk.data(), chunk.size());
+    }
+
+    digestif_sha512_finalize(&ctx, digest.data());
+
+  }
+
+  if (digest != expected_digest_sha2_512) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Digestif_sha512)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
@@ -358,6 +414,7 @@ BENCHMARK_CAPTURE(OpenSSL_hash_streaming,
                   expected_digest_sha2_512)
   ->Setup(DoSetup);
 #endif
+
 
 // -----------------------------------------------------------------------------
 

@@ -97,5 +97,5 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 ```{doxygenfunction} Hacl_HMAC_legacy_compute_sha1
 ```
 
-[hacl packages book]: https://tech.cryspen.com/hacl-packages/algorithms.html
+[hacl packages book]: https://cryspen.com/hacl-packages/algorithms.html
 [rfc 2104]: https://www.ietf.org/rfc/rfc2104.txt

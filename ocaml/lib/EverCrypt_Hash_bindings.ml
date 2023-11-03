@@ -2,8 +2,9 @@ open Ctypes
 module Bindings(F:Cstubs.FOREIGN) =
   struct
     open F
-    module Hacl_Spec_applied = (Hacl_Spec_bindings.Bindings)(Hacl_Spec_stubs)
-    open Hacl_Spec_applied
+    module Hacl_Streaming_Types_applied =
+      (Hacl_Streaming_Types_bindings.Bindings)(Hacl_Streaming_Types_stubs)
+    open Hacl_Streaming_Types_applied
     module EverCrypt_Error_applied =
       (EverCrypt_Error_bindings.Bindings)(EverCrypt_Error_stubs)
     open EverCrypt_Error_applied
@@ -29,10 +30,6 @@ module Bindings(F:Cstubs.FOREIGN) =
     let everCrypt_Hash_update_multi_256 =
       foreign "EverCrypt_Hash_update_multi_256"
         ((ptr uint32_t) @-> (ocaml_bytes @-> (uint32_t @-> (returning void))))
-    let everCrypt_Hash_update_last_256 =
-      foreign "EverCrypt_Hash_update_last_256"
-        ((ptr uint32_t) @->
-           (uint64_t @-> (ocaml_bytes @-> (uint32_t @-> (returning void)))))
     let everCrypt_Hash_Incremental_hash_len =
       foreign "EverCrypt_Hash_Incremental_hash_len"
         (spec_Hash_Definitions_hash_alg @-> (returning uint32_t))
