@@ -353,16 +353,16 @@ macro_rules! define_plain_digest {
 
             match $version {
                 Algorithm::Sha3_224 => unsafe {
-                    Hacl_Hash_SHA3_sha3_224(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_224(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_256 => unsafe {
-                    Hacl_Hash_SHA3_sha3_256(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_256(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_384 => unsafe {
-                    Hacl_Hash_SHA3_sha3_384(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_384(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_512 => unsafe {
-                    Hacl_Hash_SHA3_sha3_512(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_512(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 _ => unsafe {
                     EverCrypt_Hash_Incremental_hash(

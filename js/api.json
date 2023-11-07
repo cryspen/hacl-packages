@@ -644,23 +644,8 @@
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
       "name": "Hacl_Hash_SHA3_sha3_512",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        }, {
-          "name": "input",
-          "kind": "input",
-          "type": "buffer",
-          "size": "input_len",
-          "interface_index": 0,
-          "tests": [
-              "",
-              "616263",
-              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
-              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
-          ]
-        }, {
+      "args": [
+        {
           "name": "output",
           "kind": "output",
           "type": "buffer",
@@ -671,22 +656,7 @@
               "04a371e84ecfb5b8b77cb48610fca8182dd457ce6f326a0fd3d7ec2f1e91636dee691fbe0c985302ba1b0d8dc78c086346b533b49c030d99a27daf1139d6e75e",
               "afebb2ef542e6579c50cad06d2e578f9f8dd6881d7dc824d26360feebf18a4fa73e3261122948efcfd492e74e82e2189ed0fb440d187f382270cb455f21dd185"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_384": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_Hash_SHA3_sha3_384",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -698,7 +668,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+	}
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_384": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_384",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -710,22 +694,7 @@
               "991c665755eb3a4b6bbdfb75c78a492e8c56a22c5c4d7e429bfdbc32b9d4ad5aa04a1f076e62fea19eef51acd0657c22",
               "79407d3b5916b59c3e30b09822974791c313fb9ecc849e406f23592d04f625dc8c709b98b43b3852b337216179aa7fc7"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_256": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_Hash_SHA3_sha3_256",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+	}, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -737,7 +706,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_256": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_256",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -749,22 +732,7 @@
               "41c0dba2a9d6240849100376a8235e2c82e1b9998a999e21db32dd97496d3376",
               "916f6061fe879741ca6469b43971dfdb28b1a32dc36cb3254e812be27aad1d18"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_224": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_Hash_SHA3_sha3_224",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -776,7 +744,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        },{
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_224": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_224",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -788,7 +770,23 @@
               "8a24108b154ada21c9fd5574494479ba5c7e7ab76ef264ead0fcce33",
               "543e6868e1666c1a643630df77367ae5a62a85070a51c14cbf665cbc"
           ]
-        }
+        }, {
+          "name": "input",
+          "kind": "input",
+          "type": "buffer",
+          "size": "input_len",
+          "interface_index": 0,
+          "tests": [
+              "",
+              "616263",
+              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
+              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
+          ]
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+	}
       ],
       "return": {
         "type": "void"

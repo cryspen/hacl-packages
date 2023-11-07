@@ -65,7 +65,7 @@ TEST(ApiSuite, ApiTest)
 
     uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-    Hacl_Hash_SHA3_sha3_256(message_size, (uint8_t*)message, digest);
+    Hacl_Hash_SHA3_sha3_256(digest, (uint8_t*)message, message_size);
     // END OneShot
 
     bytes expected_digest = from_hex(
@@ -173,16 +173,16 @@ TEST_P(Sha3KAT, TryKAT)
     bytes digest(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
       Hacl_Hash_SHA3_sha3_224(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 256 / 8) {
       Hacl_Hash_SHA3_sha3_256(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 384 / 8) {
       Hacl_Hash_SHA3_sha3_384(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 512 / 8) {
       Hacl_Hash_SHA3_sha3_512(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     }
 
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl

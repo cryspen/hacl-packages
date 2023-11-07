@@ -103,25 +103,25 @@ end)
 module SHA3_224 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_224
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_224 input_len input output
+    let hash = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_224
 end)
 
 module SHA3_256 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_256
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_256 input_len input output
+    let hash= Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_256
 end)
 
 module SHA3_384 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_384
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_384 input_len input output
+    let hash = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_384
 end)
 
 module SHA3_512 : HashFunction =
   Make_HashFunction (struct
     let hash_alg = SHA3_512
-    let hash output input input_len = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_512 input_len input output
+    let hash = Hacl_Hash_SHA3.hacl_Hash_SHA3_sha3_512
 end)
 
 module Keccak = struct

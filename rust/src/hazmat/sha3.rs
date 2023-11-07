@@ -8,9 +8,9 @@ pub fn sha224(payload: &[u8]) -> [u8; 28] {
     let mut digest = [0u8; 28];
     unsafe {
         Hacl_Hash_SHA3_sha3_224(
-            payload.len().try_into().unwrap(),
-            payload.as_ptr() as _,
             digest.as_mut_ptr(),
+            payload.as_ptr() as _,
+            payload.len().try_into().unwrap(),
         );
     }
     digest
@@ -21,9 +21,9 @@ pub fn sha256(payload: &[u8]) -> [u8; 32] {
     let mut digest = [0u8; 32];
     unsafe {
         Hacl_Hash_SHA3_sha3_256(
-            payload.len().try_into().unwrap(),
-            payload.as_ptr() as _,
             digest.as_mut_ptr(),
+            payload.as_ptr() as _,
+            payload.len().try_into().unwrap(),
         );
     }
     digest
@@ -34,9 +34,9 @@ pub fn sha384(payload: &[u8]) -> [u8; 48] {
     let mut digest = [0u8; 48];
     unsafe {
         Hacl_Hash_SHA3_sha3_384(
-            payload.len().try_into().unwrap(),
-            payload.as_ptr() as _,
             digest.as_mut_ptr(),
+            payload.as_ptr() as _,
+            payload.len().try_into().unwrap(),
         );
     }
     digest
@@ -47,9 +47,9 @@ pub fn sha512(payload: &[u8]) -> [u8; 64] {
     let mut digest = [0u8; 64];
     unsafe {
         Hacl_Hash_SHA3_sha3_512(
-            payload.len().try_into().unwrap(),
-            payload.as_ptr() as _,
             digest.as_mut_ptr(),
+            payload.as_ptr() as _,
+            payload.len().try_into().unwrap(),
         );
     }
     digest

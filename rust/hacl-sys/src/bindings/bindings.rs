@@ -102,7 +102,7 @@ extern "C" {
     );
 }
 extern "C" {
-    #[doc = "Decrypt a ciphertext `cipher` with key `k`.\n\nThe arguments `k`, `n`, `aadlen`, and `aad` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `m` and `cipher` can point to the same memory.\n\nIf decryption succeeds, the resulting plaintext is stored in `m` and the function returns the success code 0.\nIf decryption fails, the array `m` remains unchanged and the function returns the error code 1.\n\n@param k Pointer to 32 bytes of memory where the AEAD key is read from.\n@param n Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param aadlen Length of the associated data.\n@param aad Pointer to `aadlen` bytes of memory where the associated data is read from.\n\n@param mlen Length of the ciphertext.\n@param m Pointer to `mlen` bytes of memory where the message is written to.\n@param cipher Pointer to `mlen` bytes of memory where the ciphertext is read from.\n@param mac Pointer to 16 bytes of memory where the mac is read from.\n\n@returns 0 on succeess; 1 on failure."]
+    #[doc = "Decrypt a ciphertext `input` with key `key`.\n\nThe arguments `key`, `nonce`, `data`, and `data_len` are same in encryption/decryption.\nNote: Encryption and decryption can be executed in-place, i.e., `output` and `input` can point to the same memory.\n\nIf decryption succeeds, the resulting plaintext is stored in `output` and the function returns the success code 0.\nIf decryption fails, the array `output` remains unchanged and the function returns the error code 1.\n\n@param output Pointer to `input_len` bytes of memory where the message is written to.\n@param input Pointer to `input_len` bytes of memory where the ciphertext is read from.\n@param input_len Length of the ciphertext.\n@param data Pointer to `data_len` bytes of memory where the associated data is read from.\n@param data_len Length of the associated data.\n@param key Pointer to 32 bytes of memory where the AEAD key is read from.\n@param nonce Pointer to 12 bytes of memory where the AEAD nonce is read from.\n@param tag Pointer to 16 bytes of memory where the mac is read from.\n\n@returns 0 on succeess; 1 on failure."]
     pub fn Hacl_AEAD_Chacha20Poly1305_decrypt(
         output: *mut u8,
         input: *mut u8,
@@ -851,16 +851,16 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_224(inputByteLen: u32, input: *mut u8, output: *mut u8);
+    pub fn Hacl_Hash_SHA3_sha3_224(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_256(inputByteLen: u32, input: *mut u8, output: *mut u8);
+    pub fn Hacl_Hash_SHA3_sha3_256(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_384(inputByteLen: u32, input: *mut u8, output: *mut u8);
+    pub fn Hacl_Hash_SHA3_sha3_384(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_512(inputByteLen: u32, input: *mut u8, output: *mut u8);
+    pub fn Hacl_Hash_SHA3_sha3_512(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
     pub fn Hacl_Hash_SHA3_absorb_inner(rateInBytes: u32, block: *mut u8, s: *mut u64);
