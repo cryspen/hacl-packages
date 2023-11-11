@@ -161,14 +161,115 @@ Hacl_Impl_Curve25519_Field51_fmul(
 }
 
 static inline void
-Hacl_Impl_Curve25519_Field51_fmul2(
+Hacl_Impl_Curve25519_Field51_fmul_a(
   uint64_t *out,
-  uint64_t *f1,
   uint64_t *f2,
   FStar_UInt128_uint128 *uu___
 )
 {
   KRML_HOST_IGNORE(uu___);
+  uint64_t f1[5] = {0U};
+  f1[0] = out[0];
+  f1[1] = out[1];
+  f1[2] = out[2];
+  f1[3] = out[3];
+  f1[4] = out[4];
+  uint64_t f10 = f1[0U];
+  uint64_t f11 = f1[1U];
+  uint64_t f12 = f1[2U];
+  uint64_t f13 = f1[3U];
+  uint64_t f14 = f1[4U];
+  uint64_t f20 = f2[0U];
+  uint64_t f21 = f2[1U];
+  uint64_t f22 = f2[2U];
+  uint64_t f23 = f2[3U];
+  uint64_t f24 = f2[4U];
+  uint64_t tmp1 = f21 * (uint64_t)19U;
+  uint64_t tmp2 = f22 * (uint64_t)19U;
+  uint64_t tmp3 = f23 * (uint64_t)19U;
+  uint64_t tmp4 = f24 * (uint64_t)19U;
+  FStar_UInt128_uint128 o00 = FStar_UInt128_mul_wide(f10, f20);
+  FStar_UInt128_uint128 o10 = FStar_UInt128_mul_wide(f10, f21);
+  FStar_UInt128_uint128 o20 = FStar_UInt128_mul_wide(f10, f22);
+  FStar_UInt128_uint128 o30 = FStar_UInt128_mul_wide(f10, f23);
+  FStar_UInt128_uint128 o40 = FStar_UInt128_mul_wide(f10, f24);
+  FStar_UInt128_uint128 o01 = FStar_UInt128_add(o00, FStar_UInt128_mul_wide(f11, tmp4));
+  FStar_UInt128_uint128 o11 = FStar_UInt128_add(o10, FStar_UInt128_mul_wide(f11, f20));
+  FStar_UInt128_uint128 o21 = FStar_UInt128_add(o20, FStar_UInt128_mul_wide(f11, f21));
+  FStar_UInt128_uint128 o31 = FStar_UInt128_add(o30, FStar_UInt128_mul_wide(f11, f22));
+  FStar_UInt128_uint128 o41 = FStar_UInt128_add(o40, FStar_UInt128_mul_wide(f11, f23));
+  FStar_UInt128_uint128 o02 = FStar_UInt128_add(o01, FStar_UInt128_mul_wide(f12, tmp3));
+  FStar_UInt128_uint128 o12 = FStar_UInt128_add(o11, FStar_UInt128_mul_wide(f12, tmp4));
+  FStar_UInt128_uint128 o22 = FStar_UInt128_add(o21, FStar_UInt128_mul_wide(f12, f20));
+  FStar_UInt128_uint128 o32 = FStar_UInt128_add(o31, FStar_UInt128_mul_wide(f12, f21));
+  FStar_UInt128_uint128 o42 = FStar_UInt128_add(o41, FStar_UInt128_mul_wide(f12, f22));
+  FStar_UInt128_uint128 o03 = FStar_UInt128_add(o02, FStar_UInt128_mul_wide(f13, tmp2));
+  FStar_UInt128_uint128 o13 = FStar_UInt128_add(o12, FStar_UInt128_mul_wide(f13, tmp3));
+  FStar_UInt128_uint128 o23 = FStar_UInt128_add(o22, FStar_UInt128_mul_wide(f13, tmp4));
+  FStar_UInt128_uint128 o33 = FStar_UInt128_add(o32, FStar_UInt128_mul_wide(f13, f20));
+  FStar_UInt128_uint128 o43 = FStar_UInt128_add(o42, FStar_UInt128_mul_wide(f13, f21));
+  FStar_UInt128_uint128 o04 = FStar_UInt128_add(o03, FStar_UInt128_mul_wide(f14, tmp1));
+  FStar_UInt128_uint128 o14 = FStar_UInt128_add(o13, FStar_UInt128_mul_wide(f14, tmp2));
+  FStar_UInt128_uint128 o24 = FStar_UInt128_add(o23, FStar_UInt128_mul_wide(f14, tmp3));
+  FStar_UInt128_uint128 o34 = FStar_UInt128_add(o33, FStar_UInt128_mul_wide(f14, tmp4));
+  FStar_UInt128_uint128 o44 = FStar_UInt128_add(o43, FStar_UInt128_mul_wide(f14, f20));
+  FStar_UInt128_uint128 tmp_w0 = o04;
+  FStar_UInt128_uint128 tmp_w1 = o14;
+  FStar_UInt128_uint128 tmp_w2 = o24;
+  FStar_UInt128_uint128 tmp_w3 = o34;
+  FStar_UInt128_uint128 tmp_w4 = o44;
+  FStar_UInt128_uint128
+  l_ = FStar_UInt128_add(tmp_w0, FStar_UInt128_uint64_to_uint128((uint64_t)0U));
+  uint64_t tmp01 = FStar_UInt128_uint128_to_uint64(l_) & (uint64_t)0x7ffffffffffffU;
+  uint64_t c0 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(l_, (uint32_t)51U));
+  FStar_UInt128_uint128 l_0 = FStar_UInt128_add(tmp_w1, FStar_UInt128_uint64_to_uint128(c0));
+  uint64_t tmp11 = FStar_UInt128_uint128_to_uint64(l_0) & (uint64_t)0x7ffffffffffffU;
+  uint64_t c1 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(l_0, (uint32_t)51U));
+  FStar_UInt128_uint128 l_1 = FStar_UInt128_add(tmp_w2, FStar_UInt128_uint64_to_uint128(c1));
+  uint64_t tmp21 = FStar_UInt128_uint128_to_uint64(l_1) & (uint64_t)0x7ffffffffffffU;
+  uint64_t c2 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(l_1, (uint32_t)51U));
+  FStar_UInt128_uint128 l_2 = FStar_UInt128_add(tmp_w3, FStar_UInt128_uint64_to_uint128(c2));
+  uint64_t tmp31 = FStar_UInt128_uint128_to_uint64(l_2) & (uint64_t)0x7ffffffffffffU;
+  uint64_t c3 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(l_2, (uint32_t)51U));
+  FStar_UInt128_uint128 l_3 = FStar_UInt128_add(tmp_w4, FStar_UInt128_uint64_to_uint128(c3));
+  uint64_t tmp41 = FStar_UInt128_uint128_to_uint64(l_3) & (uint64_t)0x7ffffffffffffU;
+  uint64_t c4 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(l_3, (uint32_t)51U));
+  uint64_t l_4 = tmp01 + c4 * (uint64_t)19U;
+  uint64_t tmp0_ = l_4 & (uint64_t)0x7ffffffffffffU;
+  uint64_t c5 = l_4 >> (uint32_t)51U;
+  uint64_t o0 = tmp0_;
+  uint64_t o1 = tmp11 + c5;
+  uint64_t o2 = tmp21;
+  uint64_t o3 = tmp31;
+  uint64_t o4 = tmp41;
+  out[0U] = o0;
+  out[1U] = o1;
+  out[2U] = o2;
+  out[3U] = o3;
+  out[4U] = o4;
+}
+
+static inline void
+Hacl_Impl_Curve25519_Field51_fmul2(
+  uint64_t *out,
+  uint64_t *f1_orig,
+  uint64_t *f2,
+  FStar_UInt128_uint128 *uu___
+)
+{
+  KRML_HOST_IGNORE(uu___);
+  uint64_t f1[10U] = { 0U };
+  //  memcpy(f1, f1_orig, 10U * sizeof (uint64_t));
+  f1[0] = f1_orig[0];
+  f1[1] = f1_orig[1];
+  f1[2] = f1_orig[2];
+  f1[3] = f1_orig[3];
+  f1[4] = f1_orig[4];
+  f1[5] = f1_orig[5];
+  f1[6] = f1_orig[6];
+  f1[7] = f1_orig[7];
+  f1[8] = f1_orig[8];
+  f1[9] = f1_orig[9];
   uint64_t f10 = f1[0U];
   uint64_t f11 = f1[1U];
   uint64_t f12 = f1[2U];
@@ -330,14 +431,23 @@ Hacl_Impl_Curve25519_Field51_fmul2(
 static inline void
 Hacl_Impl_Curve25519_Field51_fmul2_a(
   uint64_t *out,
-  uint64_t *f1_orig,
   uint64_t *f2,
   FStar_UInt128_uint128 *uu___
 )
 {
   KRML_HOST_IGNORE(uu___);
   uint64_t f1[10U] = { 0U };
-  memcpy(f1, f1_orig, 10U * sizeof (uint64_t));
+  //  memcpy(f1, out, 10U * sizeof (uint64_t));
+  f1[0] = out[0];
+  f1[1] = out[1];
+  f1[2] = out[2];
+  f1[3] = out[3];
+  f1[4] = out[4];
+  f1[5] = out[5];
+  f1[6] = out[6];
+  f1[7] = out[7];
+  f1[8] = out[8];
+  f1[9] = out[9];
   uint64_t f10 = f1[0U];
   uint64_t f11 = f1[1U];
   uint64_t f12 = f1[2U];
@@ -616,9 +726,21 @@ Hacl_Impl_Curve25519_Field51_fsqr(uint64_t *out, uint64_t *f, FStar_UInt128_uint
 }
 
 static inline void
-Hacl_Impl_Curve25519_Field51_fsqr2(uint64_t *out, uint64_t *f, FStar_UInt128_uint128 *uu___)
+Hacl_Impl_Curve25519_Field51_fsqr2(uint64_t *out, uint64_t *f_orig, FStar_UInt128_uint128 *uu___)
 {
   KRML_HOST_IGNORE(uu___);
+  uint64_t f[10U] = { 0U };
+  //  memcpy(f, f_orig, 10U * sizeof (uint64_t));
+  f[0] = f_orig[0];
+  f[1] = f_orig[1];
+  f[2] = f_orig[2];
+  f[3] = f_orig[3];
+  f[4] = f_orig[4];
+  f[5] = f_orig[5];
+  f[6] = f_orig[6];
+  f[7] = f_orig[7];
+  f[8] = f_orig[8];
+  f[9] = f_orig[9];
   uint64_t f10 = f[0U];
   uint64_t f11 = f[1U];
   uint64_t f12 = f[2U];
@@ -772,11 +894,21 @@ Hacl_Impl_Curve25519_Field51_fsqr2(uint64_t *out, uint64_t *f, FStar_UInt128_uin
 }
 
 static inline void
-Hacl_Impl_Curve25519_Field51_fsqr2_a(uint64_t *out, uint64_t *f_orig, FStar_UInt128_uint128 *uu___)
+Hacl_Impl_Curve25519_Field51_fsqr2_a(uint64_t *out, FStar_UInt128_uint128 *uu___)
 {
   KRML_HOST_IGNORE(uu___);
   uint64_t f[10U] = { 0U };
-  memcpy(f, f_orig, 10U * sizeof (uint64_t));
+  //  memcpy(f, f_orig, 10U * sizeof (uint64_t));
+  f[0] = out[0];
+  f[1] = out[1];
+  f[2] = out[2];
+  f[3] = out[3];
+  f[4] = out[4];
+  f[5] = out[5];
+  f[6] = out[6];
+  f[7] = out[7];
+  f[8] = out[8];
+  f[9] = out[9];
   uint64_t f10 = f[0U];
   uint64_t f11 = f[1U];
   uint64_t f12 = f[2U];

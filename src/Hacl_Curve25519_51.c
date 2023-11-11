@@ -51,7 +51,7 @@ static void point_add_and_double(uint64_t *q, uint64_t *p01_tmp1, FStar_UInt128_
   uint64_t *c0 = dc + 5U;
   Hacl_Impl_Curve25519_Field51_fadd(c0, x3, z31);
   Hacl_Impl_Curve25519_Field51_fsub(d0, x3, z31);
-  Hacl_Impl_Curve25519_Field51_fmul2_a(dc, dc, ab, tmp2);
+  Hacl_Impl_Curve25519_Field51_fmul2_a(dc, ab, tmp2);
   Hacl_Impl_Curve25519_Field51_fadd(x3, d0, c0);
   Hacl_Impl_Curve25519_Field51_fsub(z31, d0, c0);
   uint64_t *a1 = tmp1;
@@ -61,7 +61,7 @@ static void point_add_and_double(uint64_t *q, uint64_t *p01_tmp1, FStar_UInt128_
   uint64_t *ab1 = tmp1;
   uint64_t *dc1 = tmp1 + 10U;
   Hacl_Impl_Curve25519_Field51_fsqr2(dc1, ab1, tmp2);
-  Hacl_Impl_Curve25519_Field51_fsqr2_a(nq_p1, nq_p1, tmp2);
+  Hacl_Impl_Curve25519_Field51_fsqr2_a(nq_p1, tmp2);
   a1[0U] = c[0U];
   a1[1U] = c[1U];
   a1[2U] = c[2U];
@@ -75,9 +75,7 @@ static void point_add_and_double(uint64_t *q, uint64_t *p01_tmp1, FStar_UInt128_
   memcpy(f1_copy1, b1, 5U * sizeof (uint64_t));
   Hacl_Impl_Curve25519_Field51_fadd(b1, f1_copy1, d);
   Hacl_Impl_Curve25519_Field51_fmul2(nq, dc1, ab1, tmp2);
-  uint64_t f1_copy2[5U] = { 0U };
-  memcpy(f1_copy2, z3, 5U * sizeof (uint64_t));
-  Hacl_Impl_Curve25519_Field51_fmul(z3, f1_copy2, x1, tmp2);
+  Hacl_Impl_Curve25519_Field51_fmul_a(z3, x1, tmp2);
 }
 
 static void point_double(uint64_t *nq, uint64_t *tmp1, FStar_UInt128_uint128 *tmp2)
