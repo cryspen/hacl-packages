@@ -460,10 +460,10 @@ pub struct Hacl_Streaming_MD_state_64_s {
     pub total_len: u64,
 }
 pub type Hacl_Streaming_MD_state_64 = Hacl_Streaming_MD_state_64_s;
-pub type Hacl_Hash_SHA2_state_sha2_224 = Hacl_Streaming_MD_state_32;
-pub type Hacl_Hash_SHA2_state_sha2_256 = Hacl_Streaming_MD_state_32;
-pub type Hacl_Hash_SHA2_state_sha2_384 = Hacl_Streaming_MD_state_64;
-pub type Hacl_Hash_SHA2_state_sha2_512 = Hacl_Streaming_MD_state_64;
+pub type Hacl_Hash_SHA2_state_t_224 = Hacl_Streaming_MD_state_32;
+pub type Hacl_Hash_SHA2_state_t_256 = Hacl_Streaming_MD_state_32;
+pub type Hacl_Hash_SHA2_state_t_384 = Hacl_Streaming_MD_state_64;
+pub type Hacl_Hash_SHA2_state_t_512 = Hacl_Streaming_MD_state_64;
 extern "C" {
     #[doc = "Allocate initial state for the SHA2_256 hash. The state is to be freed by\ncalling `free_256`."]
     pub fn Hacl_Hash_SHA2_malloc_256() -> *mut Hacl_Streaming_MD_state_32;

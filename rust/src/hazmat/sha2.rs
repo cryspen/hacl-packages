@@ -70,7 +70,7 @@ pub mod streaming {
         Hacl_Hash_SHA2_free_384, Hacl_Hash_SHA2_free_512, Hacl_Hash_SHA2_malloc_224,
         Hacl_Hash_SHA2_malloc_256, Hacl_Hash_SHA2_malloc_384, Hacl_Hash_SHA2_malloc_512,
         Hacl_Hash_SHA2_reset_224, Hacl_Hash_SHA2_reset_256, Hacl_Hash_SHA2_reset_384,
-        Hacl_Hash_SHA2_reset_512, Hacl_Hash_SHA2_state_sha2_224, Hacl_Hash_SHA2_state_sha2_384,
+        Hacl_Hash_SHA2_reset_512, Hacl_Hash_SHA2_state_t_224, Hacl_Hash_SHA2_state_t_384,
         Hacl_Hash_SHA2_update_224, Hacl_Hash_SHA2_update_256, Hacl_Hash_SHA2_update_384,
         Hacl_Hash_SHA2_update_512,
     };
@@ -126,7 +126,7 @@ pub mod streaming {
     impl_streaming!(
         Sha224,
         28,
-        Hacl_Hash_SHA2_state_sha2_224,
+        Hacl_Hash_SHA2_state_t_224,
         Hacl_Hash_SHA2_malloc_224,
         Hacl_Hash_SHA2_reset_224,
         Hacl_Hash_SHA2_update_224,
@@ -137,7 +137,7 @@ pub mod streaming {
     impl_streaming!(
         Sha256,
         32,
-        Hacl_Hash_SHA2_state_sha2_224,
+        Hacl_Hash_SHA2_state_t_224,
         Hacl_Hash_SHA2_malloc_256,
         Hacl_Hash_SHA2_reset_256,
         Hacl_Hash_SHA2_update_256,
@@ -148,7 +148,7 @@ pub mod streaming {
     impl_streaming!(
         Sha384,
         48,
-        Hacl_Hash_SHA2_state_sha2_384,
+        Hacl_Hash_SHA2_state_t_384,
         Hacl_Hash_SHA2_malloc_384,
         Hacl_Hash_SHA2_reset_384,
         Hacl_Hash_SHA2_update_384,
@@ -159,7 +159,7 @@ pub mod streaming {
     impl_streaming!(
         Sha512,
         64,
-        Hacl_Hash_SHA2_state_sha2_384,
+        Hacl_Hash_SHA2_state_t_384,
         Hacl_Hash_SHA2_malloc_512,
         Hacl_Hash_SHA2_reset_512,
         Hacl_Hash_SHA2_update_512,

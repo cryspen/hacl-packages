@@ -109,7 +109,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA2_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Hash_SHA2_state_sha2_256* state =
+    Hacl_Hash_SHA2_state_t_256* state =
       Hacl_Hash_SHA2_malloc_256();
 
     // 1/2 Include `Hello, ` into the hash calculation and
@@ -175,7 +175,7 @@ TEST_P(Sha2KAT, TryKAT)
 
     if (test.md.size() == 224 / 8) {
       // Init
-      Hacl_Hash_SHA2_state_sha2_224* state =
+      Hacl_Hash_SHA2_state_t_224* state =
         Hacl_Hash_SHA2_malloc_224();
       Hacl_Hash_SHA2_reset_224(state);
 
@@ -189,7 +189,7 @@ TEST_P(Sha2KAT, TryKAT)
       Hacl_Hash_SHA2_free_224(state);
     } else if (test.md.size() == 256 / 8) {
       // Init
-      Hacl_Hash_SHA2_state_sha2_224* state =
+      Hacl_Hash_SHA2_state_t_224* state =
         Hacl_Hash_SHA2_malloc_256();
       Hacl_Hash_SHA2_reset_256(state);
 
@@ -203,7 +203,7 @@ TEST_P(Sha2KAT, TryKAT)
       Hacl_Hash_SHA2_free_256(state);
     } else if (test.md.size() == 384 / 8) {
       // Init
-      Hacl_Hash_SHA2_state_sha2_384* state =
+      Hacl_Hash_SHA2_state_t_384* state =
         Hacl_Hash_SHA2_malloc_384();
       Hacl_Hash_SHA2_reset_384(state);
 
@@ -217,7 +217,7 @@ TEST_P(Sha2KAT, TryKAT)
       Hacl_Hash_SHA2_free_384(state);
     } else if (test.md.size() == 512 / 8) {
       // Init
-      Hacl_Hash_SHA2_state_sha2_512* state =
+      Hacl_Hash_SHA2_state_t_512* state =
         Hacl_Hash_SHA2_malloc_512();
       Hacl_Hash_SHA2_reset_512(state);
 
