@@ -12,12 +12,12 @@ It also has a build-in keying mechanism so that it can be used to replace HMAC-b
 `````{tabs}
 ````{group-tab} 32
 ```C
-#include "Hacl_Hash_Blake2.h"
+#include "Hacl_Hash_Blake2b.h"
 ```
 ````
 ````{group-tab} 256
 ```C
-#include "Hacl_Hash_Blake2b_256.h"
+#include "Hacl_Hash_Blake2b_Simd256.h"
 ```
 ````
 `````
@@ -47,11 +47,11 @@ It also has a build-in keying mechanism so that it can be used to replace HMAC-b
 
 `````{tabs}
 ````{group-tab} 32
-```{doxygenfunction} Hacl_Blake2b_32_blake2b
+```{doxygenfunction} Hacl_Hash_Blake2b_hash_with_key
 ```
 ````
 ````{group-tab} 256
-```{doxygenfunction} Hacl_Blake2b_256_blake2b
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_hash_with_key
 ```
 ````
 `````
@@ -63,12 +63,12 @@ It also has a build-in keying mechanism so that it can be used to replace HMAC-b
 `````{tabs}
 ````{group-tab} 32
 ```C
-#include "Hacl_Streaming_Blake2.h"
+#include "Hacl_Hash_Blake2b.h"
 ```
 ````
 ````{group-tab} 256
 ```C
-#include "Hacl_Streaming_Blake2b_256.h"
+#include "Hacl_Hash_Blake2b_Simd256.h"
 ```
 ````
 `````
@@ -98,31 +98,31 @@ It also has a build-in keying mechanism so that it can be used to replace HMAC-b
 
 `````{tabs}
 ````{group-tab} 32
-```{doxygentypedef} Hacl_Streaming_Blake2_blake2b_32_state
+```{doxygentypedef} Hacl_Hash_Blake2b_state_t
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_create_in
+```{doxygenfunction} Hacl_Hash_Blake2b_malloc
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_init
+```{doxygenfunction} Hacl_Hash_Blake2b_update
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_update
+```{doxygenfunction} Hacl_Hash_Blake2b_digest
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_finish
+```{doxygenfunction} Hacl_Hash_Blake2b_reset
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2b_32_no_key_free
+```{doxygenfunction} Hacl_Hash_Blake2b_free
 ```
 ````
 ````{group-tab} 256
-```{doxygentypedef} Hacl_Streaming_Blake2b_256_blake2b_256_state
+```{doxygentypedef} Hacl_Hash_Blake2b_Simd256_state_t
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_create_in
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_malloc
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_init
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_update
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_update
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_digest
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_finish
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_reset
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2b_256_blake2b_256_no_key_free
+```{doxygenfunction} Hacl_Hash_Blake2b_Simd256_free
 ```
 ````
 `````

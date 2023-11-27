@@ -13,15 +13,15 @@ If you want to hash a complete messages, i.e., can provide a slice of memory tha
 If you need to provide a message chunk-by-chunk, e.g., because you read the message from network or similar, it could be more appropriate to use the streaming API.
 
 The streaming API has roughly three phases: init, update, and finish.
-Typically, you create a state element by using `init`, call `update` as often as needed, and then call `finish` to obtain the final digest.
+Typically, you create a state element by using `malloc`, call `update` as often as needed, and then call `digest` to obtain the final digest.
 Finally, you `free` the state element.
 
 **Streaming API (with intermediate digests)**
 
-It is also possible to obtain all intermediate digests by calling `finish` more than once.
-You can call `update("Hello, ")`, and `finish` to obtain the hash of `"Hello, "`.
-Then you can call `update("World!")`, and `finish` *again* to obtain the hash of `"Hello, World!"`.
-You only need to call `init` and `free` once to obtain both digests.
+It is also possible to obtain all intermediate digests by calling `digest` more than once.
+You can call `update("Hello, ")`, and `digest` to obtain the hash of `"Hello, "`.
+Then you can call `update("World!")`, and `digest` *again* to obtain the hash of `"Hello, World!"`.
+You only need to call `malloc` and `free` once to obtain both digests.
 
 ```{toctree}
 :caption: "Algorithms"

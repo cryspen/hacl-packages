@@ -10,7 +10,7 @@ All memory for the output variables have to be allocated by the caller.
 
 ````{group-tab} 32
 ```c
-#include "Hacl_Chacha20Poly1305_32.h"
+#include "Hacl_AEAD_Chacha20Poly1305.h"
 ```
 
 A portable C implementation that can be compiled and run on any platform that is 32-bit or higher.
@@ -20,7 +20,7 @@ This implementation works on all CPUs.
 
 ````{group-tab} 128
 ```c
-#include "Hacl_Chacha20Poly1305_128.h"
+#include "Hacl_AEAD_Chacha20Poly1305_Simd128.h"
 ```
 
 A 128-bit vectorized C implementation that can be compiled and run on any platform that supports 128-bit SIMD instructions.
@@ -30,7 +30,7 @@ Support for VEC128 is needed. Please see the [HACL Packages book].
 
 ````{group-tab} 256
 ```c
-#include "Hacl_Chacha20Poly1305_256.h"
+#include "Hacl_AEAD_Chacha20Poly1305_Simd256.h"
 ```
 
 A 256-bit vectorized C implementation that can be compiled and run on any platform that supports 256-bit SIMD instructions.
@@ -59,21 +59,21 @@ Support for VEC256 is needed. Please see the [HACL Packages book].
 
 `````{tabs}
 ````{group-tab} 32
-```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_encrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_encrypt
 ```
-```{doxygenfunction} Hacl_Chacha20Poly1305_32_aead_decrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_decrypt
 ```
 ````
 ````{group-tab} 128
-```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_encrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_Simd128_encrypt
 ```
-```{doxygenfunction} Hacl_Chacha20Poly1305_128_aead_decrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_Simd128_decrypt
 ```
 ````
 ````{group-tab} 256
-```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_encrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_Simd256_encrypt
 ```
-```{doxygenfunction} Hacl_Chacha20Poly1305_256_aead_decrypt
+```{doxygenfunction} Hacl_AEAD_Chacha20Poly1305_Simd256_decrypt
 ```
 ````
 `````
