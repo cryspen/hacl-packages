@@ -27,7 +27,6 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
         .allowlist_function("Hacl_RSAPSS_.*")
         .allowlist_function("Hacl_AEAD_Chacha20Poly1305_.*")
         .allowlist_function("Hacl_Hash_.*")
-        .allowlist_function("Hacl_Streaming_.*")
         .allowlist_function("Hacl_Curve25519_.*")
         .allowlist_function("Hacl_HKDF_.*")
         .allowlist_function("Hacl_HMAC_.*")
