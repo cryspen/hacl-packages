@@ -24,7 +24,7 @@ SHA-1 is insecure. Please avoid or ask your cryptographer of trust for permissio
 :end-before: "// END OneShot"
 ```
 
-```{doxygenfunction} Hacl_Hash_SHA1_legacy_hash
+```{doxygenfunction} Hacl_Hash_SHA1_hash
 ```
 
 ### Streaming
