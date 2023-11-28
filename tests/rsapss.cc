@@ -12,6 +12,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Hacl_Hash_Base.h"
+#include "Hacl_RSA.h"
 #include "Hacl_RSAPSS.h"
 #include "Hacl_Spec.h"
 #include "util.h"
@@ -34,13 +35,13 @@ TEST(ApiSuite, ApiTest)
   //       You need to bring your own keys.
   generate_rsapss_key(&e, &eBits, &d, &dBits, &mod, &modBits);
   uint64_t* skey =
-    Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
+    Hacl_RSA_new_rsa_load_skey(modBits, eBits, dBits, mod, e, d);
 
   if (skey == NULL) {
     //Error
   }
 
-  uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(modBits, eBits, mod, e);
+  uint64_t* pkey = Hacl_RSA_new_rsa_load_pkey(modBits, eBits, mod, e);
 
   if (pkey == NULL) {
     //Error
@@ -89,7 +90,7 @@ TEST(ApiSuite, ApiTest)
   if (!res_verify) {
     // Error
   }
-
+ 
   free(sgnt);
   free(salt);
   free(pkey);
@@ -154,7 +155,7 @@ sign(bytes e,
      bytes& sgnt,
      bool* out)
 {
-  uint64_t* skey = Hacl_RSAPSS_new_rsapss_load_skey(
+  uint64_t* skey = Hacl_RSA_new_rsa_load_skey(
     n.size() * 8, e.size() * 8, d.size() * 8, n.data(), e.data(), d.data());
 
   bytes sgnt_twin(n.size());
@@ -375,7 +376,7 @@ verify(bytes e,
        bytes sgnt,
        bool* out)
 {
-  uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(
+  uint64_t* pkey = Hacl_RSA_new_rsa_load_pkey(
     n.size() * 8, e.size() * 8, n.data(), e.data());
 
   bool got1 = Hacl_RSAPSS_rsapss_verify(alg,
@@ -551,7 +552,7 @@ TEST(BadSecretKey, RsaPssLoadKey)
     bytes e, d, n;
     std::tie(e, d, n) = test;
 
-    uint64_t* skey = Hacl_RSAPSS_new_rsapss_load_skey(
+    uint64_t* skey = Hacl_RSA_new_rsa_load_skey(
       n.size() * 8, e.size() * 8, d.size() * 8, n.data(), e.data(), d.data());
 
     ASSERT_TRUE(skey == NULL);
@@ -571,7 +572,7 @@ TEST(BadPublicKey, RsaPssLoadKey)
     bytes e, n;
     std::tie(e, n) = test;
 
-    uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(
+    uint64_t* pkey = Hacl_RSA_new_rsa_load_pkey(
       n.size() * 8, e.size() * 8, n.data(), e.data());
 
     ASSERT_TRUE(pkey == NULL);

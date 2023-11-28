@@ -97,17 +97,17 @@ hash(Spec_Hash_Definitions_hash_alg a, uint8_t *mHash, uint32_t msgLen, uint8_t 
   {
     case Spec_Hash_Definitions_SHA2_256:
       {
-        Hacl_Hash_SHA2_hash_256(mHash, msg, msgLen);
+        Hacl_Streaming_SHA2_hash_256(msg, msgLen, mHash);
         break;
       }
     case Spec_Hash_Definitions_SHA2_384:
       {
-        Hacl_Hash_SHA2_hash_384(mHash, msg, msgLen);
+        Hacl_Streaming_SHA2_hash_384(msg, msgLen, mHash);
         break;
       }
     case Spec_Hash_Definitions_SHA2_512:
       {
-        Hacl_Hash_SHA2_hash_512(mHash, msg, msgLen);
+        Hacl_Streaming_SHA2_hash_512(msg, msgLen, mHash);
         break;
       }
     default:
@@ -423,11 +423,7 @@ Hacl_RSAPSS_rsapss_verify(
     if (b1)
     {
       uint32_t emBits1 = modBits - 1U;
-      uint32_t emLen1 = (emBits1 - 1U) / 8U + 1U;
-      KRML_CHECK_SIZE(sizeof (uint8_t), emLen1);
-      uint8_t em1[emLen1];
-      memset(em1, 0U, emLen1 * sizeof (uint8_t));
-      bool res = pss_verify(a, saltLen, msgLen, msg, emBits1, em1);
+      bool res = pss_verify(a, saltLen, msgLen, msg, emBits1, em);
       return res;
     }
     return false;

@@ -28,7 +28,7 @@ HACL_Rsapss_sign(benchmark::State& state, Args&&... args)
   uint32_t modBits;
   generate_rsapss_key(&e, &eBits, &d, &dBits, &mod, &modBits);
   uint64_t* skey =
-    Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
+    Hacl_RSA_new_rsa_load_skey(modBits, eBits, dBits, mod, e, d);
 
   uint32_t saltLen = Hacl_Hash_Definitions_hash_len(algorithm);
   bytes salt(saltLen);
@@ -77,7 +77,7 @@ HACL_Rsapss_verify(benchmark::State& state, Args&&... args)
   uint32_t modBits;
   generate_rsapss_key(&e, &eBits, &d, &dBits, &mod, &modBits);
   uint64_t* skey =
-    Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
+    Hacl_RSA_new_rsa_load_skey(modBits, eBits, dBits, mod, e, d);
 
   uint32_t saltLen = Hacl_Hash_Definitions_hash_len(algorithm);
   bytes salt(saltLen);
@@ -96,7 +96,7 @@ HACL_Rsapss_verify(benchmark::State& state, Args&&... args)
                           msg.data(),
                           sgnt.data());
 
-  uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(modBits, eBits, mod, e);
+  uint64_t* pkey = Hacl_RSA_new_rsa_load_pkey(modBits, eBits, mod, e);
 
   for (auto _ : state) {
     Hacl_RSAPSS_rsapss_verify(algorithm,

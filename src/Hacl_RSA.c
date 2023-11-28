@@ -203,9 +203,9 @@ Hacl_RSA_rsa_enc(
   KRML_CHECK_SIZE(sizeof (uint64_t), nLen);
   uint64_t s[nLen];
   memset(s, 0U, nLen * sizeof (uint64_t));
-  KRML_CHECK_SIZE(sizeof (uint64_t), (modBits - 1U - 1U) / 64U + 1U);
-  uint64_t m[(modBits - 1U - 1U) / 64U + 1U];
-  memset(m, 0U, ((modBits - 1U - 1U) / 64U + 1U) * sizeof (uint64_t));
+  KRML_CHECK_SIZE(sizeof (uint64_t), (modBits - 1U) / 64U + 1U);
+  uint64_t m[(modBits - 1U) / 64U + 1U];
+  memset(m, 0U, ((modBits - 1U) / 64U + 1U) * sizeof (uint64_t));
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(k, plain, s);
   uint32_t nLen1 = (modBits - 1U) / 64U + 1U;
   uint64_t *n = pkey;
@@ -258,7 +258,8 @@ Hacl_RSA_rsa_enc(
     res = false;
   }
   bool b = res;
-  Hacl_Bignum_Convert_bn_to_bytes_be_uint64(emLen, m, cipher);
+  uint64_t *m1 = m;
+  Hacl_Bignum_Convert_bn_to_bytes_be_uint64(emLen, m1, cipher);
   return b;
 }
 
@@ -273,7 +274,7 @@ Load a public key from key parts.
 @return Returns an allocated public key upon success, otherwise, `NULL` if key part arguments are invalid or memory allocation fails. Note: caller must take care to `free()` the created key.
 */
 uint64_t
-*Hacl_RSA_new_rsapss_load_pkey(uint32_t modBits, uint32_t eBits, uint8_t *nb, uint8_t *eb)
+*Hacl_RSA_new_rsa_load_pkey(uint32_t modBits, uint32_t eBits, uint8_t *nb, uint8_t *eb)
 {
   bool ite;
   if (1U < modBits && 0U < eBits)
@@ -335,7 +336,7 @@ Load a secret key from key parts.
 @return Returns an allocated secret key upon success, otherwise, `NULL` if key part arguments are invalid or memory allocation fails. Note: caller must take care to `free()` the created key.
 */
 uint64_t
-*Hacl_RSA_new_rsapss_load_skey(
+*Hacl_RSA_new_rsa_load_skey(
   uint32_t modBits,
   uint32_t eBits,
   uint32_t dBits,
