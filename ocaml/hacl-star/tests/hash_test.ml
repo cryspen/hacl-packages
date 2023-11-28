@@ -338,16 +338,16 @@ let _ =
   test_nonagile "Hacl" test_sha1 Hacl.SHA1.hash Hacl.SHA1.Noalloc.hash;
   test_nonagile "Hacl" test_md5 Hacl.MD5.hash Hacl.MD5.Noalloc.hash;
 
-  let module Tests = MakeBlake2Tests (Hacl.Blake2b_32) in
+  let module Tests = MakeBlake2Tests (Hacl.Blake2b) in
   Tests.run_tests "BLAKE2b_32" blake2b_keyed_tests [];
 
-  let module Tests = MakeBlake2Tests (Hacl.Blake2b_256) in
+  let module Tests = MakeBlake2Tests (Hacl.Blake2b_Simd256) in
   Tests.run_tests "BLAKE2b_256" blake2b_keyed_tests [VEC256];
 
-  let module Tests = MakeBlake2Tests (Hacl.Blake2s_32) in
+  let module Tests = MakeBlake2Tests (Hacl.Blake2s) in
   Tests.run_tests "BLAKE2s_32" blake2s_keyed_tests [];
 
-  let module Tests = MakeBlake2Tests (Hacl.Blake2s_128) in
+  let module Tests = MakeBlake2Tests (Hacl.Blake2s_Simd128) in
   Tests.run_tests "BLAKE2s_128" blake2s_keyed_tests [VEC128];
 
   test_keccak ();

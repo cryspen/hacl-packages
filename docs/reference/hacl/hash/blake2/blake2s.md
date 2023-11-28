@@ -11,12 +11,12 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 `````{tabs}
 ````{group-tab} 32
 ```C
-#include "Hacl_Hash_Blake2.h"
+#include "Hacl_Hash_Blake2s.h"
 ```
 ````
 ````{group-tab} 128
 ```C
-#include "Hacl_Hash_Blake2s_128.h"
+#include "Hacl_Hash_Blake2s_Simd128.h"
 ```
 ````
 `````
@@ -46,11 +46,11 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 
 `````{tabs}
 ````{group-tab} 32
-```{doxygenfunction} Hacl_Blake2s_32_blake2s
+```{doxygenfunction} Hacl_Hash_Blake2s_hash_with_key
 ```
 ````
 ````{group-tab} 128
-```{doxygenfunction} Hacl_Blake2s_128_blake2s
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_hash_with_key
 ```
 ````
 `````
@@ -62,12 +62,12 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 `````{tabs}
 ````{group-tab} 32
 ```C
-#include "Hacl_Streaming_Blake2.h"
+#include "Hacl_Hash_Blake2.h"
 ```
 ````
 ````{group-tab} 128
 ```C
-#include "Hacl_Streaming_Blake2s_128.h"
+#include "Hacl_Hash_Blake2s_Simd128.h"
 ```
 ````
 `````
@@ -97,31 +97,31 @@ BLAKE2s is optimized for 8- to 32-bit platforms and produces digests of any size
 
 `````{tabs}
 ````{group-tab} 32
-```{doxygentypedef} Hacl_Streaming_Blake2_blake2s_32_state
+```{doxygentypedef} Hacl_Hash_Blake2s_state_t
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_create_in
+```{doxygenfunction} Hacl_Hash_Blake2s_malloc
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_init
+```{doxygenfunction} Hacl_Hash_Blake2s_update
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_update
+```{doxygenfunction} Hacl_Hash_Blake2s_digest
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_finish
+```{doxygenfunction} Hacl_Hash_Blake2s_reset
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2_blake2s_32_no_key_free
+```{doxygenfunction} Hacl_Hash_Blake2s_free
 ```
 ````
 ````{group-tab} 128
-```{doxygentypedef} Hacl_Streaming_Blake2s_128_blake2s_128_state
+```{doxygentypedef} Hacl_Hash_Blake2s_Simd128_state_t
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_create_in
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_malloc
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_init
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_update
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_update
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_digest
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_finish
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_reset
 ```
-```{doxygenfunction} Hacl_Streaming_Blake2s_128_blake2s_128_no_key_free
+```{doxygenfunction} Hacl_Hash_Blake2s_Simd128_free
 ```
 ````
 `````

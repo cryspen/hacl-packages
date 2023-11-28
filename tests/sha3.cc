@@ -65,7 +65,7 @@ TEST(ApiSuite, ApiTest)
 
     uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-    Hacl_SHA3_sha3_256(message_size, (uint8_t*)message, digest);
+    Hacl_Hash_SHA3_sha3_256(digest, (uint8_t*)message, message_size);
     // END OneShot
 
     bytes expected_digest = from_hex(
@@ -83,7 +83,7 @@ TEST(ApiSuite, ApiTest)
     // ANCHOR(streaming)
     // This example shows how to hash the byte sequence "Hello, World!" in two
     // chunks. As a bonus, it also shows how to obtain intermediate results by
-    // calling `finish` more than once.
+    // calling `digest` more than once.
 
     const char* chunk_1 = "Hello, ";
     const char* chunk_2 = "World!";
@@ -94,29 +94,28 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest_2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
     // Init
-    Hacl_Streaming_Keccak_state* state =
-      Hacl_Streaming_Keccak_malloc(Spec_Hash_Definitions_SHA3_256);
-    Hacl_Streaming_Keccak_reset(state);
+    Hacl_Hash_SHA3_state_t* state =
+      Hacl_Hash_SHA3_malloc(Spec_Hash_Definitions_SHA3_256);
 
     // 1/2 Include `Hello, ` into the hash calculation and
     // obtain the intermediate hash of "Hello, ".
     uint32_t update_res =
-      Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_1, chunk_1_size);
+      Hacl_Hash_SHA3_update(state, (uint8_t*)chunk_1, chunk_1_size);
     ASSERT_EQ(0, update_res);
     // This is optional when no intermediate results are required.
-    auto finish_res = Hacl_Streaming_Keccak_finish(state, digest_1);
+    auto finish_res = Hacl_Hash_SHA3_digest(state, digest_1);
     ASSERT_EQ(Hacl_Streaming_Types_Success, finish_res);
 
     // 2/2 Include `World!` into the hash calculation and
     // obtain the final hash of "Hello, World!".
     uint32_t update_res_2 =
-      Hacl_Streaming_Keccak_update(state, (uint8_t*)chunk_2, chunk_2_size);
+      Hacl_Hash_SHA3_update(state, (uint8_t*)chunk_2, chunk_2_size);
     ASSERT_EQ(0, update_res_2);
-    auto finish_res_2 = Hacl_Streaming_Keccak_finish(state, digest_2);
+    auto finish_res_2 = Hacl_Hash_SHA3_digest(state, digest_2);
     ASSERT_EQ(Hacl_Streaming_Types_Success, finish_res_2);
 
     // Cleanup
-    Hacl_Streaming_Keccak_free(state);
+    Hacl_Hash_SHA3_free(state);
 
     print_hex_ln(HACL_HASH_SHA3_256_DIGEST_LENGTH, digest_1);
     print_hex_ln(HACL_HASH_SHA3_256_DIGEST_LENGTH, digest_2);
@@ -150,7 +149,7 @@ TEST(ApiSuite, ApiTest)
     uint32_t digest_size = 42;
     uint8_t digest[42];
 
-    Hacl_SHA3_shake128_hacl(
+    Hacl_Hash_SHA3_shake128_hacl(
       message_size, (uint8_t*)message, digest_size, digest);
     // ANCHOR_END(example shake128)
 
@@ -173,17 +172,17 @@ TEST_P(Sha3KAT, TryKAT)
   {
     bytes digest(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
-      Hacl_SHA3_sha3_224(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+      Hacl_Hash_SHA3_sha3_224(
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 256 / 8) {
-      Hacl_SHA3_sha3_256(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+      Hacl_Hash_SHA3_sha3_256(
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 384 / 8) {
-      Hacl_SHA3_sha3_384(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+      Hacl_Hash_SHA3_sha3_384(
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 512 / 8) {
-      Hacl_SHA3_sha3_512(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+      Hacl_Hash_SHA3_sha3_512(
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     }
 
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
@@ -202,20 +201,16 @@ TEST_P(ShakeKAT, TryKAT)
     if (test_case.md.size() == 128 / 8) {
       bytes digest(test_case.md.size(), 128 / 8);
 
-      Hacl_SHA3_shake128_hacl(test_case.msg.size(),
-                              test_case.msg.data(),
-                              digest.size(),
-                              digest.data());
+      Hacl_Hash_SHA3_shake128_hacl(
+        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
     } else if (test_case.md.size() == 256 / 8) {
       bytes digest(test_case.md.size(), 256 / 8);
 
-      Hacl_SHA3_shake256_hacl(test_case.msg.size(),
-                              test_case.msg.data(),
-                              digest.size(),
-                              digest.data());
+      Hacl_Hash_SHA3_shake256_hacl(
+        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;

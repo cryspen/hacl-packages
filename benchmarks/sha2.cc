@@ -9,11 +9,11 @@
 #include "Hacl_Hash_SHA2.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Hash_Blake2s_128.h"
+#include "Hacl_Hash_Blake2s_Simd128.h"
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_Hash_Blake2b_256.h"
+#include "Hacl_Hash_Blake2b_Simd256.h"
 #endif
 
 #include "util.h"
@@ -47,13 +47,13 @@ HACL_Sha2_oneshot(benchmark::State& state, Args&&... args)
   auto expected_digest = std::get<1>(args_tuple);
   auto hash = std::get<2>(args_tuple);
 
-  bytes digest(digest_len, 0);
+  bytes output(digest_len, 0);
 
   for (auto _ : state) {
-    hash((uint8_t*)input.data(), input.size(), digest.data());
+    hash(output.data(), (uint8_t*)input.data(), input.size());
   }
 
-  if (digest != expected_digest) {
+  if (output != expected_digest) {
     state.SkipWithError("Incorrect digest.");
     return;
   }
@@ -90,18 +90,17 @@ HACL_Sha2_streaming(benchmark::State& state, Args&&... args)
 
   auto digest_len = std::get<0>(args_tuple);
   auto expected_digest = std::get<1>(args_tuple);
-  auto create_in = std::get<2>(args_tuple);
-  auto init = std::get<3>(args_tuple);
+  auto malloc = std::get<2>(args_tuple);
+  //auto reset = std::get<3>(args_tuple);
   auto update = std::get<4>(args_tuple);
-  auto finish = std::get<5>(args_tuple);
+  auto digest = std::get<5>(args_tuple);
   auto free = std::get<6>(args_tuple);
 
-  bytes digest(digest_len, 0);
+  bytes output(digest_len, 0);
 
   for (auto _ : state) {
     // Init
-    auto* ctx = create_in();
-    init(ctx);
+    auto* ctx = malloc();
 
     // Update
     for (auto chunk : chunk(input, chunk_len)) {
@@ -109,11 +108,11 @@ HACL_Sha2_streaming(benchmark::State& state, Args&&... args)
     }
 
     // Finish
-    finish(ctx, digest.data());
+    digest(ctx, output.data());
     free(ctx);
   }
 
-  if (digest != expected_digest) {
+  if (output != expected_digest) {
     state.SkipWithError("Incorrect digest.");
     return;
   }
@@ -133,9 +132,8 @@ EverCrypt_Sha2_streaming(benchmark::State& state, Args&&... args)
 
   for (auto _ : state) {
     // Init
-    EverCrypt_Hash_Incremental_hash_state* ctx =
-      EverCrypt_Hash_Incremental_create_in(algorithm);
-    EverCrypt_Hash_Incremental_init(ctx);
+    EverCrypt_Hash_Incremental_state_t* ctx =
+      EverCrypt_Hash_Incremental_malloc(algorithm);
 
     // Update
     for (auto chunk : chunk(input, chunk_len)) {
@@ -143,7 +141,7 @@ EverCrypt_Sha2_streaming(benchmark::State& state, Args&&... args)
     }
 
     // Finish
-    EverCrypt_Hash_Incremental_finish(ctx, digest.data());
+    EverCrypt_Hash_Incremental_digest(ctx, digest.data());
     EverCrypt_Hash_Incremental_free(ctx);
   }
 
@@ -159,7 +157,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_224,
                   HACL_HASH_SHA2_224_DIGEST_LENGTH,
                   expected_digest_sha2_224,
-                  Hacl_Streaming_SHA2_hash_224)
+                  Hacl_Hash_SHA2_hash_224)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -182,7 +180,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_256,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
-                  Hacl_Streaming_SHA2_hash_256)
+                  Hacl_Hash_SHA2_hash_256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -205,7 +203,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_384,
                   HACL_HASH_SHA2_384_DIGEST_LENGTH,
                   expected_digest_sha2_384,
-                  Hacl_Streaming_SHA2_hash_384)
+                  Hacl_Hash_SHA2_hash_384)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -228,7 +226,7 @@ BENCHMARK_CAPTURE(HACL_Sha2_oneshot,
                   sha2_512,
                   HACL_HASH_SHA2_512_DIGEST_LENGTH,
                   expected_digest_sha2_512,
-                  Hacl_Streaming_SHA2_hash_512)
+                  Hacl_Hash_SHA2_hash_512)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_oneshot,
@@ -253,11 +251,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_224,
                   HACL_HASH_SHA2_224_DIGEST_LENGTH,
                   expected_digest_sha2_224,
-                  Hacl_Streaming_SHA2_create_in_224,
-                  Hacl_Streaming_SHA2_init_224,
-                  Hacl_Streaming_SHA2_update_224,
-                  Hacl_Streaming_SHA2_finish_224,
-                  Hacl_Streaming_SHA2_free_224)
+                  Hacl_Hash_SHA2_malloc_224,
+                  Hacl_Hash_SHA2_reset_224,
+                  Hacl_Hash_SHA2_update_224,
+                  Hacl_Hash_SHA2_digest_224,
+                  Hacl_Hash_SHA2_free_224)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -281,11 +279,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_256,
                   HACL_HASH_SHA2_256_DIGEST_LENGTH,
                   expected_digest_sha2_256,
-                  Hacl_Streaming_SHA2_create_in_256,
-                  Hacl_Streaming_SHA2_init_256,
-                  Hacl_Streaming_SHA2_update_256,
-                  Hacl_Streaming_SHA2_finish_256,
-                  Hacl_Streaming_SHA2_free_256)
+                  Hacl_Hash_SHA2_malloc_256,
+                  Hacl_Hash_SHA2_reset_256,
+                  Hacl_Hash_SHA2_update_256,
+                  Hacl_Hash_SHA2_digest_256,
+                  Hacl_Hash_SHA2_free_256)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -337,11 +335,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_384,
                   HACL_HASH_SHA2_384_DIGEST_LENGTH,
                   expected_digest_sha2_384,
-                  Hacl_Streaming_SHA2_create_in_384,
-                  Hacl_Streaming_SHA2_init_384,
-                  Hacl_Streaming_SHA2_update_384,
-                  Hacl_Streaming_SHA2_finish_384,
-                  Hacl_Streaming_SHA2_free_384)
+                  Hacl_Hash_SHA2_malloc_384,
+                  Hacl_Hash_SHA2_reset_384,
+                  Hacl_Hash_SHA2_update_384,
+                  Hacl_Hash_SHA2_digest_384,
+                  Hacl_Hash_SHA2_free_384)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,
@@ -365,11 +363,11 @@ BENCHMARK_CAPTURE(HACL_Sha2_streaming,
                   sha2_512,
                   HACL_HASH_SHA2_512_DIGEST_LENGTH,
                   expected_digest_sha2_512,
-                  Hacl_Streaming_SHA2_create_in_512,
-                  Hacl_Streaming_SHA2_init_512,
-                  Hacl_Streaming_SHA2_update_512,
-                  Hacl_Streaming_SHA2_finish_512,
-                  Hacl_Streaming_SHA2_free_512)
+                  Hacl_Hash_SHA2_malloc_512,
+                  Hacl_Hash_SHA2_reset_512,
+                  Hacl_Hash_SHA2_update_512,
+                  Hacl_Hash_SHA2_digest_512,
+                  Hacl_Hash_SHA2_free_512)
   ->Setup(DoSetup);
 
 BENCHMARK_CAPTURE(EverCrypt_Sha2_streaming,

@@ -6,12 +6,12 @@
  *    - http://opensource.org/licenses/MIT
  */
 
-#include "Hacl_Chacha20Poly1305_32.h"
+#include "Hacl_AEAD_Chacha20Poly1305.h"
 #ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Chacha20Poly1305_128.h"
+#include "Hacl_AEAD_Chacha20Poly1305_Simd128.h"
 #endif
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_Chacha20Poly1305_256.h"
+#include "Hacl_AEAD_Chacha20Poly1305_Simd256.h"
 #endif
 
 #include "EverCrypt_AEAD.h"
@@ -112,14 +112,9 @@ static void
 HACL_Chacha20Poly1305_32_encrypt(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Chacha20Poly1305_32_aead_encrypt(key.data(),
-                                          nonce.data(),
-                                          aad.size(),
-                                          aad.data(),
-                                          INPUT_LEN,
-                                          plaintext.data(),
-                                          ciphertext.data(),
-                                          mac.data());
+    Hacl_AEAD_Chacha20Poly1305_encrypt(
+      ciphertext.data(), mac.data(), plaintext.data(), INPUT_LEN,
+      aad.data(), aad.size(), key.data(), nonce.data());
   }
 
   if (ciphertext != expected_ciphertext) {
@@ -139,14 +134,9 @@ HACL_Chacha20Poly1305_Vec128_encrypt(benchmark::State& state)
   }
 
   for (auto _ : state) {
-    Hacl_Chacha20Poly1305_128_aead_decrypt(key.data(),
-                                           nonce.data(),
-                                           aad.size(),
-                                           aad.data(),
-                                           INPUT_LEN,
-                                           plaintext.data(),
-                                           ciphertext.data(),
-                                           mac.data());
+    Hacl_AEAD_Chacha20Poly1305_Simd128_decrypt(
+      plaintext.data(), ciphertext.data(), INPUT_LEN, aad.data(),
+      aad.size(), key.data(), nonce.data(), mac.data());
   }
 
   if (ciphertext != expected_ciphertext) {
@@ -167,14 +157,9 @@ HACL_Chacha20Poly1305_Vec256_encrypt(benchmark::State& state)
   }
 
   for (auto _ : state) {
-    Hacl_Chacha20Poly1305_256_aead_encrypt(key.data(),
-                                           nonce.data(),
-                                           aad.size(),
-                                           aad.data(),
-                                           INPUT_LEN,
-                                           plaintext.data(),
-                                           ciphertext.data(),
-                                           mac.data());
+    Hacl_AEAD_Chacha20Poly1305_Simd256_encrypt(
+      ciphertext.data(), mac.data(), plaintext.data(), INPUT_LEN,
+      aad.data(), aad.size(), key.data(), nonce.data());
   }
 
   if (ciphertext != expected_ciphertext) {

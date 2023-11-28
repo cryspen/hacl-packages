@@ -86,26 +86,26 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 
 **Init**
 
-```{doxygentypedef} Hacl_Streaming_SHA2_state_sha2_224
+```{doxygentypedef} Hacl_Hash_SHA2_state_t_224
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_create_in_224
-```
-
-```{doxygenfunction} Hacl_Streaming_SHA2_init_224
+```{doxygenfunction} Hacl_Hash_SHA2_malloc_224
 ```
 
 **Update**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_update_224
+```{doxygenfunction} Hacl_Hash_SHA2_update_224
 ```
 
 **Finish**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_finish_224
+```{doxygenfunction} Hacl_Hash_SHA2_digest_224
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_free_224
+```{doxygenfunction} Hacl_Hash_SHA2_reset_224
+```
+
+```{doxygenfunction} Hacl_Hash_SHA2_free_224
 ```
 ````
 
@@ -113,26 +113,26 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 
 **Init**
 
-```{doxygentypedef} Hacl_Streaming_SHA2_state_sha2_256
+```{doxygentypedef} Hacl_Hash_SHA2_state_t_256
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_create_in_256
-```
-
-```{doxygenfunction} Hacl_Streaming_SHA2_init_256
+```{doxygenfunction} Hacl_Hash_SHA2_malloc_256
 ```
 
 **Update**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_update_256
+```{doxygenfunction} Hacl_Hash_SHA2_update_256
 ```
 
 **Finish**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_finish_256
+```{doxygenfunction} Hacl_Hash_SHA2_digest_256
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_free_256
+```{doxygenfunction} Hacl_Hash_SHA2_reset_256
+```
+
+```{doxygenfunction} Hacl_Hash_SHA2_free_256
 ```
 ````
 
@@ -140,26 +140,26 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 
 **Init**
 
-```{doxygentypedef} Hacl_Streaming_SHA2_state_sha2_384
+```{doxygentypedef} Hacl_Hash_SHA2_state_t_384
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_create_in_384
-```
-
-```{doxygenfunction} Hacl_Streaming_SHA2_init_384
+```{doxygenfunction} Hacl_Hash_SHA2_malloc_384
 ```
 
 **Update**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_update_384
+```{doxygenfunction} Hacl_Hash_SHA2_update_384
 ```
 
 **Finish**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_finish_384
+```{doxygenfunction} Hacl_Hash_SHA2_digest_384
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_free_384
+```{doxygenfunction} Hacl_Hash_SHA2_reset_384
+```
+
+```{doxygenfunction} Hacl_Hash_SHA2_free_384
 ```
 ````
 
@@ -168,26 +168,26 @@ it is sometimes called `SHA2-256` to avoid confusion with SHA-1 and SHA-3.
 
 **Init**
 
-```{doxygentypedef} Hacl_Streaming_SHA2_state_sha2_512
+```{doxygentypedef} Hacl_Hash_SHA2_state_t_512
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_create_in_512
-```
-
-```{doxygenfunction} Hacl_Streaming_SHA2_init_512
+```{doxygenfunction} Hacl_Hash_SHA2_malloc_512
 ```
 
 **Update**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_update_512
+```{doxygenfunction} Hacl_Hash_SHA2_update_512
 ```
 
 **Finish**
 
-```{doxygenfunction} Hacl_Streaming_SHA2_finish_512
+```{doxygenfunction} Hacl_Hash_SHA2_digest_512
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA2_free_512
+```{doxygenfunction} Hacl_Hash_SHA2_reset_512
+```
+
+```{doxygenfunction} Hacl_Hash_SHA2_free_512
 ```
 ````
 `````

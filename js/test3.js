@@ -38,7 +38,7 @@ const SHA2_256 = 1;
 
 function testEverCryptHash(Hacl) {
   let err, s;
-  s = Hacl.EverCrypt_Hash.create(SHA2_256);
+  s = Hacl.EverCrypt_Hash.malloc(SHA2_256);
   assert (Hacl.EverCrypt_Hash.alg_of_state(s) == SHA2_256);
   console.log("STEP 1", s, Hacl.EverCrypt_Hash.alg_of_state(s));
 
@@ -46,7 +46,7 @@ function testEverCryptHash(Hacl) {
   assert (err == 0);
   console.log("STEP 2", err, s);
 
-  let [ digest ] = Hacl.EverCrypt_Hash.finish(s);
+  let [ digest ] = Hacl.EverCrypt_Hash.digest(s);
   assert (buf2hex(digest) == "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9");
   console.log("STEP 3", digest);
 }
@@ -65,9 +65,10 @@ let modules = [
   "Hacl_Hash_SHA1",
   "Hacl_Hash_SHA2",
   "Hacl_Impl_Blake2_Constants",
-  "Hacl_Hash_Blake2",
-  "Hacl_Hash_Blake2s_128",
-  "Hacl_Hash_Blake2b_256",
+  "Hacl_Hash_Blake2b",
+  "Hacl_Hash_Blake2s",
+  "Hacl_Hash_Blake2s_Simd128",
+  "Hacl_Hash_Blake2b_Simd256",
   "Hacl_Hash_SHA3",
   "Vale",
   "EverCrypt",

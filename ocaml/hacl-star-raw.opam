@@ -29,8 +29,8 @@ available: [
   (os = "freebsd" | os-family != "bsd")
 ]
 build: [
-  [make "-C" "hacl-star-raw" "build-c"]
-  [make "-C" "hacl-star-raw" "build-bindings"]
+  [make "-C" "hacl-star-raw" "build-c" "-j" jobs]
+  [make "-C" "hacl-star-raw" "build-bindings" "-j" jobs]
 ]
 install: [
   [make "-C" "hacl-star-raw" "install"]
