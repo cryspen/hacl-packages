@@ -217,9 +217,9 @@ var HaclWasm = (function() {
   // We defined a few WASM-specific "compile-time macros".
   var my_imports = {
     EverCrypt_TargetConfig: (mem) => ({
-      hacl_can_compile_vale: 0,
-      hacl_can_compile_vec128: 0,
-      hacl_can_compile_vec256: 0,
+      HACL_CAN_COMPILE_VALE: 0,
+      HACL_CAN_COMPILE_VEC128: 0,
+      HACL_CAN_COMPILE_VEC256: 0,
       has_vec128_not_avx: () => false,
       has_vec256_not_avx2: () => false,
     }),

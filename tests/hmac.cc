@@ -155,7 +155,7 @@ TEST_P(HmacKAT, TryKAT)
 
   bytes tag(test_case.full_size, 0);
   if (test_case.full_size == 20) {
-    Hacl_HMAC_legacy_compute_sha1(
+    Hacl_HMAC_compute_sha1(
       tag.data(), key, test_case.key.size(), msg, test_case.msg.size());
   } else if (test_case.full_size == 28) {
     std::cout << "Skipping \"full_size=" << test_case.full_size << "\""

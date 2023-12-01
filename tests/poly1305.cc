@@ -11,19 +11,16 @@
 #include <nlohmann/json.hpp>
 
 #include "EverCrypt_Poly1305.h"
-#include "Hacl_Poly1305_32.h"
-#include "Hacl_Streaming_Poly1305_32.h"
+#include "Hacl_MAC_Poly1305.h"
 #include "hacl-cpu-features.h"
 #include "util.h"
 
 #ifdef HACL_CAN_COMPILE_VEC128
-#include "Hacl_Poly1305_128.h"
-#include "Hacl_Streaming_Poly1305_128.h"
+#include "Hacl_MAC_Poly1305_Simd128.h"
 #endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_Poly1305_256.h"
-#include "Hacl_Streaming_Poly1305_256.h"
+#include "Hacl_MAC_Poly1305_Simd256.h"
 #endif
 
 using json = nlohmann::json;
@@ -62,16 +59,15 @@ poly1305_mac(bytes key, bytes text, bytes& tag)
 
   // This works everywhere. Let's use it as a base for comparisons.
   bytes base_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-  Hacl_Poly1305_32_poly1305_mac(
-    base_tag.data(), text.size(), text.data(), key.data());
+  Hacl_MAC_Poly1305_mac(base_tag.data(), text.data(), text.size(), key.data());
 
 #ifdef HACL_CAN_COMPILE_VEC128
   if (hacl_vec128_support()) {
     cout << "Poly1305.Mac (VEC128)" << endl;
 
     bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-    Hacl_Poly1305_128_poly1305_mac(
-      tag.data(), text.size(), text.data(), key.data());
+    Hacl_MAC_Poly1305_Simd128_mac(
+      tag.data(), text.data(), text.size(), key.data());
 
     EXPECT_EQ(base_tag, tag)
       << "Detected difference between base and _128 version";
@@ -85,8 +81,8 @@ poly1305_mac(bytes key, bytes text, bytes& tag)
     cout << "Poly1305.Mac (VEC256)" << endl;
 
     bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-    Hacl_Poly1305_256_poly1305_mac(
-      tag.data(), text.size(), text.data(), key.data());
+    Hacl_MAC_Poly1305_Simd256_mac(
+      tag.data(), text.data(), text.size(), key.data());
 
     EXPECT_EQ(base_tag, tag)
       << "Detected difference between base and _256 version";
@@ -103,7 +99,7 @@ poly1305_mac(bytes key, bytes text, bytes& tag)
 
     bytes tag = bytes(POLY1305_TAG_SIZE);
 
-    EverCrypt_Poly1305_poly1305(
+    EverCrypt_Poly1305_mac(
       tag.data(), text.data(), text.size(), key.data());
 
     EXPECT_EQ(base_tag, tag)
@@ -119,87 +115,46 @@ poly1305_mac_streaming(bytes key,
                        vector<size_t> lengths,
                        bytes expected_tag)
 {
-  cout << "Poly1305.Mac (Streaming, Variant 1)" << endl;
-  {
-    bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
-    // Init
-    vector<uint64_t> ctx(32);
-    Hacl_Poly1305_32_poly1305_init(ctx.data(), key.data());
-
-    // Update
-    // Note: This doesn't work with arbitrary chunks.
-    for (auto chunk : chunk(text, 16)) {
-      Hacl_Poly1305_32_poly1305_update(ctx.data(), chunk.size(), chunk.data());
-    }
-
-    // Finish
-    Hacl_Poly1305_32_poly1305_finish(got_tag.data(), key.data(), ctx.data());
-
-    ASSERT_EQ(expected_tag, got_tag);
-  }
-
-  cout << "Poly1305.Mac (Streaming, Variant 2)" << endl;
+  cout << "Poly1305.Mac (Streaming)" << endl;
   {
     bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
     // Init
     uint8_t raw_state[32];
-    Hacl_Streaming_Poly1305_32_poly1305_32_state_s* state =
-      Hacl_Streaming_Poly1305_32_create_in(raw_state);
-    Hacl_Streaming_Poly1305_32_init(key.data(), state);
+    Hacl_MAC_Poly1305_state_t* state = Hacl_MAC_Poly1305_malloc(raw_state);
+    Hacl_MAC_Poly1305_reset(state, key.data());
 
     // Update
     for (auto chunk : split_by_index_list(text, lengths)) {
-      Hacl_Streaming_Poly1305_32_update(state, chunk.data(), chunk.size());
+      Hacl_MAC_Poly1305_update(state, chunk.data(), chunk.size());
     }
 
     // Finish
-    Hacl_Streaming_Poly1305_32_finish(state, got_tag.data());
-    Hacl_Streaming_Poly1305_32_free(state);
+    Hacl_MAC_Poly1305_digest(state, got_tag.data());
+    Hacl_MAC_Poly1305_free(state);
 
     ASSERT_EQ(expected_tag, got_tag);
   }
 
 #ifdef HACL_CAN_COMPILE_VEC128
   if (hacl_vec128_support()) {
-    cout << "Poly1305.Mac (VEC128, Streaming, Variant 1)" << endl;
+    cout << "Poly1305.Mac (VEC128, Streaming)" << endl;
     {
       bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
 
       // Init
-      Lib_IntVector_Intrinsics_vec128 ctx[32];
-      Hacl_Poly1305_128_poly1305_init(ctx, key.data());
-
-      // Update
-      // Note: This doesn't work with arbitrary chunks.
-      for (auto chunk : chunk(text, 16)) {
-        Hacl_Poly1305_128_poly1305_update(ctx, chunk.size(), chunk.data());
-      }
-
-      // Finish
-      Hacl_Poly1305_128_poly1305_finish(got_tag.data(), key.data(), ctx);
-
-      ASSERT_EQ(expected_tag, got_tag);
-    }
-
-    cout << "Poly1305.Mac (VEC128, Streaming, Variant 2)" << endl;
-    {
-      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
-      // Init
-      Hacl_Streaming_Poly1305_128_poly1305_128_state* state =
-        Hacl_Streaming_Poly1305_128_create_in(key.data());
-      Hacl_Streaming_Poly1305_128_init(key.data(), state);
+      Hacl_MAC_Poly1305_Simd128_state_t* state =
+        Hacl_MAC_Poly1305_Simd128_malloc(key.data());
+      Hacl_MAC_Poly1305_Simd128_reset(state, key.data());
 
       // Update
       for (auto chunk : split_by_index_list(text, lengths)) {
-        Hacl_Streaming_Poly1305_128_update(state, chunk.data(), chunk.size());
+        Hacl_MAC_Poly1305_Simd128_update(state, chunk.data(), chunk.size());
       }
 
       // Finish
-      Hacl_Streaming_Poly1305_128_finish(state, got_tag.data());
-      Hacl_Streaming_Poly1305_128_free(state);
+      Hacl_MAC_Poly1305_Simd128_digest(state, got_tag.data());
+      Hacl_MAC_Poly1305_Simd128_free(state);
 
       ASSERT_EQ(expected_tag, got_tag);
     }
@@ -210,49 +165,25 @@ poly1305_mac_streaming(bytes key,
 
 #ifdef HACL_CAN_COMPILE_VEC256
   if (hacl_vec256_support()) {
-    cout << "Poly1305.Mac (VEC256, Streaming, Variant 1)" << endl;
+    cout << "Poly1305.Mac (VEC256, Streaming)" << endl;
     {
-      bytes got_tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-
+      bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
+      
       // Init
-      Lib_IntVector_Intrinsics_vec256 ctx[32];
-      Hacl_Poly1305_256_poly1305_init(ctx, key.data());
-
+      Hacl_MAC_Poly1305_Simd256_state_t* state =
+        Hacl_MAC_Poly1305_Simd256_malloc(key.data());
+      
       // Update
-      // Note: This doesn't work with arbitrary chunks.
-      for (auto chunk : chunk(text, 16)) {
-        Hacl_Poly1305_256_poly1305_update(ctx, chunk.size(), chunk.data());
+      for (auto chunk : split_by_index_list(text, lengths)) {
+        Hacl_MAC_Poly1305_Simd256_update(state, chunk.data(), chunk.size());
       }
-
+      
       // Finish
-      Hacl_Poly1305_256_poly1305_finish(got_tag.data(), key.data(), ctx);
-
-      ASSERT_EQ(expected_tag, got_tag);
-    }
-
-    cout << "Poly1305.Mac (VEC256, Streaming, Variant 2)" << endl;
-    {
-      // TODO: This doesn't work currently.
-      //       See https://github.com/project-everest/hacl-star/issues/586
-
-      //      bytes tag = vector<uint8_t>(POLY1305_TAG_SIZE);
-      //
-      //      // Init
-      //      Hacl_Streaming_Poly1305_256_poly1305_256_state* state =
-      //        Hacl_Streaming_Poly1305_256_create_in(key.data());
-      //
-      //      // Update
-      //      for (auto chunk : chunks) {
-      //        Hacl_Streaming_Poly1305_256_update(state, chunk.data(),
-      //        chunk.size());
-      //      }
-      //
-      //      // Finish
-      //      Hacl_Streaming_Poly1305_256_finish(state, tag.data());
-      //      Hacl_Streaming_Poly1305_256_free(state);
-      //
-      //      EXPECT_EQ(base_tag, tag)
-      //        << "Detected difference between _32 and _128 version";
+      Hacl_MAC_Poly1305_Simd256_digest(state, tag.data());
+      Hacl_MAC_Poly1305_Simd256_free(state);
+      
+      EXPECT_EQ(expected_tag, tag)
+        << "Detected difference between _32 and _128 version";
     }
   } else {
     cout << "No support for VEC256 on this CPU." << endl;

@@ -93,12 +93,9 @@ if(NOT MSVC)
         # -pedantic
         # -Wconversion
         # -Wsign-conversion
-        # -Werror=gcc-compat
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-O3>
-        # $<$<CONFIG:RELEASE>:-g>
-        # $<$<CONFIG:RELEASE>:-Wno-deprecated-declarations>
     )
 endif()
 
@@ -337,6 +334,9 @@ configure_file(config/Config.h.in config.h)
 # Now combine everything into the hacl library
 # # Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
+if(NOT MSVC)
+    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     add_dependencies(hacl hacl_vec128)

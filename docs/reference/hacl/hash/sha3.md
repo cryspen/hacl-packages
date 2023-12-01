@@ -34,22 +34,22 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 `````{tabs}
 ````{tab} 28 byte digest
-```{doxygenfunction} Hacl_SHA3_sha3_224
+```{doxygenfunction} Hacl_Hash_SHA3_sha3_224
 ```
 ````
 
 ````{tab} 32 byte digest
-```{doxygenfunction} Hacl_SHA3_sha3_256
+```{doxygenfunction} Hacl_Hash_SHA3_sha3_256
 ```
 ````
 
 ````{tab} 48 byte digest
-```{doxygenfunction} Hacl_SHA3_sha3_384
+```{doxygenfunction} Hacl_Hash_SHA3_sha3_384
 ```
 ````
 
 ````{tab} 64 byte digest
-```{doxygenfunction} Hacl_SHA3_sha3_512
+```{doxygenfunction} Hacl_Hash_SHA3_sha3_512
 ```
 ````
 `````
@@ -79,22 +79,22 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 :end-before: "// ANCHOR_END(streaming)"
 ```
 
-```{doxygentypedef} Hacl_Streaming_SHA3_state_256
+```{doxygentypedef} Hacl_Hash_SHA3_state_t
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA3_create_in_256
+```{doxygenfunction} Hacl_Hash_SHA3_malloc
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA3_init_256
+```{doxygenfunction} Hacl_Hash_SHA3_update
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA3_update_256
+```{doxygenfunction} Hacl_Hash_SHA3_digest
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA3_finish_256
+```{doxygenfunction} Hacl_Hash_SHA3_reset
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA3_free_256
+```{doxygenfunction} Hacl_Hash_SHA3_free
 ```
 
 ## SHAKE
@@ -114,12 +114,12 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 `````{tabs}
 ````{tab} 128-bit security strength
-```{doxygenfunction} Hacl_SHA3_shake128_hacl
+```{doxygenfunction} Hacl_Hash_SHA3_shake128_hacl
 ```
 ````
 
 ````{tab} 256-bit security strength
-```{doxygenfunction} Hacl_SHA3_shake256_hacl
+```{doxygenfunction} Hacl_Hash_SHA3_shake256_hacl
 ```
 ````
 `````

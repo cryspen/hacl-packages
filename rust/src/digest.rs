@@ -277,7 +277,7 @@ const fn does_not_support_streaming(alg: Algorithm) -> bool {
 pub struct Digest {
     mode: Algorithm,
     finished: bool,
-    c_state: *mut EverCrypt_Hash_Incremental_hash_state,
+    c_state: *mut EverCrypt_Hash_Incremental_state_t,
 }
 
 impl Digest {
@@ -292,8 +292,8 @@ impl Digest {
             EverCrypt_AutoConfig2_init();
         }
 
-        let c_state: *mut EverCrypt_Hash_Incremental_hash_state =
-            unsafe { EverCrypt_Hash_Incremental_create_in(alg.into()) };
+        let c_state: *mut EverCrypt_Hash_Incremental_state_t =
+            unsafe { EverCrypt_Hash_Incremental_malloc(alg.into()) };
         Ok(Self {
             mode: alg,
             finished: false,
@@ -324,7 +324,7 @@ impl Digest {
         }
         let mut out = vec![0u8; digest_size(self.mode)];
         unsafe {
-            EverCrypt_Hash_Incremental_finish(self.c_state, out.as_mut_ptr());
+            EverCrypt_Hash_Incremental_digest(self.c_state, out.as_mut_ptr());
         }
         self.finished = true;
         Ok(out)
@@ -353,16 +353,16 @@ macro_rules! define_plain_digest {
 
             match $version {
                 Algorithm::Sha3_224 => unsafe {
-                    Hacl_SHA3_sha3_224(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_224(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_256 => unsafe {
-                    Hacl_SHA3_sha3_256(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_256(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_384 => unsafe {
-                    Hacl_SHA3_sha3_384(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_384(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 Algorithm::Sha3_512 => unsafe {
-                    Hacl_SHA3_sha3_512(data.len() as u32, data.as_ptr() as _, out.as_mut_ptr())
+                    Hacl_Hash_SHA3_sha3_512(out.as_mut_ptr(), data.as_ptr() as _, data.len() as u32)
                 },
                 _ => unsafe {
                     EverCrypt_Hash_Incremental_hash(
@@ -420,7 +420,7 @@ pub fn hash(alg: Algorithm, data: &[u8]) -> Vec<u8> {
 pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_SHA3_shake128_hacl(
+        Hacl_Hash_SHA3_shake128_hacl(
             data.len() as u32,
             data.as_ptr() as _,
             BYTES as u32,
@@ -437,7 +437,7 @@ pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
 pub fn shake256<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_SHA3_shake256_hacl(
+        Hacl_Hash_SHA3_shake256_hacl(
             data.len() as u32,
             data.as_ptr() as _,
             BYTES as u32,

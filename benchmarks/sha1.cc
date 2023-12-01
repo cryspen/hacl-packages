@@ -16,7 +16,7 @@ HACL_Sha1_oneshot(benchmark::State& state)
   bytes digest(HACL_HASH_SHA1_DIGEST_LENGTH, 0);
 
   for (auto _ : state) {
-    Hacl_Streaming_SHA1_legacy_hash(input.data(), input.size(), digest.data());
+    Hacl_Hash_SHA1_hash(digest.data(), input.data(), input.size());
   }
 
   if (digest != expected_digest) {
@@ -55,20 +55,18 @@ HACL_Sha1_streaming(benchmark::State& state)
 
   for (auto _ : state) {
     // Init
-    Hacl_Streaming_SHA1_state* state =
-      Hacl_Streaming_SHA1_legacy_create_in();
-    Hacl_Streaming_SHA1_legacy_init(state);
+    Hacl_Hash_SHA1_state_t* state = Hacl_Hash_SHA1_malloc();
 
     // Update
     for (size_t i = 0; i < input.size();) {
-      Hacl_Streaming_SHA1_legacy_update(
+      Hacl_Hash_SHA1_update(
         state, input.data() + i, min(chunk_len, input.size() - i));
       i += chunk_len;
     }
 
     // Finish
-    Hacl_Streaming_SHA1_legacy_finish(state, digest.data());
-    Hacl_Streaming_SHA1_legacy_free(state);
+    Hacl_Hash_SHA1_digest(state, digest.data());
+    Hacl_Hash_SHA1_free(state);
   }
 
   if (digest != expected_digest) {

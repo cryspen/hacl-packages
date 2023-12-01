@@ -35,7 +35,16 @@ TEST(ApiSuite, ApiTest)
   generate_rsapss_key(&e, &eBits, &d, &dBits, &mod, &modBits);
   uint64_t* skey =
     Hacl_RSAPSS_new_rsapss_load_skey(modBits, eBits, dBits, mod, e, d);
+
+  if (skey == NULL) {
+    //Error
+  }
+
   uint64_t* pkey = Hacl_RSAPSS_new_rsapss_load_pkey(modBits, eBits, mod, e);
+
+  if (pkey == NULL) {
+    //Error
+  }
 
   // Message
   const char* msg = "Hello, World!";

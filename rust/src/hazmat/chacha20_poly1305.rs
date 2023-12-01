@@ -4,7 +4,7 @@
 //! The caller MUST ensure that the required hardware features are available
 //! before calling the functions.
 
-use hacl_sys::{Hacl_Chacha20Poly1305_32_aead_decrypt, Hacl_Chacha20Poly1305_32_aead_encrypt};
+use hacl_sys::{Hacl_AEAD_Chacha20Poly1305_decrypt, Hacl_AEAD_Chacha20Poly1305_encrypt};
 
 pub type Chacha20Key = [u8; 32];
 pub type Iv = [u8; 12];
@@ -22,15 +22,15 @@ pub enum Error {
 pub fn encrypt(key: &Chacha20Key, msg_ctxt: &mut [u8], iv: Iv, aad: &[u8]) -> Tag {
     let mut tag = Tag::default();
     unsafe {
-        Hacl_Chacha20Poly1305_32_aead_encrypt(
-            key.as_ptr() as _,
-            iv.as_ptr() as _,
-            aad.len() as u32,
-            aad.as_ptr() as _,
-            msg_ctxt.len() as u32,
-            msg_ctxt.as_ptr() as _,
+        Hacl_AEAD_Chacha20Poly1305_encrypt(
             msg_ctxt.as_mut_ptr(),
             tag.as_mut_ptr(),
+            msg_ctxt.as_ptr() as _,
+            msg_ctxt.len() as u32,
+            aad.as_ptr() as _,
+            aad.len() as u32,
+            key.as_ptr() as _,
+            iv.as_ptr() as _,
         );
     }
     tag
@@ -48,14 +48,14 @@ pub fn decrypt(
     tag: &Tag,
 ) -> Result<(), Error> {
     if unsafe {
-        Hacl_Chacha20Poly1305_32_aead_decrypt(
+        Hacl_AEAD_Chacha20Poly1305_decrypt(
+            ctxt_msg.as_mut_ptr(),
+            ctxt_msg.as_ptr() as _,
+            ctxt_msg.len() as u32,
+            aad.as_ptr() as _,
+            aad.len() as u32,
             key.as_ptr() as _,
             iv.as_ptr() as _,
-            aad.len() as u32,
-            aad.as_ptr() as _,
-            ctxt_msg.len() as u32,
-            ctxt_msg.as_ptr() as _,
-            ctxt_msg.as_mut_ptr(),
             tag.as_ptr() as _,
         ) == 0
     } {
@@ -69,7 +69,7 @@ pub fn decrypt(
 pub mod simd128 {
     use super::*;
     use hacl_sys::{
-        Hacl_Chacha20Poly1305_128_aead_decrypt, Hacl_Chacha20Poly1305_128_aead_encrypt,
+        Hacl_AEAD_Chacha20Poly1305_Simd128_decrypt, Hacl_AEAD_Chacha20Poly1305_Simd128_encrypt,
     };
 
     /// 128-bit SIMD encrypt.
@@ -82,15 +82,15 @@ pub mod simd128 {
     pub fn encrypt(key: &Chacha20Key, msg_ctxt: &mut [u8], iv: Iv, aad: &[u8]) -> Tag {
         let mut tag = Tag::default();
         unsafe {
-            Hacl_Chacha20Poly1305_128_aead_encrypt(
-                key.as_ptr() as _,
-                iv.as_ptr() as _,
-                aad.len() as u32,
-                aad.as_ptr() as _,
-                msg_ctxt.len() as u32,
-                msg_ctxt.as_ptr() as _,
+            Hacl_AEAD_Chacha20Poly1305_Simd128_encrypt(
                 msg_ctxt.as_mut_ptr(),
                 tag.as_mut_ptr(),
+                msg_ctxt.as_ptr() as _,
+                msg_ctxt.len() as u32,
+                aad.as_ptr() as _,
+                aad.len() as u32,
+                key.as_ptr() as _,
+                iv.as_ptr() as _,
             );
         }
         tag
@@ -111,14 +111,14 @@ pub mod simd128 {
         tag: &Tag,
     ) -> Result<(), Error> {
         if unsafe {
-            Hacl_Chacha20Poly1305_128_aead_decrypt(
+            Hacl_AEAD_Chacha20Poly1305_Simd128_decrypt(
+                ctxt_msg.as_mut_ptr(),
+                ctxt_msg.as_ptr() as _,
+                ctxt_msg.len() as u32,
+                aad.as_ptr() as _,
+                aad.len() as u32,
                 key.as_ptr() as _,
                 iv.as_ptr() as _,
-                aad.len() as u32,
-                aad.as_ptr() as _,
-                ctxt_msg.len() as u32,
-                ctxt_msg.as_ptr() as _,
-                ctxt_msg.as_mut_ptr(),
                 tag.as_ptr() as _,
             ) == 0
         } {
@@ -133,7 +133,7 @@ pub mod simd128 {
 pub mod simd256 {
     use super::*;
     use hacl_sys::{
-        Hacl_Chacha20Poly1305_256_aead_decrypt, Hacl_Chacha20Poly1305_256_aead_encrypt,
+        Hacl_AEAD_Chacha20Poly1305_Simd256_decrypt, Hacl_AEAD_Chacha20Poly1305_Simd256_encrypt,
     };
 
     /// 256-bit SIMD encrypt.
@@ -144,15 +144,15 @@ pub mod simd256 {
     pub fn encrypt(key: &Chacha20Key, msg_ctxt: &mut [u8], iv: Iv, aad: &[u8]) -> Tag {
         let mut tag = Tag::default();
         unsafe {
-            Hacl_Chacha20Poly1305_256_aead_encrypt(
-                key.as_ptr() as _,
-                iv.as_ptr() as _,
-                aad.len() as u32,
-                aad.as_ptr() as _,
-                msg_ctxt.len() as u32,
-                msg_ctxt.as_ptr() as _,
+            Hacl_AEAD_Chacha20Poly1305_Simd256_encrypt(
                 msg_ctxt.as_mut_ptr(),
                 tag.as_mut_ptr(),
+                msg_ctxt.as_ptr() as _,
+                msg_ctxt.len() as u32,
+                aad.as_ptr() as _,
+                aad.len() as u32,
+                key.as_ptr() as _,
+                iv.as_ptr() as _,
             );
         }
         tag
@@ -171,14 +171,14 @@ pub mod simd256 {
         tag: &Tag,
     ) -> Result<(), Error> {
         if unsafe {
-            Hacl_Chacha20Poly1305_256_aead_decrypt(
+            Hacl_AEAD_Chacha20Poly1305_Simd256_decrypt(
+                ctxt_msg.as_mut_ptr(),
+                ctxt_msg.as_ptr() as _,
+                ctxt_msg.len() as u32,
+                aad.as_ptr() as _,
+                aad.len() as u32,
                 key.as_ptr() as _,
                 iv.as_ptr() as _,
-                aad.len() as u32,
-                aad.as_ptr() as _,
-                ctxt_msg.len() as u32,
-                ctxt_msg.as_ptr() as _,
-                ctxt_msg.as_mut_ptr(),
                 tag.as_ptr() as _,
             ) == 0
         } {

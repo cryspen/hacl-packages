@@ -46,7 +46,8 @@ module Hacl_Hash = struct
   include Hacl_Hash_MD5_bindings.Bindings(Hacl_Hash_MD5_stubs)
   include Hacl_Hash_SHA1_bindings.Bindings(Hacl_Hash_SHA1_stubs)
   include Hacl_Hash_SHA2_bindings.Bindings(Hacl_Hash_SHA2_stubs)
-  include Hacl_Hash_Blake2_bindings.Bindings(Hacl_Hash_Blake2_stubs)
+  include Hacl_Hash_Blake2b_bindings.Bindings(Hacl_Hash_Blake2b_stubs)
+  include Hacl_Hash_Blake2s_bindings.Bindings(Hacl_Hash_Blake2s_stubs)
 end
 module Hacl_Spec = Hacl_Spec_bindings.Bindings(Hacl_Spec_stubs)
 module Hacl_Streaming_Types = Hacl_Streaming_Types_bindings.Bindings(Hacl_Streaming_Types_stubs)

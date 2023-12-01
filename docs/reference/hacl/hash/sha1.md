@@ -24,7 +24,7 @@ SHA-1 is insecure. Please avoid or ask your cryptographer of trust for permissio
 :end-before: "// END OneShot"
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_hash
+```{doxygenfunction} Hacl_Hash_SHA1_hash
 ```
 
 ### Streaming
@@ -52,20 +52,20 @@ SHA-1 is insecure. Please avoid or ask your cryptographer of trust for permissio
 :end-before: "// ANCHOR_END(streaming)"
 ```
 
-```{doxygentypedef} Hacl_Streaming_SHA1_state
+```{doxygentypedef} Hacl_Hash_SHA1_state_t
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_create_in
+```{doxygenfunction} Hacl_Hash_SHA1_malloc
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_init
+```{doxygenfunction} Hacl_Hash_SHA1_update
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_update
+```{doxygenfunction} Hacl_Hash_SHA1_digest
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_finish
+```{doxygenfunction} Hacl_Hash_SHA1_reset
 ```
 
-```{doxygenfunction} Hacl_Streaming_SHA1_legacy_free
+```{doxygenfunction} Hacl_Hash_SHA1_free
 ```

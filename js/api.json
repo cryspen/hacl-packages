@@ -110,59 +110,10 @@
     }
   },
   "Chacha20Poly1305": {
-    "aead_encrypt": {
-      "module": "Hacl_Chacha20Poly1305_32",
-      "name": "aead_encrypt",
-      "args": [{
-          "name": "key",
-          "kind": "input",
-          "type": "buffer",
-          "size": 32,
-          "interface_index": 0,
-          "tests": [
-              "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f"
-          ]
-        },
-        {
-          "name": "nonce",
-          "kind": "input",
-          "type": "buffer",
-          "size": 12,
-          "interface_index": 1,
-          "tests": [
-              "070000004041424344454647"
-          ]
-        },
-        {
-          "name": "alen",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "aad",
-          "kind": "input",
-          "type": "buffer",
-          "size": "alen",
-          "interface_index": 2,
-          "tests": [
-              "50515253c0c1c2c3c4c5c6c7"
-          ]
-        },
-        {
-          "name": "len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "plaintext",
-          "kind": "input",
-          "type": "buffer",
-          "size": "len",
-          "interface_index": 3,
-          "tests": [
-              "4c616469657320616e642047656e746c656d656e206f662074686520636c617373206f66202739393a204966204920636f756c64206f6666657220796f75206f6e6c79206f6e652074697020666f7220746865206675747572652c2073756e73637265656e20776f756c642062652069742e"
-          ]
-        },
+    "encrypt": {
+      "module": "Hacl_AEAD_Chacha20Poly1305",
+      "name": "encrypt",
+      "args": [
         {
           "name": "ciphertext",
           "kind": "output",
@@ -180,21 +131,43 @@
           "tests": [
               "1ae10b594f09e26a7e902ecbd0600691"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "aead_decrypt": {
-      "module": "Hacl_Chacha20Poly1305_32",
-      "name": "aead_decrypt",
-      "args": [{
+        },
+        {
+          "name": "plaintext",
+          "kind": "input",
+          "type": "buffer",
+          "size": "len",
+          "interface_index": 0,
+          "tests": [
+              "4c616469657320616e642047656e746c656d656e206f662074686520636c617373206f66202739393a204966204920636f756c64206f6666657220796f75206f6e6c79206f6e652074697020666f7220746865206675747572652c2073756e73637265656e20776f756c642062652069742e"
+          ]
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "alen",
+          "interface_index": 1,
+          "tests": [
+              "50515253c0c1c2c3c4c5c6c7"
+          ]
+        },
+        {
+          "name": "alen",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
           "name": "key",
           "kind": "input",
           "type": "buffer",
           "size": 32,
-          "interface_index": 0,
+          "interface_index": 2,
           "tests": [
               "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f"
           ]
@@ -204,31 +177,20 @@
           "kind": "input",
           "type": "buffer",
           "size": 12,
-          "interface_index": 1,
+          "interface_index": 3,
           "tests": [
               "070000004041424344454647"
           ]
-        },
-        {
-          "name": "alen",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "aad",
-          "kind": "input",
-          "type": "buffer",
-          "size": "alen",
-          "interface_index": 2,
-          "tests": [
-              "50515253c0c1c2c3c4c5c6c7"
-          ]
-        },
-        {
-          "name": "len",
-          "kind": "input",
-          "type": "uint32"
-        },
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "decrypt": {
+      "module": "Hacl_AEAD_Chacha20Poly1305",
+      "name": "decrypt",
+      "args": [
         {
           "name": "plaintext",
           "kind": "output",
@@ -243,9 +205,49 @@
           "kind": "input",
           "type": "buffer",
           "size": "len",
-          "interface_index": 3,
+          "interface_index": 0,
           "tests": [
               "d31a8d34648e60db7b86afbc53ef7ec2a4aded51296e08fea9e2b5a736ee62d63dbea45e8ca9671282fafb69da92728b1a71de0a9e060b2905d6a5b67ecd3b3692ddbd7f2d778b8c9803aee328091b58fab324e4fad675945585808b4831d7bc3ff4def08e4b7a9de576d26586cec64b6116"
+          ]
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "alen",
+          "interface_index": 1,
+          "tests": [
+              "50515253c0c1c2c3c4c5c6c7"
+          ]
+        },
+        {
+          "name": "alen",
+          "kind": "input",
+          "type": "uint32"
+        },
+        {
+          "name": "key",
+          "kind": "input",
+          "type": "buffer",
+          "size": 32,
+          "interface_index": 2,
+          "tests": [
+              "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f"
+          ]
+        },
+        {
+          "name": "nonce",
+          "kind": "input",
+          "type": "buffer",
+          "size": 12,
+          "interface_index": 3,
+          "tests": [
+              "070000004041424344454647"
           ]
         },
         {
@@ -407,28 +409,9 @@
   "SHA2": {
     "hash_512": {
       "module": "Hacl_Hash_SHA2",
-      "custom_module_name": true,
-      "name": "Hacl_Streaming_SHA2_hash_512",
+      "name": "hash_512",
       "args": [{
-          "name": "input",
-          "kind": "input",
-          "type": "buffer",
-          "size": "input_len",
-          "interface_index": 0,
-          "tests": [
-              "616263",
-              "",
-              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
-              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
-          ]
-        },
-        {
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
-          "name": "hash",
+          "name": "output",
           "kind": "output",
           "type": "buffer",
           "size": 64,
@@ -438,17 +421,7 @@
               "204a8fc6dda82f0a0ced7beb8e08a41657c16ef468b228a8279be331a703c33596fd15c13b1b07f9aa1d3bea57789ca031ad85c7a71dd70354ec631238ca3445",
               "8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_384": {
-      "module": "Hacl_Hash_SHA2",
-      "custom_module_name": true,
-      "name": "Hacl_Streaming_SHA2_hash_384",
-      "args": [{
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -460,13 +433,20 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
-        {
+        }, {
           "name": "input_len",
           "kind": "input",
           "type": "uint32"
-        },
-        {
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_384": {
+      "module": "Hacl_Hash_SHA2",
+      "name": "hash_384",
+      "args": [{
           "name": "hash",
           "kind": "output",
           "type": "buffer",
@@ -477,17 +457,7 @@
               "3391fdddfc8dc7393707a65b1b4709397cf8b1d162af05abfe8f450de5f36bc6b0455a8520bc4e6f5fe95b1fe3c8452b",
               "09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa08086e3b0f712fcc7c71a557e2db966c3e9fa91746039"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_256": {
-      "module": "Hacl_Hash_SHA2",
-      "custom_module_name": true,
-      "name": "Hacl_Streaming_SHA2_hash_256",
-      "args": [{
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -499,13 +469,20 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
-        {
+        }, {
           "name": "input_len",
           "kind": "input",
           "type": "uint32"
-        },
-        {
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_256": {
+      "module": "Hacl_Hash_SHA2",
+      "name": "hash_256",
+      "args": [{
           "name": "hash",
           "kind": "output",
           "type": "buffer",
@@ -516,6 +493,22 @@
               "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1",
               "cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1"
           ]
+        }, {
+          "name": "input",
+          "kind": "input",
+          "type": "buffer",
+          "size": "input_len",
+          "interface_index": 0,
+          "tests": [
+              "616263",
+              "",
+              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
+              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
+          ]
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
         }
       ],
       "return": {
@@ -525,18 +518,10 @@
   },
   "Blake2": {
     "blake2b": {
-      "module": "Hacl_Hash_Blake2",
+      "module": "Hacl_Hash_Blake2b",
       "custom_module_name": true,
-      "name": "Hacl_Blake2b_32_blake2b",
+      "name": "Hacl_Hash_Blake2b_hash_with_key",
       "args": [{
-          "type": "uint32",
-          "kind": "input",
-          "name": "output_len",
-          "interface_index": 0,
-          "tests": [
-            64, 64
-          ]
-        }, {
           "name": "output",
           "kind": "output",
           "type": "buffer",
@@ -545,26 +530,28 @@
               "ba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923",
               "e47bb6f20fbf14984f72a4c3cd9f3dc0d38928e536733ba7c5b153c71546584b7371f9b7070777b9a0947703409650fd04cfc9a5d561f99ed134ef262b03db94"
           ]
-        },
-        {
+        }, {
           "type": "uint32",
           "kind": "input",
-          "name": "data_len"
+          "name": "output_len",
+          "interface_index": 0,
+          "tests": [
+            64, 64
+          ]
         }, {
-          "name": "data",
+          "name": "input",
           "kind": "input",
           "type": "buffer",
-          "size": "data_len",
+          "size": "input_len",
           "interface_index": 1,
           "tests": [
               "616263",
               "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
           ]
-        },
-        {
+        }, {
           "type": "uint32",
           "kind": "input",
-          "name": "key_len"
+          "name": "input_len"
         }, {
           "name": "key",
           "kind": "input",
@@ -575,6 +562,10 @@
               "",
               "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
           ]
+        }, {
+          "type": "uint32",
+          "kind": "input",
+          "name": "key_len"
         }
       ],
       "return": {
@@ -582,10 +573,21 @@
       }
     },
     "blake2s": {
-      "module": "Hacl_Hash_Blake2",
+      "module": "Hacl_Hash_Blake2s",
       "custom_module_name": true,
-      "name": "Hacl_Blake2s_32_blake2s",
+      "name": "Hacl_Hash_Blake2s_hash_with_key",
       "args": [{
+          "name": "output",
+          "kind": "output",
+          "type": "buffer",
+          "size": "output_len",
+          "tests": [
+              "508c5e8c327c14e2e1a72ba34eeb452f37458b209ed63a294d999b4c86675982",
+              "40d15fee7c328830166ac3f918650f807e7e01e177258cdc0a39b11f598066f1",
+              "3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd",
+              "d12bf3732ef4af5c22fa90356af8fc50fcb40f8f2ea5c8594737a3b3d5abdbd7"
+          ]
+        }, {
           "type": "uint32",
           "kind": "input",
           "name": "output_len",
@@ -597,26 +599,10 @@
               32
           ]
         }, {
-          "name": "output",
-          "kind": "output",
-          "type": "buffer",
-          "size": "output_len",
-          "tests": [
-              "508c5e8c327c14e2e1a72ba34eeb452f37458b209ed63a294d999b4c86675982",
-              "40d15fee7c328830166ac3f918650f807e7e01e177258cdc0a39b11f598066f1",
-              "3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd",
-              "d12bf3732ef4af5c22fa90356af8fc50fcb40f8f2ea5c8594737a3b3d5abdbd7"
-          ]
-        },
-        {
-          "type": "uint32",
-          "kind": "input",
-          "name": "data_len"
-        }, {
-          "name": "data",
+          "name": "input",
           "kind": "input",
           "type": "buffer",
-          "size": "data_len",
+          "size": "input_len",
           "interface_index": 1,
           "tests": [
               "616263",
@@ -624,11 +610,10 @@
               "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfe",
               "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa"
           ]
-        },
-        {
+        }, {
           "type": "uint32",
           "kind": "input",
-          "name": "key_len"
+          "name": "input_len"
         }, {
           "name": "key",
           "kind": "input",
@@ -641,6 +626,10 @@
               "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
               "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
           ]
+	}, {
+          "type": "uint32",
+          "kind": "input",
+          "name": "key_len"
         }
       ],
       "return": {
@@ -652,27 +641,10 @@
     "hash_512": {
       "module": "Hacl_Hash_SHA3",
       "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_512",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
+      "name": "Hacl_Hash_SHA3_sha3_512",
+      "args": [
         {
-          "name": "input",
-          "kind": "input",
-          "type": "buffer",
-          "size": "input_len",
-          "interface_index": 0,
-          "tests": [
-              "",
-              "616263",
-              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
-              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
-          ]
-        },
-        {
-          "name": "hash",
+          "name": "output",
           "kind": "output",
           "type": "buffer",
           "size": 64,
@@ -682,22 +654,7 @@
               "04a371e84ecfb5b8b77cb48610fca8182dd457ce6f326a0fd3d7ec2f1e91636dee691fbe0c985302ba1b0d8dc78c086346b533b49c030d99a27daf1139d6e75e",
               "afebb2ef542e6579c50cad06d2e578f9f8dd6881d7dc824d26360feebf18a4fa73e3261122948efcfd492e74e82e2189ed0fb440d187f382270cb455f21dd185"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_384": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_384",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -709,7 +666,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+	}
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_384": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_384",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -721,22 +692,7 @@
               "991c665755eb3a4b6bbdfb75c78a492e8c56a22c5c4d7e429bfdbc32b9d4ad5aa04a1f076e62fea19eef51acd0657c22",
               "79407d3b5916b59c3e30b09822974791c313fb9ecc849e406f23592d04f625dc8c709b98b43b3852b337216179aa7fc7"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_256": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_256",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+	}, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -748,7 +704,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_256": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_256",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -760,22 +730,7 @@
               "41c0dba2a9d6240849100376a8235e2c82e1b9998a999e21db32dd97496d3376",
               "916f6061fe879741ca6469b43971dfdb28b1a32dc36cb3254e812be27aad1d18"
           ]
-        }
-      ],
-      "return": {
-        "type": "void"
-      }
-    },
-    "hash_224": {
-      "module": "Hacl_Hash_SHA3",
-      "custom_module_name": true,
-      "name": "Hacl_SHA3_sha3_224",
-      "args": [{
-          "name": "input_len",
-          "kind": "input",
-          "type": "uint32"
-        },
-        {
+        }, {
           "name": "input",
           "kind": "input",
           "type": "buffer",
@@ -787,7 +742,21 @@
               "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
               "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
           ]
-        },
+        },{
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "hash_224": {
+      "module": "Hacl_Hash_SHA3",
+      "custom_module_name": true,
+      "name": "Hacl_Hash_SHA3_sha3_224",
+      "args": [
         {
           "name": "hash",
           "kind": "output",
@@ -799,7 +768,23 @@
               "8a24108b154ada21c9fd5574494479ba5c7e7ab76ef264ead0fcce33",
               "543e6868e1666c1a643630df77367ae5a62a85070a51c14cbf665cbc"
           ]
-        }
+        }, {
+          "name": "input",
+          "kind": "input",
+          "type": "buffer",
+          "size": "input_len",
+          "interface_index": 0,
+          "tests": [
+              "",
+              "616263",
+              "6162636462636465636465666465666765666768666768696768696a68696a6b696a6b6c6a6b6c6d6b6c6d6e6c6d6e6f6d6e6f706e6f7071",
+              "61626364656667686263646566676869636465666768696a6465666768696a6b65666768696a6b6c666768696a6b6c6d6768696a6b6c6d6e68696a6b6c6d6e6f696a6b6c6d6e6f706a6b6c6d6e6f70716b6c6d6e6f7071726c6d6e6f707172736d6e6f70717273746e6f707172737475"
+          ]
+        }, {
+          "name": "input_len",
+          "kind": "input",
+          "type": "uint32"
+	}
       ],
       "return": {
         "type": "void"
@@ -807,8 +792,7 @@
     },
     "keccak": {
       "module": "Hacl_Hash_SHA3",
-      "name": "Hacl_Impl_SHA3_keccak",
-      "custom_module_name": true,
+      "name": "keccak",
       "args": [{
           "name": "rate",
           "kind": "input",
@@ -3694,7 +3678,7 @@
       "args": [{
           "name": "state",
           "kind": "input",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
@@ -3706,10 +3690,10 @@
         ]
       }
     },
-    "create": {
+    "malloc": {
       "module": "EverCrypt_Hash",
       "custom_module_name": true,
-      "name": "EverCrypt_Hash_Incremental_create_in",
+      "name": "EverCrypt_Hash_Incremental_malloc",
       "args": [{
           "name": "hash_alg",
           "kind": "input",
@@ -3721,7 +3705,7 @@
       ],
       "return": {
         "kind": "layout",
-        "type": "EverCrypt_Hash_Incremental_hash_state",
+        "type": "EverCrypt_Hash_Incremental_state_t",
         "tests": [
         ]
       }
@@ -3733,7 +3717,7 @@
       "args": [{
           "name": "state",
           "kind": "output",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
@@ -3757,14 +3741,14 @@
         ]
       }
     },
-    "finish": {
+    "digest": {
       "module": "EverCrypt_Hash",
       "custom_module_name": true,
-      "name": "EverCrypt_Hash_Incremental_finish",
+      "name": "EverCrypt_Hash_Incremental_digest",
       "args": [{
           "name": "state",
           "kind": "input",
-          "type": "EverCrypt_Hash_Incremental_hash_state",
+          "type": "EverCrypt_Hash_Incremental_state_t",
           "interface_index": 0,
           "tests": [
           ]
