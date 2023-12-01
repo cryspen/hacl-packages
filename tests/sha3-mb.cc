@@ -12,7 +12,11 @@
 #include <string.h>
 
 #include "Hacl_SHA3_Scalar.h"
+#include "hacl-cpu-features.h"
+
+#ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_SHA3_Vec256.h"
+#endif
 
 #include "config.h"
 #include "util.h"
@@ -103,8 +107,10 @@ TEST(ApiSuite, ApiTest)
       strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
   }
 
+#ifdef HACL_CAN_COMPILE_VEC256
   // Documentation.
   // Lines after START and before END are used in documentation.
+  if (hacl_vec256_support())
   {
     // START OneShot
     // This example uses Vec256 SHA3-256.
@@ -146,6 +152,7 @@ TEST(ApiSuite, ApiTest)
 
   // Documentation.
   // Lines after START and before END are used in documentation.
+  if (hacl_vec256_support())
   {
     // ANCHOR(example shake128)
     // This example uses Vec256 SHAKE-128.
@@ -178,12 +185,13 @@ TEST(ApiSuite, ApiTest)
     EXPECT_EQ(
       strncmp((char*)digest3, (char*)expected_digest.data(), digest_size), 0);
   }
+#endif
 }
 
-class Sha3ScalarKAT : public ::testing::TestWithParam<TestCase>
+class Sha3MBKAT : public ::testing::TestWithParam<TestCase>
 {};
 
-TEST_P(Sha3ScalarKAT, TryKAT)
+TEST_P(Sha3MBKAT, TryKAT)
 {
   auto test_case = GetParam();
 
@@ -206,47 +214,9 @@ TEST_P(Sha3ScalarKAT, TryKAT)
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                     << bytes_to_hex(digest) << std::endl;
   }
-}
 
-class ShakeScalarKAT : public ::testing::TestWithParam<TestCase>
-{};
-
-TEST_P(ShakeScalarKAT, TryKAT)
-{
-  auto test_case = GetParam();
-
-  {
-    if (test_case.md.size() == 128 / 8) {
-      bytes digest(test_case.md.size(), 128 / 8);
-
-      Hacl_SHA3_Scalar_shake128_hacl(test_case.msg.size(),
-                                     test_case.msg.data(),
-                                     digest.size(),
-                                     digest.data());
-
-      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
-                                      << bytes_to_hex(digest) << std::endl;
-    } else if (test_case.md.size() == 256 / 8) {
-      bytes digest(test_case.md.size(), 256 / 8);
-
-      Hacl_SHA3_Scalar_shake256_hacl(test_case.msg.size(),
-                                     test_case.msg.data(),
-                                     digest.size(),
-                                     digest.data());
-
-      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
-                                      << bytes_to_hex(digest) << std::endl;
-    }
-  }
-}
-
-class Sha3Vec256KAT : public ::testing::TestWithParam<TestCase>
-{};
-
-TEST_P(Sha3Vec256KAT, TryKAT)
-{
-  auto test_case = GetParam();
-
+#ifdef HACL_CAN_COMPILE_VEC256
+  if (hacl_vec256_support())
   {
     bytes digest0(test_case.md.size(), 0);
     bytes digest1(test_case.md.size(), 0);
@@ -283,15 +253,42 @@ TEST_P(Sha3Vec256KAT, TryKAT)
     EXPECT_EQ(test_case.md, digest3) << bytes_to_hex(test_case.md) << std::endl
                                     << bytes_to_hex(digest3) << std::endl;
   }
+#endif
 }
 
-class ShakeVec256KAT : public ::testing::TestWithParam<TestCase>
+class ShakeMBKAT : public ::testing::TestWithParam<TestCase>
 {};
 
-TEST_P(ShakeVec256KAT, TryKAT)
+TEST_P(ShakeMBKAT, TryKAT)
 {
   auto test_case = GetParam();
 
+  {
+    if (test_case.md.size() == 128 / 8) {
+      bytes digest(test_case.md.size(), 128 / 8);
+
+      Hacl_SHA3_Scalar_shake128_hacl(test_case.msg.size(),
+                                     test_case.msg.data(),
+                                     digest.size(),
+                                     digest.data());
+
+      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                      << bytes_to_hex(digest) << std::endl;
+    } else if (test_case.md.size() == 256 / 8) {
+      bytes digest(test_case.md.size(), 256 / 8);
+
+      Hacl_SHA3_Scalar_shake256_hacl(test_case.msg.size(),
+                                     test_case.msg.data(),
+                                     digest.size(),
+                                     digest.data());
+
+      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                      << bytes_to_hex(digest) << std::endl;
+    }
+  }
+
+#ifdef HACL_CAN_COMPILE_VEC256
+  if (hacl_vec256_support())
   {
     if (test_case.md.size() == 128 / 8) {
       bytes digest0(test_case.md.size(), 128 / 8);
@@ -345,128 +342,65 @@ TEST_P(ShakeVec256KAT, TryKAT)
                                       << bytes_to_hex(digest3) << std::endl;
     }
   }
+#endif
 }
 
-// Scalar tests
-
 INSTANTIATE_TEST_SUITE_P(
   Sha3_224ShortKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-224-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_224LongKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-224-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_256ShortKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-256-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_256LongKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-256-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_384ShortKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-384-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_384LongKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-384-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_512ShortKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-512-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Sha3_512LongKAT,
-  Sha3ScalarKAT,
+  Sha3MBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("sha3-512-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Shake128ShortKAT,
-  ShakeScalarKAT,
+  ShakeMBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("shake128-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Shake128LongKAT,
-  ShakeScalarKAT,
+  ShakeMBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("shake128-long.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Shake256ShortKAT,
-  ShakeScalarKAT,
+  ShakeMBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("shake256-short.json"))));
 
 INSTANTIATE_TEST_SUITE_P(
   Shake256LongKAT,
-  ShakeScalarKAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("shake256-long.json"))));
-
-// Vec256 tests
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_224ShortKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-224-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_224LongKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-224-long.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_256ShortKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-256-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_256LongKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-256-long.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_384ShortKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-384-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_384LongKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-384-long.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_512ShortKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-512-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Sha3_512LongKAT,
-  Sha3Vec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("sha3-512-long.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Shake128ShortKAT,
-  ShakeVec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("shake128-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Shake128LongKAT,
-  ShakeVec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("shake128-long.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Shake256ShortKAT,
-  ShakeVec256KAT,
-  ::testing::ValuesIn(read_json(const_cast<char*>("shake256-short.json"))));
-
-INSTANTIATE_TEST_SUITE_P(
-  Shake256LongKAT,
-  ShakeVec256KAT,
+  ShakeMBKAT,
   ::testing::ValuesIn(read_json(const_cast<char*>("shake256-long.json"))));
