@@ -325,6 +325,16 @@
                 "file": "Hacl_Frodo_KEM.c",
                 "features": "std"
             }
+        ],
+        "sha3-mb": [
+            {
+                "file": "Hacl_SHA3_Scalar.c",
+                "features": "std"
+            },
+            {
+                "file": "Hacl_SHA3_Vec256.c",
+                "features": "vec256"
+            }
         ]
     },
     "vale_sources": {
@@ -497,6 +507,9 @@
         ],
         "aead": [
             "aead.cc"
+        ],
+        "sha3-mb": [
+            "sha3-mb.cc"
         ]
     },
     "benchmarks": {
