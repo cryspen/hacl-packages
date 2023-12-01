@@ -1,28 +1,14 @@
-name: Deploy static content to GitHub Pages
+name: Build & Deploy static content to GitHub Pages
 
 on:
   push:
     branches: ["main"]
+    pull_request:
 
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -66,9 +52,6 @@ jobs:
         run: |
           cd docs/reference
           pip install -r requirements.txt
-
-      - name: Setup | Pages
-        uses: actions/configure-pages@v2
 
       - name: Build | Book
         run: |
@@ -144,6 +127,25 @@ jobs:
         with:
           path: "build"
 
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Allow one concurrent deployment
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      - name: Setup | Pages
+        uses: actions/configure-pages@v2
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
