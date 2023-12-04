@@ -47,7 +47,8 @@ static void
 Hacl_Sha3_224(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_224(digest224_0.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_224(
+      digest224_0.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest224_0 != expected_digest_sha3_224) {
     state.SkipWithError("Incorrect digest.");
@@ -61,7 +62,8 @@ static void
 Hacl_Scalar_Sha3_224(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_224(input.size(), (uint8_t*)input.data(), digest224_0.data());
+    Hacl_SHA3_Scalar_sha3_224(
+      input.size(), (uint8_t*)input.data(), digest224_0.data());
   }
   if (digest224_0 != expected_digest_sha3_224) {
     state.SkipWithError("Incorrect digest.");
@@ -77,14 +79,14 @@ Hacl_Vec256_Sha3_224(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_sha3_224_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest224_0.data(),
-                            digest224_1.data(),
-                            digest224_2.data(),
-                            digest224_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest224_0.data(),
+                                     digest224_1.data(),
+                                     digest224_2.data(),
+                                     digest224_3.data());
   }
   if (digest224_0 != expected_digest_sha3_224 ||
       digest224_1 != expected_digest_sha3_224 ||
@@ -112,7 +114,8 @@ static void
 Hacl_Sha3_256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_256(digest256_0.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_256(
+      digest256_0.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest256_0 != expected_digest_sha3_256) {
     state.SkipWithError("Incorrect digest.");
@@ -126,7 +129,8 @@ static void
 Hacl_Scalar_Sha3_256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_256(input.size(), (uint8_t*)input.data(), digest256_0.data());
+    Hacl_SHA3_Scalar_sha3_256(
+      input.size(), (uint8_t*)input.data(), digest256_0.data());
   }
   if (digest256_0 != expected_digest_sha3_256) {
     state.SkipWithError("Incorrect digest.");
@@ -142,14 +146,14 @@ Hacl_Vec256_Sha3_256(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_sha3_256_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest256_0.data(),
-                            digest256_1.data(),
-                            digest256_2.data(),
-                            digest256_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest256_0.data(),
+                                     digest256_1.data(),
+                                     digest256_2.data(),
+                                     digest256_3.data());
   }
   if (digest256_0 != expected_digest_sha3_256 ||
       digest256_1 != expected_digest_sha3_256 ||
@@ -204,7 +208,8 @@ static void
 Hacl_Sha3_384(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_384(digest384_0.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_384(
+      digest384_0.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest384_0 != expected_digest_sha3_384) {
     state.SkipWithError("Incorrect digest.");
@@ -218,7 +223,8 @@ static void
 Hacl_Scalar_Sha3_384(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_384(input.size(), (uint8_t*)input.data(), digest384_0.data());
+    Hacl_SHA3_Scalar_sha3_384(
+      input.size(), (uint8_t*)input.data(), digest384_0.data());
   }
   if (digest384_0 != expected_digest_sha3_384) {
     state.SkipWithError("Incorrect digest.");
@@ -234,14 +240,14 @@ Hacl_Vec384_Sha3_384(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_sha3_384_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest384_0.data(),
-                            digest384_1.data(),
-                            digest384_2.data(),
-                            digest384_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest384_0.data(),
+                                     digest384_1.data(),
+                                     digest384_2.data(),
+                                     digest384_3.data());
   }
   if (digest384_0 != expected_digest_sha3_384 ||
       digest384_1 != expected_digest_sha3_384 ||
@@ -269,7 +275,8 @@ static void
 Hacl_Sha3_512(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_512(digest512_0.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_512(
+      digest512_0.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest512_0 != expected_digest_sha3_512) {
     state.SkipWithError("Incorrect digest.");
@@ -283,7 +290,8 @@ static void
 Hacl_Scalar_Sha3_512(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_512(input.size(), (uint8_t*)input.data(), digest512_0.data());
+    Hacl_SHA3_Scalar_sha3_512(
+      input.size(), (uint8_t*)input.data(), digest512_0.data());
   }
   if (digest512_0 != expected_digest_sha3_512) {
     state.SkipWithError("Incorrect digest.");
@@ -299,14 +307,14 @@ Hacl_Vec512_Sha3_512(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_sha3_512_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest512_0.data(),
-                            digest512_1.data(),
-                            digest512_2.data(),
-                            digest512_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest512_0.data(),
+                                     digest512_1.data(),
+                                     digest512_2.data(),
+                                     digest512_3.data());
   }
   if (digest512_0 != expected_digest_sha3_512 ||
       digest512_1 != expected_digest_sha3_512 ||
@@ -426,8 +434,10 @@ static void
 Hacl_Sha3_shake128(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_shake128_hacl(
-      input.size(), (uint8_t*)input.data(), digest_shake_0.size(), digest_shake_0.data());
+    Hacl_Hash_SHA3_shake128_hacl(input.size(),
+                                 (uint8_t*)input.data(),
+                                 digest_shake_0.size(),
+                                 digest_shake_0.data());
   }
 }
 
@@ -437,7 +447,10 @@ static void
 Hacl_Scalar_Sha3_shake128(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_shake128_hacl(input.size(), (uint8_t*)input.data(), digest_shake_0.size(), digest_shake_0.data());
+    Hacl_SHA3_Scalar_shake128_hacl(input.size(),
+                                   (uint8_t*)input.data(),
+                                   digest_shake_0.size(),
+                                   digest_shake_0.data());
   }
 }
 
@@ -449,15 +462,15 @@ Hacl_Vec256_Sha3_shake128(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_shake128_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest_shake_0.size(),
-                            digest_shake_0.data(),
-                            digest_shake_1.data(),
-                            digest_shake_2.data(),
-                            digest_shake_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest_shake_0.size(),
+                                     digest_shake_0.data(),
+                                     digest_shake_1.data(),
+                                     digest_shake_2.data(),
+                                     digest_shake_3.data());
   }
 }
 
@@ -468,8 +481,10 @@ static void
 Hacl_Sha3_shake256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_shake256_hacl(
-      input.size(), (uint8_t*)input.data(), digest_shake_0.size(), digest_shake_0.data());
+    Hacl_Hash_SHA3_shake256_hacl(input.size(),
+                                 (uint8_t*)input.data(),
+                                 digest_shake_0.size(),
+                                 digest_shake_0.data());
   }
 }
 
@@ -479,7 +494,10 @@ static void
 Hacl_Scalar_Sha3_shake256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_shake256_hacl(input.size(), (uint8_t*)input.data(), digest_shake_0.size(), digest_shake_0.data());
+    Hacl_SHA3_Scalar_shake256_hacl(input.size(),
+                                   (uint8_t*)input.data(),
+                                   digest_shake_0.size(),
+                                   digest_shake_0.data());
   }
 }
 
@@ -491,15 +509,15 @@ Hacl_Vec256_Sha3_shake256(benchmark::State& state)
 {
   for (auto _ : state) {
     Hacl_SHA3_Vec256_shake256_vec256(input.size(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            (uint8_t*)input.data(),
-                            digest_shake_0.size(),
-                            digest_shake_0.data(),
-                            digest_shake_1.data(),
-                            digest_shake_2.data(),
-                            digest_shake_3.data());
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     (uint8_t*)input.data(),
+                                     digest_shake_0.size(),
+                                     digest_shake_0.data(),
+                                     digest_shake_1.data(),
+                                     digest_shake_2.data(),
+                                     digest_shake_3.data());
   }
 }
 
