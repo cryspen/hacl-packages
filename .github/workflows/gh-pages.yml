@@ -9,7 +9,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    # build on macos until bindgen is fixed
+    runs-on: macos-latest # runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,13 +28,18 @@ jobs:
         with:
           mdbook-version: "latest"
 
-      - name: Setup | Update
-        run: sudo apt-get update
+      # - name: Setup | Update
+      #   run: sudo apt-get update
+
+      # - name: Setup | System
+      #   run: |
+      #     sudo apt-get install doxygen python3-sphinx libgmp-dev ninja-build nodejs
+      #     sudo pip install --upgrade pip
 
       - name: Setup | System
         run: |
-          sudo apt-get install doxygen python3-sphinx libgmp-dev ninja-build nodejs
-          sudo pip install --upgrade pip
+          brew install doxygen python3-sphinx libgmp-dev ninja-build nodejs
+          pip install --upgrade pip
 
       - name: Setup | OCaml | 1/2
         uses: ocaml/setup-ocaml@v2
