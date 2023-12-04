@@ -414,7 +414,6 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/nacl.cc
 	${PROJECT_SOURCE_DIR}/tests/evercrypt.cc
 	${PROJECT_SOURCE_DIR}/tests/aead.cc
-	${PROJECT_SOURCE_DIR}/tests/sha3-mb.cc
 )
 set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/blake.cc
@@ -483,7 +482,6 @@ set(ALGORITHM_TEST_FILES
 	TEST_FILES_nacl
 	TEST_FILES_evercrypt
 	TEST_FILES_aead
-	TEST_FILES_sha3_mb
 )
 set(TEST_FILES_detection
 	detection.cc
@@ -550,7 +548,4 @@ set(TEST_FILES_evercrypt
 )
 set(TEST_FILES_aead
 	aead.cc
-)
-set(TEST_FILES_sha3_mb
-	sha3-mb.cc
 )

@@ -507,9 +507,6 @@
         ],
         "aead": [
             "aead.cc"
-        ],
-        "sha3-mb": [
-            "sha3-mb.cc"
         ]
     },
     "benchmarks": {
