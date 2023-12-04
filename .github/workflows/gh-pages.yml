@@ -38,7 +38,7 @@ jobs:
 
       - name: Setup | System
         run: |
-          brew install doxygen python3-sphinx libgmp-dev ninja-build nodejs
+          brew install doxygen sphinx-doc libgmp-dev ninja-build nodejs
           pip install --upgrade pip
 
       - name: Setup | OCaml | 1/2
