@@ -12,6 +12,12 @@
 #include <string.h>
 
 #include "Hacl_Hash_SHA3.h"
+#include "Hacl_SHA3_Scalar.h"
+#include "hacl-cpu-features.h"
+
+#ifdef HACL_CAN_COMPILE_VEC256
+#include "Hacl_SHA3_Vec256.h"
+#endif
 
 #include "config.h"
 #include "util.h"
@@ -160,6 +166,163 @@ TEST(ApiSuite, ApiTest)
     EXPECT_EQ(
       strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
   }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example scalar_sha3_256)
+    // This example uses Scalar SHA3-256.
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+
+    Hacl_SHA3_Scalar_sha3_256(message_size, (uint8_t*)message, digest);
+    // ANCHOR_END(example scalar_sha3_256)
+
+    bytes expected_digest = from_hex(
+      "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+    EXPECT_EQ(strncmp((char*)digest,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_SHA3_256_DIGEST_LENGTH),
+              0);
+  }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example scalar_shake128)
+    // This example uses Scalar SHAKE-128.
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // SHAKE will generate as many bytes as requested.
+    uint32_t digest_size = 42;
+    uint8_t digest[42];
+
+    Hacl_SHA3_Scalar_shake128_hacl(
+      message_size, (uint8_t*)message, digest_size, digest);
+    // ANCHOR_END(example scalar_shake128)
+
+    bytes expected_digest =
+      from_hex("2bf5e6dee6079fad604f573194ba8426bd4d30eb13e8ba2edae70e529b570cb"
+               "dd588f2c5dd4e465dfbaf");
+
+    EXPECT_EQ(
+      strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
+  }
+
+#ifdef HACL_CAN_COMPILE_VEC256
+  hacl_init_cpu_features();
+  if (hacl_vec256_support()) {
+    // Documentation.
+    // Lines after START and before END are used in documentation.
+    {
+      // ANCHOR(example vec256_sha3_256)
+      // This example uses Vec256 SHA3-256.
+
+      const char* message = "Hello, World!";
+      uint32_t message_size = strlen(message);
+
+      uint8_t digest0[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+      uint8_t digest1[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+      uint8_t digest2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+      uint8_t digest3[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+
+      Hacl_SHA3_Vec256_sha3_256_vec256(message_size,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       digest0,
+                                       digest1,
+                                       digest2,
+                                       digest3);
+      // ANCHOR_END(example vec256_sha3_256)
+
+      bytes expected_digest = from_hex(
+        "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+      EXPECT_EQ(strncmp((char*)digest0,
+                        (char*)expected_digest.data(),
+                        HACL_HASH_SHA3_256_DIGEST_LENGTH),
+                0);
+      EXPECT_EQ(strncmp((char*)digest1,
+                        (char*)expected_digest.data(),
+                        HACL_HASH_SHA3_256_DIGEST_LENGTH),
+                0);
+      EXPECT_EQ(strncmp((char*)digest2,
+                        (char*)expected_digest.data(),
+                        HACL_HASH_SHA3_256_DIGEST_LENGTH),
+                0);
+      EXPECT_EQ(strncmp((char*)digest3,
+                        (char*)expected_digest.data(),
+                        HACL_HASH_SHA3_256_DIGEST_LENGTH),
+                0);
+    }
+
+    // Documentation.
+    // Lines after START and before END are used in documentation.
+    {
+      // ANCHOR(example vec256_shake128)
+      // This example uses Vec256 SHAKE-128.
+
+      const char* message0 = "Hello, World1!";
+      const char* message1 = "Hello, World2!";
+      const char* message2 = "Hello, World3!";
+      const char* message3 = "Hello, World4!";
+      uint32_t message_size = 14;
+
+      // SHAKE will generate as many bytes as requested.
+      uint32_t digest_size = 42;
+      uint8_t digest0[42];
+      uint8_t digest1[42];
+      uint8_t digest2[42];
+      uint8_t digest3[42];
+
+      Hacl_SHA3_Vec256_shake128_vec256(message_size,
+                                       (uint8_t*)message0,
+                                       (uint8_t*)message1,
+                                       (uint8_t*)message2,
+                                       (uint8_t*)message3,
+                                       digest_size,
+                                       digest0,
+                                       digest1,
+                                       digest2,
+                                       digest3);
+      // ANCHOR_END(example vec256_shake128)
+
+      bytes expected_digest0 = from_hex(
+        "1b82c3db6cb958a09a7ea3dd82b67a9c994422c39616ec373afafcf2fca8bca"
+        "808881328f9ca03eb119a");
+      bytes expected_digest1 = from_hex(
+        "3c8f0ab13109dff341fbe0e7511bd8bdfa8d13335b36acdb391170017c6d45f"
+        "460964cab081699f6e45d");
+      bytes expected_digest2 = from_hex(
+        "86ee9003051369f1d5461b00263e01cac1c65defaf722e6ed648fba99743a14"
+        "9b39abc52d6fc746f5014");
+      bytes expected_digest3 = from_hex(
+        "0b9efd21050944cb5ba5df0cc35a176100201e3fd7c4f2b9f70a9dfd4a7228b"
+        "5d676451df013d3e22ac9");
+
+      EXPECT_EQ(
+        strncmp((char*)digest0, (char*)expected_digest0.data(), digest_size),
+        0);
+      EXPECT_EQ(
+        strncmp((char*)digest1, (char*)expected_digest1.data(), digest_size),
+        0);
+      EXPECT_EQ(
+        strncmp((char*)digest2, (char*)expected_digest2.data(), digest_size),
+        0);
+      EXPECT_EQ(
+        strncmp((char*)digest3, (char*)expected_digest3.data(), digest_size),
+        0);
+    }
+  }
+#endif
 }
 
 class Sha3KAT : public ::testing::TestWithParam<TestCase>
@@ -188,6 +351,86 @@ TEST_P(Sha3KAT, TryKAT)
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                     << bytes_to_hex(digest) << std::endl;
   }
+
+  {
+    bytes digest(test_case.md.size(), 0);
+    if (test_case.md.size() == 224 / 8) {
+      Hacl_SHA3_Scalar_sha3_224(
+        test_case.msg.size(), test_case.msg.data(), digest.data());
+    } else if (test_case.md.size() == 256 / 8) {
+      Hacl_SHA3_Scalar_sha3_256(
+        test_case.msg.size(), test_case.msg.data(), digest.data());
+    } else if (test_case.md.size() == 384 / 8) {
+      Hacl_SHA3_Scalar_sha3_384(
+        test_case.msg.size(), test_case.msg.data(), digest.data());
+    } else if (test_case.md.size() == 512 / 8) {
+      Hacl_SHA3_Scalar_sha3_512(
+        test_case.msg.size(), test_case.msg.data(), digest.data());
+    }
+
+    EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                    << bytes_to_hex(digest) << std::endl;
+  }
+
+#ifdef HACL_CAN_COMPILE_VEC256
+  hacl_init_cpu_features();
+  if (hacl_vec256_support()) {
+    bytes digest0(test_case.md.size(), 0);
+    bytes digest1(test_case.md.size(), 0);
+    bytes digest2(test_case.md.size(), 0);
+    bytes digest3(test_case.md.size(), 0);
+    if (test_case.md.size() == 224 / 8) {
+      Hacl_SHA3_Vec256_sha3_224_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+    } else if (test_case.md.size() == 256 / 8) {
+      Hacl_SHA3_Vec256_sha3_256_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+    } else if (test_case.md.size() == 384 / 8) {
+      Hacl_SHA3_Vec256_sha3_384_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+    } else if (test_case.md.size() == 512 / 8) {
+      Hacl_SHA3_Vec256_sha3_512_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+    }
+
+    EXPECT_EQ(test_case.md, digest0) << bytes_to_hex(test_case.md) << std::endl
+                                     << bytes_to_hex(digest0) << std::endl;
+    EXPECT_EQ(test_case.md, digest1) << bytes_to_hex(test_case.md) << std::endl
+                                     << bytes_to_hex(digest1) << std::endl;
+    EXPECT_EQ(test_case.md, digest2) << bytes_to_hex(test_case.md) << std::endl
+                                     << bytes_to_hex(digest2) << std::endl;
+    EXPECT_EQ(test_case.md, digest3) << bytes_to_hex(test_case.md) << std::endl
+                                     << bytes_to_hex(digest3) << std::endl;
+  }
+#endif
 }
 
 class ShakeKAT : public ::testing::TestWithParam<TestCase>
@@ -201,21 +444,114 @@ TEST_P(ShakeKAT, TryKAT)
     if (test_case.md.size() == 128 / 8) {
       bytes digest(test_case.md.size(), 128 / 8);
 
-      Hacl_Hash_SHA3_shake128_hacl(
-        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
+      Hacl_Hash_SHA3_shake128_hacl(test_case.msg.size(),
+                                   test_case.msg.data(),
+                                   digest.size(),
+                                   digest.data());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
     } else if (test_case.md.size() == 256 / 8) {
       bytes digest(test_case.md.size(), 256 / 8);
 
-      Hacl_Hash_SHA3_shake256_hacl(
-        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
+      Hacl_Hash_SHA3_shake256_hacl(test_case.msg.size(),
+                                   test_case.msg.data(),
+                                   digest.size(),
+                                   digest.data());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
     }
   }
+
+  {
+    if (test_case.md.size() == 128 / 8) {
+      bytes digest(test_case.md.size(), 128 / 8);
+
+      Hacl_SHA3_Scalar_shake128_hacl(test_case.msg.size(),
+                                     test_case.msg.data(),
+                                     digest.size(),
+                                     digest.data());
+
+      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                      << bytes_to_hex(digest) << std::endl;
+    } else if (test_case.md.size() == 256 / 8) {
+      bytes digest(test_case.md.size(), 256 / 8);
+
+      Hacl_SHA3_Scalar_shake256_hacl(test_case.msg.size(),
+                                     test_case.msg.data(),
+                                     digest.size(),
+                                     digest.data());
+
+      EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                      << bytes_to_hex(digest) << std::endl;
+    }
+  }
+
+#ifdef HACL_CAN_COMPILE_VEC256
+  hacl_init_cpu_features();
+  if (hacl_vec256_support()) {
+    if (test_case.md.size() == 128 / 8) {
+      bytes digest0(test_case.md.size(), 128 / 8);
+      bytes digest1(test_case.md.size(), 128 / 8);
+      bytes digest2(test_case.md.size(), 128 / 8);
+      bytes digest3(test_case.md.size(), 128 / 8);
+
+      Hacl_SHA3_Vec256_shake128_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.size(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+
+      EXPECT_EQ(test_case.md, digest0)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest0) << std::endl;
+      EXPECT_EQ(test_case.md, digest1)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest1) << std::endl;
+      EXPECT_EQ(test_case.md, digest2)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest2) << std::endl;
+      EXPECT_EQ(test_case.md, digest3)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest3) << std::endl;
+    } else if (test_case.md.size() == 256 / 8) {
+      bytes digest0(test_case.md.size(), 256 / 8);
+      bytes digest1(test_case.md.size(), 256 / 8);
+      bytes digest2(test_case.md.size(), 256 / 8);
+      bytes digest3(test_case.md.size(), 256 / 8);
+
+      Hacl_SHA3_Vec256_shake256_vec256(test_case.msg.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       digest0.size(),
+                                       digest0.data(),
+                                       digest1.data(),
+                                       digest2.data(),
+                                       digest3.data());
+
+      EXPECT_EQ(test_case.md, digest0)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest0) << std::endl;
+      EXPECT_EQ(test_case.md, digest1)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest1) << std::endl;
+      EXPECT_EQ(test_case.md, digest2)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest2) << std::endl;
+      EXPECT_EQ(test_case.md, digest3)
+        << bytes_to_hex(test_case.md) << std::endl
+        << bytes_to_hex(digest3) << std::endl;
+    }
+  }
+#endif
 }
 
 INSTANTIATE_TEST_SUITE_P(
