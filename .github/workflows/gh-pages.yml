@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     # build on macos until bindgen is fixed
-    runs-on: macos-latest # runs-on: ubuntu-22.04
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,14 +27,6 @@ jobs:
         uses: peaceiris/actions-mdbook@4b5ef36b314c2599664ca107bb8c02412548d79d
         with:
           mdbook-version: "latest"
-
-      # - name: Setup | Update
-      #   run: sudo apt-get update
-
-      # - name: Setup | System
-      #   run: |
-      #     sudo apt-get install doxygen python3-sphinx libgmp-dev ninja-build nodejs
-      #     sudo pip install --upgrade pip
 
       - name: Setup | System
         run: |
