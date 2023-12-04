@@ -325,6 +325,12 @@
                 "file": "Hacl_Frodo_KEM.c",
                 "features": "std"
             }
+        ],
+        "kyber": [
+            {
+                "file": "Libcrux_Kem_Kyber_Kyber768.c",
+                "features": "std"
+            }
         ]
     },
     "vale_sources": {
@@ -497,6 +503,9 @@
         ],
         "aead": [
             "aead.cc"
+        ],
+        "kyber768": [
+            "kyber768.cc"
         ]
     },
     "benchmarks": {

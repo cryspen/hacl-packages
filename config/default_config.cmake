@@ -39,6 +39,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo640.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo976.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Frodo64.c
+	${PROJECT_SOURCE_DIR}/src/Libcrux_Kem_Kyber_Kyber768.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Lib_RandomBuffer_System.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_HMAC.c
@@ -224,6 +225,12 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/src/Libcrux_Kem_Kyber_Kyber768.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krmllib.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krml/internal/callconv.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krml/internal/builtin.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krml/internal/debug.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krml/fstar_int.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/internal/EverCrypt_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/internal/EverCrypt_Hash.h
@@ -336,6 +343,9 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo640.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo976.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Frodo64.h
+	${PROJECT_SOURCE_DIR}/src/Libcrux_Kem_Kyber_Kyber768.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krmllib.h
+	${PROJECT_SOURCE_DIR}/karamel/include/krml/fstar_int.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_DRBG.h
 	${PROJECT_SOURCE_DIR}/include/internal/../EverCrypt_Hash.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Error.h
@@ -373,6 +383,7 @@ set(ALGORITHMS
 	rsapss
 	hpke
 	frodo
+	kyber
 )
 set(INCLUDE_PATHS
 	${PROJECT_SOURCE_DIR}/include

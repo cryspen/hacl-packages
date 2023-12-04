@@ -39,7 +39,7 @@ $ sudo pacman -S gcc
 
 <details>
   <summary><b>Fedora</b></summary>
-  
+
 ```sh
 $ sudo dnf install cmake ninja-build python3
 
@@ -51,7 +51,7 @@ $ sudo dnf install gcc
 
 <details>
   <summary><b>Ubuntu</b></summary>
-  
+
 ```sh
 $ sudo apt install cmake ninja-build python3
 
