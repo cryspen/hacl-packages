@@ -1,29 +1,16 @@
-name: Deploy static content to GitHub Pages
+name: Build & Deploy static content to GitHub Pages
 
 on:
   push:
     branches: ["main"]
+  pull_request:
 
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-22.04
+  build:
+    # build on macos until bindgen is fixed
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -34,20 +21,17 @@ jobs:
         run: git fetch --tags origin
 
       - name: Setup | mdBook | 1/2
-        uses: hecrj/setup-rust-action@8708beccd22540a3f955ae10cc884af27ca81bf5
+        uses: hecrj/setup-rust-action@f344d1a51e8ad6e1c6c51d9cf8d5a6edf4cfd230
 
       - name: Setup | mdBook | 2/2
         uses: peaceiris/actions-mdbook@4b5ef36b314c2599664ca107bb8c02412548d79d
         with:
           mdbook-version: "latest"
 
-      - name: Setup | Update
-        run: sudo apt-get update
-
       - name: Setup | System
         run: |
-          sudo apt-get install doxygen python3-sphinx libgmp-dev ninja-build nodejs
-          sudo pip install --upgrade pip
+          brew install doxygen sphinx-doc gmp ninja node
+          pip install --upgrade pip
 
       - name: Setup | OCaml | 1/2
         uses: ocaml/setup-ocaml@v2
@@ -66,9 +50,6 @@ jobs:
         run: |
           cd docs/reference
           pip install -r requirements.txt
-
-      - name: Setup | Pages
-        uses: actions/configure-pages@v2
 
       - name: Build | Book
         run: |
@@ -144,6 +125,25 @@ jobs:
         with:
           path: "build"
 
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Allow one concurrent deployment
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      - name: Setup | Pages
+        uses: actions/configure-pages@v2
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
