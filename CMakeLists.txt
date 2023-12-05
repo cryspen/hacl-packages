@@ -333,7 +333,7 @@ configure_file(config/Config.h.in config.h)
 # Set library config and files
 # Now combine everything into the hacl library
 # # Dynamic library
-add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
+add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS} ${LIBCRUX_SOURCES})
 if(NOT MSVC)
     target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
 endif()
@@ -349,7 +349,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
 endif()
 
 # # Static library
-add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
+add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS} ${LIBCRUX_SOURCES})
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec128>)

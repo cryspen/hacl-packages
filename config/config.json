@@ -6,6 +6,9 @@
     "vale_include_paths": [
         "vale/include"
     ],
+    "libcrux_include_paths": [
+        "libcrux/include"
+    ],
     "hacl_sources": {
         "nacl": [
             {
@@ -325,11 +328,12 @@
                 "file": "Hacl_Frodo_KEM.c",
                 "features": "std"
             }
-        ],
+        ]
+    },
+    "libcrux_sources": {
         "kyber": [
             {
-                "file": "Libcrux_Kem_Kyber_Kyber768.c",
-                "features": "std"
+                "file": "Libcrux_Kem_Kyber_Kyber768.c"
             }
         ]
     },
