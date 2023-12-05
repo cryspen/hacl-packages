@@ -72,8 +72,7 @@ class Config:
         files = []
         for line in stdout.splitlines():
             # Remove object file and the c file itself
-            first_line_search = "(\w*).o: " + \
-                re.escape(join(source_dir, "(\w*).c"))
+            first_line_search = "(\w*).o: " + re.escape(join(source_dir, "(\w*).c"))
             line = re.sub(first_line_search, "", line)
             line = line.strip()
             line = line.split(" ")
@@ -87,8 +86,7 @@ class Config:
         # Get all source files in source_dir
         source_files = glob(join(source_dir, "*.c"))
         # remove source_dir and .c
-        source_files = list(
-            map(lambda s: s[len(source_dir) + 1: -2], source_files))
+        source_files = list(map(lambda s: s[len(source_dir) + 1 : -2], source_files))
 
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
@@ -181,8 +179,7 @@ class Config:
         self.hacl_includes = []
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files, includes = self.dependencies(
-                    source_dir, a, source_file["file"])
+                files, includes = self.dependencies(source_dir, a, source_file["file"])
                 self.hacl_includes.extend(
                     includes if type(includes) == list else [includes]
                 )
@@ -232,8 +229,10 @@ class Config:
         # Flatten libcrux sources
         libcrux_files_flattened = []
         for _, impls in self.libcrux_files.items():
-           libcrux_files_flattened.extend(impl["file"] for impl in impls)
-        self.libcrux_files = [join("libcrux", "src", f) for f in libcrux_files_flattened]
+            libcrux_files_flattened.extend(impl["file"] for impl in impls)
+        self.libcrux_files = [
+            join("libcrux", "src", f) for f in libcrux_files_flattened
+        ]
 
         # Evercrypt has feature detection and we don't disable anything.
         self.evercrypt_compile_files = []
@@ -250,8 +249,7 @@ class Config:
             self.hacl_compile_feature[k] = list(
                 dict.fromkeys(self.hacl_compile_feature[k])
             )
-        self.evercrypt_compile_files = list(
-            dict.fromkeys(self.evercrypt_compile_files))
+        self.evercrypt_compile_files = list(dict.fromkeys(self.evercrypt_compile_files))
         self.hacl_includes = list(dict.fromkeys(self.hacl_includes))
         # Drop Hacl_ files from evercrypt
         self.evercrypt_compile_files = [
@@ -355,17 +353,14 @@ class Config:
                     "set(LIBCRUX_SOURCES\n\t%s\n)\n"
                     % (
                         "\n\t".join(
-                            join("${PROJECT_SOURCE_DIR}", f)
-                            for f in self.libcrux_files
+                            join("${PROJECT_SOURCE_DIR}", f) for f in self.libcrux_files
                         ).replace("\\", "/"),
                     )
                 )
 
             out.write(
                 "set(ALGORITHM_TEST_FILES\n\t%s\n)\n"
-                % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace(
-                    "\\", "/"
-                )
+                % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace("\\", "/")
             )
             for a in self.tests:
                 out.write(
