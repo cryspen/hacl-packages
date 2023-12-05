@@ -504,8 +504,8 @@
         "aead": [
             "aead.cc"
         ],
-        "kyber768": [
-            "kyber768.cc"
+        "kyber": [
+            "kyber.cc"
         ]
     },
     "benchmarks": {
