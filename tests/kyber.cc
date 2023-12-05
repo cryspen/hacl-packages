@@ -18,12 +18,12 @@ using namespace std;
 class KAT
 {
 public:
-    bytes key_generation_seed;
-    bytes sha3_256_hash_of_public_key;
-    bytes sha3_256_hash_of_secret_key;
-    bytes encapsulation_seed;
-    bytes sha3_256_hash_of_ciphertext;
-    bytes shared_secret;
+  bytes key_generation_seed;
+  bytes sha3_256_hash_of_public_key;
+  bytes sha3_256_hash_of_secret_key;
+  bytes encapsulation_seed;
+  bytes sha3_256_hash_of_ciphertext;
+  bytes shared_secret;
 };
 
 vector<KAT>
@@ -37,16 +37,19 @@ read_kats(string path)
 
   // Read test group
   for (auto& kat_raw : kats_raw.items()) {
-      auto kat_raw_value = kat_raw.value();
+    auto kat_raw_value = kat_raw.value();
 
-      kats.push_back(KAT{
-                          .key_generation_seed = from_hex(kat_raw_value["key_generation_seed"]),
-                          .sha3_256_hash_of_public_key = from_hex(kat_raw_value["sha3_256_hash_of_public_key"]),
-                          .sha3_256_hash_of_secret_key = from_hex(kat_raw_value["sha3_256_hash_of_secret_key"]),
-                          .encapsulation_seed = from_hex(kat_raw_value["encapsulation_seed"]),
-                          .sha3_256_hash_of_ciphertext = from_hex(kat_raw_value["sha3_256_hash_of_ciphertext"]),
-                          .shared_secret = from_hex(kat_raw_value["shared_secret"]),
-                    });
+    kats.push_back(KAT{
+      .key_generation_seed = from_hex(kat_raw_value["key_generation_seed"]),
+      .sha3_256_hash_of_public_key =
+        from_hex(kat_raw_value["sha3_256_hash_of_public_key"]),
+      .sha3_256_hash_of_secret_key =
+        from_hex(kat_raw_value["sha3_256_hash_of_secret_key"]),
+      .encapsulation_seed = from_hex(kat_raw_value["encapsulation_seed"]),
+      .sha3_256_hash_of_ciphertext =
+        from_hex(kat_raw_value["sha3_256_hash_of_ciphertext"]),
+      .shared_secret = from_hex(kat_raw_value["shared_secret"]),
+    });
   }
 
   return kats;
@@ -54,7 +57,7 @@ read_kats(string path)
 
 TEST(Kyber768Test, ConsistencyTest)
 {
-  uint8_t randomness[64] = {0};
+  uint8_t randomness[64] = { 0 };
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
@@ -63,7 +66,8 @@ TEST(Kyber768Test, ConsistencyTest)
 
   uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
   uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
-  rv = Libcrux_Kyber768_Encapsulate(ciphertext, sharedSecret, publicKey, randomness);
+  rv = Libcrux_Kyber768_Encapsulate(
+    ciphertext, sharedSecret, publicKey, randomness);
 
   EXPECT_EQ(0, rv);
 
@@ -78,13 +82,13 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
 {
   auto kats = read_kats("kyber768_nistkats.json");
 
-  uint8_t randomness[64] = {0};
+  uint8_t randomness[64] = { 0 };
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
   for (auto kat : kats) {
-      int rv = Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, kat.key_generation_seed.data());
-      EXPECT_EQ(0, rv);
+    int rv = Libcrux_Kyber768_GenerateKeyPair(
+      publicKey, secretKey, kat.key_generation_seed.data());
+    EXPECT_EQ(0, rv);
   }
 }
-
