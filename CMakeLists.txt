@@ -333,7 +333,7 @@ configure_file(config/Config.h.in config.h)
 # Set library config and files
 # Now combine everything into the hacl library
 # # Dynamic library
-add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS} ${LIBCRUX_SOURCES})
+add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 if(NOT MSVC)
     target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
 endif()
@@ -349,7 +349,7 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
 endif()
 
 # # Static library
-add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS} ${LIBCRUX_SOURCES})
+add_library(hacl_static STATIC ${SOURCES_std} ${VALE_OBJECTS})
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec128>)
@@ -357,6 +357,11 @@ endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
+endif()
+
+add_library(libcrux_static STATIC ${LIBCRUX_SOURCES})
+if(NOT MSVC)
+    target_compile_options(libcrux_static PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
 endif()
 
 # Install
@@ -471,6 +476,7 @@ if(ENABLE_TESTS)
             hacl_static
             hacl_cpu_features
             nlohmann_json::nlohmann_json
+            libcrux_static
         )
         target_include_directories(${TEST_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/cpu-features/include)
 
