@@ -507,7 +507,9 @@
         ],
         "aead": [
             "aead.cc"
-        ],
+        ]
+    },
+    "libcrux_tests": {
         "kyber": [
             "kyber.cc"
         ]

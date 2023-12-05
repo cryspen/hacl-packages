@@ -132,6 +132,7 @@ class Config:
         self.vale_files = self.config["vale_sources"]
         self.libcrux_files = self.config["libcrux_sources"]
         self.tests = self.config["tests"]
+        self.libcrux_tests = self.config["libcrux_tests"]
         self.benchmarks = self.config["benchmarks"]
 
         self.include_paths = [include_dir]
@@ -206,6 +207,12 @@ class Config:
         # Flatten test sources
         self.test_sources = [
             f for files in [self.tests[b] for b in self.tests] for f in files
+        ]
+
+        self.libcrux_test_sources = [
+            f
+            for files in [self.libcrux_tests[b] for b in self.libcrux_tests]
+            for f in files
         ]
 
         # Flatten benchmark sources
@@ -322,6 +329,16 @@ class Config:
                     "\n\t".join(
                         join("${PROJECT_SOURCE_DIR}", "tests", f)
                         for f in self.test_sources
+                    ).replace("\\", "/")
+                )
+            )
+
+            out.write(
+                "set(LIBCRUX_TEST_SOURCES\n\t%s\n)\n"
+                % (
+                    "\n\t".join(
+                        join("${PROJECT_SOURCE_DIR}", "tests", f)
+                        for f in self.libcrux_test_sources
                     ).replace("\\", "/")
                 )
             )

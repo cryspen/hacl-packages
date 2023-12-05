@@ -884,10 +884,8 @@ extern "C" {
         output: *mut u8,
     );
 }
-pub type __m128i = [::std::os::raw::c_longlong; 2usize];
-pub type Lib_IntVector_Intrinsics_vec128 = __m128i;
-pub type __m256i = [::std::os::raw::c_longlong; 4usize];
-pub type Lib_IntVector_Intrinsics_vec256 = __m256i;
+pub type uint32x4_t = [u32; 4usize];
+pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hacl_Hash_Blake2s_Simd128_block_state_t_s {
@@ -944,8 +942,8 @@ extern "C" {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hacl_Hash_Blake2b_Simd256_block_state_t_s {
-    pub fst: *mut Lib_IntVector_Intrinsics_vec256,
-    pub snd: *mut Lib_IntVector_Intrinsics_vec256,
+    pub fst: *mut *mut ::std::os::raw::c_void,
+    pub snd: *mut *mut ::std::os::raw::c_void,
 }
 pub type Hacl_Hash_Blake2b_Simd256_block_state_t = Hacl_Hash_Blake2b_Simd256_block_state_t_s;
 #[repr(C)]
