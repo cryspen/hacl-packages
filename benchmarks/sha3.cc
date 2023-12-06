@@ -3,6 +3,8 @@
 #include "Hacl_Hash_SHA3.h"
 #include "Hacl_Hash_SHA3_Scalar.h"
 
+#include "util.h"
+
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_SHA3_Simd256.h"
 #endif
@@ -77,6 +79,11 @@ BENCHMARK(Hacl_Sha3_224_Scalar)->Setup(DoSetup);
 static void
 Hacl_Sha3_224_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_sha3_224(input.size(),
                                      (uint8_t*)input.data(),
@@ -144,6 +151,11 @@ BENCHMARK(Hacl_Sha3_256_Scalar)->Setup(DoSetup);
 static void
 Hacl_Sha3_256_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_sha3_256(input.size(),
                                      (uint8_t*)input.data(),
@@ -234,10 +246,15 @@ Hacl_Sha3_384_Scalar(benchmark::State& state)
 
 BENCHMARK(Hacl_Sha3_384_Scalar)->Setup(DoSetup);
 
-#ifdef HACL_CAN_COMPILE_VEC384
+#ifdef HACL_CAN_COMPILE_VEC256
 static void
 Hacl_Sha3_384_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_sha3_384(input.size(),
                                      (uint8_t*)input.data(),
@@ -305,6 +322,11 @@ BENCHMARK(Hacl_Sha3_512_Scalar)->Setup(DoSetup);
 static void
 Hacl_Sha3_512_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_sha3_512(input.size(),
                                      (uint8_t*)input.data(),
@@ -460,6 +482,11 @@ BENCHMARK(Hacl_Sha3_shake128_Scalar)->Setup(DoSetup);
 static void
 Hacl_Sha3_shake128_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_shake128(input.size(),
                                      (uint8_t*)input.data(),
@@ -507,6 +534,11 @@ BENCHMARK(Hacl_Sha3_shake256_Scalar)->Setup(DoSetup);
 static void
 Hacl_Sha3_shake256_Simd256(benchmark::State& state)
 {
+  if (!vec256_support()) {
+    state.SkipWithError("No vec256 support");
+    return;
+  }
+  
   for (auto _ : state) {
     Hacl_Hash_SHA3_Simd256_shake256(input.size(),
                                      (uint8_t*)input.data(),
