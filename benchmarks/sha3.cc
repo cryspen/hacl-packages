@@ -1,10 +1,10 @@
 #include "util.h"
 
 #include "Hacl_Hash_SHA3.h"
-#include "Hacl_SHA3_Scalar.h"
+#include "Hacl_Hash_SHA3_Scalar.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_SHA3_Vec256.h"
+#include "Hacl_Hash_SHA3_Simd256.h"
 #endif
 
 const bytes input(1000, 0x37);
@@ -59,10 +59,10 @@ Hacl_Sha3_224(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_224)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_224(benchmark::State& state)
+Hacl_Sha3_224_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_224(
+    Hacl_Hash_SHA3_Scalar_sha3_224(
       input.size(), (uint8_t*)input.data(), digest224_0.data());
   }
   if (digest224_0 != expected_digest_sha3_224) {
@@ -71,14 +71,14 @@ Hacl_Scalar_Sha3_224(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_224)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_224_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Hacl_Vec256_Sha3_224(benchmark::State& state)
+Hacl_Sha3_224_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_sha3_224_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_sha3_224(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -97,7 +97,7 @@ Hacl_Vec256_Sha3_224(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec256_Sha3_224)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_224_Simd256)->Setup(DoSetup);
 #endif
 
 #ifndef NO_OPENSSL
@@ -126,10 +126,10 @@ Hacl_Sha3_256(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_256)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_256(benchmark::State& state)
+Hacl_Sha3_256_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_256(
+    Hacl_Hash_SHA3_Scalar_sha3_256(
       input.size(), (uint8_t*)input.data(), digest256_0.data());
   }
   if (digest256_0 != expected_digest_sha3_256) {
@@ -138,14 +138,14 @@ Hacl_Scalar_Sha3_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_256)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_256_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Hacl_Vec256_Sha3_256(benchmark::State& state)
+Hacl_Sha3_256_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_sha3_256_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_sha3_256(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -164,7 +164,7 @@ Hacl_Vec256_Sha3_256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec256_Sha3_256)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_256_Simd256)->Setup(DoSetup);
 #endif
 
 #include "sha3.h"
@@ -220,10 +220,10 @@ Hacl_Sha3_384(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_384)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_384(benchmark::State& state)
+Hacl_Sha3_384_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_384(
+    Hacl_Hash_SHA3_Scalar_sha3_384(
       input.size(), (uint8_t*)input.data(), digest384_0.data());
   }
   if (digest384_0 != expected_digest_sha3_384) {
@@ -232,14 +232,14 @@ Hacl_Scalar_Sha3_384(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_384)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_384_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC384
 static void
-Hacl_Vec384_Sha3_384(benchmark::State& state)
+Hacl_Sha3_384_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_sha3_384_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_sha3_384(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -258,7 +258,7 @@ Hacl_Vec384_Sha3_384(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec384_Sha3_384)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_384_Simd256)->Setup(DoSetup);
 #endif
 
 #ifndef NO_OPENSSL
@@ -287,10 +287,10 @@ Hacl_Sha3_512(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_512)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_512(benchmark::State& state)
+Hacl_Sha3_512_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_sha3_512(
+    Hacl_Hash_SHA3_Scalar_sha3_512(
       input.size(), (uint8_t*)input.data(), digest512_0.data());
   }
   if (digest512_0 != expected_digest_sha3_512) {
@@ -299,14 +299,14 @@ Hacl_Scalar_Sha3_512(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_512)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_512_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Hacl_Vec512_Sha3_512(benchmark::State& state)
+Hacl_Sha3_512_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_sha3_512_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_sha3_512(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -325,7 +325,7 @@ Hacl_Vec512_Sha3_512(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec512_Sha3_512)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_512_Simd256)->Setup(DoSetup);
 #endif
 
 static void
@@ -444,24 +444,24 @@ Hacl_Sha3_shake128(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_shake128)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_shake128(benchmark::State& state)
+Hacl_Sha3_shake128_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_shake128_hacl(input.size(),
+    Hacl_Hash_SHA3_Scalar_shake128(input.size(),
                                    (uint8_t*)input.data(),
                                    digest_shake_0.size(),
                                    digest_shake_0.data());
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_shake128)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_shake128_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Hacl_Vec256_Sha3_shake128(benchmark::State& state)
+Hacl_Sha3_shake128_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_shake128_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_shake128(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -474,7 +474,7 @@ Hacl_Vec256_Sha3_shake128(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec256_Sha3_shake128)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_shake128_Simd256)->Setup(DoSetup);
 #endif
 
 static void
@@ -491,24 +491,24 @@ Hacl_Sha3_shake256(benchmark::State& state)
 BENCHMARK(Hacl_Sha3_shake256)->Setup(DoSetup);
 
 static void
-Hacl_Scalar_Sha3_shake256(benchmark::State& state)
+Hacl_Sha3_shake256_Scalar(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Scalar_shake256_hacl(input.size(),
+    Hacl_Hash_SHA3_Scalar_shake256(input.size(),
                                    (uint8_t*)input.data(),
                                    digest_shake_0.size(),
                                    digest_shake_0.data());
   }
 }
 
-BENCHMARK(Hacl_Scalar_Sha3_shake256)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_shake256_Scalar)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
-Hacl_Vec256_Sha3_shake256(benchmark::State& state)
+Hacl_Sha3_shake256_Simd256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_SHA3_Vec256_shake256_vec256(input.size(),
+    Hacl_Hash_SHA3_Simd256_shake256(input.size(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
                                      (uint8_t*)input.data(),
@@ -521,7 +521,7 @@ Hacl_Vec256_Sha3_shake256(benchmark::State& state)
   }
 }
 
-BENCHMARK(Hacl_Vec256_Sha3_shake256)->Setup(DoSetup);
+BENCHMARK(Hacl_Sha3_shake256_Simd256)->Setup(DoSetup);
 #endif
 
 BENCHMARK_MAIN();

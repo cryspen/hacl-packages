@@ -328,11 +328,11 @@
         ],
         "sha3-mb": [
             {
-                "file": "Hacl_SHA3_Scalar.c",
+                "file": "Hacl_Hash_SHA3_Scalar.c",
                 "features": "std"
             },
             {
-                "file": "Hacl_SHA3_Vec256.c",
+                "file": "Hacl_Hash_SHA3_Simd256.c",
                 "features": "vec256"
             }
         ]
