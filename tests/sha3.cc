@@ -12,11 +12,11 @@
 #include <string.h>
 
 #include "Hacl_Hash_SHA3.h"
-#include "Hacl_SHA3_Scalar.h"
+#include "Hacl_Hash_SHA3_Scalar.h"
 #include "hacl-cpu-features.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "Hacl_SHA3_Vec256.h"
+#include "Hacl_Hash_SHA3_Simd256.h"
 #endif
 
 #include "config.h"
@@ -178,7 +178,7 @@ TEST(ApiSuite, ApiTest)
 
     uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-    Hacl_SHA3_Scalar_sha3_256(message_size, (uint8_t*)message, digest);
+    Hacl_Hash_SHA3_Scalar_sha3_256(message_size, (uint8_t*)message, digest);
     // ANCHOR_END(example scalar_sha3_256)
 
     bytes expected_digest = from_hex(
@@ -203,7 +203,7 @@ TEST(ApiSuite, ApiTest)
     uint32_t digest_size = 42;
     uint8_t digest[42];
 
-    Hacl_SHA3_Scalar_shake128_hacl(
+    Hacl_Hash_SHA3_Scalar_shake128(
       message_size, (uint8_t*)message, digest_size, digest);
     // ANCHOR_END(example scalar_shake128)
 
@@ -232,7 +232,7 @@ TEST(ApiSuite, ApiTest)
       uint8_t digest2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
       uint8_t digest3[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-      Hacl_SHA3_Vec256_sha3_256_vec256(message_size,
+      Hacl_Hash_SHA3_Simd256_sha3_256(message_size,
                                        (uint8_t*)message,
                                        (uint8_t*)message,
                                        (uint8_t*)message,
@@ -283,7 +283,7 @@ TEST(ApiSuite, ApiTest)
       uint8_t digest2[42];
       uint8_t digest3[42];
 
-      Hacl_SHA3_Vec256_shake128_vec256(message_size,
+      Hacl_Hash_SHA3_Simd256_shake128(message_size,
                                        (uint8_t*)message0,
                                        (uint8_t*)message1,
                                        (uint8_t*)message2,
@@ -355,16 +355,16 @@ TEST_P(Sha3KAT, TryKAT)
   {
     bytes digest(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
-      Hacl_SHA3_Scalar_sha3_224(
+      Hacl_Hash_SHA3_Scalar_sha3_224(
         test_case.msg.size(), test_case.msg.data(), digest.data());
     } else if (test_case.md.size() == 256 / 8) {
-      Hacl_SHA3_Scalar_sha3_256(
+      Hacl_Hash_SHA3_Scalar_sha3_256(
         test_case.msg.size(), test_case.msg.data(), digest.data());
     } else if (test_case.md.size() == 384 / 8) {
-      Hacl_SHA3_Scalar_sha3_384(
+      Hacl_Hash_SHA3_Scalar_sha3_384(
         test_case.msg.size(), test_case.msg.data(), digest.data());
     } else if (test_case.md.size() == 512 / 8) {
-      Hacl_SHA3_Scalar_sha3_512(
+      Hacl_Hash_SHA3_Scalar_sha3_512(
         test_case.msg.size(), test_case.msg.data(), digest.data());
     }
 
@@ -380,7 +380,7 @@ TEST_P(Sha3KAT, TryKAT)
     bytes digest2(test_case.md.size(), 0);
     bytes digest3(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
-      Hacl_SHA3_Vec256_sha3_224_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_sha3_224(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
@@ -390,7 +390,7 @@ TEST_P(Sha3KAT, TryKAT)
                                        digest2.data(),
                                        digest3.data());
     } else if (test_case.md.size() == 256 / 8) {
-      Hacl_SHA3_Vec256_sha3_256_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_sha3_256(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
@@ -400,7 +400,7 @@ TEST_P(Sha3KAT, TryKAT)
                                        digest2.data(),
                                        digest3.data());
     } else if (test_case.md.size() == 384 / 8) {
-      Hacl_SHA3_Vec256_sha3_384_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_sha3_384(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
@@ -410,7 +410,7 @@ TEST_P(Sha3KAT, TryKAT)
                                        digest2.data(),
                                        digest3.data());
     } else if (test_case.md.size() == 512 / 8) {
-      Hacl_SHA3_Vec256_sha3_512_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_sha3_512(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
@@ -468,7 +468,7 @@ TEST_P(ShakeKAT, TryKAT)
     if (test_case.md.size() == 128 / 8) {
       bytes digest(test_case.md.size(), 128 / 8);
 
-      Hacl_SHA3_Scalar_shake128_hacl(test_case.msg.size(),
+      Hacl_Hash_SHA3_Scalar_shake128(test_case.msg.size(),
                                      test_case.msg.data(),
                                      digest.size(),
                                      digest.data());
@@ -478,7 +478,7 @@ TEST_P(ShakeKAT, TryKAT)
     } else if (test_case.md.size() == 256 / 8) {
       bytes digest(test_case.md.size(), 256 / 8);
 
-      Hacl_SHA3_Scalar_shake256_hacl(test_case.msg.size(),
+      Hacl_Hash_SHA3_Scalar_shake256(test_case.msg.size(),
                                      test_case.msg.data(),
                                      digest.size(),
                                      digest.data());
@@ -497,7 +497,7 @@ TEST_P(ShakeKAT, TryKAT)
       bytes digest2(test_case.md.size(), 128 / 8);
       bytes digest3(test_case.md.size(), 128 / 8);
 
-      Hacl_SHA3_Vec256_shake128_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_shake128(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
@@ -526,7 +526,7 @@ TEST_P(ShakeKAT, TryKAT)
       bytes digest2(test_case.md.size(), 256 / 8);
       bytes digest3(test_case.md.size(), 256 / 8);
 
-      Hacl_SHA3_Vec256_shake256_vec256(test_case.msg.size(),
+      Hacl_Hash_SHA3_Simd256_shake256(test_case.msg.size(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
                                        test_case.msg.data(),
