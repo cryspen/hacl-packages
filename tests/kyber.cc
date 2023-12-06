@@ -83,6 +83,7 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
   auto kats = read_kats("kyber768_nistkats.json");
 
   uint8_t randomness[64] = { 0 };
+
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
