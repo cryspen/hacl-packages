@@ -64,8 +64,9 @@ def run_tests(tests, bin_path, test_args=[], algorithms=[], coverage=False):
                 if coverage:
                     generate_report(test_name, my_env)
 
+    os.chdir(dir_backup)
+
     if coverage:
-        os.chdir(dir_backup)
         subprocess.call(["./tools/coverage.sh"])
 
 

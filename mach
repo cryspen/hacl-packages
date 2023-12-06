@@ -197,7 +197,7 @@ def build(args):
     if not os.path.exists("build"):
         os.mkdir("build")
 
-    cmake_args = []
+    cmake_args = ["-DBUILD_LIBCRUX=1"]
     # Verbosity
     verbose = False
     if args.verbose:
@@ -475,6 +475,7 @@ def build(args):
     # test if requested
     if args.test:
         run_tests(config.tests, build_config, coverage=args.coverage)
+        run_tests(config.libcrux_tests, build_config, coverage=args.coverage)
 
     # benchmark if requested
     if args.benchmark:

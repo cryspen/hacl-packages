@@ -6,8 +6,8 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_DRBG.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA2.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_EC_Ed25519.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Base.c
@@ -57,8 +57,8 @@ set(SOURCES_std
 set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_Simd256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_AEAD_Chacha20Poly1305_Simd256.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_MAC_Poly1305_Simd256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_MAC_Poly1305_Simd256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Vec256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF_Blake2b_256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_Blake2b_256.c
@@ -73,8 +73,8 @@ set(SOURCES_vec128
 	${PROJECT_SOURCE_DIR}/src/Hacl_Bignum64.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_GenericField64.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_AEAD_Chacha20Poly1305_Simd128.c
-	${PROJECT_SOURCE_DIR}/src/Hacl_MAC_Poly1305_Simd128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Chacha20_Vec128.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_MAC_Poly1305_Simd128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_SHA2_Vec128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF_Blake2s_128.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HMAC_Blake2s_128.c
@@ -112,16 +112,16 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal/LowStar_Endianness.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Salsa20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Krmllib.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Krmllib.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Krmllib.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_DRBG.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
@@ -138,14 +138,16 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b.h
-	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Impl_Blake2_Constants.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/lib_memzero0.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2b_Simd256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_Blake2s_Simd128.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Bignum.h
@@ -159,16 +161,16 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_GenericField64.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_MAC_Poly1305.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec32.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Chacha20.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Chacha20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305_Simd128.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305_Simd256.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec256.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305_Simd256.h
@@ -195,11 +197,15 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_MD5.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_MD5.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_HMAC.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2s_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
@@ -240,6 +246,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Cipher.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Chacha20Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Poly1305.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
 	${PROJECT_SOURCE_DIR}/include/internal/Hacl_Hash_SHA3_Scalar.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3_Scalar.h
@@ -254,15 +262,15 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal/LowStar_Endianness.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Salsa20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Krmllib.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Krmllib.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_DRBG.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Streaming_Types.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA2.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA2.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Curve25519_51.h
 	${PROJECT_SOURCE_DIR}/include/lib_intrinsics.h
@@ -273,11 +281,11 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_EC_Ed25519.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Base.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b.h
-	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s.h
 	${PROJECT_SOURCE_DIR}/include/lib_memzero0.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/libintvector.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum256_32.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Bignum.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Bignum.h
@@ -290,14 +298,13 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_GenericField64.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec32.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Chacha20.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305_Simd128.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec128.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_AEAD_Chacha20Poly1305_Simd256.h
-	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Chacha20_Vec256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Curve25519_64.h
@@ -312,11 +319,14 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_SHA2_Vec256.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_SHA1.h
 	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_Hash_MD5.h
+	${PROJECT_SOURCE_DIR}/include/internal/../Hacl_HMAC.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2s_128.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2s_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_Blake2b_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
@@ -353,6 +363,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Cipher.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Chacha20Poly1305.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_Poly1305.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3_Scalar.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_Hash_SHA3_Simd256.h
@@ -388,6 +400,7 @@ set(INCLUDE_PATHS
 	${PROJECT_SOURCE_DIR}/karamel/include
 	${PROJECT_SOURCE_DIR}/karamel/krmllib/dist/minimal
 	${PROJECT_SOURCE_DIR}/vale/include
+	${PROJECT_SOURCE_DIR}/libcrux/include
 )
 set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/detection.cc
@@ -414,6 +427,7 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/nacl.cc
 	${PROJECT_SOURCE_DIR}/tests/evercrypt.cc
 	${PROJECT_SOURCE_DIR}/tests/aead.cc
+	${PROJECT_SOURCE_DIR}/tests/kyber.cc
 )
 set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/blake.cc
@@ -460,6 +474,9 @@ set(VALE_SOURCES_msvc
 	${PROJECT_SOURCE_DIR}/vale/src/curve25519-x86_64-msvc.asm
 	${PROJECT_SOURCE_DIR}/vale/src/poly1305-x86_64-msvc.asm
 )
+set(LIBCRUX_SOURCES
+	${PROJECT_SOURCE_DIR}/libcrux/src/Libcrux_Kem_Kyber_Kyber768.c
+)
 set(ALGORITHM_TEST_FILES
 	TEST_FILES_detection
 	TEST_FILES_bignum
@@ -482,6 +499,7 @@ set(ALGORITHM_TEST_FILES
 	TEST_FILES_nacl
 	TEST_FILES_evercrypt
 	TEST_FILES_aead
+	TEST_FILES_kyber
 )
 set(TEST_FILES_detection
 	detection.cc
@@ -548,4 +566,7 @@ set(TEST_FILES_evercrypt
 )
 set(TEST_FILES_aead
 	aead.cc
+)
+set(TEST_FILES_kyber
+	kyber.cc
 )

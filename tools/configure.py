@@ -72,8 +72,7 @@ class Config:
         files = []
         for line in stdout.splitlines():
             # Remove object file and the c file itself
-            first_line_search = "(\w*).o: " + \
-                re.escape(join(source_dir, "(\w*).c"))
+            first_line_search = "(\w*).o: " + re.escape(join(source_dir, "(\w*).c"))
             line = re.sub(first_line_search, "", line)
             line = line.strip()
             line = line.split(" ")
@@ -87,8 +86,7 @@ class Config:
         # Get all source files in source_dir
         source_files = glob(join(source_dir, "*.c"))
         # remove source_dir and .c
-        source_files = list(
-            map(lambda s: s[len(source_dir) + 1: -2], source_files))
+        source_files = list(map(lambda s: s[len(source_dir) + 1 : -2], source_files))
 
         # Now let's collect the c files from the included headers
         # This adds all files without looking at the feature requirements into deps.
@@ -132,7 +130,9 @@ class Config:
         self.hacl_files = self.config["hacl_sources"]
         self.evercrypt_files = self.config["evercrypt_sources"]
         self.vale_files = self.config["vale_sources"]
+        self.libcrux_files = self.config["libcrux_sources"]
         self.tests = self.config["tests"]
+        self.libcrux_tests = self.config["libcrux_tests"]
         self.benchmarks = self.config["benchmarks"]
 
         self.include_paths = [include_dir]
@@ -143,6 +143,9 @@ class Config:
         # If vale is compiled add the include path
         if len(self.vale_files) != 0:
             self.include_paths.extend(self.config["vale_include_paths"])
+        # If libcrux is compiled add the include path
+        if len(self.libcrux_files) != 0:
+            self.include_paths.extend(self.config["libcrux_include_paths"])
 
         # If the build directory is empty, copy the `default_config.h` there to
         # make the dependency analysis work.
@@ -177,8 +180,7 @@ class Config:
         self.hacl_includes = []
         for a in self.hacl_files:
             for source_file in self.hacl_files[a]:
-                files, includes = self.dependencies(
-                    source_dir, a, source_file["file"])
+                files, includes = self.dependencies(source_dir, a, source_file["file"])
                 self.hacl_includes.extend(
                     includes if type(includes) == list else [includes]
                 )
@@ -207,6 +209,12 @@ class Config:
             f for files in [self.tests[b] for b in self.tests] for f in files
         ]
 
+        self.libcrux_test_sources = [
+            f
+            for files in [self.libcrux_tests[b] for b in self.libcrux_tests]
+            for f in files
+        ]
+
         # Flatten benchmark sources
         self.benchmark_sources = [
             f for files in [self.benchmarks[b] for b in self.benchmarks] for f in files
@@ -225,6 +233,14 @@ class Config:
             platforms[p] = [join("vale", "src", f) for f in platforms[p]]
         self.vale_files = platforms
 
+        # Flatten libcrux sources
+        libcrux_files_flattened = []
+        for _, impls in self.libcrux_files.items():
+            libcrux_files_flattened.extend(impl["file"] for impl in impls)
+        self.libcrux_files = [
+            join("libcrux", "src", f) for f in libcrux_files_flattened
+        ]
+
         # Evercrypt has feature detection and we don't disable anything.
         self.evercrypt_compile_files = []
         for a in self.evercrypt_files:
@@ -240,8 +256,7 @@ class Config:
             self.hacl_compile_feature[k] = list(
                 dict.fromkeys(self.hacl_compile_feature[k])
             )
-        self.evercrypt_compile_files = list(
-            dict.fromkeys(self.evercrypt_compile_files))
+        self.evercrypt_compile_files = list(dict.fromkeys(self.evercrypt_compile_files))
         self.hacl_includes = list(dict.fromkeys(self.hacl_includes))
         # Drop Hacl_ files from evercrypt
         self.evercrypt_compile_files = [
@@ -319,6 +334,16 @@ class Config:
             )
 
             out.write(
+                "set(LIBCRUX_TEST_SOURCES\n\t%s\n)\n"
+                % (
+                    "\n\t".join(
+                        join("${PROJECT_SOURCE_DIR}", "tests", f)
+                        for f in self.libcrux_test_sources
+                    ).replace("\\", "/")
+                )
+            )
+
+            out.write(
                 "set(BENCHMARK_SOURCES\n\t%s\n)\n"
                 % (
                     "\n\t".join(
@@ -340,11 +365,19 @@ class Config:
                     )
                 )
 
+            for os in self.libcrux_files:
+                out.write(
+                    "set(LIBCRUX_SOURCES\n\t%s\n)\n"
+                    % (
+                        "\n\t".join(
+                            join("${PROJECT_SOURCE_DIR}", f) for f in self.libcrux_files
+                        ).replace("\\", "/"),
+                    )
+                )
+
             out.write(
                 "set(ALGORITHM_TEST_FILES\n\t%s\n)\n"
-                % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace(
-                    "\\", "/"
-                )
+                % "\n\t".join("TEST_FILES_" + a for a in self.tests).replace("\\", "/")
             )
             for a in self.tests:
                 out.write(
@@ -365,12 +398,17 @@ class Config:
         kremlin_includes = [
             include for include in self.hacl_includes if include.startswith("kremlin")
         ]
+        libcrux_includes = [
+            include for include in self.include_paths if include.startswith("libcrux")
+        ]
         return {
             "sources": self.hacl_compile_feature,
             "includes": includes,
             "kremlin_includes": kremlin_includes,
             "vale_sources": self.vale_files,
             "vale_includes": vale_includes,
+            "libcrux_sources": self.libcrux_files,
+            "libcrux_includes": libcrux_includes,
         }
 
     def write_dep_config(self, dep_config):

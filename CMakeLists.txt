@@ -359,6 +359,13 @@ if(TOOLCHAIN_CAN_COMPILE_VEC256 AND HACL_VEC256_O)
     target_sources(hacl_static PRIVATE $<TARGET_OBJECTS:hacl_vec256>)
 endif()
 
+if(BUILD_LIBCRUX)
+    add_library(libcrux_static STATIC ${LIBCRUX_SOURCES})
+    if(NOT MSVC)
+        target_compile_options(libcrux_static PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+    endif()
+endif()
+
 # Install
 # # This allows package maintainers to control the install destination by setting
 # # the appropriate cache variables.
@@ -482,6 +489,43 @@ if(ENABLE_TESTS)
                 ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME} $<TARGET_FILE_DIR:${TEST_NAME}>)
         endif()
     endforeach()
+
+    if(BUILD_LIBCRUX)
+        foreach(TEST_FILE IN LISTS LIBCRUX_TEST_SOURCES)
+            get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+            add_executable(${TEST_NAME}
+                ${TEST_FILE}
+            )
+
+            # Coverage
+            if(ENABLE_COVERAGE)
+                target_compile_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+                target_link_options(${TEST_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+            endif()
+
+            if(MSVC)
+                # MSVC needs a modern C++ for designated initializers.
+                target_compile_options(${TEST_NAME} PRIVATE /std:c++20)
+            endif(MSVC)
+
+            add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
+            target_link_libraries(${TEST_NAME} PRIVATE
+                gtest_main
+                hacl_static
+                hacl_cpu_features
+                nlohmann_json::nlohmann_json
+                libcrux_static
+            )
+
+            if(EXISTS ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME})
+                # Copy test input files. They must be in a directory with the same
+                # name as the test and get copied to the build directory.
+                add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME} $<TARGET_FILE_DIR:${TEST_NAME}>)
+            endif()
+        endforeach()
+    endif()
 endif()
 
 # Benchmarks

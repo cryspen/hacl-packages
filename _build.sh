@@ -6,5 +6,5 @@ printf " ! USE ./mach FOR MORE OPTIONS                 !\n\n"
 
 mkdir build
 cp config/default_config.cmake build/config.cmake
-cmake -B build -G"Ninja Multi-Config"
+cmake -B build -G"Ninja Multi-Config" -DBUILD_LIBCRUX=ON
 ninja -f build-Release.ninja -C build
