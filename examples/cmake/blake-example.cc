@@ -5,7 +5,7 @@
  *    - http://www.apache.org/licenses/LICENSE-2.0
  *    - http://opensource.org/licenses/MIT
  */
-#include "Hacl_Hash_Blake2.h"
+#include "Hacl_Hash_Blake2b.h"
 
 using namespace std;
 
@@ -35,8 +35,8 @@ int main(int argc, char const *argv[])
     uint32_t key_len = 0;
     uint8_t *key = 0;
 
-    Hacl_Blake2b_32_blake2b(
-        output_len, output, message_len, (uint8_t *)message, key_len, key);
+    Hacl_Hash_Blake2b_hash_with_key(
+        output, output_len, (uint8_t *)message,message_len, key, key_len);
 
     print_hex_ln(output_len, output);
 

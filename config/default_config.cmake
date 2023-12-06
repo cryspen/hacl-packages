@@ -52,6 +52,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Chacha20Poly1305.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_Poly1305.c
 	${PROJECT_SOURCE_DIR}/src/EverCrypt_AEAD.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3_Scalar.c
 )
 set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2b_Simd256.c
@@ -64,6 +65,7 @@ set(SOURCES_vec256
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP256_SHA256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP256_SHA512.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_P256_CP256_SHA256.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_SHA3_Vec256.c
 )
 set(SOURCES_vec128
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_Blake2s_Simd128.c
@@ -247,6 +249,9 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_SHA3_Scalar.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3_Scalar.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3_Vec256.h
 )
 set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_NaCl.h
@@ -361,6 +366,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_MAC_Poly1305_Simd128.h
 	${PROJECT_SOURCE_DIR}/include/EverCrypt_AEAD.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3_Scalar.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_SHA3_Vec256.h
 )
 set(ALGORITHMS
 	nacl
@@ -385,6 +392,7 @@ set(ALGORITHMS
 	rsapss
 	hpke
 	frodo
+	sha3-mb
 )
 set(INCLUDE_PATHS
 	${PROJECT_SOURCE_DIR}/include
