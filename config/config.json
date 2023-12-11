@@ -7,7 +7,8 @@
         "vale/include"
     ],
     "libcrux_include_paths": [
-        "libcrux/include"
+        "libcrux/include",
+        "libcrux/eurydice"
     ],
     "hacl_sources": {
         "nacl": [
