@@ -61,19 +61,15 @@ TEST(Kyber768Test, ConsistencyTest)
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
-  int rv = Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
-  EXPECT_EQ(0, rv);
+  Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
 
   uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
   uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
-  rv = Libcrux_Kyber768_Encapsulate(
-    ciphertext, sharedSecret, publicKey, randomness);
-
-  EXPECT_EQ(0, rv);
+  Libcrux_Kyber768_Encapsulate(
+    ciphertext, sharedSecret, &publicKey, randomness);
 
   uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
-  rv = Libcrux_Kyber768_Decapsulate(sharedSecret2, ciphertext, secretKey);
-  EXPECT_EQ(0, rv);
+  Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
 
   EXPECT_EQ(0, memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
 }
@@ -88,8 +84,7 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
   for (auto kat : kats) {
-    int rv = Libcrux_Kyber768_GenerateKeyPair(
+    Libcrux_Kyber768_GenerateKeyPair(
       publicKey, secretKey, kat.key_generation_seed.data());
-    EXPECT_EQ(0, rv);
   }
 }

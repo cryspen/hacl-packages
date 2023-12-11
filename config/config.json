@@ -344,7 +344,12 @@
     "libcrux_sources": {
         "kyber": [
             {
-                "file": "Libcrux_Kem_Kyber_Kyber768.c"
+                "file": "Libcrux_Kem_Kyber_Kyber768.c",
+                "features": "std"
+            },
+            {
+                "file": "libcrux_kyber.c",
+                "features": "std"
             }
         ]
     },
