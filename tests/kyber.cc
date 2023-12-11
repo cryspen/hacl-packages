@@ -61,12 +61,18 @@ TEST(Kyber768Test, ConsistencyTest)
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
+  std::cerr << "ARE WE HERE? 0.5\n";
+
   Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
+
+  std::cerr << "ARE WE HERE? 1\n";
 
   uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
   uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
   Libcrux_Kyber768_Encapsulate(
     ciphertext, sharedSecret, &publicKey, randomness);
+
+    std::cerr << "ARE WE HERE? 2\n";
 
   uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
   Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);

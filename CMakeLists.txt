@@ -362,7 +362,7 @@ endif()
 if(BUILD_LIBCRUX)
     add_library(libcrux_static STATIC ${LIBCRUX_SOURCES})
     if(NOT MSVC)
-        target_compile_options(libcrux_static PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+        target_compile_options(libcrux_static PRIVATE -g -O0 -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
     endif()
 endif()
 
