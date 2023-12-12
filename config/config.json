@@ -574,5 +574,10 @@
         "rsapss": [
             "rsapss.cc"
         ]
+    },
+    "libcrux_benchmarks": {
+        "kyber": [
+            "kyber.cc"
+        ]
     }
 }
