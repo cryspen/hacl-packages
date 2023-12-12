@@ -58,22 +58,19 @@ read_kats(string path)
 
 TEST(Kyber768Test, ConsistencyTest)
 {
-  uint8_t randomness[64] = { 0 };
+  uint8_t randomness[64];
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
-  std::cerr << "ARE WE HERE? 0.5\n";
-
+  generate_random(randomness, 64);
   Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
-
-  std::cerr << "ARE WE HERE? 1\n";
 
   uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
   uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
+
+  generate_random(randomness, 32);
   Libcrux_Kyber768_Encapsulate(
     ciphertext, sharedSecret, &publicKey, randomness);
-
-  std::cerr << "ARE WE HERE? 2\n";
 
   uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
   Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
@@ -85,41 +82,39 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
 {
   auto kats = read_kats("kyber768_nistkats.json");
 
-  uint8_t randomness[64] = { 0 };
-
   uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
   for (auto kat : kats) {
-    // printf("key gen seed: %s\n", bytes_to_hex(kat.key_generation_seed).c_str());
     Libcrux_Kyber768_GenerateKeyPair(
       publicKey, secretKey, kat.key_generation_seed.data());
-    // printf("pk: %s\n",
-    //        bytes_to_hex(bytes(publicKey, publicKey +
-    //        KYBER768_PUBLICKEYBYTES))
-    //          .c_str());
-    // printf("sk: %s\n",
-    //        bytes_to_hex(bytes(secretKey, secretKey +
-    //        KYBER768_SECRETKEYBYTES))
-    //          .c_str());
     uint8_t pk_hash[32];
     Hacl_Hash_SHA3_sha3_256(pk_hash, publicKey, KYBER768_PUBLICKEYBYTES);
-    // printf("pk hash: %s\n", bytes_to_hex(bytes(pk_hash, pk_hash + 32)).c_str());
+    EXPECT_EQ(0,
+              memcmp(pk_hash, kat.sha3_256_hash_of_public_key.data(), 32));
+    uint8_t sk_hash[32];
+    Hacl_Hash_SHA3_sha3_256(sk_hash, secretKey, KYBER768_SECRETKEYBYTES);
+    EXPECT_EQ(0,
+              memcmp(sk_hash, kat.sha3_256_hash_of_secret_key.data(), 32));
 
     uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
     uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
     Libcrux_Kyber768_Encapsulate(
       ciphertext, sharedSecret, &publicKey, kat.encapsulation_seed.data());
+    uint8_t ct_hash[32];
+    Hacl_Hash_SHA3_sha3_256(ct_hash, ciphertext, KYBER768_CIPHERTEXTBYTES);
+    EXPECT_EQ(0,
+              memcmp(ct_hash, kat.sha3_256_hash_of_ciphertext.data(), 32));
+    EXPECT_EQ(0,
+              memcmp(sharedSecret,
+                     kat.shared_secret.data(),
+                     KYBER768_SHAREDSECRETBYTES));
 
     uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
     Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
 
     EXPECT_EQ(0,
               memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
-    EXPECT_EQ(0,
-              memcmp(sharedSecret,
-                     kat.shared_secret.data(),
-                     KYBER768_SHAREDSECRETBYTES));
   }
 }
 

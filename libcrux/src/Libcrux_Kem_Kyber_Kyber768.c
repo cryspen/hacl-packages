@@ -11,8 +11,8 @@ Libcrux_Kyber768_GenerateKeyPair(uint8_t* pk,
   libcrux_kyber_types_KyberKeyPair___2400size_t_1184size_t result =
     libcrux_kyber_kyber768_generate_key_pair_768(randomness);
 
-  memcpy(pk, result.pk, 1184);
-  memcpy(sk, result.sk, 2400);
+  memcpy(pk, result.pk, KYBER768_PUBLICKEYBYTES);
+  memcpy(sk, result.sk, KYBER768_SECRETKEYBYTES);
 }
 
 void
