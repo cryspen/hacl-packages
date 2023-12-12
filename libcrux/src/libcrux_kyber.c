@@ -4552,7 +4552,7 @@ libcrux_kyber_ind_cpa_deserialize_then_decompress_u___4size_t_1568size_t_1408siz
   chunk_size = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT * (size_t)11U / (size_t)8U;
   core_ops_range_Range__size_t lit0;
   lit0.start = (size_t)0U;
-  lit0.end = (size_t)1408U;
+  lit0.end = (size_t)1408U / chunk_size;
   core_ops_range_Range__size_t
   iter = core_iter_traits_collect__I__into_iter(lit0, core_ops_range_Range__size_t);
   while (true)
@@ -7555,7 +7555,7 @@ libcrux_kyber_ind_cpa_deserialize_then_decompress_u___2size_t_768size_t_640size_
   chunk_size = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT * (size_t)10U / (size_t)8U;
   core_ops_range_Range__size_t lit0;
   lit0.start = (size_t)0U;
-  lit0.end = (size_t)640U;
+  lit0.end = (size_t)640U / chunk_size;
   core_ops_range_Range__size_t
   iter = core_iter_traits_collect__I__into_iter(lit0, core_ops_range_Range__size_t);
   while (true)
@@ -10148,7 +10148,7 @@ libcrux_kyber_ind_cpa_deserialize_then_decompress_u___3size_t_1088size_t_960size
   chunk_size = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT * (size_t)10U / (size_t)8U;
   core_ops_range_Range__size_t lit0;
   lit0.start = (size_t)0U;
-  lit0.end = (size_t)960U;
+  lit0.end = (size_t)960U / chunk_size;
   core_ops_range_Range__size_t
   iter = core_iter_traits_collect__I__into_iter(lit0, core_ops_range_Range__size_t);
   while (true)
