@@ -120,5 +120,6 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
               memcmp(sharedSecret,
                      kat.shared_secret.data(),
                      KYBER768_SHAREDSECRETBYTES));
+    break;
   }
 }

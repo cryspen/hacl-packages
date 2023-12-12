@@ -8892,6 +8892,7 @@ libcrux_kyber_hash_functions_XOFx4___3size_t(uint8_t input[3U][34U], uint8_t ret
           libcrux_digest_shake128((size_t)840U,
             Eurydice_array_to_slice((size_t)34U, input[i], uint8_t),
             uu____2);
+          // printf("shak128: %02x %02x %02x ... %02x %02x %02x\n", uu____2[0], uu____2[1], uu____2[2], uu____2[837], uu____2[838], uu____2[839]);
           memcpy(out[i], uu____2, (size_t)840U * sizeof (uint8_t));
         }
         else
@@ -8900,6 +8901,7 @@ libcrux_kyber_hash_functions_XOFx4___3size_t(uint8_t input[3U][34U], uint8_t ret
           KRML_HOST_EXIT(255U);
         }
       } else {
+        memcpy(ret, out, sizeof(ret));
         return;
       }
     }
@@ -8949,6 +8951,7 @@ libcrux_kyber_matrix_sample_matrix_A___3size_t(
     memcpy(A_transpose[i][0U],
       libcrux_kyber_arithmetic__libcrux_kyber__arithmetic__PolynomialRingElement__ZERO,
       (size_t)256U * sizeof (int32_t));
+  // memset(A_transpose, 0, sizeof(A_transpose)); // XXX
   core_ops_range_Range__size_t lit0;
   lit0.start = (size_t)0U;
   lit0.end = (size_t)3U;
@@ -8984,6 +8987,7 @@ libcrux_kyber_matrix_sample_matrix_A___3size_t(
             size_t j = uu____2.f0;
             seeds[j][32U] = (uint8_t)i0;
             seeds[j][33U] = (uint8_t)j;
+            // printf("seeds[%d]: %02x %02x %02x ... %02x %02x %02x\n", j, seeds[j][0], seeds[j][1], seeds[j][2], seeds[j][31], seeds[j][32], seeds[j][33]);
           }
           else
           {
@@ -8995,6 +8999,7 @@ libcrux_kyber_matrix_sample_matrix_A___3size_t(
         memcpy(uu____3, seeds, (size_t)3U * sizeof (uint8_t [34U]));
         uint8_t xof_bytes[3U][840U];
         libcrux_kyber_hash_functions_XOFx4___3size_t(uu____3, xof_bytes);
+        // printf("xof_bytes[0]: %02x %02x %02x ... %02x %02x %02x\n", xof_bytes[0][0], xof_bytes[0][1], xof_bytes[0][2], xof_bytes[0][837], xof_bytes[0][838], xof_bytes[0][839]);
         core_ops_range_Range__size_t lit;
         lit.start = (size_t)0U;
         lit.end = (size_t)3U;
@@ -9352,8 +9357,9 @@ libcrux_kyber_ind_cpa_generate_keypair___3size_t_1152size_t_1184size_t_1152size_
   int32_t A_transpose[3U][3U][256U];
   uint8_t ret[34U];
   libcrux_kyber_ind_cpa_into_padded_array___34size_t(seed_for_A, ret);
+  printf("ret: %02x %02x %02x ... %02x %02x %02x\n", ret[0], ret[1], ret[2], ret[31], ret[32], ret[33]);
   libcrux_kyber_matrix_sample_matrix_A___3size_t(ret, true, A_transpose);
-  printf("a transpose: %02x %02x %02x\n", A_transpose[0][0][0], A_transpose[0][0][1], A_transpose[0][0][2]);
+  printf("a transpose: %d %d %d\n", A_transpose[0][0][0], A_transpose[0][0][1], A_transpose[0][0][2]);
   uint8_t prf_input[33U];
   libcrux_kyber_ind_cpa_into_padded_array___33size_t(seed_for_secret_and_error, prf_input);
   printf("prf_input: %02x %02x %02x\n", prf_input[0], prf_input[1], prf_input[2]);
@@ -9375,15 +9381,18 @@ libcrux_kyber_ind_cpa_generate_keypair___3size_t_1152size_t_1184size_t_1152size_
       domain_separator).fst,
     (size_t)3U * sizeof (int32_t [256U]));
   int32_t t_as_ntt[3U][256U];
+  printf("secret_as_ntt: %d %d %d %d\n", secret_as_ntt[0][0], secret_as_ntt[0][1], secret_as_ntt[0][2], secret_as_ntt[0][3]);
+  printf("error_as_ntt: %d %d %d %d\n", error_as_ntt[0][0], error_as_ntt[0][1], error_as_ntt[0][2], error_as_ntt[0][3]);
   libcrux_kyber_matrix_compute_As_plus_e___3size_t(A_transpose,
     secret_as_ntt,
     error_as_ntt,
     t_as_ntt);
 
-  printf("%02x %02x %02x %02x\n", t_as_ntt[0][0], t_as_ntt[0][1], t_as_ntt[0][2], t_as_ntt[0][3]);
+  printf("t_as_ntt: %d %d %d %d\n", t_as_ntt[0][0], t_as_ntt[0][1], t_as_ntt[0][2], t_as_ntt[0][3]);
   int32_t uu____4[3U][256U];
   memcpy(uu____4, t_as_ntt, (size_t)3U * sizeof (int32_t [256U]));
   uint8_t public_key_serialized[1184U];
+  printf("seed_for_A: %02x %02x %02x\n", ((uint8_t*)seed_for_A.ptr)[0], ((uint8_t*)seed_for_A.ptr)[1], ((uint8_t*)seed_for_A.ptr)[2]);
   libcrux_kyber_ind_cpa_serialize_public_key___3size_t_1152size_t_1184size_t(uu____4,
     seed_for_A,
     public_key_serialized);
