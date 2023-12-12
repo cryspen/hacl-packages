@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
+#include "Hacl_Hash_SHA3.h"
 #include "Libcrux_Kem_Kyber_Kyber768.h"
 #include "util.h"
 
@@ -90,13 +91,25 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
   uint8_t secretKey[KYBER768_SECRETKEYBYTES];
 
   for (auto kat : kats) {
+    printf("key gen seed: %s\n", bytes_to_hex(kat.key_generation_seed).c_str());
     Libcrux_Kyber768_GenerateKeyPair(
       publicKey, secretKey, kat.key_generation_seed.data());
+    // printf("pk: %s\n",
+    //        bytes_to_hex(bytes(publicKey, publicKey +
+    //        KYBER768_PUBLICKEYBYTES))
+    //          .c_str());
+    // printf("sk: %s\n",
+    //        bytes_to_hex(bytes(secretKey, secretKey +
+    //        KYBER768_SECRETKEYBYTES))
+    //          .c_str());
+    uint8_t pk_hash[32];
+    Hacl_Hash_SHA3_sha3_256(pk_hash, publicKey, KYBER768_PUBLICKEYBYTES);
+    printf("pk hash: %s\n", bytes_to_hex(bytes(pk_hash, pk_hash + 32)).c_str());
 
     uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
     uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
     Libcrux_Kyber768_Encapsulate(
-      ciphertext, sharedSecret, &publicKey, randomness);
+      ciphertext, sharedSecret, &publicKey, kat.encapsulation_seed.data());
 
     uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
     Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
@@ -104,6 +117,8 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
     EXPECT_EQ(0,
               memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
     EXPECT_EQ(0,
-              memcmp(sharedSecret, kat.shared_secret.data(), KYBER768_SHAREDSECRETBYTES));
+              memcmp(sharedSecret,
+                     kat.shared_secret.data(),
+                     KYBER768_SHAREDSECRETBYTES));
   }
 }

@@ -261,27 +261,7 @@ libcrux_kyber_serialize_deserialize_to_uncompressed_ring_element(
   int32_t ret[256U]
 );
 
-static uint32_t core_num__u32_8__BITS;
-
-static inline uint32_t core_clone_impls__u32_8__clone(uint32_t *x0);
-
-static inline bool core_cmp_impls__u32_24__eq(uint32_t *x0, uint32_t *x1);
-
-static inline bool core_cmp_impls__u32_24__ne(uint32_t *x0, uint32_t *x1);
-
-static inline core_option_Option__core_cmp_Ordering
-core_cmp_impls__u32_60__partial_cmp(uint32_t *x0, uint32_t *x1);
-
-static inline bool core_cmp_impls__u32_60__lt(uint32_t *x0, uint32_t *x1);
-
-static inline bool core_cmp_impls__u32_60__le(uint32_t *x0, uint32_t *x1);
-
-static inline bool core_cmp_impls__u32_60__ge(uint32_t *x0, uint32_t *x1);
-
-static inline bool core_cmp_impls__u32_60__gt(uint32_t *x0, uint32_t *x1);
-
-static inline core_option_Option__size_t
-core_iter_range__u32_33__steps_between(uint32_t *x0, uint32_t *x1);
+static uint32_t core_num__u32_8__BITS = 32;
 
 typedef struct core_option_Option__uint32_t_s
 {
