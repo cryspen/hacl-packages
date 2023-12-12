@@ -13,17 +13,17 @@ bool libcrux_platform_simd256_support(void) {
     return false;
 }
 
-static inline size_t
-libcrux_digest_digest_size(libcrux_digest_Algorithm x0)
-{
-  if (x0 == libcrux_digest_Sha3_512) {
-    return 64;
-  } else if (x0 == libcrux_digest_Sha3_256) {
-    return 32;
-  } else {
-    return KRML_HOST_EXIT;
-  }
-}
+// static inline size_t
+// libcrux_digest_digest_size(libcrux_digest_Algorithm x0)
+// {
+//   if (x0 == libcrux_digest_Sha3_512) {
+//     return 64;
+//   } else if (x0 == libcrux_digest_Sha3_256) {
+//     return 32;
+//   } else {
+//     return KRML_HOST_EXIT;
+//   }
+// }
 
 static inline void
 libcrux_digest_shake256(size_t len, Eurydice_slice input, uint8_t* out)

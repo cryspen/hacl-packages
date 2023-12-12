@@ -172,6 +172,7 @@ def build(args):
     Supported sanitizers:
         - asan
         - ubsan
+        - msan
 
     Use an edition if you want a different build. Note that this build will
     use the MSVC version by default on Windows.

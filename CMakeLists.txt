@@ -168,6 +168,11 @@ if(ENABLE_UBSAN)
     add_link_options(-fsanitize=undefined)
 endif()
 
+if(ENABLE_MSAN)
+    add_compile_options(-fsanitize=memory -fsanitize-memory-track-origins)
+    add_link_options(-fsanitize=memory)
+endif()
+
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
@@ -335,7 +340,7 @@ configure_file(config/Config.h.in config.h)
 # # Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 if(NOT MSVC)
-    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+    target_compile_options(hacl PRIVATE -Wall -Wextra -pedantic)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
@@ -362,7 +367,7 @@ endif()
 if(BUILD_LIBCRUX)
     add_library(libcrux_static STATIC ${LIBCRUX_SOURCES})
     if(NOT MSVC)
-        target_compile_options(libcrux_static PRIVATE -g -O0 -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+        target_compile_options(libcrux_static PRIVATE -g -O0 -Wall -Wextra -pedantic)
     endif()
 endif()
 
