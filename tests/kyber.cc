@@ -72,7 +72,7 @@ TEST(Kyber768Test, ConsistencyTest)
   Libcrux_Kyber768_Encapsulate(
     ciphertext, sharedSecret, &publicKey, randomness);
 
-    std::cerr << "ARE WE HERE? 2\n";
+  std::cerr << "ARE WE HERE? 2\n";
 
   uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
   Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
@@ -92,5 +92,18 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
   for (auto kat : kats) {
     Libcrux_Kyber768_GenerateKeyPair(
       publicKey, secretKey, kat.key_generation_seed.data());
+
+    uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
+    uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
+    Libcrux_Kyber768_Encapsulate(
+      ciphertext, sharedSecret, &publicKey, randomness);
+
+    uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
+    Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
+
+    EXPECT_EQ(0,
+              memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+    EXPECT_EQ(0,
+              memcmp(sharedSecret, kat.shared_secret.data(), KYBER768_SHAREDSECRETBYTES));
   }
 }
