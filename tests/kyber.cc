@@ -56,6 +56,56 @@ read_kats(string path)
   return kats;
 }
 
+void modify_ciphertext(uint8_t* ciphertext, size_t ciphertext_size) {
+    uint8_t randomness[3];
+    generate_random(randomness, 3);
+
+    uint8_t random_byte = randomness[0];
+    if (random_byte == 0) {
+        random_byte += 1;
+    }
+
+    uint16_t random_u16 = (randomness[2] << 8) | randomness[1];
+
+    uint16_t random_position = random_u16 % ciphertext_size;
+
+    ciphertext[random_position] ^= random_byte;
+}
+
+void modify_secret_key(uint8_t* secret_key, size_t secret_key_size, bool modify_implicit_rejection_value) {
+    uint8_t randomness[3];
+    generate_random(randomness, 3);
+
+    uint8_t random_byte = randomness[0];
+    if (random_byte == 0) {
+        random_byte += 1;
+    }
+
+    uint16_t random_u16 = (randomness[2] << 8) | randomness[1];
+
+    uint16_t random_position = 0;
+
+    if(modify_implicit_rejection_value == true) {
+        random_position = (secret_key_size - 32) + (random_u16 % 32);
+    } else {
+        random_position = random_u16 % (secret_key_size - 32);
+    }
+
+    secret_key[random_position] ^= random_byte;
+}
+
+uint8_t* compute_implicit_rejection_shared_secret(uint8_t* ciphertext, size_t ciphertext_size, uint8_t* secret_key, size_t secret_key_size) {
+    uint8_t* hashInput = new uint8_t[32 + ciphertext_size];
+    uint8_t* sharedSecret = new uint8_t[32];
+
+    std::copy(secret_key + (secret_key_size - 32), secret_key + secret_key_size, hashInput);
+    std::copy(ciphertext, ciphertext + ciphertext_size, hashInput + 32);
+
+    Hacl_Hash_SHA3_shake256_hacl(32 + ciphertext_size, hashInput, 32, sharedSecret);
+
+    return sharedSecret;
+}
+
 TEST(Kyber768Test, ConsistencyTest)
 {
   uint8_t randomness[64];
@@ -76,6 +126,62 @@ TEST(Kyber768Test, ConsistencyTest)
   Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
 
   EXPECT_EQ(0, memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+}
+
+TEST(Kyber768Test, ModifiedCiphertextTest)
+{
+  uint8_t randomness[64];
+  uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
+  uint8_t secretKey[KYBER768_SECRETKEYBYTES];
+
+  generate_random(randomness, 64);
+  Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
+
+  uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
+  uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
+
+  generate_random(randomness, 32);
+  Libcrux_Kyber768_Encapsulate(
+    ciphertext, sharedSecret, &publicKey, randomness);
+
+  uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
+  modify_ciphertext(ciphertext, KYBER768_CIPHERTEXTBYTES);
+  Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
+
+  EXPECT_NE(0, memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+
+  uint8_t* implicitRejectionSharedSecret = compute_implicit_rejection_shared_secret(ciphertext, KYBER768_CIPHERTEXTBYTES, secretKey, KYBER768_SECRETKEYBYTES);
+
+  EXPECT_EQ(0, memcmp(implicitRejectionSharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+}
+
+TEST(Kyber768Test, ModifiedSecretKeyTest)
+{
+  uint8_t randomness[64];
+  uint8_t publicKey[KYBER768_PUBLICKEYBYTES];
+  uint8_t secretKey[KYBER768_SECRETKEYBYTES];
+
+  generate_random(randomness, 64);
+  Libcrux_Kyber768_GenerateKeyPair(publicKey, secretKey, randomness);
+
+  uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
+  uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
+
+  generate_random(randomness, 32);
+  Libcrux_Kyber768_Encapsulate(
+    ciphertext, sharedSecret, &publicKey, randomness);
+
+  uint8_t sharedSecret2[KYBER768_SHAREDSECRETBYTES];
+  modify_secret_key(secretKey, KYBER768_SECRETKEYBYTES, false);
+  Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
+
+  EXPECT_NE(0, memcmp(sharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+
+  modify_secret_key(secretKey, KYBER768_SECRETKEYBYTES, true);
+  Libcrux_Kyber768_Decapsulate(sharedSecret2, &ciphertext, &secretKey);
+
+  uint8_t* implicitRejectionSharedSecret = compute_implicit_rejection_shared_secret(ciphertext, KYBER768_CIPHERTEXTBYTES, secretKey, KYBER768_SECRETKEYBYTES);
+  EXPECT_EQ(0, memcmp(implicitRejectionSharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
 }
 
 TEST(Kyber768Test, NISTKnownAnswerTest)
