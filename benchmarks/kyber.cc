@@ -13,7 +13,6 @@ static void
 kyber768_key_generation(benchmark::State& state)
 {
   uint8_t randomness[64];
-  generate_random(randomness, 64);
 
   uint8_t public_key[KYBER768_PUBLICKEYBYTES];
   uint8_t secret_key[KYBER768_SECRETKEYBYTES];
@@ -26,8 +25,7 @@ kyber768_key_generation(benchmark::State& state)
 static void
 kyber768_encapsulation(benchmark::State& state)
 {
-  uint8_t randomness[32];
-  generate_random(randomness, 32);
+  uint8_t randomness[64];
 
   uint8_t public_key[KYBER768_PUBLICKEYBYTES];
   uint8_t secret_key[KYBER768_SECRETKEYBYTES];
@@ -35,7 +33,8 @@ kyber768_encapsulation(benchmark::State& state)
   uint8_t ciphertext[KYBER768_CIPHERTEXTBYTES];
   uint8_t sharedSecret[KYBER768_SHAREDSECRETBYTES];
 
-  Libcrux_Kyber768_GenerateKeyPair(public_key, secret_key, randomness);
+ generate_random(randomness, 64); 
+ Libcrux_Kyber768_GenerateKeyPair(public_key, secret_key, randomness);
 
   for (auto _ : state) {
       Libcrux_Kyber768_Encapsulate(
