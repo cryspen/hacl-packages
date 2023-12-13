@@ -601,4 +601,32 @@ if(ENABLE_BENCHMARKS)
             benchmark::benchmark
         )
     endforeach()
+
+    if(BUILD_LIBCRUX)
+        foreach(BENCH_FILE IN LISTS LIBCRUX_BENCHMARK_SOURCES)
+            get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WE)
+            set(BENCH_NAME ${BENCH_NAME}_benchmark)
+            add_executable(${BENCH_NAME}
+                ${BENCH_FILE}
+            )
+
+            # Use modern C++
+            if(NOT MSVC)
+                target_compile_options(${BENCH_NAME} PRIVATE -std=c++17)
+            else()
+                # MSVC needs a modern C++ for designated initializers.
+                target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
+            endif(NOT MSVC)
+
+            target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
+
+            add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
+            target_link_libraries(${BENCH_NAME} PRIVATE
+                hacl_static
+                hacl_cpu_features
+                benchmark::benchmark
+                libcrux_static
+            )
+        endforeach()
+    endif()
 endif(ENABLE_BENCHMARKS)
