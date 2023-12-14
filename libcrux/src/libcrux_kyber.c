@@ -2472,95 +2472,38 @@ libcrux_kyber_hash_functions_XOFx4___3size_t(uint8_t input[3U][34U],
       }
     }
   } else {
-    uint8_t d0[840U];
-    uint8_t d1[840U];
-    uint8_t d2[840U];
+    Eurydice_slice uu____3 =
+      Eurydice_array_to_slice((size_t)34U, input[0U], uint8_t);
+    Eurydice_slice uu____4 =
+      Eurydice_array_to_slice((size_t)34U, input[1U], uint8_t);
+    Eurydice_slice uu____5 =
+      Eurydice_array_to_slice((size_t)34U, input[2U], uint8_t);
     __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
-      uu____3;
-    Eurydice_slice uu____4;
-    uint8_t* uu____5;
-    uint8_t* uu____6;
-    size_t uu____7;
-    Eurydice_slice uu____8;
-    uint8_t* uu____9;
-    uint8_t* uu____10;
-    size_t uu____11;
-    Eurydice_slice uu____12;
-    uint8_t* uu____13;
-    uint8_t* uu____14;
-    size_t uu____15;
-    Eurydice_slice uu____16;
-    uint8_t* uu____17;
-    uint8_t* uu____18;
-    size_t uu____19;
-    uint8_t uu____20[840U];
-    size_t uu____21;
-    uint8_t uu____22[840U];
-    size_t uu____23;
-    uint8_t uu____24[840U];
-    size_t uu____25;
-    uint8_t(*uu____26)[840U];
-    uint8_t* uu____27;
-    uint8_t(*uu____28)[840U];
-    uint8_t* uu____29;
-    uint8_t(*uu____30)[840U];
-    uint8_t* uu____31;
-    uint8_t(*uu____32)[34U];
-    uint8_t* uu____33;
-    uint8_t(*uu____34)[34U];
-    uint8_t* uu____35;
-    uint8_t(*uu____36)[34U];
-    uint8_t* uu____37;
-    uint8_t(*uu____38)[34U];
-    uint8_t* uu____39;
-    uu____7 = (size_t)0U;
-    uu____38 = input;
-    uu____39 = uu____38[uu____7];
-    uu____6 = uu____39;
-    uu____5 = uu____6;
-    uu____4 = Eurydice_array_to_slice((size_t)34U, uu____5, uint8_t);
-    uu____11 = (size_t)1U;
-    uu____36 = input;
-    uu____37 = uu____36[uu____11];
-    uu____10 = uu____37;
-    uu____9 = uu____10;
-    uu____8 = Eurydice_array_to_slice((size_t)34U, uu____9, uint8_t);
-    uu____15 = (size_t)2U;
-    uu____34 = input;
-    uu____35 = uu____34[uu____15];
-    uu____14 = uu____35;
-    uu____13 = uu____14;
-    uu____12 = Eurydice_array_to_slice((size_t)34U, uu____13, uint8_t);
-    uu____19 = (size_t)0U;
-    uu____32 = input;
-    uu____33 = uu____32[uu____19];
-    uu____18 = uu____33;
-    uu____17 = uu____18;
-    uu____16 = Eurydice_array_to_slice((size_t)34U, uu____17, uint8_t);
-    uu____3 = libcrux_digest_shake128x4(
-      (size_t)840U, uu____4, uu____8, uu____12, uu____16);
-    memcpy(d0, uu____3.fst, (size_t)840U * sizeof(uint8_t));
-    memcpy(d1, uu____3.snd, (size_t)840U * sizeof(uint8_t));
-    memcpy(d2, uu____3.thd, (size_t)840U * sizeof(uint8_t));
-    memcpy(uu____20, d0, (size_t)840U * sizeof(uint8_t));
-    uu____21 = (size_t)0U;
-    uu____30 = out;
-    uu____31 = uu____30[uu____21];
-    uu____31 = uu____20;
-    memcpy(uu____22, d1, (size_t)840U * sizeof(uint8_t));
-    uu____23 = (size_t)1U;
-    uu____28 = out;
-    uu____29 = uu____28[uu____23];
-    uu____29 = uu____22;
-    memcpy(uu____24, d2, (size_t)840U * sizeof(uint8_t));
-    uu____25 = (size_t)2U;
-    uu____26 = out;
-    uu____27 = uu____26[uu____25];
-    uu____27 = uu____24;
+      uu____6 = libcrux_digest_shake128x4(
+        (size_t)840U,
+        uu____3,
+        uu____4,
+        uu____5,
+        Eurydice_array_to_slice((size_t)34U, input[0U], uint8_t));
+    uint8_t d0[840U];
+    memcpy(d0, uu____6.fst, (size_t)840U * sizeof(uint8_t));
+    uint8_t d1[840U];
+    memcpy(d1, uu____6.snd, (size_t)840U * sizeof(uint8_t));
+    uint8_t d2[840U];
+    memcpy(d2, uu____6.thd, (size_t)840U * sizeof(uint8_t));
+    uint8_t uu____7[840U];
+    memcpy(uu____7, d0, (size_t)840U * sizeof(uint8_t));
+    memcpy(out[0U], uu____7, (size_t)840U * sizeof(uint8_t));
+    uint8_t uu____8[840U];
+    memcpy(uu____8, d1, (size_t)840U * sizeof(uint8_t));
+    memcpy(out[1U], uu____8, (size_t)840U * sizeof(uint8_t));
+    uint8_t uu____9[840U];
+    memcpy(uu____9, d2, (size_t)840U * sizeof(uint8_t));
+    memcpy(out[2U], uu____9, (size_t)840U * sizeof(uint8_t));
   }
-  uint8_t uu____40[3U][840U];
-  memcpy(uu____40, out, (size_t)3U * sizeof(uint8_t[840U]));
-  memcpy(ret, uu____40, (size_t)3U * sizeof(uint8_t[840U]));
+  uint8_t uu____10[3U][840U];
+  memcpy(uu____10, out, (size_t)3U * sizeof(uint8_t[840U]));
+  memcpy(ret, uu____10, (size_t)3U * sizeof(uint8_t[840U]));
 }
 
 void
@@ -2711,9 +2654,8 @@ libcrux_kyber_sampling_sample_from_binomial_distribution___2size_t(
   int32_t ret[256U])
 {
   int32_t uu____0[256U];
-  Eurydice_slice uu____1;
-  uu____1 = randomness;
-  libcrux_kyber_sampling_sample_from_binomial_distribution_2(uu____1, uu____0);
+  libcrux_kyber_sampling_sample_from_binomial_distribution_2(randomness,
+                                                             uu____0);
   memcpy(ret, uu____0, (size_t)256U * sizeof(int32_t));
 }
 
@@ -3604,10 +3546,7 @@ libcrux_kyber_serialize_compress_then_serialize_ring_element_u___10size_t_320siz
   uint8_t ret[320U])
 {
   uint8_t uu____0[320U];
-  int32_t uu____1[256U];
-  memcpy(uu____1, re, (size_t)256U * sizeof(int32_t));
-  libcrux_kyber_serialize_compress_then_serialize_10___320size_t(uu____1,
-                                                                 uu____0);
+  libcrux_kyber_serialize_compress_then_serialize_10___320size_t(re, uu____0);
   memcpy(ret, uu____0, (size_t)320U * sizeof(uint8_t));
 }
 
@@ -3800,10 +3739,7 @@ libcrux_kyber_serialize_compress_then_serialize_ring_element_v___4size_t_128size
   uint8_t ret[128U])
 {
   uint8_t uu____0[128U];
-  int32_t uu____1[256U];
-  memcpy(uu____1, re, (size_t)256U * sizeof(int32_t));
-  libcrux_kyber_serialize_compress_then_serialize_4___128size_t(uu____1,
-                                                                uu____0);
+  libcrux_kyber_serialize_compress_then_serialize_4___128size_t(re, uu____0);
   memcpy(ret, uu____0, (size_t)128U * sizeof(uint8_t));
 }
 
@@ -3995,9 +3931,7 @@ libcrux_kyber_serialize_deserialize_then_decompress_ring_element_u___10size_t(
   int32_t ret[256U])
 {
   int32_t uu____0[256U];
-  Eurydice_slice uu____1;
-  uu____1 = serialized;
-  libcrux_kyber_serialize_deserialize_then_decompress_10(uu____1, uu____0);
+  libcrux_kyber_serialize_deserialize_then_decompress_10(serialized, uu____0);
   memcpy(ret, uu____0, (size_t)256U * sizeof(int32_t));
 }
 
@@ -4089,9 +4023,7 @@ libcrux_kyber_serialize_deserialize_then_decompress_ring_element_v___4size_t(
   int32_t ret[256U])
 {
   int32_t uu____0[256U];
-  Eurydice_slice uu____1;
-  uu____1 = serialized;
-  libcrux_kyber_serialize_deserialize_then_decompress_4(uu____1, uu____0);
+  libcrux_kyber_serialize_deserialize_then_decompress_4(serialized, uu____0);
   memcpy(ret, uu____0, (size_t)256U * sizeof(int32_t));
 }
 
