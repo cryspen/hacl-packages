@@ -37,27 +37,27 @@ extern "C" {
 
 void
 Hacl_Hash_SHA3_Scalar_shake128(
-  uint32_t inputByteLen,
-  uint8_t *input,
+  uint8_t *output,
   uint32_t outputByteLen,
-  uint8_t *output
+  uint8_t *input,
+  uint32_t inputByteLen
 );
 
 void
 Hacl_Hash_SHA3_Scalar_shake256(
-  uint32_t inputByteLen,
-  uint8_t *input,
+  uint8_t *output,
   uint32_t outputByteLen,
-  uint8_t *output
+  uint8_t *input,
+  uint32_t inputByteLen
 );
 
-void Hacl_Hash_SHA3_Scalar_sha3_224(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_Scalar_sha3_224(uint8_t *output, uint8_t *input, uint32_t inputByteLen);
 
-void Hacl_Hash_SHA3_Scalar_sha3_256(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_Scalar_sha3_256(uint8_t *output, uint8_t *input, uint32_t inputByteLen);
 
-void Hacl_Hash_SHA3_Scalar_sha3_384(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_Scalar_sha3_384(uint8_t *output, uint8_t *input, uint32_t inputByteLen);
 
-void Hacl_Hash_SHA3_Scalar_sha3_512(uint32_t inputByteLen, uint8_t *input, uint8_t *output);
+void Hacl_Hash_SHA3_Scalar_sha3_512(uint8_t *output, uint8_t *input, uint32_t inputByteLen);
 
 #if defined(__cplusplus)
 }
