@@ -59,6 +59,20 @@ void Hacl_Hash_SHA3_Scalar_sha3_384(uint8_t *output, uint8_t *input, uint32_t in
 
 void Hacl_Hash_SHA3_Scalar_sha3_512(uint8_t *output, uint8_t *input, uint32_t inputByteLen);
 
+uint64_t *Hacl_Hash_SHA3_Scalar_state_malloc(void);
+
+void Hacl_Hash_SHA3_Scalar_state_free(uint64_t *s);
+
+void
+Hacl_Hash_SHA3_Scalar_shake128_absorb(uint64_t *state, uint8_t *input, uint32_t inputByteLen);
+
+void
+Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
+  uint64_t *state,
+  uint8_t *output,
+  uint32_t outputByteLen
+);
+
 #if defined(__cplusplus)
 }
 #endif
