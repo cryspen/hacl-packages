@@ -10,37 +10,42 @@
 #include "Eurydice.h"
 #include "eurydice_glue.h"
 
-extern const int32_t libcrux_kyber_constants_FIELD_MODULUS;
+#define LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS ((int32_t)3329)
 
-extern const size_t libcrux_kyber_constants_BITS_PER_COEFFICIENT;
+#define LIBCRUX_KYBER_CONSTANTS_BITS_PER_COEFFICIENT ((size_t)12U)
 
-extern const size_t libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+#define LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT ((size_t)256U)
 
-extern const size_t libcrux_kyber_constants_BITS_PER_RING_ELEMENT;
+#define LIBCRUX_KYBER_CONSTANTS_BITS_PER_RING_ELEMENT                          \
+  (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT * (size_t)12U)
 
-extern const size_t libcrux_kyber_constants_BYTES_PER_RING_ELEMENT;
+#define LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT                         \
+  (LIBCRUX_KYBER_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U)
 
-extern const size_t libcrux_kyber_constants_REJECTION_SAMPLING_SEED_SIZE;
+#define LIBCRUX_KYBER_CONSTANTS_REJECTION_SAMPLING_SEED_SIZE                   \
+  ((size_t)168U * (size_t)5U)
 
-extern const size_t libcrux_kyber_constants_SHARED_SECRET_SIZE;
+#define LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE ((size_t)32U)
 
-extern const size_t libcrux_kyber_constants_CPA_PKE_KEY_GENERATION_SEED_SIZE;
+#define LIBCRUX_KYBER_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE ((size_t)32U)
 
-extern const size_t libcrux_kyber_constants_H_DIGEST_SIZE;
+#define LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE ((size_t)32U)
 
-extern const uint8_t libcrux_kyber_arithmetic_MONTGOMERY_SHIFT;
+#define LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT (16U)
 
-extern const int32_t libcrux_kyber_arithmetic_MONTGOMERY_R;
+#define LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_R                                  \
+  ((int32_t)1 << (uint32_t)LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT)
 
 uint32_t
 libcrux_kyber_arithmetic_get_n_least_significant_bits(uint8_t n,
                                                       uint32_t value);
 
-extern const int64_t libcrux_kyber_arithmetic_BARRETT_SHIFT;
+#define LIBCRUX_KYBER_ARITHMETIC_BARRETT_SHIFT ((int64_t)26)
 
-extern const int64_t libcrux_kyber_arithmetic_BARRETT_R;
+#define LIBCRUX_KYBER_ARITHMETIC_BARRETT_R                                     \
+  ((int64_t)1 << (uint32_t)LIBCRUX_KYBER_ARITHMETIC_BARRETT_SHIFT)
 
-extern const int64_t libcrux_kyber_arithmetic_BARRETT_MULTIPLIER;
+#define LIBCRUX_KYBER_ARITHMETIC_BARRETT_MULTIPLIER ((int64_t)20159)
 
 static inline int64_t
 core_convert_num__i64_59__from(int32_t x0);
@@ -48,7 +53,7 @@ core_convert_num__i64_59__from(int32_t x0);
 int32_t
 libcrux_kyber_arithmetic_barrett_reduce(int32_t value);
 
-extern const uint32_t libcrux_kyber_arithmetic_INVERSE_OF_MODULUS_MOD_R;
+#define LIBCRUX_KYBER_ARITHMETIC_INVERSE_OF_MODULUS_MOD_R (62209U)
 
 int32_t
 libcrux_kyber_arithmetic_montgomery_reduce(int32_t value);
@@ -57,8 +62,8 @@ int32_t
 libcrux_kyber_arithmetic_montgomery_multiply_sfe_by_fer(int32_t fe,
                                                         int32_t fer);
 
-extern const int32_t
-  libcrux_kyber_arithmetic_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS;
+#define LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS        \
+  ((int32_t)1353)
 
 int32_t
 libcrux_kyber_arithmetic_to_standard_domain(int32_t mfe);
@@ -552,39 +557,62 @@ void
 libcrux_kyber_serialize_compress_then_serialize_message(int32_t re[256U],
                                                         uint8_t ret[32U]);
 
-extern const size_t libcrux_kyber_kyber768_RANK_768;
+#define LIBCRUX_KYBER_KYBER768_RANK_768 ((size_t)3U)
 
-extern const size_t libcrux_kyber_kyber768_RANKED_BYTES_PER_RING_ELEMENT_768;
+#define LIBCRUX_KYBER_KYBER768_RANKED_BYTES_PER_RING_ELEMENT_768               \
+  (LIBCRUX_KYBER_KYBER768_RANK_768 *                                           \
+   LIBCRUX_KYBER_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U)
 
-extern const size_t libcrux_kyber_kyber768_T_AS_NTT_ENCODED_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_T_AS_NTT_ENCODED_SIZE_768                       \
+  (LIBCRUX_KYBER_KYBER768_RANK_768 *                                           \
+   LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *                      \
+   LIBCRUX_KYBER_CONSTANTS_BITS_PER_COEFFICIENT / (size_t)8U)
 
-extern const size_t libcrux_kyber_kyber768_VECTOR_U_COMPRESSION_FACTOR_768;
+#define LIBCRUX_KYBER_KYBER768_VECTOR_U_COMPRESSION_FACTOR_768 ((size_t)10U)
 
-extern const size_t libcrux_kyber_kyber768_C1_BLOCK_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_C1_BLOCK_SIZE_768                               \
+  (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *                      \
+   LIBCRUX_KYBER_KYBER768_VECTOR_U_COMPRESSION_FACTOR_768 / (size_t)8U)
 
-extern const size_t libcrux_kyber_kyber768_C1_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_C1_SIZE_768                                     \
+  (LIBCRUX_KYBER_KYBER768_C1_BLOCK_SIZE_768 * LIBCRUX_KYBER_KYBER768_RANK_768)
 
-extern const size_t libcrux_kyber_kyber768_VECTOR_V_COMPRESSION_FACTOR_768;
+#define LIBCRUX_KYBER_KYBER768_VECTOR_V_COMPRESSION_FACTOR_768 ((size_t)4U)
 
-extern const size_t libcrux_kyber_kyber768_C2_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_C2_SIZE_768                                     \
+  (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *                      \
+   LIBCRUX_KYBER_KYBER768_VECTOR_V_COMPRESSION_FACTOR_768 / (size_t)8U)
 
-extern const size_t libcrux_kyber_kyber768_CPA_PKE_SECRET_KEY_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_CPA_PKE_SECRET_KEY_SIZE_768                     \
+  (LIBCRUX_KYBER_KYBER768_RANK_768 *                                           \
+   LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *                      \
+   LIBCRUX_KYBER_CONSTANTS_BITS_PER_COEFFICIENT / (size_t)8U)
 
-extern const size_t libcrux_kyber_kyber768_CPA_PKE_PUBLIC_KEY_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_CPA_PKE_PUBLIC_KEY_SIZE_768                     \
+  (LIBCRUX_KYBER_KYBER768_T_AS_NTT_ENCODED_SIZE_768 + (size_t)32U)
 
-extern const size_t libcrux_kyber_kyber768_CPA_PKE_CIPHERTEXT_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_CPA_PKE_CIPHERTEXT_SIZE_768                     \
+  (LIBCRUX_KYBER_KYBER768_C1_SIZE_768 + LIBCRUX_KYBER_KYBER768_C2_SIZE_768)
 
-extern const size_t libcrux_kyber_kyber768_SECRET_KEY_SIZE_768;
+#define LIBCRUX_KYBER_KYBER768_SECRET_KEY_SIZE_768                             \
+  (LIBCRUX_KYBER_KYBER768_CPA_PKE_SECRET_KEY_SIZE_768 +                        \
+   LIBCRUX_KYBER_KYBER768_CPA_PKE_PUBLIC_KEY_SIZE_768 +                        \
+   LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE +                                     \
+   LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE)
 
-extern const size_t libcrux_kyber_kyber768_ETA1;
+#define LIBCRUX_KYBER_KYBER768_ETA1 ((size_t)2U)
 
-extern const size_t libcrux_kyber_kyber768_ETA1_RANDOMNESS_SIZE;
+#define LIBCRUX_KYBER_KYBER768_ETA1_RANDOMNESS_SIZE                            \
+  (LIBCRUX_KYBER_KYBER768_ETA1 * (size_t)64U)
 
-extern const size_t libcrux_kyber_kyber768_ETA2;
+#define LIBCRUX_KYBER_KYBER768_ETA2 ((size_t)2U)
 
-extern const size_t libcrux_kyber_kyber768_ETA2_RANDOMNESS_SIZE;
+#define LIBCRUX_KYBER_KYBER768_ETA2_RANDOMNESS_SIZE                            \
+  (LIBCRUX_KYBER_KYBER768_ETA2 * (size_t)64U)
 
-extern const size_t libcrux_kyber_kyber768_IMPLICIT_REJECTION_HASH_INPUT_SIZE;
+#define LIBCRUX_KYBER_KYBER768_IMPLICIT_REJECTION_HASH_INPUT_SIZE              \
+  (LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE +                                \
+   LIBCRUX_KYBER_KYBER768_CPA_PKE_CIPHERTEXT_SIZE_768)
 
 void
 libcrux_kyber_hash_functions_XOFx4___3size_t(uint8_t input[3U][34U],
@@ -874,7 +902,9 @@ void libcrux_kyber_kyber768_decapsulate_768(uint8_t (*secret_key)[2400U],
                                             uint8_t (*ciphertext)[1088U],
                                             uint8_t ret[32U]);
 
-extern const size_t libcrux_kyber_KEY_GENERATION_SEED_SIZE;
+#define LIBCRUX_KYBER_KEY_GENERATION_SEED_SIZE                                 \
+  (LIBCRUX_KYBER_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE +                  \
+   LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE)
 
 #define __libcrux_kyber_H_DEFINED
 #endif

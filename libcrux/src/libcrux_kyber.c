@@ -7,73 +7,36 @@
 #include "libcrux_kyber.h"
 #include "libcrux_hacl_glue.h"
 
-const int32_t libcrux_kyber_constants_FIELD_MODULUS = (int32_t)3329;
-
-const size_t libcrux_kyber_constants_BITS_PER_COEFFICIENT = (size_t)12U;
-
-const size_t libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT =
-  (size_t)256U;
-
-const size_t libcrux_kyber_constants_BITS_PER_RING_ELEMENT =
-  libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT * (size_t)12U;
-
-const size_t libcrux_kyber_constants_BYTES_PER_RING_ELEMENT =
-  libcrux_kyber_constants_BITS_PER_RING_ELEMENT / (size_t)8U;
-
-const size_t libcrux_kyber_constants_REJECTION_SAMPLING_SEED_SIZE =
-  (size_t)168U * (size_t)5U;
-
-const size_t libcrux_kyber_constants_SHARED_SECRET_SIZE = (size_t)32U;
-
-const size_t libcrux_kyber_constants_CPA_PKE_KEY_GENERATION_SEED_SIZE =
-  (size_t)32U;
-
-const size_t libcrux_kyber_constants_H_DIGEST_SIZE = (size_t)32U;
-
-const uint8_t libcrux_kyber_arithmetic_MONTGOMERY_SHIFT = 16U;
-
-const int32_t libcrux_kyber_arithmetic_MONTGOMERY_R =
-  (int32_t)1 << (uint32_t)libcrux_kyber_arithmetic_MONTGOMERY_SHIFT;
-
 uint32_t
 libcrux_kyber_arithmetic_get_n_least_significant_bits(uint8_t n, uint32_t value)
 {
   return value & ((1U << (uint32_t)n) - 1U);
 }
 
-const int64_t libcrux_kyber_arithmetic_BARRETT_SHIFT = (int64_t)26;
-
-const int64_t libcrux_kyber_arithmetic_BARRETT_R =
-  (int64_t)1 << (uint32_t)libcrux_kyber_arithmetic_BARRETT_SHIFT;
-
-const int64_t libcrux_kyber_arithmetic_BARRETT_MULTIPLIER = (int64_t)20159;
-
 int32_t
 libcrux_kyber_arithmetic_barrett_reduce(int32_t value)
 {
   int64_t t = core_convert_num__i64_59__from(value) *
-                libcrux_kyber_arithmetic_BARRETT_MULTIPLIER +
-              (libcrux_kyber_arithmetic_BARRETT_R >> 1U);
+                LIBCRUX_KYBER_ARITHMETIC_BARRETT_MULTIPLIER +
+              (LIBCRUX_KYBER_ARITHMETIC_BARRETT_R >> 1U);
   int32_t quotient =
-    (int32_t)(t >> (uint32_t)libcrux_kyber_arithmetic_BARRETT_SHIFT);
-  return value - quotient * libcrux_kyber_constants_FIELD_MODULUS;
+    (int32_t)(t >> (uint32_t)LIBCRUX_KYBER_ARITHMETIC_BARRETT_SHIFT);
+  return value - quotient * LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
 }
-
-const uint32_t libcrux_kyber_arithmetic_INVERSE_OF_MODULUS_MOD_R = 62209U;
 
 int32_t
 libcrux_kyber_arithmetic_montgomery_reduce(int32_t value)
 {
   uint32_t t = libcrux_kyber_arithmetic_get_n_least_significant_bits(
-                 libcrux_kyber_arithmetic_MONTGOMERY_SHIFT, (uint32_t)value) *
-               libcrux_kyber_arithmetic_INVERSE_OF_MODULUS_MOD_R;
+                 LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT, (uint32_t)value) *
+               LIBCRUX_KYBER_ARITHMETIC_INVERSE_OF_MODULUS_MOD_R;
   int16_t k = (int16_t)libcrux_kyber_arithmetic_get_n_least_significant_bits(
-    libcrux_kyber_arithmetic_MONTGOMERY_SHIFT, t);
-  int32_t k_times_modulus = (int32_t)k * libcrux_kyber_constants_FIELD_MODULUS;
+    LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT, t);
+  int32_t k_times_modulus = (int32_t)k * LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
   int32_t c =
-    k_times_modulus >> (uint32_t)libcrux_kyber_arithmetic_MONTGOMERY_SHIFT;
+    k_times_modulus >> (uint32_t)LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT;
   int32_t value_high =
-    value >> (uint32_t)libcrux_kyber_arithmetic_MONTGOMERY_SHIFT;
+    value >> (uint32_t)LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_SHIFT;
   return value_high - c;
 }
 
@@ -83,20 +46,17 @@ libcrux_kyber_arithmetic_montgomery_multiply_sfe_by_fer(int32_t fe, int32_t fer)
   return libcrux_kyber_arithmetic_montgomery_reduce(fe * fer);
 }
 
-const int32_t libcrux_kyber_arithmetic_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS =
-  (int32_t)1353;
-
 int32_t
 libcrux_kyber_arithmetic_to_standard_domain(int32_t mfe)
 {
   return libcrux_kyber_arithmetic_montgomery_reduce(
-    mfe * libcrux_kyber_arithmetic_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS);
+    mfe * LIBCRUX_KYBER_ARITHMETIC_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS);
 }
 
 uint16_t
 libcrux_kyber_arithmetic_to_unsigned_representative(int32_t fe)
 {
-  return (uint16_t)(fe + (libcrux_kyber_constants_FIELD_MODULUS & fe >> 31U));
+  return (uint16_t)(fe + (LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS & fe >> 31U));
 }
 
 void
@@ -127,9 +87,9 @@ libcrux_kyber_compress_compress_ciphertext_coefficient(uint8_t coefficient_bits,
 {
   uint32_t compressed = (uint32_t)fe
                         << (uint32_t)((uint32_t)coefficient_bits + 1U);
-  compressed = compressed + (uint32_t)libcrux_kyber_constants_FIELD_MODULUS;
+  compressed = compressed + (uint32_t)LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
   compressed =
-    compressed / (uint32_t)(libcrux_kyber_constants_FIELD_MODULUS << 1U);
+    compressed / (uint32_t)(LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS << 1U);
   return (int32_t)libcrux_kyber_arithmetic_get_n_least_significant_bits(
     coefficient_bits, compressed);
 }
@@ -138,7 +98,7 @@ int32_t
 libcrux_kyber_compress_decompress_message_coefficient(int32_t fe)
 {
   return -fe &
-         (libcrux_kyber_constants_FIELD_MODULUS + (int32_t)1) / (int32_t)2;
+         (LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS + (int32_t)1) / (int32_t)2;
 }
 
 int32_t
@@ -147,7 +107,7 @@ libcrux_kyber_compress_decompress_ciphertext_coefficient(
   int32_t fe)
 {
   uint32_t decompressed =
-    (uint32_t)fe * (uint32_t)libcrux_kyber_constants_FIELD_MODULUS;
+    (uint32_t)fe * (uint32_t)LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
   decompressed = (decompressed << 1U) + (1U << (uint32_t)coefficient_bits);
   decompressed = decompressed >> (uint32_t)((uint32_t)coefficient_bits + 1U);
   return (int32_t)decompressed;
@@ -180,7 +140,7 @@ libcrux_kyber_constant_time_ops_select_shared_secret_in_constant_time(
     out[i] = 0U;
   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
-      .start = (size_t)0U, .end = libcrux_kyber_constants_SHARED_SECRET_SIZE }),
+      .start = (size_t)0U, .end = LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____0 =
@@ -579,7 +539,7 @@ libcrux_kyber_ntt_ntt_binomially_sampled_ring_element(int32_t re[256U],
   core_ops_range_Range__size_t iter0 = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
-      .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+      .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____1 =
@@ -650,20 +610,20 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
         int32_t uu____13;
         size_t uu____14;
         size_t uu____15;
-        if (d1 < libcrux_kyber_constants_FIELD_MODULUS) {
+        if (d1 < LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS) {
           uu____1 = sampled_coefficients <
-                    libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                    LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
           if (uu____1) {
             uu____2 = d1;
             uu____3 = sampled_coefficients;
             out[uu____3] = uu____2;
             sampled_coefficients++;
             uu____6 = d2;
-            uu____13 = libcrux_kyber_constants_FIELD_MODULUS;
+            uu____13 = LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
             uu____5 = uu____6 < uu____13;
             if (uu____5) {
               uu____8 = sampled_coefficients;
-              uu____14 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+              uu____14 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
               uu____7 = uu____8 < uu____14;
               uu____4 = uu____7;
               if (uu____4) {
@@ -672,13 +632,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -691,13 +651,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -705,11 +665,11 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
             }
           } else {
             uu____6 = d2;
-            uu____13 = libcrux_kyber_constants_FIELD_MODULUS;
+            uu____13 = LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
             uu____5 = uu____6 < uu____13;
             if (uu____5) {
               uu____8 = sampled_coefficients;
-              uu____14 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+              uu____14 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
               uu____7 = uu____8 < uu____14;
               uu____4 = uu____7;
               if (uu____4) {
@@ -718,13 +678,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -737,13 +697,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -758,11 +718,11 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
             out[uu____3] = uu____2;
             sampled_coefficients++;
             uu____6 = d2;
-            uu____13 = libcrux_kyber_constants_FIELD_MODULUS;
+            uu____13 = LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
             uu____5 = uu____6 < uu____13;
             if (uu____5) {
               uu____8 = sampled_coefficients;
-              uu____14 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+              uu____14 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
               uu____7 = uu____8 < uu____14;
               uu____4 = uu____7;
               if (uu____4) {
@@ -771,13 +731,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -790,13 +750,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -804,11 +764,11 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
             }
           } else {
             uu____6 = d2;
-            uu____13 = libcrux_kyber_constants_FIELD_MODULUS;
+            uu____13 = LIBCRUX_KYBER_CONSTANTS_FIELD_MODULUS;
             uu____5 = uu____6 < uu____13;
             if (uu____5) {
               uu____8 = sampled_coefficients;
-              uu____14 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+              uu____14 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
               uu____7 = uu____8 < uu____14;
               uu____4 = uu____7;
               if (uu____4) {
@@ -817,13 +777,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -836,13 +796,13 @@ libcrux_kyber_sampling_sample_from_uniform_distribution(
                 out[uu____10] = uu____9;
                 sampled_coefficients++;
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
               } else {
                 uu____12 = sampled_coefficients;
-                uu____15 = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT;
+                uu____15 = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
                 uu____11 = uu____12 == uu____15;
                 if (uu____11)
                   done = true;
@@ -889,7 +849,7 @@ libcrux_kyber_ntt_ntt_multiply(int32_t (*lhs)[256U],
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
       .end =
-        libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT / (size_t)4U }),
+        LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT / (size_t)4U }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____0 =
@@ -1539,65 +1499,6 @@ libcrux_kyber_serialize_compress_then_serialize_message(int32_t re[256U],
   memcpy(uu____3, serialized, (size_t)32U * sizeof(uint8_t));
   memcpy(ret, uu____3, (size_t)32U * sizeof(uint8_t));
 }
-
-const size_t libcrux_kyber_kyber768_RANK_768 = (size_t)3U;
-
-const size_t libcrux_kyber_kyber768_RANKED_BYTES_PER_RING_ELEMENT_768 =
-  libcrux_kyber_kyber768_RANK_768 *
-  libcrux_kyber_constants_BITS_PER_RING_ELEMENT / (size_t)8U;
-
-const size_t libcrux_kyber_kyber768_T_AS_NTT_ENCODED_SIZE_768 =
-  libcrux_kyber_kyber768_RANK_768 *
-  libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
-  libcrux_kyber_constants_BITS_PER_COEFFICIENT / (size_t)8U;
-
-const size_t libcrux_kyber_kyber768_VECTOR_U_COMPRESSION_FACTOR_768 =
-  (size_t)10U;
-
-const size_t libcrux_kyber_kyber768_C1_BLOCK_SIZE_768 =
-  libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
-  libcrux_kyber_kyber768_VECTOR_U_COMPRESSION_FACTOR_768 / (size_t)8U;
-
-const size_t libcrux_kyber_kyber768_C1_SIZE_768 =
-  libcrux_kyber_kyber768_C1_BLOCK_SIZE_768 * libcrux_kyber_kyber768_RANK_768;
-
-const size_t libcrux_kyber_kyber768_VECTOR_V_COMPRESSION_FACTOR_768 =
-  (size_t)4U;
-
-const size_t libcrux_kyber_kyber768_C2_SIZE_768 =
-  libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
-  libcrux_kyber_kyber768_VECTOR_V_COMPRESSION_FACTOR_768 / (size_t)8U;
-
-const size_t libcrux_kyber_kyber768_CPA_PKE_SECRET_KEY_SIZE_768 =
-  libcrux_kyber_kyber768_RANK_768 *
-  libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
-  libcrux_kyber_constants_BITS_PER_COEFFICIENT / (size_t)8U;
-
-const size_t libcrux_kyber_kyber768_CPA_PKE_PUBLIC_KEY_SIZE_768 =
-  libcrux_kyber_kyber768_T_AS_NTT_ENCODED_SIZE_768 + (size_t)32U;
-
-const size_t libcrux_kyber_kyber768_CPA_PKE_CIPHERTEXT_SIZE_768 =
-  libcrux_kyber_kyber768_C1_SIZE_768 + libcrux_kyber_kyber768_C2_SIZE_768;
-
-const size_t libcrux_kyber_kyber768_SECRET_KEY_SIZE_768 =
-  libcrux_kyber_kyber768_CPA_PKE_SECRET_KEY_SIZE_768 +
-  libcrux_kyber_kyber768_CPA_PKE_PUBLIC_KEY_SIZE_768 +
-  libcrux_kyber_constants_H_DIGEST_SIZE +
-  libcrux_kyber_constants_SHARED_SECRET_SIZE;
-
-const size_t libcrux_kyber_kyber768_ETA1 = (size_t)2U;
-
-const size_t libcrux_kyber_kyber768_ETA1_RANDOMNESS_SIZE =
-  libcrux_kyber_kyber768_ETA1 * (size_t)64U;
-
-const size_t libcrux_kyber_kyber768_ETA2 = (size_t)2U;
-
-const size_t libcrux_kyber_kyber768_ETA2_RANDOMNESS_SIZE =
-  libcrux_kyber_kyber768_ETA2 * (size_t)64U;
-
-const size_t libcrux_kyber_kyber768_IMPLICIT_REJECTION_HASH_INPUT_SIZE =
-  libcrux_kyber_constants_SHARED_SECRET_SIZE +
-  libcrux_kyber_kyber768_CPA_PKE_CIPHERTEXT_SIZE_768;
 
 void
 libcrux_kyber_hash_functions_XOFx4___3size_t(uint8_t input[3U][34U],
@@ -2780,7 +2681,7 @@ libcrux_kyber_matrix_compute_As_plus_e___3size_t(int32_t (*matrix_A)[3U][256U],
         core_iter_traits_collect__I__into_iter(
           ((core_ops_range_Range__size_t){
             .start = (size_t)0U,
-            .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+            .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
           core_ops_range_Range__size_t);
       while (true) {
         core_option_Option__size_t uu____3 =
@@ -2830,9 +2731,9 @@ libcrux_kyber_ind_cpa_serialize_secret_key___3size_t_1152size_t(
         (size_t)1152U,
         out,
         ((core_ops_range_Range__size_t){
-          .start = i * libcrux_kyber_constants_BYTES_PER_RING_ELEMENT,
+          .start = i * LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT,
           .end = (i + (size_t)1U) *
-                 libcrux_kyber_constants_BYTES_PER_RING_ELEMENT }),
+                 LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT }),
         uint8_t,
         core_ops_range_Range__size_t);
       uint8_t ret0[384U];
@@ -2985,14 +2886,14 @@ libcrux_kyber_serialize_kem_secret_key___2400size_t(
     out,
     ((core_ops_range_Range__size_t){
       .start = pointer,
-      .end = pointer + libcrux_kyber_constants_H_DIGEST_SIZE }),
+      .end = pointer + LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE }),
     uint8_t,
     core_ops_range_Range__size_t);
   uint8_t ret0[32U];
   libcrux_kyber_hash_functions_H(public_key, ret0);
   core_slice___Slice_T___copy_from_slice(
     uu____6, Eurydice_array_to_slice((size_t)32U, ret0, uint8_t), uint8_t);
-  pointer = pointer + libcrux_kyber_constants_H_DIGEST_SIZE;
+  pointer = pointer + LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE;
   uint8_t* uu____7 = out;
   size_t uu____8 = pointer;
   size_t uu____9 = pointer;
@@ -3043,13 +2944,13 @@ libcrux_kyber_generate_keypair___3size_t_1152size_t_2400size_t_1184size_t_1152si
     randomness,
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
-      .end = libcrux_kyber_constants_CPA_PKE_KEY_GENERATION_SEED_SIZE }),
+      .end = LIBCRUX_KYBER_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE }),
     uint8_t,
     core_ops_range_Range__size_t);
   Eurydice_slice implicit_rejection_value = Eurydice_array_to_subslice_from(
     (size_t)64U,
     randomness,
-    libcrux_kyber_constants_CPA_PKE_KEY_GENERATION_SEED_SIZE,
+    LIBCRUX_KYBER_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE,
     uint8_t,
     size_t);
   K___uint8_t_1152size_t__uint8_t_1184size_t_ uu____0 =
@@ -3135,7 +3036,7 @@ libcrux_kyber_ind_cpa_deserialize_public_key___3size_t_1152size_t(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
       .end = core_slice___Slice_T___len(public_key, uint8_t) /
-             libcrux_kyber_constants_BYTES_PER_RING_ELEMENT }),
+             LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____0 =
@@ -3147,9 +3048,9 @@ libcrux_kyber_ind_cpa_deserialize_public_key___3size_t_1152size_t(
       Eurydice_slice t_as_ntt_bytes = Eurydice_slice_subslice(
         public_key,
         ((core_ops_range_Range__size_t){
-          .start = i * libcrux_kyber_constants_BYTES_PER_RING_ELEMENT,
-          .end = i * libcrux_kyber_constants_BYTES_PER_RING_ELEMENT +
-                 libcrux_kyber_constants_BYTES_PER_RING_ELEMENT }),
+          .start = i * LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT,
+          .end = i * LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT +
+                 LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT }),
         uint8_t,
         core_ops_range_Range__size_t);
       int32_t uu____1[256U];
@@ -3206,7 +3107,7 @@ libcrux_kyber_ntt_invert_ntt_montgomery___3size_t(int32_t re[256U],
                                                   int32_t ret[256U])
 {
   size_t zeta_i =
-    libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT / (size_t)2U;
+    LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT / (size_t)2U;
   libcrux_kyber_ntt_invert_ntt_at_layer(&zeta_i, re, (size_t)1U, re);
   libcrux_kyber_ntt_invert_ntt_at_layer(&zeta_i, re, (size_t)2U, re);
   libcrux_kyber_ntt_invert_ntt_at_layer(&zeta_i, re, (size_t)3U, re);
@@ -3288,7 +3189,7 @@ libcrux_kyber_matrix_compute_vector_u___3size_t(int32_t (*a_as_ntt)[3U][256U],
         core_iter_traits_collect__I__into_iter(
           ((core_ops_range_Range__size_t){
             .start = (size_t)0U,
-            .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+            .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
           core_ops_range_Range__size_t);
       while (true) {
         core_option_Option__size_t uu____4 =
@@ -3344,7 +3245,7 @@ libcrux_kyber_matrix_compute_ring_element_v___3size_t(int32_t (*t_as_ntt)[256U],
   core_ops_range_Range__size_t iter0 = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
-      .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+      .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____1 =
@@ -3847,7 +3748,7 @@ libcrux_kyber_encapsulate___3size_t_1088size_t_1184size_t_1152size_t_960size_t_1
   Eurydice_slice uu____0 =
     Eurydice_array_to_subslice_from((size_t)64U,
                                     to_hash,
-                                    libcrux_kyber_constants_H_DIGEST_SIZE,
+                                    LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE,
                                     uint8_t,
                                     size_t);
   uint8_t ret[32U];
@@ -3866,7 +3767,7 @@ libcrux_kyber_encapsulate___3size_t_1088size_t_1184size_t_1152size_t_960size_t_1
   K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t uu____1 =
     core_slice___Slice_T___split_at(
       Eurydice_array_to_slice((size_t)64U, hashed, uint8_t),
-      libcrux_kyber_constants_SHARED_SECRET_SIZE,
+      LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE,
       uint8_t);
   Eurydice_slice shared_secret0 = uu____1.fst;
   Eurydice_slice pseudorandomness = uu____1.snd;
@@ -3949,7 +3850,7 @@ libcrux_kyber_ntt_ntt_vector_u___10size_t(int32_t re[256U], int32_t ret[256U])
   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
-      .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+      .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____0 =
@@ -3982,7 +3883,7 @@ libcrux_kyber_ind_cpa_deserialize_then_decompress_u___3size_t_1088size_t_960size
       .end = core_slice___Slice_T___len(
                Eurydice_array_to_slice((size_t)1088U, ciphertext, uint8_t),
                uint8_t) /
-             (libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
+             (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *
               (size_t)10U / (size_t)8U) }),
     core_ops_range_Range__size_t);
   while (true) {
@@ -3996,11 +3897,11 @@ libcrux_kyber_ind_cpa_deserialize_then_decompress_u___3size_t_1088size_t_960size
         (size_t)1088U,
         ciphertext,
         ((core_ops_range_Range__size_t){
-          .start = i * (libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
+          .start = i * (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *
                         (size_t)10U / (size_t)8U),
-          .end = i * (libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
+          .end = i * (LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *
                       (size_t)10U / (size_t)8U) +
-                 libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT *
+                 LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT *
                    (size_t)10U / (size_t)8U }),
         uint8_t,
         core_ops_range_Range__size_t);
@@ -4042,7 +3943,7 @@ libcrux_kyber_ind_cpa_deserialize_secret_key___3size_t(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
       .end = core_slice___Slice_T___len(secret_key, uint8_t) /
-             libcrux_kyber_constants_BYTES_PER_RING_ELEMENT }),
+             LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____0 =
@@ -4054,9 +3955,9 @@ libcrux_kyber_ind_cpa_deserialize_secret_key___3size_t(
       Eurydice_slice secret_bytes = Eurydice_slice_subslice(
         secret_key,
         ((core_ops_range_Range__size_t){
-          .start = i * libcrux_kyber_constants_BYTES_PER_RING_ELEMENT,
-          .end = i * libcrux_kyber_constants_BYTES_PER_RING_ELEMENT +
-                 libcrux_kyber_constants_BYTES_PER_RING_ELEMENT }),
+          .start = i * LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT,
+          .end = i * LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT +
+                 LIBCRUX_KYBER_CONSTANTS_BYTES_PER_RING_ELEMENT }),
         uint8_t,
         core_ops_range_Range__size_t);
       int32_t uu____1[256U];
@@ -4101,7 +4002,7 @@ libcrux_kyber_matrix_compute_message___3size_t(int32_t (*v)[256U],
   core_ops_range_Range__size_t iter0 = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
       .start = (size_t)0U,
-      .end = libcrux_kyber_constants_COEFFICIENTS_IN_RING_ELEMENT }),
+      .end = LIBCRUX_KYBER_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT }),
     core_ops_range_Range__size_t);
   while (true) {
     core_option_Option__size_t uu____1 =
@@ -4227,7 +4128,7 @@ libcrux_kyber_decapsulate___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_
   Eurydice_slice secret_key1 = uu____1.snd;
   K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t uu____2 =
     core_slice___Slice_T___split_at(
-      secret_key1, libcrux_kyber_constants_H_DIGEST_SIZE, uint8_t);
+      secret_key1, LIBCRUX_KYBER_CONSTANTS_H_DIGEST_SIZE, uint8_t);
   Eurydice_slice ind_cpa_public_key_hash = uu____2.fst;
   Eurydice_slice implicit_rejection_value = uu____2.snd;
   uint8_t decrypted[32U];
@@ -4239,7 +4140,7 @@ libcrux_kyber_decapsulate___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_
   core_slice___Slice_T___copy_from_slice(
     Eurydice_array_to_subslice_from((size_t)64U,
                                     to_hash0,
-                                    libcrux_kyber_constants_SHARED_SECRET_SIZE,
+                                    LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE,
                                     uint8_t,
                                     size_t),
     ind_cpa_public_key_hash,
@@ -4250,7 +4151,7 @@ libcrux_kyber_decapsulate___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_
   K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t uu____3 =
     core_slice___Slice_T___split_at(
       Eurydice_array_to_slice((size_t)64U, hashed, uint8_t),
-      libcrux_kyber_constants_SHARED_SECRET_SIZE,
+      LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE,
       uint8_t);
   Eurydice_slice shared_secret = uu____3.fst;
   Eurydice_slice pseudorandomness = uu____3.snd;
@@ -4260,7 +4161,7 @@ libcrux_kyber_decapsulate___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_
   Eurydice_slice uu____4 =
     Eurydice_array_to_subslice_from((size_t)1120U,
                                     to_hash,
-                                    libcrux_kyber_constants_SHARED_SECRET_SIZE,
+                                    LIBCRUX_KYBER_CONSTANTS_SHARED_SECRET_SIZE,
                                     uint8_t,
                                     size_t);
   core_slice___Slice_T___copy_from_slice(
@@ -4306,7 +4207,3 @@ libcrux_kyber_kyber768_decapsulate_768(uint8_t (*secret_key)[2400U],
     secret_key, ciphertext, ret0);
   memcpy(ret, ret0, (size_t)32U * sizeof(uint8_t));
 }
-
-const size_t libcrux_kyber_KEY_GENERATION_SEED_SIZE =
-  libcrux_kyber_constants_CPA_PKE_KEY_GENERATION_SEED_SIZE +
-  libcrux_kyber_constants_SHARED_SECRET_SIZE;
