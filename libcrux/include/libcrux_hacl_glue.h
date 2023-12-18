@@ -1,5 +1,7 @@
 #pragma once
 
+#include "eurydice_glue.h"
+
 typedef struct
   __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__s
 {

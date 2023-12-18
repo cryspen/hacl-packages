@@ -516,10 +516,10 @@ if(ENABLE_TESTS)
             add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
             target_link_libraries(${TEST_NAME} PRIVATE
                 gtest_main
-                hacl_static
                 hacl_cpu_features
                 nlohmann_json::nlohmann_json
                 libcrux_static
+                hacl_static
             )
 
             if(EXISTS ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME})
@@ -622,10 +622,10 @@ if(ENABLE_BENCHMARKS)
 
             add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
             target_link_libraries(${BENCH_NAME} PRIVATE
-                hacl_static
                 hacl_cpu_features
                 benchmark::benchmark
                 libcrux_static
+                hacl_static
             )
         endforeach()
     endif()

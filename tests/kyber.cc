@@ -103,6 +103,7 @@ uint8_t* compute_implicit_rejection_shared_secret(uint8_t* ciphertext, size_t ci
 
     Hacl_Hash_SHA3_shake256_hacl(32 + ciphertext_size, hashInput, 32, sharedSecret);
 
+    delete [] hashInput;
     return sharedSecret;
 }
 
@@ -153,6 +154,7 @@ TEST(Kyber768Test, ModifiedCiphertextTest)
   uint8_t* implicitRejectionSharedSecret = compute_implicit_rejection_shared_secret(ciphertext, KYBER768_CIPHERTEXTBYTES, secretKey, KYBER768_SECRETKEYBYTES);
 
   EXPECT_EQ(0, memcmp(implicitRejectionSharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+  delete [] implicitRejectionSharedSecret;
 }
 
 TEST(Kyber768Test, ModifiedSecretKeyTest)
@@ -182,6 +184,7 @@ TEST(Kyber768Test, ModifiedSecretKeyTest)
 
   uint8_t* implicitRejectionSharedSecret = compute_implicit_rejection_shared_secret(ciphertext, KYBER768_CIPHERTEXTBYTES, secretKey, KYBER768_SECRETKEYBYTES);
   EXPECT_EQ(0, memcmp(implicitRejectionSharedSecret, sharedSecret2, KYBER768_SHAREDSECRETBYTES));
+  delete [] implicitRejectionSharedSecret;
 }
 
 TEST(Kyber768Test, NISTKnownAnswerTest)
