@@ -351,6 +351,9 @@
             },
             {
                 "file": "libcrux_hacl_glue.c"
+            },
+            {
+                "file": "core.c"
             }
         ]
     },
