@@ -14,23 +14,23 @@ libcrux_platform_simd256_support(void)
 }
 
 inline void
-libcrux_digest_shake256(size_t len, Eurydice_slice input, uint8_t* out)
+libcrux_digest_shake256f(size_t len, Eurydice_slice input, uint8_t* out)
 {
   Hacl_Hash_SHA3_shake256_hacl(input.len, input.ptr, (uint32_t)len, out);
 }
 
 inline void
-libcrux_digest_shake128(size_t len, Eurydice_slice input, uint8_t* out)
+libcrux_digest_shake128f(size_t len, Eurydice_slice input, uint8_t* out)
 {
   Hacl_Hash_SHA3_shake128_hacl(input.len, input.ptr, (uint32_t)len, out);
 }
 
 inline __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
-libcrux_digest_shake128x4(size_t len,
-                          Eurydice_slice input0,
-                          Eurydice_slice input1,
-                          Eurydice_slice input2,
-                          Eurydice_slice input3)
+libcrux_digest_shake128x4f(size_t len,
+                           Eurydice_slice input0,
+                           Eurydice_slice input1,
+                           Eurydice_slice input2,
+                           Eurydice_slice input3)
 {
   __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
     out =
