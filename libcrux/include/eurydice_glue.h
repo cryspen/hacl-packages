@@ -9,6 +9,8 @@
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
+#define LowStar_Ignore_ignore(e, t, _ret_t) ((void)e)
+
 // SLICES, ARRAYS, ETC.
 
 // We represent a slice as a pair of an (untyped) pointer, along with the length of the slice, i.e.
