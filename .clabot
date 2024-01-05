@@ -12,7 +12,8 @@
     "emillon": "",
     "protz": "",
     "ma-ilsi": "",
-    "xvzcf": "Cryspen"
+    "xvzcf": "Cryspen",
+    "msprotz": "Microsoft"
   },
   "contributors": [
     "franziskuskiefer",
@@ -27,6 +28,7 @@
     "emillon",
     "protz",
     "ma-ilsi",
-    "xvzcf"
+    "xvzcf",
+    "msprotz"
   ]
 }
