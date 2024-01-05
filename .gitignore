@@ -27,3 +27,5 @@ rust/.c
 .idea
 cmake-build-debug
 
+# ctags
+tags
