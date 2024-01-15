@@ -71,14 +71,11 @@ Hacl_Hash_SHA3_Scalar_shake128_absorb_nblocks(
 );
 
 void
-Hacl_Hash_SHA3_Scalar_shake128_absorb_last(
+Hacl_Hash_SHA3_Scalar_shake128_absorb_final(
   uint64_t *state,
   uint8_t *input,
   uint32_t inputByteLen
 );
-
-void
-Hacl_Hash_SHA3_Scalar_shake128_absorb(uint64_t *state, uint8_t *input, uint32_t inputByteLen);
 
 void
 Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(

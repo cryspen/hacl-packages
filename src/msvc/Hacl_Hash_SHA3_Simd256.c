@@ -10323,7 +10323,7 @@ Hacl_Hash_SHA3_Simd256_shake128_absorb_nblocks(
 }
 
 void
-Hacl_Hash_SHA3_Simd256_shake128_absorb_last(
+Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
   Lib_IntVector_Intrinsics_vec256 *state,
   uint8_t *input0,
   uint8_t *input1,
