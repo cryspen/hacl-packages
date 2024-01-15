@@ -35,6 +35,8 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
+#include "libintvector.h"
+
 typedef struct K____uint8_t___uint8_t__s
 {
   uint8_t *fst;
@@ -141,7 +143,17 @@ uint64_t *Hacl_Hash_SHA3_Simd256_state_malloc(void);
 void Hacl_Hash_SHA3_Simd256_state_free(uint64_t *s);
 
 void
-Hacl_Hash_SHA3_Simd256_shake128_absorb(
+Hacl_Hash_SHA3_Simd256_shake128_absorb_nblocks(
+  Lib_IntVector_Intrinsics_vec256 *state,
+  uint8_t *input0,
+  uint8_t *input1,
+  uint8_t *input2,
+  uint8_t *input3,
+  uint32_t inputByteLen
+);
+
+void
+Hacl_Hash_SHA3_Simd256_shake128_absorb_last(
   Lib_IntVector_Intrinsics_vec256 *state,
   uint8_t *input0,
   uint8_t *input1,

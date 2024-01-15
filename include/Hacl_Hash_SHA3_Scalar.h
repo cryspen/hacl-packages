@@ -64,6 +64,20 @@ uint64_t *Hacl_Hash_SHA3_Scalar_state_malloc(void);
 void Hacl_Hash_SHA3_Scalar_state_free(uint64_t *s);
 
 void
+Hacl_Hash_SHA3_Scalar_shake128_absorb_nblocks(
+  uint64_t *state,
+  uint8_t *input,
+  uint32_t inputByteLen
+);
+
+void
+Hacl_Hash_SHA3_Scalar_shake128_absorb_last(
+  uint64_t *state,
+  uint8_t *input,
+  uint32_t inputByteLen
+);
+
+void
 Hacl_Hash_SHA3_Scalar_shake128_absorb(uint64_t *state, uint8_t *input, uint32_t inputByteLen);
 
 void
