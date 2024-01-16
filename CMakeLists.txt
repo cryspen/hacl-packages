@@ -168,6 +168,11 @@ if(ENABLE_UBSAN)
     add_link_options(-fsanitize=undefined)
 endif()
 
+if(ENABLE_MSAN)
+    add_compile_options(-fsanitize=memory -fsanitize-memory-track-origins)
+    add_link_options(-fsanitize=memory)
+endif()
+
 # Sources are written by mach.py into the following lists
 # - SOURCES_std: All regular files
 # - SOURCES_vec128: Files that require vec128 hardware
@@ -335,7 +340,7 @@ configure_file(config/Config.h.in config.h)
 # # Dynamic library
 add_library(hacl SHARED ${SOURCES_std} ${VALE_OBJECTS})
 if(NOT MSVC)
-    target_compile_options(hacl PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+    target_compile_options(hacl PRIVATE -Wall -Wextra -pedantic)
 endif()
 
 if(TOOLCHAIN_CAN_COMPILE_VEC128 AND HACL_VEC128_O)
@@ -362,7 +367,7 @@ endif()
 if(BUILD_LIBCRUX)
     add_library(libcrux_static STATIC ${LIBCRUX_SOURCES})
     if(NOT MSVC)
-        target_compile_options(libcrux_static PRIVATE -Wsign-conversion -Wconversion -Wall -Wextra -pedantic)
+        target_compile_options(libcrux_static PRIVATE -Wall -Wextra -pedantic -Wshadow -Wunused-function)
     endif()
 endif()
 
@@ -511,10 +516,10 @@ if(ENABLE_TESTS)
             add_dependencies(${TEST_NAME} hacl hacl_cpu_features)
             target_link_libraries(${TEST_NAME} PRIVATE
                 gtest_main
-                hacl_static
                 hacl_cpu_features
                 nlohmann_json::nlohmann_json
                 libcrux_static
+                hacl_static
             )
 
             if(EXISTS ${PROJECT_SOURCE_DIR}/tests/${TEST_NAME})
@@ -596,4 +601,32 @@ if(ENABLE_BENCHMARKS)
             benchmark::benchmark
         )
     endforeach()
+
+    if(BUILD_LIBCRUX)
+        foreach(BENCH_FILE IN LISTS LIBCRUX_BENCHMARK_SOURCES)
+            get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WE)
+            set(BENCH_NAME ${BENCH_NAME}_benchmark)
+            add_executable(${BENCH_NAME}
+                ${BENCH_FILE}
+            )
+
+            # Use modern C++
+            if(NOT MSVC)
+                target_compile_options(${BENCH_NAME} PRIVATE -std=c++17)
+            else()
+                # MSVC needs a modern C++ for designated initializers.
+                target_compile_options(${BENCH_NAME} PRIVATE /std:c++20)
+            endif(NOT MSVC)
+
+            target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
+
+            add_dependencies(${BENCH_NAME} hacl hacl_cpu_features)
+            target_link_libraries(${BENCH_NAME} PRIVATE
+                hacl_cpu_features
+                benchmark::benchmark
+                libcrux_static
+                hacl_static
+            )
+        endforeach()
+    endif()
 endif(ENABLE_BENCHMARKS)
