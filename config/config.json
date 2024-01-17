@@ -7,7 +7,8 @@
         "vale/include"
     ],
     "libcrux_include_paths": [
-        "libcrux/include"
+        "libcrux/include",
+        "libcrux/eurydice"
     ],
     "hacl_sources": {
         "nacl": [
@@ -344,6 +345,15 @@
         "kyber": [
             {
                 "file": "Libcrux_Kem_Kyber_Kyber768.c"
+            },
+            {
+                "file": "libcrux_kyber.c"
+            },
+            {
+                "file": "libcrux_hacl_glue.c"
+            },
+            {
+                "file": "core.c"
             }
         ]
     },
@@ -569,6 +579,11 @@
         ],
         "rsapss": [
             "rsapss.cc"
+        ]
+    },
+    "libcrux_benchmarks": {
+        "kyber": [
+            "kyber.cc"
         ]
     }
 }

@@ -1,36 +1,36 @@
 #include <string.h>
 
 #include "Libcrux_Kem_Kyber_Kyber768.h"
+#include "libcrux_kyber.h"
 
-int
+void
 Libcrux_Kyber768_GenerateKeyPair(uint8_t* pk,
                                  uint8_t* sk,
-                                 const uint8_t* randomness)
+                                 uint8_t randomness[64])
 {
-  (void)randomness;
-  memset(pk, 0, KYBER768_PUBLICKEYBYTES);
-  memset(sk, 0, KYBER768_SECRETKEYBYTES);
-  return 0;
+  libcrux_kyber_types_KyberKeyPair___2400size_t_1184size_t result =
+    libcrux_kyber_kyber768_generate_key_pair_768(randomness);
+
+  memcpy(pk, result.pk, KYBER768_PUBLICKEYBYTES);
+  memcpy(sk, result.sk, KYBER768_SECRETKEYBYTES);
 }
 
-int
+void
 Libcrux_Kyber768_Encapsulate(uint8_t* ct,
                              uint8_t* ss,
-                             const uint8_t* pk,
-                             const uint8_t* randomness)
+                             uint8_t (*pk)[1184],
+                             uint8_t randomness[32])
 {
-  (void)pk;
-  (void)randomness;
-  memset(ct, 0, KYBER768_CIPHERTEXTBYTES);
-  memset(ss, 0, KYBER768_SHAREDSECRETBYTES);
-  return 0;
+  K___libcrux_kyber_types_KyberCiphertext__1088size_t___uint8_t_32size_t_
+    result = libcrux_kyber_kyber768_encapsulate_768(pk, randomness);
+  memcpy(ct, result.fst, KYBER768_CIPHERTEXTBYTES);
+  memcpy(ss, result.snd, KYBER768_SHAREDSECRETBYTES);
 }
 
-int
-Libcrux_Kyber768_Decapsulate(uint8_t* ss, const uint8_t* ct, const uint8_t* sk)
+void
+Libcrux_Kyber768_Decapsulate(uint8_t ss[32U],
+                             uint8_t (*ct)[1088U],
+                             uint8_t (*sk)[2400U])
 {
-  (void)sk;
-  (void)ct;
-  memset(ss, 0, KYBER768_SHAREDSECRETBYTES);
-  return 0;
+  libcrux_kyber_kyber768_decapsulate_768(sk, ct, ss);
 }
