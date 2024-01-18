@@ -39,16 +39,16 @@ libcrux_digest_shake128x4f(size_t len,
       };
 #ifdef HACL_CAN_COMPILE_VEC256
   if (libcrux_platform_simd256_support() == true) {
-    Hacl_Hash_SHA3_Simd256_shake128(input0.len,
+    Hacl_Hash_SHA3_Simd256_shake128(out.fst,
+                                    out.snd,
+                                    out.thd,
+                                    out.f3,
+                                    (uint32_t)len,
                                     input0.ptr,
                                     input1.ptr,
                                     input2.ptr,
                                     input3.ptr,
-                                    (uint32_t)len,
-                                    out.fst,
-                                    out.snd,
-                                    out.thd,
-                                    out.f3);
+                                    input0.len);
   } else {
     Hacl_Hash_SHA3_shake128_hacl(
       input0.len, input0.ptr, (uint32_t)len, out.fst);

@@ -178,7 +178,7 @@ TEST(ApiSuite, ApiTest)
 
     uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-    Hacl_Hash_SHA3_Scalar_sha3_256(message_size, (uint8_t*)message, digest);
+    Hacl_Hash_SHA3_Scalar_sha3_256(digest, (uint8_t*)message, message_size);
     // ANCHOR_END(example scalar_sha3_256)
 
     bytes expected_digest = from_hex(
@@ -204,7 +204,7 @@ TEST(ApiSuite, ApiTest)
     uint8_t digest[42];
 
     Hacl_Hash_SHA3_Scalar_shake128(
-      message_size, (uint8_t*)message, digest_size, digest);
+      digest, digest_size, (uint8_t*)message, message_size);
     // ANCHOR_END(example scalar_shake128)
 
     bytes expected_digest =
@@ -232,15 +232,15 @@ TEST(ApiSuite, ApiTest)
       uint8_t digest2[HACL_HASH_SHA3_256_DIGEST_LENGTH];
       uint8_t digest3[HACL_HASH_SHA3_256_DIGEST_LENGTH];
 
-      Hacl_Hash_SHA3_Simd256_sha3_256(message_size,
-                                       (uint8_t*)message,
-                                       (uint8_t*)message,
-                                       (uint8_t*)message,
-                                       (uint8_t*)message,
-                                       digest0,
+      Hacl_Hash_SHA3_Simd256_sha3_256(digest0,
                                        digest1,
                                        digest2,
-                                       digest3);
+                                       digest3,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       (uint8_t*)message,
+                                       message_size);
       // ANCHOR_END(example vec256_sha3_256)
 
       bytes expected_digest = from_hex(
@@ -283,16 +283,16 @@ TEST(ApiSuite, ApiTest)
       uint8_t digest2[42];
       uint8_t digest3[42];
 
-      Hacl_Hash_SHA3_Simd256_shake128(message_size,
+      Hacl_Hash_SHA3_Simd256_shake128(digest0,
+                                       digest1,
+                                       digest2,
+                                       digest3,
+                                       digest_size,
                                        (uint8_t*)message0,
                                        (uint8_t*)message1,
                                        (uint8_t*)message2,
                                        (uint8_t*)message3,
-                                       digest_size,
-                                       digest0,
-                                       digest1,
-                                       digest2,
-                                       digest3);
+                                       message_size);
       // ANCHOR_END(example vec256_shake128)
 
       bytes expected_digest0 = from_hex(
@@ -356,16 +356,16 @@ TEST_P(Sha3KAT, TryKAT)
     bytes digest(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
       Hacl_Hash_SHA3_Scalar_sha3_224(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 256 / 8) {
       Hacl_Hash_SHA3_Scalar_sha3_256(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 384 / 8) {
       Hacl_Hash_SHA3_Scalar_sha3_384(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     } else if (test_case.md.size() == 512 / 8) {
       Hacl_Hash_SHA3_Scalar_sha3_512(
-        test_case.msg.size(), test_case.msg.data(), digest.data());
+        digest.data(), test_case.msg.data(), test_case.msg.size());
     }
 
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
@@ -380,45 +380,45 @@ TEST_P(Sha3KAT, TryKAT)
     bytes digest2(test_case.md.size(), 0);
     bytes digest3(test_case.md.size(), 0);
     if (test_case.md.size() == 224 / 8) {
-      Hacl_Hash_SHA3_Simd256_sha3_224(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_sha3_224(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
     } else if (test_case.md.size() == 256 / 8) {
-      Hacl_Hash_SHA3_Simd256_sha3_256(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_sha3_256(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
     } else if (test_case.md.size() == 384 / 8) {
-      Hacl_Hash_SHA3_Simd256_sha3_384(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_sha3_384(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
     } else if (test_case.md.size() == 512 / 8) {
-      Hacl_Hash_SHA3_Simd256_sha3_512(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_sha3_512(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
     }
 
     EXPECT_EQ(test_case.md, digest0) << bytes_to_hex(test_case.md) << std::endl
@@ -468,20 +468,20 @@ TEST_P(ShakeKAT, TryKAT)
     if (test_case.md.size() == 128 / 8) {
       bytes digest(test_case.md.size(), 128 / 8);
 
-      Hacl_Hash_SHA3_Scalar_shake128(test_case.msg.size(),
-                                     test_case.msg.data(),
+      Hacl_Hash_SHA3_Scalar_shake128(digest.data(),
                                      digest.size(),
-                                     digest.data());
+                                     test_case.msg.data(),
+                                     test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
     } else if (test_case.md.size() == 256 / 8) {
       bytes digest(test_case.md.size(), 256 / 8);
 
-      Hacl_Hash_SHA3_Scalar_shake256(test_case.msg.size(),
-                                     test_case.msg.data(),
+      Hacl_Hash_SHA3_Scalar_shake256(digest.data(),
                                      digest.size(),
-                                     digest.data());
+                                     test_case.msg.data(),
+                                     test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
@@ -497,16 +497,16 @@ TEST_P(ShakeKAT, TryKAT)
       bytes digest2(test_case.md.size(), 128 / 8);
       bytes digest3(test_case.md.size(), 128 / 8);
 
-      Hacl_Hash_SHA3_Simd256_shake128(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.size(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_shake128(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       digest0.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest0)
         << bytes_to_hex(test_case.md) << std::endl
@@ -526,16 +526,16 @@ TEST_P(ShakeKAT, TryKAT)
       bytes digest2(test_case.md.size(), 256 / 8);
       bytes digest3(test_case.md.size(), 256 / 8);
 
-      Hacl_Hash_SHA3_Simd256_shake256(test_case.msg.size(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       test_case.msg.data(),
-                                       digest0.size(),
-                                       digest0.data(),
+      Hacl_Hash_SHA3_Simd256_shake256(digest0.data(),
                                        digest1.data(),
                                        digest2.data(),
-                                       digest3.data());
+                                       digest3.data(),
+                                       digest0.size(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.data(),
+                                       test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest0)
         << bytes_to_hex(test_case.md) << std::endl
