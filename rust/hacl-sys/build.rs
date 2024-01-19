@@ -1,4 +1,7 @@
-use std::{env, path::Path, process::Command};
+extern crate cmake;
+
+use std::env;
+use std::path::{Path, PathBuf};
 
 #[cfg(all(not(windows), not(nobindgen)))]
 fn create_bindings(include_path: &Path, home_dir: &Path) {
@@ -65,77 +68,28 @@ fn create_bindings(include_path: &Path, home_dir: &Path) {
 #[cfg(any(windows, nobindgen))]
 fn create_bindings(_: &Path, _: &Path) {}
 
-fn build_hacl_c(path: &Path, cross_target: Option<String>) {
+fn build_hacl_c(path: &Path, cross_target: Option<String>) -> PathBuf {
     eprintln!(" >>> Building HACL C in {}", path.display());
-    // cmake
-    let mut cmake_cmd = Command::new("cmake");
 
-    // Map cross compile targets to cmake toolchain files
-    let toolchain_file = cross_target
-        .clone()
-        .map(|s| match s.as_str() {
-            "x86_64-apple-darwin" => vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/x64-darwin.cmake"],
-            "aarch64-apple-darwin" => {
-                vec!["-D", "CMAKE_TOOLCHAIN_FILE=config/aarch64-darwin.cmake"]
-            }
-            _ => vec![],
-        })
-        .unwrap_or_default();
-    let mut cmake_args = cross_target
-        .map(|s| match s.as_str() {
-            "i686-unknown-linux-gnu" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
-            "i686-pc-windows-msvc" => vec!["-DCMAKE_C_FLAGS=-m32", "-D", "CMAKE_CXX_FLAGS=-m32"],
-            _ => vec![],
-        })
-        .unwrap_or_default();
-    if !toolchain_file.is_empty() {
-        cmake_args.extend_from_slice(&toolchain_file);
-    }
-    cmake_args.extend_from_slice(&[
-        "-B",
-        "build",
-        "-G",
-        "Ninja",
-        "-D",
-        "CMAKE_BUILD_TYPE=Release",
-    ]);
+    let mut cmake_cmd = cmake::Config::new(path);
 
-    // We always build the release version here.
-    // TODO: For debugging don't use this.
-    let cmake_cmd = cmake_cmd.current_dir(path).args(&cmake_args);
-    eprintln!(" >>> CMAKE: {cmake_cmd:?}");
-    let cmake_status = cmake_cmd.status().expect("Failed to run cmake.");
-    if !cmake_status.success() {
-        panic!("Failed to run cmake.")
-    }
-    // build
-    let mut ninja_cmd = Command::new("ninja");
-    let ninja_status = ninja_cmd
-        .current_dir(path)
-        .args(&["-f", "build.ninja", "-C", "build"])
-        .status()
-        .expect("Failed to run ninja.");
-    if !ninja_status.success() {
-        panic!("Failed to run ninja.")
+    cmake_cmd.out_dir(path);
+    if let Some(toolchain_file) = cross_target.as_deref().and_then(|target| match target {
+        "x86_64-apple-darwin" => Some("config/x64-darwin.cmake"),
+        "aarch64-apple-darwin" => Some("config/aarch-darwin.cmake"),
+        _ => None,
+    }) {
+        cmake_cmd.define("CMAKE_TOOLCHAIN_FILE", toolchain_file);
     }
 
-    // install
-    let install_path = path.join("build").join("installed");
-    eprintln!(" >>> Installing HACL C into {}", install_path.display());
-    let mut cmake_cmd = Command::new("cmake");
-    let cmake_status = cmake_cmd
-        .current_dir(path)
-        .args(&[
-            "--install",
-            "build",
-            "--prefix",
-            install_path.to_str().unwrap(),
-        ])
-        .status()
-        .expect("Failed to install C library.");
-    if !cmake_status.success() {
-        panic!("Failed to install C library.")
+    if let Some((cflags, cxxflags)) = cross_target.as_deref().and_then(|target| match target {
+        "i686-unknown-linux-gnu" | "i686-pc-windows-msvc" => Some(("-m32", "-m32")),
+        _ => None,
+    }) {
+        cmake_cmd.cflag(cflags).cxxflag(cxxflags);
     }
+
+    cmake_cmd.build()
 }
 
 fn copy_hacl_to_out(out_dir: &Path) {
@@ -182,7 +136,11 @@ fn main() {
     let out_dir = Path::new(&out_dir);
     eprintln!("mach_build: {}", mach_build);
 
-    let cross_target = if target != host { Some(target.clone()) } else { None };
+    let cross_target = if target != host {
+        Some(target.clone())
+    } else {
+        None
+    };
 
     // Get the C library and build it first.
     // This is the default behaviour. It can be disabled when working on this
@@ -196,9 +154,7 @@ fn main() {
             eprintln!("     to {}", c_out_dir.display());
             copy_hacl_to_out(&c_out_dir);
         }
-        build_hacl_c(&c_out_dir, cross_target);
-
-        c_out_dir.join("build").join("installed")
+        build_hacl_c(&c_out_dir, cross_target)
     } else {
         // Use the higher level install directory.
         home_dir
