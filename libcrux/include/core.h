@@ -5,16 +5,23 @@
   KaRaMeL version: 08bfa78a
  */
 
-#ifndef __Eurydice_H
-#define __Eurydice_H
+#ifndef __core_H
+#define __core_H
 
-#include "core.h"
 #include "eurydice_glue.h"
 
-extern uint8_t Eurydice_bitand_pv_u8(uint8_t *x, uint8_t y);
+#define core_option_None 0
+#define core_option_Some 1
 
-extern uint8_t Eurydice_shr_pv_u8(uint8_t *x, int32_t y);
+typedef uint8_t core_option_Option__size_t_tags;
+
+typedef struct core_ops_range_Range__size_t_s
+{
+  size_t start;
+  size_t end;
+}
+core_ops_range_Range__size_t;
 
 
-#define __Eurydice_H_DEFINED
+#define __core_H_DEFINED
 #endif

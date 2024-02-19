@@ -5,16 +5,13 @@
   KaRaMeL version: 08bfa78a
  */
 
-#ifndef __Eurydice_H
-#define __Eurydice_H
+#ifndef __libcrux_platform_H
+#define __libcrux_platform_H
 
-#include "core.h"
 #include "eurydice_glue.h"
 
-extern uint8_t Eurydice_bitand_pv_u8(uint8_t *x, uint8_t y);
-
-extern uint8_t Eurydice_shr_pv_u8(uint8_t *x, int32_t y);
+extern bool libcrux_platform_simd256_support(void);
 
 
-#define __Eurydice_H_DEFINED
+#define __libcrux_platform_H_DEFINED
 #endif

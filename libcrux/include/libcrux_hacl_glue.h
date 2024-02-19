@@ -1,6 +1,6 @@
-#pragma once
+/* Hand-written file */
 
-#include "eurydice_glue.h"
+#pragma once
 
 extern K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
 libcrux_digest_shake128x4f(size_t len,
