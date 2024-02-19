@@ -1,6 +1,6 @@
+#include "libcrux_kyber.h"
 #include "libcrux_hacl_glue.h"
 #include "Hacl_Hash_SHA3.h"
-#include "libcrux_kyber.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_SHA3_Simd256.h"
@@ -14,27 +14,27 @@ libcrux_platform_simd256_support(void)
 }
 
 inline void
-libcrux_digest_shake256f(size_t len, Eurydice_slice input, uint8_t* out)
+libcrux_digest_shake256_(size_t len, Eurydice_slice input, uint8_t* out)
 {
   Hacl_Hash_SHA3_shake256_hacl(input.len, input.ptr, (uint32_t)len, out);
 }
 
 inline void
-libcrux_digest_shake128f(size_t len, Eurydice_slice input, uint8_t* out)
+libcrux_digest_shake128_(size_t len, Eurydice_slice input, uint8_t* out)
 {
   Hacl_Hash_SHA3_shake128_hacl(input.len, input.ptr, (uint32_t)len, out);
 }
 
-inline __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
+inline K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
 libcrux_digest_shake128x4f(size_t len,
                            Eurydice_slice input0,
                            Eurydice_slice input1,
                            Eurydice_slice input2,
                            Eurydice_slice input3)
 {
-  __uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
+  K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
     out =
-      (__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_){
+      (K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_){
         .fst = { 0 }, .snd = { 0 }, .thd = { 0 }, .f3 = { 0 }
       };
 #ifdef HACL_CAN_COMPILE_VEC256
