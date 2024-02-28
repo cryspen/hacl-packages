@@ -148,68 +148,67 @@ inline void
 libcrux_digest_shake128_squeeze_nblocks_x2(
   size_t output_bytes,
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[2]
+  uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  uint8_t* tmp0 = KRML_ALIGNED_MALLOC(output_bytes);
-  uint8_t* tmp1 = KRML_ALIGNED_MALLOC(output_bytes);
+  uint8_t* tmp = KRML_ALIGNED_MALLOC(2*output_bytes);
   return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
-    output[0],
-    output[1],
-    tmp0,
-    tmp1,
+    output,
+    output+output_bytes,
+    tmp,
+    tmp+output_bytes,
     output_bytes
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[0],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[1],output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st1,output+output_bytes,output_bytes);
   #endif
 }
 
 inline void
 libcrux_digest_shake128_squeeze_nblocks_x3(
   size_t output_bytes,
-  libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[3]
+  libcrux_digest_Shake128StateX3 *x0,
+  uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
   uint8_t* tmp0 = KRML_ALIGNED_MALLOC(output_bytes);
   return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
-    output[0],
-    output[1],
-    output[2],
+    output,
+    output+output_bytes,
+    output+2*output_bytes,
     tmp0,
     output_bytes
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[0],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[1],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[2],output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st1,output+output_bytes,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st2,output+2*output_bytes,output_bytes);
   #endif
 }
 
 inline void
 libcrux_digest_shake128_squeeze_nblocks_x4(
   size_t output_bytes,
-  libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[4]
+  libcrux_digest_Shake128StateX4 *x0,
+  uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
   return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
-    output[0],
-    output[1],
-    output[2],
-    output[3],
+    output,
+    output+output_bytes,
+    output+2*output_bytes,
+    output+3*output_bytes,
     output_bytes
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[0],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[1],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[2],output_bytes);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output[3],output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st0,output,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st1,output+output_bytes,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st2,output+2*output_bytes,output_bytes);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x0->st3,output+3*output_bytes,output_bytes);
   #endif
 }
 

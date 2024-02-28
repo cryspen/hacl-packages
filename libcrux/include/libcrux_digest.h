@@ -53,21 +53,21 @@ extern void
 libcrux_digest_shake128_squeeze_nblocks_x2(
   size_t output_bytes,
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[2]
+  uint8_t* output
 );
 
 extern void
 libcrux_digest_shake128_squeeze_nblocks_x3(
   size_t output_bytes,
-  libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[3]
+  libcrux_digest_Shake128StateX3 *x0,
+  uint8_t* output
 );
 
 extern void
 libcrux_digest_shake128_squeeze_nblocks_x4(
   size_t output_bytes,
-  libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output[4]
+  libcrux_digest_Shake128StateX4 *x0,
+  uint8_t* output  
 );
 
 
