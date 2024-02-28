@@ -25,48 +25,6 @@ libcrux_digest_shake128_(size_t len, Eurydice_slice input, uint8_t* out)
   Hacl_Hash_SHA3_shake128_hacl(input.len, input.ptr, (uint32_t)len, out);
 }
 
-inline K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
-libcrux_digest_shake128x4f(size_t len,
-                           Eurydice_slice input0,
-                           Eurydice_slice input1,
-                           Eurydice_slice input2,
-                           Eurydice_slice input3)
-{
-  K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
-    out =
-      (K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_){
-        .fst = { 0 }, .snd = { 0 }, .thd = { 0 }, .f3 = { 0 }
-      };
-#ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support() == true) {
-    Hacl_Hash_SHA3_Simd256_shake128(out.fst,
-                                    out.snd,
-                                    out.thd,
-                                    out.f3,
-                                    (uint32_t)len,
-                                    input0.ptr,
-                                    input1.ptr,
-                                    input2.ptr,
-                                    input3.ptr,
-                                    input0.len);
-  } else {
-    Hacl_Hash_SHA3_shake128_hacl(
-      input0.len, input0.ptr, (uint32_t)len, out.fst);
-    Hacl_Hash_SHA3_shake128_hacl(
-      input1.len, input1.ptr, (uint32_t)len, out.snd);
-    Hacl_Hash_SHA3_shake128_hacl(
-      input2.len, input2.ptr, (uint32_t)len, out.thd);
-    Hacl_Hash_SHA3_shake128_hacl(input3.len, input3.ptr, (uint32_t)len, out.f3);
-  }
-#else
-  Hacl_Hash_SHA3_shake128_hacl(input0.len, input0.ptr, (uint32_t)len, out.fst);
-  Hacl_Hash_SHA3_shake128_hacl(input1.len, input1.ptr, (uint32_t)len, out.snd);
-  Hacl_Hash_SHA3_shake128_hacl(input2.len, input2.ptr, (uint32_t)len, out.thd);
-  Hacl_Hash_SHA3_shake128_hacl(input3.len, input3.ptr, (uint32_t)len, out.f3);
-#endif
-  return out;
-}
-
 inline void
 libcrux_digest_sha3_512(Eurydice_slice x0, uint8_t x1[64U])
 {
@@ -78,3 +36,33 @@ libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U])
 {
   Hacl_Hash_SHA3_sha3_256(x1, x0.ptr, (uint32_t)x0.len);
 }
+
+extern libcrux_digest_Shake128StateX2 libcrux_digest_shake128_init_x2(void);
+
+extern libcrux_digest_Shake128StateX3 libcrux_digest_shake128_init_x3(void);
+
+extern libcrux_digest_Shake128StateX4 libcrux_digest_shake128_init_x4(void);
+
+extern void
+libcrux_digest_shake128_absorb_final_x2(
+  libcrux_digest_Shake128StateX2 *x0,
+  Eurydice_slice x1,
+  Eurydice_slice x2
+);
+
+extern void
+libcrux_digest_shake128_absorb_final_x3(
+  libcrux_digest_Shake128StateX3 *x0,
+  Eurydice_slice x1,
+  Eurydice_slice x2,
+  Eurydice_slice x3
+);
+
+extern void
+libcrux_digest_shake128_absorb_final_x4(
+  libcrux_digest_Shake128StateX4 *x0,
+  Eurydice_slice x1,
+  Eurydice_slice x2,
+  Eurydice_slice x3,
+  Eurydice_slice x4
+);
