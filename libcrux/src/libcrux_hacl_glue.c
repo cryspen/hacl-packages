@@ -4,6 +4,8 @@
 
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_SHA3_Simd256.h"
+#else
+#include "Hacl_Hash_SHA3_Scalar.h"
 #endif
 
 bool
@@ -37,13 +39,24 @@ libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U])
   Hacl_Hash_SHA3_sha3_256(x1, x0.ptr, (uint32_t)x0.len);
 }
 
-inline libcrux_digest_Shake128StateX2 libcrux_digest_shake128_init_x3(void){
+inline libcrux_digest_Shake128StateX2 libcrux_digest_shake128_init_x2(void){
   #ifdef HACL_CAN_COMPILE_VEC256
   return (libcrux_digest_Shake128StateX2) {.x4 = Hacl_Hash_SHA3_Simd256_state_malloc()}
   #else
   uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
   uint64_t* st1 = Hacl_Hash_SHA3_Scalar_state_malloc();
   return (libcrux_digest_Shake128StateX2) { .st0 = st0, .st1 = st1 };
+  #endif
+}
+
+inline libcrux_digest_Shake128StateX3 libcrux_digest_shake128_init_x3(void){
+  #ifdef HACL_CAN_COMPILE_VEC256
+  return (libcrux_digest_Shake128StateX3) {.x4 = Hacl_Hash_SHA3_Simd256_state_malloc()}
+  #else
+  uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
+  uint64_t* st1 = Hacl_Hash_SHA3_Scalar_state_malloc();
+  uint64_t* st2 = Hacl_Hash_SHA3_Scalar_state_malloc();
+  return (libcrux_digest_Shake128StateX3) { .st0 = st0, .st1 = st1, .st2 = st2 };
   #endif
 }
 
@@ -76,8 +89,8 @@ libcrux_digest_shake128_absorb_final_x2(
     x1.len
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr,x1.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr,x2.len);
   #endif
 }
 
@@ -99,9 +112,9 @@ libcrux_digest_shake128_absorb_final_x3(
     x1.len
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2,x3.ptr);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr,x1.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr,x2.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2,x3.ptr,x3.len);
   #endif
 }
 
@@ -124,10 +137,10 @@ libcrux_digest_shake128_absorb_final_x4(
     x1.len
   );
   #else
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2,x3.ptr);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3,x4.ptr);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0,x1.ptr,x1.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1,x2.ptr,x2.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2,x3.ptr,x3.len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3,x4.ptr,x4.len);
   #endif
 }
 

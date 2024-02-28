@@ -9,6 +9,7 @@
 #define __libcrux_digest_H
 
 #include "eurydice_glue.h"
+#include "libcrux_hacl_glue.h"
 
 extern void libcrux_digest_sha3_512(Eurydice_slice x0, uint8_t x1[64U]);
 
@@ -51,21 +52,21 @@ libcrux_digest_shake128_absorb_final_x4(
 extern void
 libcrux_digest_shake128_squeeze_nblocks_x2(
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output,
+  uint8_t* output[2],
   size_t output_bytes
 );
 
 extern void
 libcrux_digest_shake128_squeeze_nblocks_x3(
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output,
+  uint8_t* output[3],
   size_t output_bytes
 );
 
 extern void
 libcrux_digest_shake128_squeeze_nblocks_x4(
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output,
+  uint8_t* output[4],
   size_t output_bytes
 );
 
