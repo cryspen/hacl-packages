@@ -1506,7 +1506,7 @@ XOF_squeeze_three_blocks___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX2 st = uu____0.snd.val.case_X2;
         uint8_t tmp[2U][504U];
         libcrux_digest_shake128_squeeze_nblocks_x2(
-          (size_t)504U, &st, tmp, void*);
+          (size_t)504U, &st, tmp);
         uint8_t uu____1[504U];
         memcpy(uu____1, tmp[0U], (size_t)504U * sizeof(uint8_t));
         memcpy(output[0U], uu____1, (size_t)504U * sizeof(uint8_t));
@@ -1528,7 +1528,7 @@ XOF_squeeze_three_blocks___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX3 st = uu____0.snd.val.case_X3;
         uint8_t tmp[3U][504U];
         libcrux_digest_shake128_squeeze_nblocks_x3(
-          (size_t)504U, &st, tmp, void*);
+          (size_t)504U, &st, tmp);
         uint8_t uu____4[504U];
         memcpy(uu____4, tmp[0U], (size_t)504U * sizeof(uint8_t));
         memcpy(output[0U], uu____4, (size_t)504U * sizeof(uint8_t));
@@ -1553,7 +1553,7 @@ XOF_squeeze_three_blocks___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX4 st = uu____0.snd.val.case_X4;
         uint8_t tmp[4U][504U];
         libcrux_digest_shake128_squeeze_nblocks_x4(
-          (size_t)504U, &st, tmp, void*);
+          (size_t)504U, &st, tmp);
         uint8_t uu____8[504U];
         memcpy(uu____8, tmp[0U], (size_t)504U * sizeof(uint8_t));
         memcpy(output[0U], uu____8, (size_t)504U * sizeof(uint8_t));
@@ -1682,7 +1682,7 @@ XOF_squeeze_block___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX2 st = uu____0.snd.val.case_X2;
         uint8_t tmp[2U][168U];
         libcrux_digest_shake128_squeeze_nblocks_x2(
-          (size_t)168U, &st, tmp, void*);
+          (size_t)168U, &st, tmp);
         uint8_t uu____1[168U];
         memcpy(uu____1, tmp[0U], (size_t)168U * sizeof(uint8_t));
         memcpy(output[0U], uu____1, (size_t)168U * sizeof(uint8_t));
@@ -1704,7 +1704,7 @@ XOF_squeeze_block___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX3 st = uu____0.snd.val.case_X3;
         uint8_t tmp[3U][168U];
         libcrux_digest_shake128_squeeze_nblocks_x3(
-          (size_t)168U, &st, tmp, void*);
+          (size_t)168U, &st, tmp);
         uint8_t uu____4[168U];
         memcpy(uu____4, tmp[0U], (size_t)168U * sizeof(uint8_t));
         memcpy(output[0U], uu____4, (size_t)168U * sizeof(uint8_t));
@@ -1729,7 +1729,7 @@ XOF_squeeze_block___3size_t(XofState xof_state)
         libcrux_digest_Shake128StateX4 st = uu____0.snd.val.case_X4;
         uint8_t tmp[4U][168U];
         libcrux_digest_shake128_squeeze_nblocks_x4(
-          (size_t)168U, &st, tmp, void*);
+          (size_t)168U, &st, tmp);
         uint8_t uu____8[168U];
         memcpy(uu____8, tmp[0U], (size_t)168U * sizeof(uint8_t));
         memcpy(output[0U], uu____8, (size_t)168U * sizeof(uint8_t));
