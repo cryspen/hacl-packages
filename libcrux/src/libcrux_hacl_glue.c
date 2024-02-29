@@ -151,7 +151,7 @@ libcrux_digest_shake128_squeeze_nblocks_x2(
   uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  uint8_t* tmp = KRML_HOST_CALLOC(2,output_bytes);
+  uint8_t* tmp = alloca(2*output_bytes);
   Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
     output,
@@ -173,13 +173,13 @@ libcrux_digest_shake128_squeeze_nblocks_x3(
   uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  uint8_t* tmp0 = KRML_HOST_CALLOC(1,output_bytes);
+  uint8_t* tmp = alloca(output_bytes);
   Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
     output,
     output+output_bytes,
     output+2*output_bytes,
-    tmp0,
+    tmp,
     output_bytes
   );
   #else
