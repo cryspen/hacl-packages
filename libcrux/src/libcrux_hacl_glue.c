@@ -41,7 +41,7 @@ libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U])
 
 inline libcrux_digest_Shake128StateX2 libcrux_digest_shake128_init_x2(void){
   #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128StateX2) {.x4 = Hacl_Hash_SHA3_Simd256_state_malloc()}
+  return (libcrux_digest_Shake128StateX2) {.x4 = (Lib_IntVector_Intrinsics_vec256*) Hacl_Hash_SHA3_Simd256_state_malloc()};
   #else
   uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
   uint64_t* st1 = Hacl_Hash_SHA3_Scalar_state_malloc();
@@ -51,7 +51,7 @@ inline libcrux_digest_Shake128StateX2 libcrux_digest_shake128_init_x2(void){
 
 inline libcrux_digest_Shake128StateX3 libcrux_digest_shake128_init_x3(void){
   #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128StateX3) {.x4 = Hacl_Hash_SHA3_Simd256_state_malloc()}
+  return (libcrux_digest_Shake128StateX3) {.x4 = (Lib_IntVector_Intrinsics_vec256*) Hacl_Hash_SHA3_Simd256_state_malloc()};
   #else
   uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
   uint64_t* st1 = Hacl_Hash_SHA3_Scalar_state_malloc();
@@ -62,7 +62,7 @@ inline libcrux_digest_Shake128StateX3 libcrux_digest_shake128_init_x3(void){
 
 inline libcrux_digest_Shake128StateX4 libcrux_digest_shake128_init_x4(void){
   #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128StateX4) {.x4 = Hacl_Hash_SHA3_Simd256_state_malloc()}
+  return (libcrux_digest_Shake128StateX4) {.x4 = (Lib_IntVector_Intrinsics_vec256*) Hacl_Hash_SHA3_Simd256_state_malloc()};
   #else
   uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
   uint64_t* st1 = Hacl_Hash_SHA3_Scalar_state_malloc();
@@ -80,7 +80,7 @@ libcrux_digest_shake128_absorb_final_x2(
 ) {
   assert (x1.len == x2.len);
   #ifdef HACL_CAN_COMPILE_VEC256
-  return Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
+  Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
     x0->x4,
     x1.ptr,
     x2.ptr,
@@ -103,7 +103,7 @@ libcrux_digest_shake128_absorb_final_x3(
 ) {
   assert (x1.len == x2.len && x1.len == x3.len);
   #ifdef HACL_CAN_COMPILE_VEC256
-  return Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
+  Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
     x0->x4,
     x1.ptr,
     x2.ptr,
@@ -128,7 +128,7 @@ libcrux_digest_shake128_absorb_final_x4(
 ) {
   assert (x1.len == x2.len && x1.len == x3.len && x1.len == x4.len);
   #ifdef HACL_CAN_COMPILE_VEC256
-  return Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
+  Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
     x0->x4,
     x1.ptr,
     x2.ptr,
@@ -151,8 +151,8 @@ libcrux_digest_shake128_squeeze_nblocks_x2(
   uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  uint8_t* tmp = KRML_ALIGNED_MALLOC(2*output_bytes);
-  return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
+  uint8_t* tmp = KRML_HOST_CALLOC(2,output_bytes);
+  Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
     output,
     output+output_bytes,
@@ -173,8 +173,8 @@ libcrux_digest_shake128_squeeze_nblocks_x3(
   uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  uint8_t* tmp0 = KRML_ALIGNED_MALLOC(output_bytes);
-  return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
+  uint8_t* tmp0 = KRML_HOST_CALLOC(1,output_bytes);
+  Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
     output,
     output+output_bytes,
@@ -196,7 +196,7 @@ libcrux_digest_shake128_squeeze_nblocks_x4(
   uint8_t* output
 ) {
   #ifdef HACL_CAN_COMPILE_VEC256
-  return Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
+  Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
     output,
     output+output_bytes,

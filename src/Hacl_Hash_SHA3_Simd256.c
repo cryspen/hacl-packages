@@ -9919,13 +9919,13 @@ Hacl_Hash_SHA3_Simd256_sha3_512(
 
 uint64_t *Hacl_Hash_SHA3_Simd256_state_malloc(void)
 {
-  uint64_t *buf = (uint64_t *)KRML_HOST_CALLOC(100U, sizeof (uint64_t));
+  uint64_t *buf = (uint64_t *)KRML_ALIGNED_MALLOC(32,100U * sizeof (uint64_t));
   return buf;
 }
 
 void Hacl_Hash_SHA3_Simd256_state_free(uint64_t *s)
 {
-  KRML_HOST_FREE(s);
+  KRML_ALIGNED_FREE(s);
 }
 
 void
