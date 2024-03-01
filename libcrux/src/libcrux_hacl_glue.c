@@ -148,8 +148,9 @@ inline void
 libcrux_digest_shake128_squeeze_nblocks_x2_(
   size_t output_bytes,
   libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output
+  uint8_t (*output_array)[]
 ) {
+  uint8_t *output = (uint8_t*) output_array;
   #ifdef HACL_CAN_COMPILE_VEC256
   uint8_t* tmp = alloca(2*output_bytes);
   Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
@@ -170,8 +171,9 @@ inline void
 libcrux_digest_shake128_squeeze_nblocks_x3_(
   size_t output_bytes,
   libcrux_digest_Shake128StateX3 *x0,
-  uint8_t* output
+  uint8_t (*output_array)[]
 ) {
+  uint8_t *output = (uint8_t*) output_array;
   #ifdef HACL_CAN_COMPILE_VEC256
   uint8_t* tmp = alloca(output_bytes);
   Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
@@ -193,8 +195,9 @@ inline void
 libcrux_digest_shake128_squeeze_nblocks_x4_(
   size_t output_bytes,
   libcrux_digest_Shake128StateX4 *x0,
-  uint8_t* output
+  uint8_t (*output_array)[]
 ) {
+  uint8_t *output = (uint8_t*) output_array;
   #ifdef HACL_CAN_COMPILE_VEC256
   Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
     x0->x4,
