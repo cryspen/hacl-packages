@@ -26,3 +26,30 @@ typedef struct libcrux_digest_Shake128StateX4 {
   uint64_t* st3;
 } libcrux_digest_Shake128StateX4;
 #endif
+
+extern void
+libcrux_digest_shake128_squeeze_nblocks_x2_(
+  size_t output_bytes,
+  libcrux_digest_Shake128StateX2 *x0,
+  uint8_t* output
+);
+
+#define libcrux_digest_shake128_squeeze_nblocks_x2(a,b,c,d) libcrux_digest_shake128_squeeze_nblocks_x2_(a,b,c)
+
+extern void
+libcrux_digest_shake128_squeeze_nblocks_x3_(
+  size_t output_bytes,
+  libcrux_digest_Shake128StateX3 *x0,
+  uint8_t* output
+);
+
+#define libcrux_digest_shake128_squeeze_nblocks_x3(a,b,c,d) libcrux_digest_shake128_squeeze_nblocks_x3_(a,b,c)
+
+extern void
+libcrux_digest_shake128_squeeze_nblocks_x4_(
+  size_t output_bytes,
+  libcrux_digest_Shake128StateX4 *x0,
+  uint8_t* output  
+);
+
+#define libcrux_digest_shake128_squeeze_nblocks_x4(a,b,c,d) libcrux_digest_shake128_squeeze_nblocks_x4_(a,b,c)

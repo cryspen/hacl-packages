@@ -6,7 +6,7 @@
  */
 
 #ifndef __internal_libcrux_kyber_H
-#define __internal_libcrux_kyber_H 
+#define __internal_libcrux_kyber_H
 
 #include "internal/core.h"
 #include "../libcrux_kyber.h"

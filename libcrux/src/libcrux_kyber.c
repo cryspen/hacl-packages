@@ -1487,101 +1487,37 @@ typedef struct
   XofState snd;
 } __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState;
 
-typedef struct __uint8_t_libcrux_kyber_hash_functions_XofState_s
-{
-  uint8_t fst;
-  XofState snd;
-} __uint8_t_libcrux_kyber_hash_functions_XofState;
-
 static __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState
 XOF_squeeze_three_blocks___3size_t(XofState xof_state)
 {
   uint8_t output[3U][504U] = { 0U };
-  __uint8_t_libcrux_kyber_hash_functions_XofState uu____0 = {
-    .fst = (uint8_t)(size_t)3U, .snd = xof_state
-  };
-  switch (uu____0.fst) {
-    case 2U: {
-      if (uu____0.snd.tag == X2) {
-        libcrux_digest_Shake128StateX2 st = uu____0.snd.val.case_X2;
-        uint8_t tmp[2U][504U];
-        libcrux_digest_shake128_squeeze_nblocks_x2(
-          (size_t)504U, &st, tmp);
-        uint8_t uu____1[504U];
-        memcpy(uu____1, tmp[0U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[0U], uu____1, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____2[504U];
-        memcpy(uu____2, tmp[1U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[1U], uu____2, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____3[3U][504U];
-        memcpy(uu____3, output, (size_t)3U * sizeof(uint8_t[504U]));
-        __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____3, (size_t)3U * sizeof(uint8_t[504U]));
-        lit.snd.tag = X2;
-        lit.snd.val.case_X2 = st;
-        return lit;
-      }
-      break;
-    }
-    case 3U: {
-      if (uu____0.snd.tag == X3) {
-        libcrux_digest_Shake128StateX3 st = uu____0.snd.val.case_X3;
-        uint8_t tmp[3U][504U];
-        libcrux_digest_shake128_squeeze_nblocks_x3(
-          (size_t)504U, &st, tmp);
-        uint8_t uu____4[504U];
-        memcpy(uu____4, tmp[0U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[0U], uu____4, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____5[504U];
-        memcpy(uu____5, tmp[1U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[1U], uu____5, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____6[504U];
-        memcpy(uu____6, tmp[2U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[2U], uu____6, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____7[3U][504U];
-        memcpy(uu____7, output, (size_t)3U * sizeof(uint8_t[504U]));
-        __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____7, (size_t)3U * sizeof(uint8_t[504U]));
-        lit.snd.tag = X3;
-        lit.snd.val.case_X3 = st;
-        return lit;
-      }
-      break;
-    }
-    case 4U: {
-      if (uu____0.snd.tag == X4) {
-        libcrux_digest_Shake128StateX4 st = uu____0.snd.val.case_X4;
-        uint8_t tmp[4U][504U];
-        libcrux_digest_shake128_squeeze_nblocks_x4(
-          (size_t)504U, &st, tmp);
-        uint8_t uu____8[504U];
-        memcpy(uu____8, tmp[0U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[0U], uu____8, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____9[504U];
-        memcpy(uu____9, tmp[1U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[1U], uu____9, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____10[504U];
-        memcpy(uu____10, tmp[2U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[2U], uu____10, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____11[504U];
-        memcpy(uu____11, tmp[3U], (size_t)504U * sizeof(uint8_t));
-        memcpy(output[3U], uu____11, (size_t)504U * sizeof(uint8_t));
-        uint8_t uu____12[3U][504U];
-        memcpy(uu____12, output, (size_t)3U * sizeof(uint8_t[504U]));
-        __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____12, (size_t)3U * sizeof(uint8_t[504U]));
-        lit.snd.tag = X4;
-        lit.snd.val.case_X4 = st;
-        return lit;
-      }
-      break;
-    }
-    default: {
-    }
+  __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState uu____0;
+  if (xof_state.tag == X3) {
+    libcrux_digest_Shake128StateX3 st = xof_state.val.case_X3;
+    uint8_t tmp[3U][504U];
+    libcrux_digest_shake128_squeeze_nblocks_x3((size_t)504U, &st, tmp, void*);
+    uint8_t uu____1[504U];
+    memcpy(uu____1, tmp[0U], (size_t)504U * sizeof(uint8_t));
+    memcpy(output[0U], uu____1, (size_t)504U * sizeof(uint8_t));
+    uint8_t uu____2[504U];
+    memcpy(uu____2, tmp[1U], (size_t)504U * sizeof(uint8_t));
+    memcpy(output[1U], uu____2, (size_t)504U * sizeof(uint8_t));
+    uint8_t uu____3[504U];
+    memcpy(uu____3, tmp[2U], (size_t)504U * sizeof(uint8_t));
+    memcpy(output[2U], uu____3, (size_t)504U * sizeof(uint8_t));
+    uint8_t uu____4[3U][504U];
+    memcpy(uu____4, output, (size_t)3U * sizeof(uint8_t[504U]));
+    __uint8_t_504size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
+    memcpy(lit.fst, uu____4, (size_t)3U * sizeof(uint8_t[504U]));
+    lit.snd.tag = X3;
+    lit.snd.val.case_X3 = st;
+    uu____0 = lit;
+  } else {
+    KRML_HOST_EPRINTF(
+      "KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
+    KRML_HOST_EXIT(255U);
   }
-  KRML_HOST_EPRINTF(
-    "KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
-  KRML_HOST_EXIT(255U);
+  return uu____0;
 }
 
 static bool
@@ -1673,91 +1609,33 @@ static __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState
 XOF_squeeze_block___3size_t(XofState xof_state)
 {
   uint8_t output[3U][168U] = { 0U };
-  __uint8_t_libcrux_kyber_hash_functions_XofState uu____0 = {
-    .fst = (uint8_t)(size_t)3U, .snd = xof_state
-  };
-  switch (uu____0.fst) {
-    case 2U: {
-      if (uu____0.snd.tag == X2) {
-        libcrux_digest_Shake128StateX2 st = uu____0.snd.val.case_X2;
-        uint8_t tmp[2U][168U];
-        libcrux_digest_shake128_squeeze_nblocks_x2(
-          (size_t)168U, &st, tmp);
-        uint8_t uu____1[168U];
-        memcpy(uu____1, tmp[0U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[0U], uu____1, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____2[168U];
-        memcpy(uu____2, tmp[1U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[1U], uu____2, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____3[3U][168U];
-        memcpy(uu____3, output, (size_t)3U * sizeof(uint8_t[168U]));
-        __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____3, (size_t)3U * sizeof(uint8_t[168U]));
-        lit.snd.tag = X2;
-        lit.snd.val.case_X2 = st;
-        return lit;
-      }
-      break;
-    }
-    case 3U: {
-      if (uu____0.snd.tag == X3) {
-        libcrux_digest_Shake128StateX3 st = uu____0.snd.val.case_X3;
-        uint8_t tmp[3U][168U];
-        libcrux_digest_shake128_squeeze_nblocks_x3(
-          (size_t)168U, &st, tmp);
-        uint8_t uu____4[168U];
-        memcpy(uu____4, tmp[0U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[0U], uu____4, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____5[168U];
-        memcpy(uu____5, tmp[1U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[1U], uu____5, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____6[168U];
-        memcpy(uu____6, tmp[2U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[2U], uu____6, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____7[3U][168U];
-        memcpy(uu____7, output, (size_t)3U * sizeof(uint8_t[168U]));
-        __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____7, (size_t)3U * sizeof(uint8_t[168U]));
-        lit.snd.tag = X3;
-        lit.snd.val.case_X3 = st;
-        return lit;
-      }
-      break;
-    }
-    case 4U: {
-      if (uu____0.snd.tag == X4) {
-        libcrux_digest_Shake128StateX4 st = uu____0.snd.val.case_X4;
-        uint8_t tmp[4U][168U];
-        libcrux_digest_shake128_squeeze_nblocks_x4(
-          (size_t)168U, &st, tmp);
-        uint8_t uu____8[168U];
-        memcpy(uu____8, tmp[0U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[0U], uu____8, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____9[168U];
-        memcpy(uu____9, tmp[1U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[1U], uu____9, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____10[168U];
-        memcpy(uu____10, tmp[2U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[2U], uu____10, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____11[168U];
-        memcpy(uu____11, tmp[3U], (size_t)168U * sizeof(uint8_t));
-        memcpy(output[3U], uu____11, (size_t)168U * sizeof(uint8_t));
-        uint8_t uu____12[3U][168U];
-        memcpy(uu____12, output, (size_t)3U * sizeof(uint8_t[168U]));
-        __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
-        memcpy(lit.fst, uu____12, (size_t)3U * sizeof(uint8_t[168U]));
-        lit.snd.tag = X4;
-        lit.snd.val.case_X4 = st;
-        return lit;
-      }
-      break;
-    }
-    default: {
-    }
+  __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState uu____0;
+  if (xof_state.tag == X3) {
+    libcrux_digest_Shake128StateX3 st = xof_state.val.case_X3;
+    uint8_t tmp[3U][168U];
+    libcrux_digest_shake128_squeeze_nblocks_x3((size_t)168U, &st, tmp, void*);
+    uint8_t uu____1[168U];
+    memcpy(uu____1, tmp[0U], (size_t)168U * sizeof(uint8_t));
+    memcpy(output[0U], uu____1, (size_t)168U * sizeof(uint8_t));
+    uint8_t uu____2[168U];
+    memcpy(uu____2, tmp[1U], (size_t)168U * sizeof(uint8_t));
+    memcpy(output[1U], uu____2, (size_t)168U * sizeof(uint8_t));
+    uint8_t uu____3[168U];
+    memcpy(uu____3, tmp[2U], (size_t)168U * sizeof(uint8_t));
+    memcpy(output[2U], uu____3, (size_t)168U * sizeof(uint8_t));
+    uint8_t uu____4[3U][168U];
+    memcpy(uu____4, output, (size_t)3U * sizeof(uint8_t[168U]));
+    __uint8_t_168size_t__3size_t__libcrux_kyber_hash_functions_XofState lit;
+    memcpy(lit.fst, uu____4, (size_t)3U * sizeof(uint8_t[168U]));
+    lit.snd.tag = X3;
+    lit.snd.val.case_X3 = st;
+    uu____0 = lit;
+  } else {
+    KRML_HOST_EPRINTF(
+      "KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
+    KRML_HOST_EXIT(255U);
   }
-  KRML_HOST_EPRINTF(
-    "KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
-  KRML_HOST_EXIT(255U);
+  return uu____0;
 }
 
 static bool

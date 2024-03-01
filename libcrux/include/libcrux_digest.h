@@ -49,27 +49,6 @@ libcrux_digest_shake128_absorb_final_x4(
   Eurydice_slice x4
 );
 
-extern void
-libcrux_digest_shake128_squeeze_nblocks_x2(
-  size_t output_bytes,
-  libcrux_digest_Shake128StateX2 *x0,
-  uint8_t* output
-);
-
-extern void
-libcrux_digest_shake128_squeeze_nblocks_x3(
-  size_t output_bytes,
-  libcrux_digest_Shake128StateX3 *x0,
-  uint8_t* output
-);
-
-extern void
-libcrux_digest_shake128_squeeze_nblocks_x4(
-  size_t output_bytes,
-  libcrux_digest_Shake128StateX4 *x0,
-  uint8_t* output  
-);
-
 
 #define __libcrux_digest_H_DEFINED
 #endif
