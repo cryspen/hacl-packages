@@ -368,78 +368,78 @@ sample_from_binomial_distribution_2(Eurydice_slice randomness,
   memcpy(ret, sampled, (size_t)256U * sizeof(int32_t));
 }
 
-// static void
-// sample_from_binomial_distribution_3(Eurydice_slice randomness,
-//                                     int32_t ret[256U])
-// {
-//   int32_t sampled[256U];
-//   memcpy(sampled, ZERO, (size_t)256U * sizeof(int32_t));
-//   core_ops_range_Range__size_t iter0 = core_iter_traits_collect__I__into_iter(
-//     ((core_ops_range_Range__size_t){
-//       .start = (size_t)0U,
-//       .end =
-//         core_slice___Slice_T___len(randomness, uint8_t, size_t) / (size_t)3U }),
-//     core_ops_range_Range__size_t,
-//     core_ops_range_Range__size_t);
-//   while (true) {
-//     core_option_Option__size_t uu____0 =
-//       core_iter_range__core__ops__range__Range_A__3__next(
-//         &iter0, size_t, core_option_Option__size_t);
-//     if (uu____0.tag == core_option_None) {
-//       break;
-//     } else {
-//       size_t chunk_number = uu____0.f0;
-//       Eurydice_slice byte_chunk = Eurydice_slice_subslice(
-//         randomness,
-//         ((core_ops_range_Range__size_t){ .start = chunk_number * (size_t)3U,
-//                                          .end = chunk_number * (size_t)3U +
-//                                                 (size_t)3U }),
-//         uint8_t,
-//         core_ops_range_Range__size_t,
-//         Eurydice_slice);
-//       uint32_t uu____1 = (uint32_t)Eurydice_slice_index(
-//         byte_chunk, (size_t)0U, uint8_t, uint8_t);
-//       uint32_t uu____2 =
-//         uu____1 |
-//         (uint32_t)Eurydice_slice_index(byte_chunk, (size_t)1U, uint8_t, uint8_t)
-//           << 8U;
-//       uint32_t random_bits_as_u24 =
-//         uu____2 |
-//         (uint32_t)Eurydice_slice_index(byte_chunk, (size_t)2U, uint8_t, uint8_t)
-//           << 16U;
-//       uint32_t first_bits = random_bits_as_u24 & 2396745U;
-//       uint32_t second_bits = random_bits_as_u24 >> 1U & 2396745U;
-//       uint32_t third_bits = random_bits_as_u24 >> 2U & 2396745U;
-//       uint32_t coin_toss_outcomes = first_bits + second_bits + third_bits;
-//       core_ops_range_Range__int32_t iter =
-//         core_iter_traits_collect__I__into_iter(
-//           ((core_ops_range_Range__int32_t){ .start = (int32_t)0,
-//                                             .end = (int32_t)24 / (int32_t)6 }),
-//           core_ops_range_Range__int32_t,
-//           core_ops_range_Range__int32_t);
-//       while (true) {
-//         core_option_Option__int32_t uu____3 =
-//           core_iter_range__core__ops__range__Range_A__3__next(
-//             &iter, int32_t, core_option_Option__int32_t);
-//         if (uu____3.tag == core_option_None) {
-//           break;
-//         } else {
-//           int32_t outcome_set = uu____3.f0;
-//           int32_t outcome_set0 = outcome_set * (int32_t)6;
-//           int32_t outcome_1 =
-//             (int32_t)(coin_toss_outcomes >> (uint32_t)outcome_set0 & 7U);
-//           int32_t outcome_2 =
-//             (int32_t)(coin_toss_outcomes >>
-//                         (uint32_t)(outcome_set0 + (int32_t)3) &
-//                       7U);
-//           size_t offset = (size_t)(outcome_set0 / (int32_t)6);
-//           sampled[(size_t)4U * chunk_number + offset] = outcome_1 - outcome_2;
-//         }
-//       }
-//     }
-//   }
-//   memcpy(ret, sampled, (size_t)256U * sizeof(int32_t));
-// }
+static void
+sample_from_binomial_distribution_3(Eurydice_slice randomness,
+                                    int32_t ret[256U])
+{
+  int32_t sampled[256U];
+  memcpy(sampled, ZERO, (size_t)256U * sizeof(int32_t));
+  core_ops_range_Range__size_t iter0 = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){
+      .start = (size_t)0U,
+      .end =
+        core_slice___Slice_T___len(randomness, uint8_t, size_t) / (size_t)3U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter0, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t chunk_number = uu____0.f0;
+      Eurydice_slice byte_chunk = Eurydice_slice_subslice(
+        randomness,
+        ((core_ops_range_Range__size_t){ .start = chunk_number * (size_t)3U,
+                                         .end = chunk_number * (size_t)3U +
+                                                (size_t)3U }),
+        uint8_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      uint32_t uu____1 = (uint32_t)Eurydice_slice_index(
+        byte_chunk, (size_t)0U, uint8_t, uint8_t);
+      uint32_t uu____2 =
+        uu____1 |
+        (uint32_t)Eurydice_slice_index(byte_chunk, (size_t)1U, uint8_t, uint8_t)
+          << 8U;
+      uint32_t random_bits_as_u24 =
+        uu____2 |
+        (uint32_t)Eurydice_slice_index(byte_chunk, (size_t)2U, uint8_t, uint8_t)
+          << 16U;
+      uint32_t first_bits = random_bits_as_u24 & 2396745U;
+      uint32_t second_bits = random_bits_as_u24 >> 1U & 2396745U;
+      uint32_t third_bits = random_bits_as_u24 >> 2U & 2396745U;
+      uint32_t coin_toss_outcomes = first_bits + second_bits + third_bits;
+      core_ops_range_Range__int32_t iter =
+        core_iter_traits_collect__I__into_iter(
+          ((core_ops_range_Range__int32_t){ .start = (int32_t)0,
+                                            .end = (int32_t)24 / (int32_t)6 }),
+          core_ops_range_Range__int32_t,
+          core_ops_range_Range__int32_t);
+      while (true) {
+        core_option_Option__int32_t uu____3 =
+          core_iter_range__core__ops__range__Range_A__3__next(
+            &iter, int32_t, core_option_Option__int32_t);
+        if (uu____3.tag == core_option_None) {
+          break;
+        } else {
+          int32_t outcome_set = uu____3.f0;
+          int32_t outcome_set0 = outcome_set * (int32_t)6;
+          int32_t outcome_1 =
+            (int32_t)(coin_toss_outcomes >> (uint32_t)outcome_set0 & 7U);
+          int32_t outcome_2 =
+            (int32_t)(coin_toss_outcomes >>
+                        (uint32_t)(outcome_set0 + (int32_t)3) &
+                      7U);
+          size_t offset = (size_t)(outcome_set0 / (int32_t)6);
+          sampled[(size_t)4U * chunk_number + offset] = outcome_1 - outcome_2;
+        }
+      }
+    }
+  }
+  memcpy(ret, sampled, (size_t)256U * sizeof(int32_t));
+}
 
 static const int32_t ZETAS_TIMES_MONTGOMERY_R[128U] = {
   (int32_t)-1044, (int32_t)-758,  (int32_t)-359,  (int32_t)-1517,
@@ -685,48 +685,48 @@ typedef struct
   uint8_t f10;
 } __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t;
 
-// static __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
-// compress_coefficients_11(int32_t coefficient1,
-//                          int32_t coefficient2,
-//                          int32_t coefficient3,
-//                          int32_t coefficient4,
-//                          int32_t coefficient5,
-//                          int32_t coefficient6,
-//                          int32_t coefficient7,
-//                          int32_t coefficient8)
-// {
-//   uint8_t coef1 = (uint8_t)coefficient1;
-//   uint8_t coef2 = (uint32_t)(uint8_t)(coefficient2 & (int32_t)31) << 3U |
-//                   (uint32_t)(uint8_t)(coefficient1 >> 8U);
-//   uint8_t coef3 = (uint32_t)(uint8_t)(coefficient3 & (int32_t)3) << 6U |
-//                   (uint32_t)(uint8_t)(coefficient2 >> 5U);
-//   uint8_t coef4 = (uint8_t)(coefficient3 >> 2U & (int32_t)255);
-//   uint8_t coef5 = (uint32_t)(uint8_t)(coefficient4 & (int32_t)127) << 1U |
-//                   (uint32_t)(uint8_t)(coefficient3 >> 10U);
-//   uint8_t coef6 = (uint32_t)(uint8_t)(coefficient5 & (int32_t)15) << 4U |
-//                   (uint32_t)(uint8_t)(coefficient4 >> 7U);
-//   uint8_t coef7 = (uint32_t)(uint8_t)(coefficient6 & (int32_t)1) << 7U |
-//                   (uint32_t)(uint8_t)(coefficient5 >> 4U);
-//   uint8_t coef8 = (uint8_t)(coefficient6 >> 1U & (int32_t)255);
-//   uint8_t coef9 = (uint32_t)(uint8_t)(coefficient7 & (int32_t)63) << 2U |
-//                   (uint32_t)(uint8_t)(coefficient6 >> 9U);
-//   uint8_t coef10 = (uint32_t)(uint8_t)(coefficient8 & (int32_t)7) << 5U |
-//                    (uint32_t)(uint8_t)(coefficient7 >> 6U);
-//   uint8_t coef11 = (uint8_t)(coefficient8 >> 3U);
-//   return ((
-//     __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t){
-//     .fst = coef1,
-//     .snd = coef2,
-//     .thd = coef3,
-//     .f3 = coef4,
-//     .f4 = coef5,
-//     .f5 = coef6,
-//     .f6 = coef7,
-//     .f7 = coef8,
-//     .f8 = coef9,
-//     .f9 = coef10,
-//     .f10 = coef11 });
-// }
+static __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
+compress_coefficients_11(int32_t coefficient1,
+                         int32_t coefficient2,
+                         int32_t coefficient3,
+                         int32_t coefficient4,
+                         int32_t coefficient5,
+                         int32_t coefficient6,
+                         int32_t coefficient7,
+                         int32_t coefficient8)
+{
+  uint8_t coef1 = (uint8_t)coefficient1;
+  uint8_t coef2 = (uint32_t)(uint8_t)(coefficient2 & (int32_t)31) << 3U |
+                  (uint32_t)(uint8_t)(coefficient1 >> 8U);
+  uint8_t coef3 = (uint32_t)(uint8_t)(coefficient3 & (int32_t)3) << 6U |
+                  (uint32_t)(uint8_t)(coefficient2 >> 5U);
+  uint8_t coef4 = (uint8_t)(coefficient3 >> 2U & (int32_t)255);
+  uint8_t coef5 = (uint32_t)(uint8_t)(coefficient4 & (int32_t)127) << 1U |
+                  (uint32_t)(uint8_t)(coefficient3 >> 10U);
+  uint8_t coef6 = (uint32_t)(uint8_t)(coefficient5 & (int32_t)15) << 4U |
+                  (uint32_t)(uint8_t)(coefficient4 >> 7U);
+  uint8_t coef7 = (uint32_t)(uint8_t)(coefficient6 & (int32_t)1) << 7U |
+                  (uint32_t)(uint8_t)(coefficient5 >> 4U);
+  uint8_t coef8 = (uint8_t)(coefficient6 >> 1U & (int32_t)255);
+  uint8_t coef9 = (uint32_t)(uint8_t)(coefficient7 & (int32_t)63) << 2U |
+                  (uint32_t)(uint8_t)(coefficient6 >> 9U);
+  uint8_t coef10 = (uint32_t)(uint8_t)(coefficient8 & (int32_t)7) << 5U |
+                   (uint32_t)(uint8_t)(coefficient7 >> 6U);
+  uint8_t coef11 = (uint8_t)(coefficient8 >> 3U);
+  return ((
+    __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t){
+    .fst = coef1,
+    .snd = coef2,
+    .thd = coef3,
+    .f3 = coef4,
+    .f4 = coef5,
+    .f5 = coef6,
+    .f6 = coef7,
+    .f7 = coef8,
+    .f8 = coef9,
+    .f9 = coef10,
+    .f10 = coef11 });
+}
 
 static void
 invert_ntt_at_layer(size_t* zeta_i,
@@ -824,29 +824,29 @@ deserialize_then_decompress_message(uint8_t serialized[32U], int32_t ret[256U])
   memcpy(ret, re, (size_t)256U * sizeof(int32_t));
 }
 
-// static __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
-// compress_coefficients_5(uint8_t coefficient2,
-//                         uint8_t coefficient1,
-//                         uint8_t coefficient4,
-//                         uint8_t coefficient3,
-//                         uint8_t coefficient5,
-//                         uint8_t coefficient7,
-//                         uint8_t coefficient6,
-//                         uint8_t coefficient8)
-// {
-//   uint8_t coef1 = ((uint32_t)coefficient2 & 7U) << 5U | (uint32_t)coefficient1;
-//   uint8_t coef2 =
-//     (((uint32_t)coefficient4 & 1U) << 7U | (uint32_t)coefficient3 << 2U) |
-//     (uint32_t)coefficient2 >> 3U;
-//   uint8_t coef3 =
-//     ((uint32_t)coefficient5 & 15U) << 4U | (uint32_t)coefficient4 >> 1U;
-//   uint8_t coef4 =
-//     (((uint32_t)coefficient7 & 3U) << 6U | (uint32_t)coefficient6 << 1U) |
-//     (uint32_t)coefficient5 >> 4U;
-//   uint8_t coef5 = (uint32_t)coefficient8 << 3U | (uint32_t)coefficient7 >> 2U;
-//   return ((__uint8_t_uint8_t_uint8_t_uint8_t_uint8_t){
-//     .fst = coef1, .snd = coef2, .thd = coef3, .f3 = coef4, .f4 = coef5 });
-// }
+static __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
+compress_coefficients_5(uint8_t coefficient2,
+                        uint8_t coefficient1,
+                        uint8_t coefficient4,
+                        uint8_t coefficient3,
+                        uint8_t coefficient5,
+                        uint8_t coefficient7,
+                        uint8_t coefficient6,
+                        uint8_t coefficient8)
+{
+  uint8_t coef1 = ((uint32_t)coefficient2 & 7U) << 5U | (uint32_t)coefficient1;
+  uint8_t coef2 =
+    (((uint32_t)coefficient4 & 1U) << 7U | (uint32_t)coefficient3 << 2U) |
+    (uint32_t)coefficient2 >> 3U;
+  uint8_t coef3 =
+    ((uint32_t)coefficient5 & 15U) << 4U | (uint32_t)coefficient4 >> 1U;
+  uint8_t coef4 =
+    (((uint32_t)coefficient7 & 3U) << 6U | (uint32_t)coefficient6 << 1U) |
+    (uint32_t)coefficient5 >> 4U;
+  uint8_t coef5 = (uint32_t)coefficient8 << 3U | (uint32_t)coefficient7 >> 2U;
+  return ((__uint8_t_uint8_t_uint8_t_uint8_t_uint8_t){
+    .fst = coef1, .snd = coef2, .thd = coef3, .f3 = coef4, .f4 = coef5 });
+}
 
 typedef struct __int32_t_int32_t_int32_t_int32_t_s
 {
@@ -942,129 +942,129 @@ typedef struct
   int32_t f7;
 } __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t;
 
-// static __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
-// decompress_coefficients_11(int32_t byte2,
-//                            int32_t byte1,
-//                            int32_t byte3,
-//                            int32_t byte5,
-//                            int32_t byte4,
-//                            int32_t byte6,
-//                            int32_t byte7,
-//                            int32_t byte9,
-//                            int32_t byte8,
-//                            int32_t byte10,
-//                            int32_t byte11)
-// {
-//   int32_t coefficient1 = (byte2 & (int32_t)7) << 8U | byte1;
-//   int32_t coefficient2 = (byte3 & (int32_t)63) << 5U | byte2 >> 3U;
-//   int32_t coefficient3 =
-//     ((byte5 & (int32_t)1) << 10U | byte4 << 2U) | byte3 >> 6U;
-//   int32_t coefficient4 = (byte6 & (int32_t)15) << 7U | byte5 >> 1U;
-//   int32_t coefficient5 = (byte7 & (int32_t)127) << 4U | byte6 >> 4U;
-//   int32_t coefficient6 =
-//     ((byte9 & (int32_t)3) << 9U | byte8 << 1U) | byte7 >> 7U;
-//   int32_t coefficient7 = (byte10 & (int32_t)31) << 6U | byte9 >> 2U;
-//   int32_t coefficient8 = byte11 << 3U | byte10 >> 5U;
-//   return ((__int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t){
-//     .fst = coefficient1,
-//     .snd = coefficient2,
-//     .thd = coefficient3,
-//     .f3 = coefficient4,
-//     .f4 = coefficient5,
-//     .f5 = coefficient6,
-//     .f6 = coefficient7,
-//     .f7 = coefficient8 });
-// }
+static __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
+decompress_coefficients_11(int32_t byte2,
+                           int32_t byte1,
+                           int32_t byte3,
+                           int32_t byte5,
+                           int32_t byte4,
+                           int32_t byte6,
+                           int32_t byte7,
+                           int32_t byte9,
+                           int32_t byte8,
+                           int32_t byte10,
+                           int32_t byte11)
+{
+  int32_t coefficient1 = (byte2 & (int32_t)7) << 8U | byte1;
+  int32_t coefficient2 = (byte3 & (int32_t)63) << 5U | byte2 >> 3U;
+  int32_t coefficient3 =
+    ((byte5 & (int32_t)1) << 10U | byte4 << 2U) | byte3 >> 6U;
+  int32_t coefficient4 = (byte6 & (int32_t)15) << 7U | byte5 >> 1U;
+  int32_t coefficient5 = (byte7 & (int32_t)127) << 4U | byte6 >> 4U;
+  int32_t coefficient6 =
+    ((byte9 & (int32_t)3) << 9U | byte8 << 1U) | byte7 >> 7U;
+  int32_t coefficient7 = (byte10 & (int32_t)31) << 6U | byte9 >> 2U;
+  int32_t coefficient8 = byte11 << 3U | byte10 >> 5U;
+  return ((__int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t){
+    .fst = coefficient1,
+    .snd = coefficient2,
+    .thd = coefficient3,
+    .f3 = coefficient4,
+    .f4 = coefficient5,
+    .f5 = coefficient6,
+    .f6 = coefficient7,
+    .f7 = coefficient8 });
+}
 
-// static void
-// deserialize_then_decompress_11(Eurydice_slice serialized, int32_t ret[256U])
-// {
-//   int32_t re[256U];
-//   memcpy(re, ZERO, (size_t)256U * sizeof(int32_t));
-//   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-//     ((core_ops_range_Range__size_t){
-//       .start = (size_t)0U,
-//       .end = core_slice___Slice_T___len(serialized, uint8_t, size_t) /
-//              (size_t)11U }),
-//     core_ops_range_Range__size_t,
-//     core_ops_range_Range__size_t);
-//   while (true) {
-//     core_option_Option__size_t uu____0 =
-//       core_iter_range__core__ops__range__Range_A__3__next(
-//         &iter, size_t, core_option_Option__size_t);
-//     if (uu____0.tag == core_option_None) {
-//       break;
-//     } else {
-//       size_t i = uu____0.f0;
-//       Eurydice_slice bytes = Eurydice_slice_subslice(
-//         serialized,
-//         ((core_ops_range_Range__size_t){
-//           .start = i * (size_t)11U, .end = i * (size_t)11U + (size_t)11U }),
-//         uint8_t,
-//         core_ops_range_Range__size_t,
-//         Eurydice_slice);
-//       int32_t byte1 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)0U, uint8_t, uint8_t);
-//       int32_t byte2 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)1U, uint8_t, uint8_t);
-//       int32_t byte3 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)2U, uint8_t, uint8_t);
-//       int32_t byte4 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)3U, uint8_t, uint8_t);
-//       int32_t byte5 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)4U, uint8_t, uint8_t);
-//       int32_t byte6 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)5U, uint8_t, uint8_t);
-//       int32_t byte7 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)6U, uint8_t, uint8_t);
-//       int32_t byte8 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)7U, uint8_t, uint8_t);
-//       int32_t byte9 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)8U, uint8_t, uint8_t);
-//       int32_t byte10 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)9U, uint8_t, uint8_t);
-//       int32_t byte11 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)10U, uint8_t, uint8_t);
-//       __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
-//         uu____1 = decompress_coefficients_11(byte2,
-//                                              byte1,
-//                                              byte3,
-//                                              byte5,
-//                                              byte4,
-//                                              byte6,
-//                                              byte7,
-//                                              byte9,
-//                                              byte8,
-//                                              byte10,
-//                                              byte11);
-//       int32_t coefficient1 = uu____1.fst;
-//       int32_t coefficient2 = uu____1.snd;
-//       int32_t coefficient3 = uu____1.thd;
-//       int32_t coefficient4 = uu____1.f3;
-//       int32_t coefficient5 = uu____1.f4;
-//       int32_t coefficient6 = uu____1.f5;
-//       int32_t coefficient7 = uu____1.f6;
-//       int32_t coefficient8 = uu____1.f7;
-//       int32_t uu____2 = decompress_ciphertext_coefficient(11U, coefficient1);
-//       re[(size_t)8U * i] = uu____2;
-//       int32_t uu____3 = decompress_ciphertext_coefficient(11U, coefficient2);
-//       re[(size_t)8U * i + (size_t)1U] = uu____3;
-//       int32_t uu____4 = decompress_ciphertext_coefficient(11U, coefficient3);
-//       re[(size_t)8U * i + (size_t)2U] = uu____4;
-//       int32_t uu____5 = decompress_ciphertext_coefficient(11U, coefficient4);
-//       re[(size_t)8U * i + (size_t)3U] = uu____5;
-//       int32_t uu____6 = decompress_ciphertext_coefficient(11U, coefficient5);
-//       re[(size_t)8U * i + (size_t)4U] = uu____6;
-//       int32_t uu____7 = decompress_ciphertext_coefficient(11U, coefficient6);
-//       re[(size_t)8U * i + (size_t)5U] = uu____7;
-//       int32_t uu____8 = decompress_ciphertext_coefficient(11U, coefficient7);
-//       re[(size_t)8U * i + (size_t)6U] = uu____8;
-//       int32_t uu____9 = decompress_ciphertext_coefficient(11U, coefficient8);
-//       re[(size_t)8U * i + (size_t)7U] = uu____9;
-//     }
-//   }
-//   memcpy(ret, re, (size_t)256U * sizeof(int32_t));
-// }
+static void
+deserialize_then_decompress_11(Eurydice_slice serialized, int32_t ret[256U])
+{
+  int32_t re[256U];
+  memcpy(re, ZERO, (size_t)256U * sizeof(int32_t));
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){
+      .start = (size_t)0U,
+      .end = core_slice___Slice_T___len(serialized, uint8_t, size_t) /
+             (size_t)11U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice bytes = Eurydice_slice_subslice(
+        serialized,
+        ((core_ops_range_Range__size_t){
+          .start = i * (size_t)11U, .end = i * (size_t)11U + (size_t)11U }),
+        uint8_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      int32_t byte1 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)0U, uint8_t, uint8_t);
+      int32_t byte2 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)1U, uint8_t, uint8_t);
+      int32_t byte3 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)2U, uint8_t, uint8_t);
+      int32_t byte4 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)3U, uint8_t, uint8_t);
+      int32_t byte5 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)4U, uint8_t, uint8_t);
+      int32_t byte6 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)5U, uint8_t, uint8_t);
+      int32_t byte7 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)6U, uint8_t, uint8_t);
+      int32_t byte8 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)7U, uint8_t, uint8_t);
+      int32_t byte9 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)8U, uint8_t, uint8_t);
+      int32_t byte10 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)9U, uint8_t, uint8_t);
+      int32_t byte11 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)10U, uint8_t, uint8_t);
+      __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
+        uu____1 = decompress_coefficients_11(byte2,
+                                             byte1,
+                                             byte3,
+                                             byte5,
+                                             byte4,
+                                             byte6,
+                                             byte7,
+                                             byte9,
+                                             byte8,
+                                             byte10,
+                                             byte11);
+      int32_t coefficient1 = uu____1.fst;
+      int32_t coefficient2 = uu____1.snd;
+      int32_t coefficient3 = uu____1.thd;
+      int32_t coefficient4 = uu____1.f3;
+      int32_t coefficient5 = uu____1.f4;
+      int32_t coefficient6 = uu____1.f5;
+      int32_t coefficient7 = uu____1.f6;
+      int32_t coefficient8 = uu____1.f7;
+      int32_t uu____2 = decompress_ciphertext_coefficient(11U, coefficient1);
+      re[(size_t)8U * i] = uu____2;
+      int32_t uu____3 = decompress_ciphertext_coefficient(11U, coefficient2);
+      re[(size_t)8U * i + (size_t)1U] = uu____3;
+      int32_t uu____4 = decompress_ciphertext_coefficient(11U, coefficient3);
+      re[(size_t)8U * i + (size_t)2U] = uu____4;
+      int32_t uu____5 = decompress_ciphertext_coefficient(11U, coefficient4);
+      re[(size_t)8U * i + (size_t)3U] = uu____5;
+      int32_t uu____6 = decompress_ciphertext_coefficient(11U, coefficient5);
+      re[(size_t)8U * i + (size_t)4U] = uu____6;
+      int32_t uu____7 = decompress_ciphertext_coefficient(11U, coefficient6);
+      re[(size_t)8U * i + (size_t)5U] = uu____7;
+      int32_t uu____8 = decompress_ciphertext_coefficient(11U, coefficient7);
+      re[(size_t)8U * i + (size_t)6U] = uu____8;
+      int32_t uu____9 = decompress_ciphertext_coefficient(11U, coefficient8);
+      re[(size_t)8U * i + (size_t)7U] = uu____9;
+    }
+  }
+  memcpy(ret, re, (size_t)256U * sizeof(int32_t));
+}
 
 static void
 ntt_at_layer_3328(size_t* zeta_i,
@@ -1118,99 +1118,99 @@ deserialize_then_decompress_4(Eurydice_slice serialized, int32_t ret[256U])
   memcpy(ret, re, (size_t)256U * sizeof(int32_t));
 }
 
-// static __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
-// decompress_coefficients_5(int32_t byte1,
-//                           int32_t byte2,
-//                           int32_t byte3,
-//                           int32_t byte4,
-//                           int32_t byte5)
-// {
-//   int32_t coefficient1 = byte1 & (int32_t)31;
-//   int32_t coefficient2 = (byte2 & (int32_t)3) << 3U | byte1 >> 5U;
-//   int32_t coefficient3 = byte2 >> 2U & (int32_t)31;
-//   int32_t coefficient4 = (byte3 & (int32_t)15) << 1U | byte2 >> 7U;
-//   int32_t coefficient5 = (byte4 & (int32_t)1) << 4U | byte3 >> 4U;
-//   int32_t coefficient6 = byte4 >> 1U & (int32_t)31;
-//   int32_t coefficient7 = (byte5 & (int32_t)7) << 2U | byte4 >> 6U;
-//   int32_t coefficient8 = byte5 >> 3U;
-//   return ((__int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t){
-//     .fst = coefficient1,
-//     .snd = coefficient2,
-//     .thd = coefficient3,
-//     .f3 = coefficient4,
-//     .f4 = coefficient5,
-//     .f5 = coefficient6,
-//     .f6 = coefficient7,
-//     .f7 = coefficient8 });
-// }
+static __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
+decompress_coefficients_5(int32_t byte1,
+                          int32_t byte2,
+                          int32_t byte3,
+                          int32_t byte4,
+                          int32_t byte5)
+{
+  int32_t coefficient1 = byte1 & (int32_t)31;
+  int32_t coefficient2 = (byte2 & (int32_t)3) << 3U | byte1 >> 5U;
+  int32_t coefficient3 = byte2 >> 2U & (int32_t)31;
+  int32_t coefficient4 = (byte3 & (int32_t)15) << 1U | byte2 >> 7U;
+  int32_t coefficient5 = (byte4 & (int32_t)1) << 4U | byte3 >> 4U;
+  int32_t coefficient6 = byte4 >> 1U & (int32_t)31;
+  int32_t coefficient7 = (byte5 & (int32_t)7) << 2U | byte4 >> 6U;
+  int32_t coefficient8 = byte5 >> 3U;
+  return ((__int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t){
+    .fst = coefficient1,
+    .snd = coefficient2,
+    .thd = coefficient3,
+    .f3 = coefficient4,
+    .f4 = coefficient5,
+    .f5 = coefficient6,
+    .f6 = coefficient7,
+    .f7 = coefficient8 });
+}
 
-// static void
-// deserialize_then_decompress_5(Eurydice_slice serialized, int32_t ret[256U])
-// {
-//   int32_t re[256U];
-//   memcpy(re, ZERO, (size_t)256U * sizeof(int32_t));
-//   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-//     ((core_ops_range_Range__size_t){
-//       .start = (size_t)0U,
-//       .end =
-//         core_slice___Slice_T___len(serialized, uint8_t, size_t) / (size_t)5U }),
-//     core_ops_range_Range__size_t,
-//     core_ops_range_Range__size_t);
-//   while (true) {
-//     core_option_Option__size_t uu____0 =
-//       core_iter_range__core__ops__range__Range_A__3__next(
-//         &iter, size_t, core_option_Option__size_t);
-//     if (uu____0.tag == core_option_None) {
-//       break;
-//     } else {
-//       size_t i = uu____0.f0;
-//       Eurydice_slice bytes = Eurydice_slice_subslice(
-//         serialized,
-//         ((core_ops_range_Range__size_t){ .start = i * (size_t)5U,
-//                                          .end = i * (size_t)5U + (size_t)5U }),
-//         uint8_t,
-//         core_ops_range_Range__size_t,
-//         Eurydice_slice);
-//       int32_t byte1 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)0U, uint8_t, uint8_t);
-//       int32_t byte2 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)1U, uint8_t, uint8_t);
-//       int32_t byte3 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)2U, uint8_t, uint8_t);
-//       int32_t byte4 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)3U, uint8_t, uint8_t);
-//       int32_t byte5 =
-//         (int32_t)Eurydice_slice_index(bytes, (size_t)4U, uint8_t, uint8_t);
-//       __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
-//         uu____1 = decompress_coefficients_5(byte1, byte2, byte3, byte4, byte5);
-//       int32_t coefficient1 = uu____1.fst;
-//       int32_t coefficient2 = uu____1.snd;
-//       int32_t coefficient3 = uu____1.thd;
-//       int32_t coefficient4 = uu____1.f3;
-//       int32_t coefficient5 = uu____1.f4;
-//       int32_t coefficient6 = uu____1.f5;
-//       int32_t coefficient7 = uu____1.f6;
-//       int32_t coefficient8 = uu____1.f7;
-//       int32_t uu____2 = decompress_ciphertext_coefficient(5U, coefficient1);
-//       re[(size_t)8U * i] = uu____2;
-//       int32_t uu____3 = decompress_ciphertext_coefficient(5U, coefficient2);
-//       re[(size_t)8U * i + (size_t)1U] = uu____3;
-//       int32_t uu____4 = decompress_ciphertext_coefficient(5U, coefficient3);
-//       re[(size_t)8U * i + (size_t)2U] = uu____4;
-//       int32_t uu____5 = decompress_ciphertext_coefficient(5U, coefficient4);
-//       re[(size_t)8U * i + (size_t)3U] = uu____5;
-//       int32_t uu____6 = decompress_ciphertext_coefficient(5U, coefficient5);
-//       re[(size_t)8U * i + (size_t)4U] = uu____6;
-//       int32_t uu____7 = decompress_ciphertext_coefficient(5U, coefficient6);
-//       re[(size_t)8U * i + (size_t)5U] = uu____7;
-//       int32_t uu____8 = decompress_ciphertext_coefficient(5U, coefficient7);
-//       re[(size_t)8U * i + (size_t)6U] = uu____8;
-//       int32_t uu____9 = decompress_ciphertext_coefficient(5U, coefficient8);
-//       re[(size_t)8U * i + (size_t)7U] = uu____9;
-//     }
-//   }
-//   memcpy(ret, re, (size_t)256U * sizeof(int32_t));
-// }
+static void
+deserialize_then_decompress_5(Eurydice_slice serialized, int32_t ret[256U])
+{
+  int32_t re[256U];
+  memcpy(re, ZERO, (size_t)256U * sizeof(int32_t));
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){
+      .start = (size_t)0U,
+      .end =
+        core_slice___Slice_T___len(serialized, uint8_t, size_t) / (size_t)5U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice bytes = Eurydice_slice_subslice(
+        serialized,
+        ((core_ops_range_Range__size_t){ .start = i * (size_t)5U,
+                                         .end = i * (size_t)5U + (size_t)5U }),
+        uint8_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      int32_t byte1 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)0U, uint8_t, uint8_t);
+      int32_t byte2 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)1U, uint8_t, uint8_t);
+      int32_t byte3 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)2U, uint8_t, uint8_t);
+      int32_t byte4 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)3U, uint8_t, uint8_t);
+      int32_t byte5 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)4U, uint8_t, uint8_t);
+      __int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t_int32_t
+        uu____1 = decompress_coefficients_5(byte1, byte2, byte3, byte4, byte5);
+      int32_t coefficient1 = uu____1.fst;
+      int32_t coefficient2 = uu____1.snd;
+      int32_t coefficient3 = uu____1.thd;
+      int32_t coefficient4 = uu____1.f3;
+      int32_t coefficient5 = uu____1.f4;
+      int32_t coefficient6 = uu____1.f5;
+      int32_t coefficient7 = uu____1.f6;
+      int32_t coefficient8 = uu____1.f7;
+      int32_t uu____2 = decompress_ciphertext_coefficient(5U, coefficient1);
+      re[(size_t)8U * i] = uu____2;
+      int32_t uu____3 = decompress_ciphertext_coefficient(5U, coefficient2);
+      re[(size_t)8U * i + (size_t)1U] = uu____3;
+      int32_t uu____4 = decompress_ciphertext_coefficient(5U, coefficient3);
+      re[(size_t)8U * i + (size_t)2U] = uu____4;
+      int32_t uu____5 = decompress_ciphertext_coefficient(5U, coefficient4);
+      re[(size_t)8U * i + (size_t)3U] = uu____5;
+      int32_t uu____6 = decompress_ciphertext_coefficient(5U, coefficient5);
+      re[(size_t)8U * i + (size_t)4U] = uu____6;
+      int32_t uu____7 = decompress_ciphertext_coefficient(5U, coefficient6);
+      re[(size_t)8U * i + (size_t)5U] = uu____7;
+      int32_t uu____8 = decompress_ciphertext_coefficient(5U, coefficient7);
+      re[(size_t)8U * i + (size_t)6U] = uu____8;
+      int32_t uu____9 = decompress_ciphertext_coefficient(5U, coefficient8);
+      re[(size_t)8U * i + (size_t)7U] = uu____9;
+    }
+  }
+  memcpy(ret, re, (size_t)256U * sizeof(int32_t));
+}
 
 static void
 compress_then_serialize_message(int32_t re[256U], uint8_t ret[32U])
@@ -1444,11 +1444,11 @@ libcrux_kyber_kyber768_validate_public_key(uint8_t public_key[1184U])
   return uu____0;
 }
 
-// static libcrux_digest_Shake128State
-// closure___3size_t(size_t _)
-// {
-//   return libcrux_digest_shake128_init();
-// }
+static libcrux_digest_Shake128State
+closure___3size_t(size_t _)
+{
+  return libcrux_digest_shake128_init();
+}
 
 static void
 XOF_absorb___3size_t(uint8_t input[3U][34U],
@@ -1710,10 +1710,25 @@ sample_from_uniform_distribution_next___3size_t_168size_t(
   return done;
 }
 
-// static void
-// XOF_free___3size_t(libcrux_digest_Shake128State xof_state[3U])
-// {
-// }
+static void
+XOF_free___3size_t(libcrux_digest_Shake128State xof_state[3U])
+{
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      libcrux_digest__libcrux__digest__Shake128State_3__free(&xof_state[i]);
+    }
+  }
+}
 
 static void
 sample_from_xof___3size_t(uint8_t seeds[3U][34U], int32_t ret[3U][256U])
@@ -1759,7 +1774,7 @@ sample_from_xof___3size_t(uint8_t seeds[3U][34U], int32_t ret[3U][256U])
     done = sample_from_uniform_distribution_next___3size_t_168size_t(
       uu____4, sampled_coefficients, out);
   }
-  // XOF_free___3size_t(xof_state);
+  XOF_free___3size_t(xof_state);
   int32_t uu____5[3U][256U];
   memcpy(uu____5, out, (size_t)3U * sizeof(int32_t[256U]));
   memcpy(ret, uu____5, (size_t)3U * sizeof(int32_t[256U]));
@@ -2585,105 +2600,105 @@ compress_then_serialize_10___320size_t(int32_t re[256U], uint8_t ret[320U])
   memcpy(ret, uu____2, (size_t)320U * sizeof(uint8_t));
 }
 
-// static void
-// compress_then_serialize_11___320size_t(int32_t re[256U], uint8_t ret[320U])
-// {
-//   uint8_t serialized[320U] = { 0U };
-//   core_ops_range_Range__size_t lit;
-//   lit.start = (size_t)0U;
-//   lit.end =
-//     core_slice___Slice_T___len(
-//       Eurydice_array_to_slice((size_t)256U, re, int32_t, Eurydice_slice),
-//       int32_t,
-//       size_t) /
-//     (size_t)8U;
-//   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-//     lit, core_ops_range_Range__size_t, core_ops_range_Range__size_t);
-//   while (true) {
-//     core_option_Option__size_t uu____0 =
-//       core_iter_range__core__ops__range__Range_A__3__next(
-//         &iter, size_t, core_option_Option__size_t);
-//     if (uu____0.tag == core_option_None) {
-//       break;
-//     } else {
-//       size_t i = uu____0.f0;
-//       Eurydice_slice coefficients = Eurydice_array_to_subslice(
-//         (size_t)256U,
-//         re,
-//         ((core_ops_range_Range__size_t){ .start = i * (size_t)8U,
-//                                          .end = i * (size_t)8U + (size_t)8U }),
-//         int32_t,
-//         core_ops_range_Range__size_t,
-//         Eurydice_slice);
-//       int32_t coefficient1 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)0U, int32_t, int32_t)));
-//       int32_t coefficient2 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)1U, int32_t, int32_t)));
-//       int32_t coefficient3 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)2U, int32_t, int32_t)));
-//       int32_t coefficient4 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)3U, int32_t, int32_t)));
-//       int32_t coefficient5 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)4U, int32_t, int32_t)));
-//       int32_t coefficient6 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)5U, int32_t, int32_t)));
-//       int32_t coefficient7 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)6U, int32_t, int32_t)));
-//       int32_t coefficient8 = compress_ciphertext_coefficient(
-//         11U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)7U, int32_t, int32_t)));
-//       __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
-//         uu____1 = compress_coefficients_11(coefficient1,
-//                                            coefficient2,
-//                                            coefficient3,
-//                                            coefficient4,
-//                                            coefficient5,
-//                                            coefficient6,
-//                                            coefficient7,
-//                                            coefficient8);
-//       uint8_t coef1 = uu____1.fst;
-//       uint8_t coef2 = uu____1.snd;
-//       uint8_t coef3 = uu____1.thd;
-//       uint8_t coef4 = uu____1.f3;
-//       uint8_t coef5 = uu____1.f4;
-//       uint8_t coef6 = uu____1.f5;
-//       uint8_t coef7 = uu____1.f6;
-//       uint8_t coef8 = uu____1.f7;
-//       uint8_t coef9 = uu____1.f8;
-//       uint8_t coef10 = uu____1.f9;
-//       uint8_t coef11 = uu____1.f10;
-//       serialized[(size_t)11U * i] = coef1;
-//       serialized[(size_t)11U * i + (size_t)1U] = coef2;
-//       serialized[(size_t)11U * i + (size_t)2U] = coef3;
-//       serialized[(size_t)11U * i + (size_t)3U] = coef4;
-//       serialized[(size_t)11U * i + (size_t)4U] = coef5;
-//       serialized[(size_t)11U * i + (size_t)5U] = coef6;
-//       serialized[(size_t)11U * i + (size_t)6U] = coef7;
-//       serialized[(size_t)11U * i + (size_t)7U] = coef8;
-//       serialized[(size_t)11U * i + (size_t)8U] = coef9;
-//       serialized[(size_t)11U * i + (size_t)9U] = coef10;
-//       serialized[(size_t)11U * i + (size_t)10U] = coef11;
-//     }
-//   }
-//   uint8_t uu____2[320U];
-//   memcpy(uu____2, serialized, (size_t)320U * sizeof(uint8_t));
-//   memcpy(ret, uu____2, (size_t)320U * sizeof(uint8_t));
-// }
+static void
+compress_then_serialize_11___320size_t(int32_t re[256U], uint8_t ret[320U])
+{
+  uint8_t serialized[320U] = { 0U };
+  core_ops_range_Range__size_t lit;
+  lit.start = (size_t)0U;
+  lit.end =
+    core_slice___Slice_T___len(
+      Eurydice_array_to_slice((size_t)256U, re, int32_t, Eurydice_slice),
+      int32_t,
+      size_t) /
+    (size_t)8U;
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    lit, core_ops_range_Range__size_t, core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice coefficients = Eurydice_array_to_subslice(
+        (size_t)256U,
+        re,
+        ((core_ops_range_Range__size_t){ .start = i * (size_t)8U,
+                                         .end = i * (size_t)8U + (size_t)8U }),
+        int32_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      int32_t coefficient1 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)0U, int32_t, int32_t)));
+      int32_t coefficient2 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)1U, int32_t, int32_t)));
+      int32_t coefficient3 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)2U, int32_t, int32_t)));
+      int32_t coefficient4 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)3U, int32_t, int32_t)));
+      int32_t coefficient5 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)4U, int32_t, int32_t)));
+      int32_t coefficient6 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)5U, int32_t, int32_t)));
+      int32_t coefficient7 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)6U, int32_t, int32_t)));
+      int32_t coefficient8 = compress_ciphertext_coefficient(
+        11U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)7U, int32_t, int32_t)));
+      __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t_uint8_t
+        uu____1 = compress_coefficients_11(coefficient1,
+                                           coefficient2,
+                                           coefficient3,
+                                           coefficient4,
+                                           coefficient5,
+                                           coefficient6,
+                                           coefficient7,
+                                           coefficient8);
+      uint8_t coef1 = uu____1.fst;
+      uint8_t coef2 = uu____1.snd;
+      uint8_t coef3 = uu____1.thd;
+      uint8_t coef4 = uu____1.f3;
+      uint8_t coef5 = uu____1.f4;
+      uint8_t coef6 = uu____1.f5;
+      uint8_t coef7 = uu____1.f6;
+      uint8_t coef8 = uu____1.f7;
+      uint8_t coef9 = uu____1.f8;
+      uint8_t coef10 = uu____1.f9;
+      uint8_t coef11 = uu____1.f10;
+      serialized[(size_t)11U * i] = coef1;
+      serialized[(size_t)11U * i + (size_t)1U] = coef2;
+      serialized[(size_t)11U * i + (size_t)2U] = coef3;
+      serialized[(size_t)11U * i + (size_t)3U] = coef4;
+      serialized[(size_t)11U * i + (size_t)4U] = coef5;
+      serialized[(size_t)11U * i + (size_t)5U] = coef6;
+      serialized[(size_t)11U * i + (size_t)6U] = coef7;
+      serialized[(size_t)11U * i + (size_t)7U] = coef8;
+      serialized[(size_t)11U * i + (size_t)8U] = coef9;
+      serialized[(size_t)11U * i + (size_t)9U] = coef10;
+      serialized[(size_t)11U * i + (size_t)10U] = coef11;
+    }
+  }
+  uint8_t uu____2[320U];
+  memcpy(uu____2, serialized, (size_t)320U * sizeof(uint8_t));
+  memcpy(ret, uu____2, (size_t)320U * sizeof(uint8_t));
+}
 
 static void
 compress_then_serialize_ring_element_u___10size_t_320size_t(int32_t re[256U],
@@ -2787,93 +2802,93 @@ compress_then_serialize_4___128size_t(int32_t re[256U], uint8_t ret[128U])
   memcpy(ret, uu____1, (size_t)128U * sizeof(uint8_t));
 }
 
-// static void
-// compress_then_serialize_5___128size_t(int32_t re[256U], uint8_t ret[128U])
-// {
-//   uint8_t serialized[128U] = { 0U };
-//   core_ops_range_Range__size_t lit;
-//   lit.start = (size_t)0U;
-//   lit.end =
-//     core_slice___Slice_T___len(
-//       Eurydice_array_to_slice((size_t)256U, re, int32_t, Eurydice_slice),
-//       int32_t,
-//       size_t) /
-//     (size_t)8U;
-//   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-//     lit, core_ops_range_Range__size_t, core_ops_range_Range__size_t);
-//   while (true) {
-//     core_option_Option__size_t uu____0 =
-//       core_iter_range__core__ops__range__Range_A__3__next(
-//         &iter, size_t, core_option_Option__size_t);
-//     if (uu____0.tag == core_option_None) {
-//       break;
-//     } else {
-//       size_t i = uu____0.f0;
-//       Eurydice_slice coefficients = Eurydice_array_to_subslice(
-//         (size_t)256U,
-//         re,
-//         ((core_ops_range_Range__size_t){ .start = i * (size_t)8U,
-//                                          .end = i * (size_t)8U + (size_t)8U }),
-//         int32_t,
-//         core_ops_range_Range__size_t,
-//         Eurydice_slice);
-//       uint8_t coefficient1 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)0U, int32_t, int32_t)));
-//       uint8_t coefficient2 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)1U, int32_t, int32_t)));
-//       uint8_t coefficient3 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)2U, int32_t, int32_t)));
-//       uint8_t coefficient4 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)3U, int32_t, int32_t)));
-//       uint8_t coefficient5 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)4U, int32_t, int32_t)));
-//       uint8_t coefficient6 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)5U, int32_t, int32_t)));
-//       uint8_t coefficient7 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)6U, int32_t, int32_t)));
-//       uint8_t coefficient8 = (uint8_t)compress_ciphertext_coefficient(
-//         5U,
-//         to_unsigned_representative(
-//           Eurydice_slice_index(coefficients, (size_t)7U, int32_t, int32_t)));
-//       __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t uu____1 =
-//         compress_coefficients_5(coefficient2,
-//                                 coefficient1,
-//                                 coefficient4,
-//                                 coefficient3,
-//                                 coefficient5,
-//                                 coefficient7,
-//                                 coefficient6,
-//                                 coefficient8);
-//       uint8_t coef1 = uu____1.fst;
-//       uint8_t coef2 = uu____1.snd;
-//       uint8_t coef3 = uu____1.thd;
-//       uint8_t coef4 = uu____1.f3;
-//       uint8_t coef5 = uu____1.f4;
-//       serialized[(size_t)5U * i] = coef1;
-//       serialized[(size_t)5U * i + (size_t)1U] = coef2;
-//       serialized[(size_t)5U * i + (size_t)2U] = coef3;
-//       serialized[(size_t)5U * i + (size_t)3U] = coef4;
-//       serialized[(size_t)5U * i + (size_t)4U] = coef5;
-//     }
-//   }
-//   uint8_t uu____2[128U];
-//   memcpy(uu____2, serialized, (size_t)128U * sizeof(uint8_t));
-//   memcpy(ret, uu____2, (size_t)128U * sizeof(uint8_t));
-// }
+static void
+compress_then_serialize_5___128size_t(int32_t re[256U], uint8_t ret[128U])
+{
+  uint8_t serialized[128U] = { 0U };
+  core_ops_range_Range__size_t lit;
+  lit.start = (size_t)0U;
+  lit.end =
+    core_slice___Slice_T___len(
+      Eurydice_array_to_slice((size_t)256U, re, int32_t, Eurydice_slice),
+      int32_t,
+      size_t) /
+    (size_t)8U;
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    lit, core_ops_range_Range__size_t, core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice coefficients = Eurydice_array_to_subslice(
+        (size_t)256U,
+        re,
+        ((core_ops_range_Range__size_t){ .start = i * (size_t)8U,
+                                         .end = i * (size_t)8U + (size_t)8U }),
+        int32_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      uint8_t coefficient1 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)0U, int32_t, int32_t)));
+      uint8_t coefficient2 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)1U, int32_t, int32_t)));
+      uint8_t coefficient3 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)2U, int32_t, int32_t)));
+      uint8_t coefficient4 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)3U, int32_t, int32_t)));
+      uint8_t coefficient5 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)4U, int32_t, int32_t)));
+      uint8_t coefficient6 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)5U, int32_t, int32_t)));
+      uint8_t coefficient7 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)6U, int32_t, int32_t)));
+      uint8_t coefficient8 = (uint8_t)compress_ciphertext_coefficient(
+        5U,
+        to_unsigned_representative(
+          Eurydice_slice_index(coefficients, (size_t)7U, int32_t, int32_t)));
+      __uint8_t_uint8_t_uint8_t_uint8_t_uint8_t uu____1 =
+        compress_coefficients_5(coefficient2,
+                                coefficient1,
+                                coefficient4,
+                                coefficient3,
+                                coefficient5,
+                                coefficient7,
+                                coefficient6,
+                                coefficient8);
+      uint8_t coef1 = uu____1.fst;
+      uint8_t coef2 = uu____1.snd;
+      uint8_t coef3 = uu____1.thd;
+      uint8_t coef4 = uu____1.f3;
+      uint8_t coef5 = uu____1.f4;
+      serialized[(size_t)5U * i] = coef1;
+      serialized[(size_t)5U * i + (size_t)1U] = coef2;
+      serialized[(size_t)5U * i + (size_t)2U] = coef3;
+      serialized[(size_t)5U * i + (size_t)3U] = coef4;
+      serialized[(size_t)5U * i + (size_t)4U] = coef5;
+    }
+  }
+  uint8_t uu____2[128U];
+  memcpy(uu____2, serialized, (size_t)128U * sizeof(uint8_t));
+  memcpy(ret, uu____2, (size_t)128U * sizeof(uint8_t));
+}
 
 static void
 compress_then_serialize_ring_element_v___4size_t_128size_t(int32_t re[256U],

@@ -1,6 +1,6 @@
-#include "libcrux_kyber.h"
 #include "libcrux_hacl_glue.h"
 #include "Hacl_Hash_SHA3.h"
+#include "libcrux_kyber.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "Hacl_Hash_SHA3_Simd256.h"
@@ -39,25 +39,45 @@ libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U])
   Hacl_Hash_SHA3_sha3_256(x1, x0.ptr, (uint32_t)x0.len);
 }
 
-inline libcrux_digest_Shake128State libcrux_digest_shake128_init(void) {
-  #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128State) {.x4 = (Lib_IntVector_Intrinsics_vec256*) Hacl_Hash_SHA3_Simd256_state_malloc()};
-  #else
+inline libcrux_digest_Shake128State
+libcrux_digest_shake128_init(void)
+{
+#ifdef HACL_CAN_COMPILE_VEC256
+  return (libcrux_digest_Shake128State){
+    .x4 =
+      (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_malloc()
+  };
+#else
   uint64_t* st = Hacl_Hash_SHA3_Scalar_state_malloc();
-  return (libcrux_digest_Shake128State) { .st = st };
-  #endif
+  return (libcrux_digest_Shake128State){ .st = st };
+#endif
 }
 
 void
-libcrux_digest_shake128_absorb_final(libcrux_digest_Shake128State *x0, Eurydice_slice x1) {
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st,x1.ptr,x1.len);
+libcrux_digest_shake128_absorb_final(libcrux_digest_Shake128State* x0,
+                                     Eurydice_slice x1)
+{
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st, x1.ptr, x1.len);
 }
 
 inline void
-libcrux_digest_shake128_squeeze_nblocks_(
-  size_t x0,
-  libcrux_digest_Shake128State *x1,
-  uint8_t *x2
-) {
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st,x2,x0);
+libcrux_digest_shake128_squeeze_nblocks_(size_t x0,
+                                         libcrux_digest_Shake128State* x1,
+                                         uint8_t* x2)
+{
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st, x2, x0);
+}
+
+inline void
+libcrux_digest__libcrux__digest__Shake128State_3__free(
+  libcrux_digest_Shake128State* x0)
+{
+#ifdef HACL_CAN_COMPILE_VEC256
+  return (libcrux_digest_Shake128State){
+    .x4 =
+      (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_free(x0.)
+  };
+#else
+  Hacl_Hash_SHA3_Scalar_state_free(x0->st);
+#endif
 }

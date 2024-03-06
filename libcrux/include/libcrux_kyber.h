@@ -101,5 +101,9 @@ void libcrux_kyber_kyber768_decapsulate(uint8_t (*secret_key)[2400U],
                                         uint8_t (*ciphertext)[1088U],
                                         uint8_t ret[32U]);
 
+extern void
+libcrux_digest__libcrux__digest__Shake128State_3__free(
+  libcrux_digest_Shake128State* x0);
+
 #define __libcrux_kyber_H_DEFINED
 #endif
