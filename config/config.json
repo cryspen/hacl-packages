@@ -228,7 +228,17 @@
                 "features": "vec256"
             }
         ],
+        "rsa": [
+            {
+                "file": "Hacl_RSA.c",
+                "features": "std"
+            }
+        ],
         "rsapss": [
+            {
+                "file": "Hacl_RSA.c",
+                "features": "std"
+            },
             {
                 "file": "Hacl_RSAPSS.c",
                 "features": "std"
@@ -462,6 +472,9 @@
         "curve25519": [
             "x25519.cc"
         ],
+        "rsa": [
+            "rsa.cc"
+        ],
         "rsapss": [
             "rsapss.cc"
         ],
@@ -541,6 +554,9 @@
         ],
         "hmac": [
             "hmac.cc"
+        ],
+        "rsa": [
+            "rsa.cc"
         ],
         "rsapss": [
             "rsapss.cc"

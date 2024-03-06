@@ -29,6 +29,7 @@ set(SOURCES_std
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_SHA1.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_Hash_MD5.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HKDF.c
+	${PROJECT_SOURCE_DIR}/src/Hacl_RSA.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_RSAPSS.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP32_SHA256.c
 	${PROJECT_SOURCE_DIR}/src/Hacl_HPKE_Curve51_CP32_SHA512.c
@@ -198,6 +199,8 @@ set(INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_RSA.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_RSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
@@ -312,6 +315,8 @@ set(PUBLIC_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2s_128.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HKDF_Blake2b_256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HMAC_Blake2b_256.h
+	${PROJECT_SOURCE_DIR}/include/Hacl_RSA.h
+	${PROJECT_SOURCE_DIR}/include/internal/Hacl_RSA.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_RSAPSS.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Curve64_CP128_SHA256.h
 	${PROJECT_SOURCE_DIR}/include/Hacl_HPKE_Interface_Hacl_Impl_HPKE_Hacl_Meta_HPKE.h
@@ -370,6 +375,7 @@ set(ALGORITHMS
 	md5
 	hmac
 	hkdf
+	rsa
 	rsapss
 	hpke
 	frodo
@@ -394,6 +400,7 @@ set(TEST_SOURCES
 	${PROJECT_SOURCE_DIR}/tests/chacha20poly1305.cc
 	${PROJECT_SOURCE_DIR}/tests/ed25519.cc
 	${PROJECT_SOURCE_DIR}/tests/x25519.cc
+	${PROJECT_SOURCE_DIR}/tests/rsa.cc
 	${PROJECT_SOURCE_DIR}/tests/rsapss.cc
 	${PROJECT_SOURCE_DIR}/tests/hkdf.cc
 	${PROJECT_SOURCE_DIR}/tests/poly1305.cc
@@ -462,6 +469,7 @@ set(ALGORITHM_TEST_FILES
 	TEST_FILES_chacha20poly1305
 	TEST_FILES_ed25519
 	TEST_FILES_curve25519
+	TEST_FILES_rsa
 	TEST_FILES_rsapss
 	TEST_FILES_hkdf
 	TEST_FILES_poly1305
@@ -507,6 +515,9 @@ set(TEST_FILES_curve25519
 )
 set(TEST_FILES_rsapss
 	rsapss.cc
+)
+set(TEST_FILES_rsa
+	rsa.cc
 )
 set(TEST_FILES_hkdf
 	hkdf.cc
