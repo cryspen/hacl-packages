@@ -429,6 +429,7 @@ set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/kdf.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/drbg.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/hmac.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/rsa.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/rsapss.cc
 )
 set(VALE_SOURCES_osx
