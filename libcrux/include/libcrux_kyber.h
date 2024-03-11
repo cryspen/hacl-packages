@@ -101,9 +101,18 @@ void libcrux_kyber_kyber768_decapsulate(uint8_t (*secret_key)[2400U],
                                         uint8_t (*ciphertext)[1088U],
                                         uint8_t ret[32U]);
 
+extern libcrux_digest_incremental_x4_Shake128StateX4
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__new(
+  void);
+
 extern void
-libcrux_digest__libcrux__digest__Shake128State_3__free(
-  libcrux_digest_Shake128State* x0);
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(
+  libcrux_digest_incremental_x4_Shake128StateX4* x0,
+  Eurydice_slice x1[4U]);
+
+extern void
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free(
+  libcrux_digest_incremental_x4_Shake128StateX4 x0);
 
 #define __libcrux_kyber_H_DEFINED
 #endif

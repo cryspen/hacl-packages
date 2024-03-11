@@ -19,20 +19,6 @@ extern void libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U]);
 
 extern void libcrux_digest_shake256_(size_t x0, Eurydice_slice x1, uint8_t *x2);
 
-extern libcrux_digest_Shake128State libcrux_digest_shake128_init(void);
-
-extern void
-libcrux_digest_shake128_absorb_final(libcrux_digest_Shake128State *x0, Eurydice_slice x1);
-
-#define libcrux_digest_shake128_squeeze_nblocks(x_0, x_1, x_2, _ret_t) libcrux_digest_shake128_squeeze_nblocks_(x_0, x_1, x_2)
-
-extern void
-libcrux_digest_shake128_squeeze_nblocks_(
-  size_t x0,
-  libcrux_digest_Shake128State *x1,
-  uint8_t *x2
-);
-
 
 #define __libcrux_digest_H_DEFINED
 #endif

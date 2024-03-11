@@ -185,6 +185,13 @@ H(Eurydice_slice input, uint8_t ret[32U])
   memcpy(ret, ret0, (size_t)32U * sizeof(uint8_t));
 }
 
+static void
+free_xof_state(libcrux_digest_incremental_x4_Shake128StateX4 xof_state)
+{
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free(
+    xof_state);
+}
+
 typedef struct __uint8_t_uint8_t_uint8_t_s
 {
   uint8_t fst;
@@ -1444,53 +1451,50 @@ libcrux_kyber_kyber768_validate_public_key(uint8_t public_key[1184U])
   return uu____0;
 }
 
-static libcrux_digest_Shake128State
-closure___3size_t(size_t _)
+static libcrux_digest_incremental_x4_Shake128StateX4
+absorb___3size_t(uint8_t input[3U][34U])
 {
-  return libcrux_digest_shake128_init();
+  libcrux_digest_incremental_x4_Shake128StateX4 state =
+    libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__new();
+  Eurydice_slice uu____0 =
+    Eurydice_array_to_slice((size_t)34U, input[0U], uint8_t, Eurydice_slice);
+  Eurydice_slice uu____1 =
+    Eurydice_array_to_slice((size_t)34U, input[1U], uint8_t, Eurydice_slice);
+  Eurydice_slice uu____2;
+  if ((size_t)3U > (size_t)2U) {
+    uu____2 =
+      Eurydice_array_to_slice((size_t)34U, input[2U], uint8_t, Eurydice_slice);
+  } else {
+    uint8_t buf[0U] = {};
+    uu____2 = Eurydice_array_to_slice((size_t)0U, buf, uint8_t, Eurydice_slice);
+  }
+  Eurydice_slice uu____3 = uu____2;
+  Eurydice_slice uu____4;
+  if ((size_t)3U > (size_t)3U) {
+    uu____4 =
+      Eurydice_array_to_slice((size_t)34U, input[3U], uint8_t, Eurydice_slice);
+  } else {
+    uint8_t buf[0U] = {};
+    uu____4 = Eurydice_array_to_slice((size_t)0U, buf, uint8_t, Eurydice_slice);
+  }
+  Eurydice_slice data[4U] = { uu____0, uu____1, uu____3, uu____4 };
+  libcrux_digest_incremental_x4_Shake128StateX4* uu____5 = &state;
+  Eurydice_slice uu____6[4U];
+  memcpy(uu____6, data, (size_t)4U * sizeof(Eurydice_slice));
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(
+    uu____5, uu____6);
+  return state;
 }
 
 static void
-XOF_absorb___3size_t(uint8_t input[3U][34U],
-                     libcrux_digest_Shake128State ret[3U])
+squeeze_three_blocks___3size_t(
+  libcrux_digest_incremental_x4_Shake128StateX4* xof_state,
+  uint8_t ret[3U][504U])
 {
-  libcrux_digest_Shake128State state[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
-    state[i] = libcrux_digest_shake128_init();
-  }
-  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-    ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
-    core_ops_range_Range__size_t,
-    core_ops_range_Range__size_t);
-  while (true) {
-    core_option_Option__size_t uu____0 =
-      core_iter_range__core__ops__range__Range_A__3__next(
-        &iter, size_t, core_option_Option__size_t);
-    if (uu____0.tag == core_option_None) {
-      break;
-    } else {
-      size_t i = uu____0.f0;
-      libcrux_digest_Shake128State* uu____1 = &state[i];
-      libcrux_digest_shake128_absorb_final(
-        uu____1,
-        Eurydice_array_to_slice(
-          (size_t)34U, input[i], uint8_t, Eurydice_slice));
-    }
-  }
-  memcpy(ret, state, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-}
-
-typedef struct
-  __uint8_t_504size_t__3size_t__libcrux_digest_Shake128State_3size_t__s
-{
-  uint8_t fst[3U][504U];
-  libcrux_digest_Shake128State snd[3U];
-} __uint8_t_504size_t__3size_t__libcrux_digest_Shake128State_3size_t_;
-
-static __uint8_t_504size_t__3size_t__libcrux_digest_Shake128State_3size_t_
-XOF_squeeze_three_blocks___3size_t(libcrux_digest_Shake128State xof_state[3U])
-{
-  uint8_t output[3U][504U] = { 0U };
+  uint8_t output[3U][504U];
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks(
+    (size_t)504U, (size_t)3U, xof_state, output, void*);
+  uint8_t out[3U][504U] = { { 0U } };
   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
     core_ops_range_Range__size_t,
@@ -1504,17 +1508,13 @@ XOF_squeeze_three_blocks___3size_t(libcrux_digest_Shake128State xof_state[3U])
     } else {
       size_t i = uu____0.f0;
       uint8_t uu____1[504U];
-      libcrux_digest_shake128_squeeze_nblocks(
-        (size_t)504U, &xof_state[i], uu____1, void*);
-      memcpy(output[i], uu____1, (size_t)504U * sizeof(uint8_t));
+      memcpy(uu____1, output[i], (size_t)504U * sizeof(uint8_t));
+      memcpy(out[i], uu____1, (size_t)504U * sizeof(uint8_t));
     }
   }
   uint8_t uu____2[3U][504U];
-  memcpy(uu____2, output, (size_t)3U * sizeof(uint8_t[504U]));
-  __uint8_t_504size_t__3size_t__libcrux_digest_Shake128State_3size_t_ lit;
-  memcpy(lit.fst, uu____2, (size_t)3U * sizeof(uint8_t[504U]));
-  memcpy(lit.snd, xof_state, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-  return lit;
+  memcpy(uu____2, out, (size_t)3U * sizeof(uint8_t[504U]));
+  memcpy(ret, uu____2, (size_t)3U * sizeof(uint8_t[504U]));
 }
 
 static bool
@@ -1595,17 +1595,15 @@ sample_from_uniform_distribution_next___3size_t_504size_t(
   return done;
 }
 
-typedef struct
-  __uint8_t_168size_t__3size_t__libcrux_digest_Shake128State_3size_t__s
+static void
+squeeze_block___3size_t(
+  libcrux_digest_incremental_x4_Shake128StateX4* xof_state,
+  uint8_t ret[3U][168U])
 {
-  uint8_t fst[3U][168U];
-  libcrux_digest_Shake128State snd[3U];
-} __uint8_t_168size_t__3size_t__libcrux_digest_Shake128State_3size_t_;
-
-static __uint8_t_168size_t__3size_t__libcrux_digest_Shake128State_3size_t_
-XOF_squeeze_block___3size_t(libcrux_digest_Shake128State xof_state[3U])
-{
-  uint8_t output[3U][168U] = { 0U };
+  uint8_t output[3U][168U];
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks(
+    (size_t)168U, (size_t)3U, xof_state, output, void*);
+  uint8_t out[3U][168U] = { { 0U } };
   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
     core_ops_range_Range__size_t,
@@ -1619,17 +1617,13 @@ XOF_squeeze_block___3size_t(libcrux_digest_Shake128State xof_state[3U])
     } else {
       size_t i = uu____0.f0;
       uint8_t uu____1[168U];
-      libcrux_digest_shake128_squeeze_nblocks(
-        (size_t)168U, &xof_state[i], uu____1, void*);
-      memcpy(output[i], uu____1, (size_t)168U * sizeof(uint8_t));
+      memcpy(uu____1, output[i], (size_t)168U * sizeof(uint8_t));
+      memcpy(out[i], uu____1, (size_t)168U * sizeof(uint8_t));
     }
   }
   uint8_t uu____2[3U][168U];
-  memcpy(uu____2, output, (size_t)3U * sizeof(uint8_t[168U]));
-  __uint8_t_168size_t__3size_t__libcrux_digest_Shake128State_3size_t_ lit;
-  memcpy(lit.fst, uu____2, (size_t)3U * sizeof(uint8_t[168U]));
-  memcpy(lit.snd, xof_state, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-  return lit;
+  memcpy(uu____2, out, (size_t)3U * sizeof(uint8_t[168U]));
+  memcpy(ret, uu____2, (size_t)3U * sizeof(uint8_t[168U]));
 }
 
 static bool
@@ -1711,26 +1705,6 @@ sample_from_uniform_distribution_next___3size_t_168size_t(
 }
 
 static void
-XOF_free___3size_t(libcrux_digest_Shake128State xof_state[3U])
-{
-  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
-    ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
-    core_ops_range_Range__size_t,
-    core_ops_range_Range__size_t);
-  while (true) {
-    core_option_Option__size_t uu____0 =
-      core_iter_range__core__ops__range__Range_A__3__next(
-        &iter, size_t, core_option_Option__size_t);
-    if (uu____0.tag == core_option_None) {
-      break;
-    } else {
-      size_t i = uu____0.f0;
-      libcrux_digest__libcrux__digest__Shake128State_3__free(&xof_state[i]);
-    }
-  }
-}
-
-static void
 sample_from_xof___3size_t(uint8_t seeds[3U][34U], int32_t ret[3U][256U])
 {
   size_t sampled_coefficients[3U] = { 0U };
@@ -1740,44 +1714,29 @@ sample_from_xof___3size_t(uint8_t seeds[3U][34U], int32_t ret[3U][256U])
   }
   uint8_t uu____0[3U][34U];
   memcpy(uu____0, seeds, (size_t)3U * sizeof(uint8_t[34U]));
-  libcrux_digest_Shake128State xof_state[3U];
-  XOF_absorb___3size_t(uu____0, xof_state);
-  __uint8_t_504size_t__3size_t__libcrux_digest_Shake128State_3size_t_ uu____1 =
-    XOF_squeeze_three_blocks___3size_t(xof_state);
+  libcrux_digest_incremental_x4_Shake128StateX4 xof_state =
+    absorb___3size_t(uu____0);
   uint8_t randomness0[3U][504U];
-  memcpy(randomness0, uu____1.fst, (size_t)3U * sizeof(uint8_t[504U]));
-  libcrux_digest_Shake128State new_state0[3U];
-  memcpy(
-    new_state0, uu____1.snd, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-  memcpy(
-    xof_state, new_state0, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-  uint8_t uu____2[3U][504U];
-  memcpy(uu____2, randomness0, (size_t)3U * sizeof(uint8_t[504U]));
+  squeeze_three_blocks___3size_t(&xof_state, randomness0);
+  uint8_t uu____1[3U][504U];
+  memcpy(uu____1, randomness0, (size_t)3U * sizeof(uint8_t[504U]));
   bool done = sample_from_uniform_distribution_next___3size_t_504size_t(
-    uu____2, sampled_coefficients, out);
+    uu____1, sampled_coefficients, out);
   while (true) {
     if (!!done) {
       break;
     }
-    __uint8_t_168size_t__3size_t__libcrux_digest_Shake128State_3size_t_
-      uu____3 = XOF_squeeze_block___3size_t(xof_state);
     uint8_t randomness[3U][168U];
-    memcpy(randomness, uu____3.fst, (size_t)3U * sizeof(uint8_t[168U]));
-    libcrux_digest_Shake128State new_state[3U];
-    memcpy(new_state,
-           uu____3.snd,
-           (size_t)3U * sizeof(libcrux_digest_Shake128State));
-    memcpy(
-      xof_state, new_state, (size_t)3U * sizeof(libcrux_digest_Shake128State));
-    uint8_t uu____4[3U][168U];
-    memcpy(uu____4, randomness, (size_t)3U * sizeof(uint8_t[168U]));
+    squeeze_block___3size_t(&xof_state, randomness);
+    uint8_t uu____2[3U][168U];
+    memcpy(uu____2, randomness, (size_t)3U * sizeof(uint8_t[168U]));
     done = sample_from_uniform_distribution_next___3size_t_168size_t(
-      uu____4, sampled_coefficients, out);
+      uu____2, sampled_coefficients, out);
   }
-  XOF_free___3size_t(xof_state);
-  int32_t uu____5[3U][256U];
-  memcpy(uu____5, out, (size_t)3U * sizeof(int32_t[256U]));
-  memcpy(ret, uu____5, (size_t)3U * sizeof(int32_t[256U]));
+  free_xof_state(xof_state);
+  int32_t uu____3[3U][256U];
+  memcpy(uu____3, out, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(ret, uu____3, (size_t)3U * sizeof(int32_t[256U]));
 }
 
 static void
