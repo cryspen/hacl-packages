@@ -44,7 +44,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   void)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128State){
+  return (libcrux_digest_incremental_x4_Shake128StateX4){
     .x4 =
       (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_malloc()
   };
@@ -64,10 +64,15 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
   Eurydice_slice x1[4U])
 {
+#ifdef HACL_CAN_COMPILE_VEC256
+  Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
+    x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[3].ptr, x1[0].len);
+#else
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, x1[0].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, x1[1].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, x1[2].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, x1[3].len);
+#endif
 }
 
 inline void
@@ -76,11 +81,18 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   size_t block_len,
   uint8_t* output)
 {
+#ifdef HACL_CAN_COMPILE_VEC256
+  uint8_t* tmp = aligned_alloc(32, block_len);
+  Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(
+    x1->x4, output, output + block_len, output + 2 * block_len, tmp, block_len);
+  free(tmp);
+#else
   Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output, block_len);
   Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
     x1->st1, output + block_len, block_len);
   Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
     x1->st2, output + 2 * block_len, block_len);
+#endif
 }
 
 inline void
@@ -88,10 +100,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   libcrux_digest_incremental_x4_Shake128StateX4 x0)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  return (libcrux_digest_Shake128State){
-    .x4 =
-      (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_free(x0.)
-  };
+  Hacl_Hash_SHA3_Simd256_state_free(x0.x4);
 #else
   Hacl_Hash_SHA3_Scalar_state_free(x0.st0);
   Hacl_Hash_SHA3_Scalar_state_free(x0.st1);
