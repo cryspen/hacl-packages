@@ -186,9 +186,9 @@ H(Eurydice_slice input, uint8_t ret[32U])
 }
 
 static void
-free_xof_state(libcrux_digest_incremental_x4_Shake128StateX4 xof_state)
+free_state(libcrux_digest_incremental_x4_Shake128StateX4 xof_state)
 {
-  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free(
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(
     xof_state);
 }
 
@@ -1456,33 +1456,33 @@ absorb___3size_t(uint8_t input[3U][34U])
 {
   libcrux_digest_incremental_x4_Shake128StateX4 state =
     libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__new();
-  Eurydice_slice uu____0 =
-    Eurydice_array_to_slice((size_t)34U, input[0U], uint8_t, Eurydice_slice);
-  Eurydice_slice uu____1 =
-    Eurydice_array_to_slice((size_t)34U, input[1U], uint8_t, Eurydice_slice);
-  Eurydice_slice uu____2;
-  if ((size_t)3U > (size_t)2U) {
-    uu____2 =
-      Eurydice_array_to_slice((size_t)34U, input[2U], uint8_t, Eurydice_slice);
-  } else {
-    uint8_t buf[0U] = {};
-    uu____2 = Eurydice_array_to_slice((size_t)0U, buf, uint8_t, Eurydice_slice);
+  Eurydice_slice data[3U];
+  for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
+    uint8_t buf[1U] = { 0U };
+    data[i] = Eurydice_array_to_slice((size_t)1U, buf, uint8_t, Eurydice_slice);
   }
-  Eurydice_slice uu____3 = uu____2;
-  Eurydice_slice uu____4;
-  if ((size_t)3U > (size_t)3U) {
-    uu____4 =
-      Eurydice_array_to_slice((size_t)34U, input[3U], uint8_t, Eurydice_slice);
-  } else {
-    uint8_t buf[0U] = {};
-    uu____4 = Eurydice_array_to_slice((size_t)0U, buf, uint8_t, Eurydice_slice);
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){ .start = (size_t)0U, .end = (size_t)3U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice uu____1 =
+        Eurydice_array_to_slice((size_t)34U, input[i], uint8_t, Eurydice_slice);
+      data[i] = uu____1;
+    }
   }
-  Eurydice_slice data[4U] = { uu____0, uu____1, uu____3, uu____4 };
-  libcrux_digest_incremental_x4_Shake128StateX4* uu____5 = &state;
-  Eurydice_slice uu____6[4U];
-  memcpy(uu____6, data, (size_t)4U * sizeof(Eurydice_slice));
+  libcrux_digest_incremental_x4_Shake128StateX4* uu____2 = &state;
+  Eurydice_slice uu____3[3U];
+  memcpy(uu____3, data, (size_t)3U * sizeof(Eurydice_slice));
   libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(
-    uu____5, uu____6);
+    (size_t)3U, uu____2, uu____3, void*);
   return state;
 }
 
@@ -1733,7 +1733,7 @@ sample_from_xof___3size_t(uint8_t seeds[3U][34U], int32_t ret[3U][256U])
     done = sample_from_uniform_distribution_next___3size_t_168size_t(
       uu____2, sampled_coefficients, out);
   }
-  free_xof_state(xof_state);
+  free_state(xof_state);
   int32_t uu____3[3U][256U];
   memcpy(uu____3, out, (size_t)3U * sizeof(int32_t[256U]));
   memcpy(ret, uu____3, (size_t)3U * sizeof(int32_t[256U]));

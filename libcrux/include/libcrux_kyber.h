@@ -105,13 +105,13 @@ extern libcrux_digest_incremental_x4_Shake128StateX4
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__new(
   void);
 
-extern void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(
-  libcrux_digest_incremental_x4_Shake128StateX4* x0,
-  Eurydice_slice x1[4U]);
+#define libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final( \
+  x_0, x_1, x_2, _ret_t)                                                                               \
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(      \
+    x_0, x_1, x_2)
 
 extern void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free(
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(
   libcrux_digest_incremental_x4_Shake128StateX4 x0);
 
 #define __libcrux_kyber_H_DEFINED

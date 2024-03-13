@@ -59,19 +59,20 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 #endif
 }
 
-void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(
+inline void
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
+  size_t k,
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
-  Eurydice_slice x1[4U])
+  Eurydice_slice x1[3U])
 {
+  (void)k;
 #ifdef HACL_CAN_COMPILE_VEC256
   Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
-    x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[3].ptr, x1[0].len);
+    x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[0].ptr, x1[0].len);
 #else
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, x1[0].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, x1[1].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, x1[2].len);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, x1[3].len);
 #endif
 }
 
@@ -96,7 +97,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 }
 
 inline void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free(
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(
   libcrux_digest_incremental_x4_Shake128StateX4 x0)
 {
 #ifdef HACL_CAN_COMPILE_VEC256

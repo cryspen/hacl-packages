@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Eurydice.h"
+
 #include <stdint.h>
 #include <string.h>
 
@@ -31,3 +33,9 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   num_blocks, num, xof_state, output, c)                                                                 \
   libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(     \
     xof_state, num_blocks, (uint8_t*)output[0])
+
+void
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
+  size_t k,
+  libcrux_digest_incremental_x4_Shake128StateX4* x0,
+  Eurydice_slice x1[3U]);
