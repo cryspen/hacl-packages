@@ -1282,12 +1282,59 @@ compress_then_serialize_message(int32_t re[256U], uint8_t ret[32U])
 }
 
 static void
-deserialize_public_key___3size_t(Eurydice_slice public_key,
-                                 int32_t ret[3U][256U])
+deserialize_to_reduced_ring_element(Eurydice_slice ring_element,
+                                    int32_t ret[256U])
 {
-  int32_t t_as_ntt[3U][256U];
+  int32_t re[256U];
+  memcpy(re, ZERO, (size_t)256U * sizeof(int32_t));
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){
+      .start = (size_t)0U,
+      .end = core_slice___Slice_T___len(ring_element, uint8_t, size_t) /
+             (size_t)3U }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice bytes = Eurydice_slice_subslice(
+        ring_element,
+        ((core_ops_range_Range__size_t){ .start = i * (size_t)3U,
+                                         .end = i * (size_t)3U + (size_t)3U }),
+        uint8_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      int32_t byte1 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)0U, uint8_t, uint8_t);
+      int32_t byte2 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)1U, uint8_t, uint8_t);
+      int32_t byte3 =
+        (int32_t)Eurydice_slice_index(bytes, (size_t)2U, uint8_t, uint8_t);
+      re[(size_t)2U * i] = (byte2 & (int32_t)15) << 8U | (byte1 & (int32_t)255);
+      int32_t tmp = re[(size_t)2U * i] % (int32_t)3329;
+      re[(size_t)2U * i] = tmp;
+      re[(size_t)2U * i + (size_t)1U] =
+        byte3 << 4U | (byte2 >> 4U & (int32_t)15);
+      int32_t tmp0 = re[(size_t)2U * i + (size_t)1U] % (int32_t)3329;
+      re[(size_t)2U * i + (size_t)1U] = tmp0;
+    }
+  }
+  memcpy(ret, re, (size_t)256U * sizeof(int32_t));
+}
+
+static void
+deserialize_ring_elements_reduced___1184size_t_3size_t(
+  Eurydice_slice public_key,
+  int32_t ret[3U][256U])
+{
+  int32_t deserialized_pk[3U][256U];
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
-    memcpy(t_as_ntt[i], ZERO, (size_t)256U * sizeof(int32_t));
+    memcpy(deserialized_pk[i], ZERO, (size_t)256U * sizeof(int32_t));
   }
   core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
     ((core_ops_range_Range__size_t){
@@ -1304,7 +1351,7 @@ deserialize_public_key___3size_t(Eurydice_slice public_key,
       break;
     } else {
       size_t i = uu____0.f0;
-      Eurydice_slice t_as_ntt_bytes = Eurydice_slice_subslice(
+      Eurydice_slice ring_element = Eurydice_slice_subslice(
         public_key,
         ((core_ops_range_Range__size_t){ .start = i * BYTES_PER_RING_ELEMENT,
                                          .end = i * BYTES_PER_RING_ELEMENT +
@@ -1313,12 +1360,12 @@ deserialize_public_key___3size_t(Eurydice_slice public_key,
         core_ops_range_Range__size_t,
         Eurydice_slice);
       int32_t uu____1[256U];
-      deserialize_to_uncompressed_ring_element(t_as_ntt_bytes, uu____1);
-      memcpy(t_as_ntt[i], uu____1, (size_t)256U * sizeof(int32_t));
+      deserialize_to_reduced_ring_element(ring_element, uu____1);
+      memcpy(deserialized_pk[i], uu____1, (size_t)256U * sizeof(int32_t));
     }
   }
   int32_t uu____2[3U][256U];
-  memcpy(uu____2, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(uu____2, deserialized_pk, (size_t)3U * sizeof(int32_t[256U]));
   memcpy(ret, uu____2, (size_t)3U * sizeof(int32_t[256U]));
 }
 
@@ -1409,17 +1456,17 @@ serialize_public_key___3size_t_1152size_t_1184size_t(int32_t t_as_ntt[3U][256U],
 static bool
 validate_public_key___3size_t_1152size_t_1184size_t(uint8_t* public_key)
 {
-  int32_t pk[3U][256U];
-  deserialize_public_key___3size_t(
+  int32_t deserialized_pk[3U][256U];
+  deserialize_ring_elements_reduced___1184size_t_3size_t(
     Eurydice_array_to_subslice_to((size_t)1184U,
                                   public_key,
                                   (size_t)1152U,
                                   uint8_t,
                                   size_t,
                                   Eurydice_slice),
-    pk);
+    deserialized_pk);
   int32_t uu____0[3U][256U];
-  memcpy(uu____0, pk, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(uu____0, deserialized_pk, (size_t)3U * sizeof(int32_t[256U]));
   uint8_t public_key_serialized[1184U];
   serialize_public_key___3size_t_1152size_t_1184size_t(
     uu____0,
@@ -2287,6 +2334,47 @@ static uint8_t*
 as_slice___1184size_t(uint8_t (*self)[1184U])
 {
   return self[0U];
+}
+
+static void
+deserialize_public_key___3size_t(Eurydice_slice public_key,
+                                 int32_t ret[3U][256U])
+{
+  int32_t t_as_ntt[3U][256U];
+  for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
+    memcpy(t_as_ntt[i], ZERO, (size_t)256U * sizeof(int32_t));
+  }
+  core_ops_range_Range__size_t iter = core_iter_traits_collect__I__into_iter(
+    ((core_ops_range_Range__size_t){
+      .start = (size_t)0U,
+      .end = core_slice___Slice_T___len(public_key, uint8_t, size_t) /
+             BYTES_PER_RING_ELEMENT }),
+    core_ops_range_Range__size_t,
+    core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____0 =
+      core_iter_range__core__ops__range__Range_A__3__next(
+        &iter, size_t, core_option_Option__size_t);
+    if (uu____0.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____0.f0;
+      Eurydice_slice t_as_ntt_bytes = Eurydice_slice_subslice(
+        public_key,
+        ((core_ops_range_Range__size_t){ .start = i * BYTES_PER_RING_ELEMENT,
+                                         .end = i * BYTES_PER_RING_ELEMENT +
+                                                BYTES_PER_RING_ELEMENT }),
+        uint8_t,
+        core_ops_range_Range__size_t,
+        Eurydice_slice);
+      int32_t uu____1[256U];
+      deserialize_to_uncompressed_ring_element(t_as_ntt_bytes, uu____1);
+      memcpy(t_as_ntt[i], uu____1, (size_t)256U * sizeof(int32_t));
+    }
+  }
+  int32_t uu____2[3U][256U];
+  memcpy(uu____2, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(ret, uu____2, (size_t)3U * sizeof(int32_t[256U]));
 }
 
 static void
