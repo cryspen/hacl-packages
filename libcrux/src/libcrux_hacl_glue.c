@@ -16,9 +16,7 @@ libcrux_platform_simd256_support(void)
   // TODO: Replace this with HACL platform support.
 #ifdef HACL_CAN_COMPILE_VEC256
   EverCrypt_AutoConfig2_init();
-  if (EverCrypt_AutoConfig2_has_avx2()) {
-    return true;
-  }
+  return EverCrypt_AutoConfig2_has_avx2();
 #endif
   return false;
 }
@@ -112,7 +110,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 {
 #ifdef HACL_CAN_COMPILE_VEC256
   if (libcrux_platform_simd256_support()) {
-    uint8_t* tmp = aligned_alloc(32, block_len);
+    uint8_t* tmp = KRML_HOST_MALLOC(block_len);
     Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(x1->x4,
                                                     output,
                                                     output + block_len,
