@@ -12,6 +12,10 @@
 typedef struct libcrux_digest_incremental_x4_Shake128StateX4
 {
   Lib_IntVector_Intrinsics_vec256* x4;
+  uint64_t* st0;
+  uint64_t* st1;
+  uint64_t* st2;
+  uint64_t* st3;
 } libcrux_digest_incremental_x4_Shake128StateX4;
 #else
 typedef struct libcrux_digest_incremental_x4_Shake128StateX4

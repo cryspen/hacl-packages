@@ -114,7 +114,7 @@ extern void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
   size_t x0,
   libcrux_digest_incremental_x4_Shake128StateX4* x1,
-  Eurydice_slice* x2);
+  Eurydice_slice x2[3U]);
 
 extern void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(

@@ -7,9 +7,8 @@
 #ifdef HACL_CAN_COMPILE_VEC256
 #include "EverCrypt_AutoConfig2.h"
 #include "Hacl_Hash_SHA3_Simd256.h"
-#else
-#include "Hacl_Hash_SHA3_Scalar.h"
 #endif
+#include "Hacl_Hash_SHA3_Scalar.h"
 
 bool
 libcrux_platform_simd256_support(void)
@@ -56,7 +55,11 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   if (libcrux_platform_simd256_support()) {
     return (libcrux_digest_incremental_x4_Shake128StateX4){
       .x4 =
-        (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_malloc()
+        (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_malloc(),
+      .st0 = NULL,
+      .st1 = NULL,
+      .st2 = NULL,
+      .st3 = NULL,
     };
   } else {
     uint64_t* st0 = Hacl_Hash_SHA3_Scalar_state_malloc();
@@ -64,7 +67,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
     uint64_t* st2 = Hacl_Hash_SHA3_Scalar_state_malloc();
     uint64_t* st3 = Hacl_Hash_SHA3_Scalar_state_malloc();
     return (libcrux_digest_incremental_x4_Shake128StateX4){
-      .st0 = st0, .st1 = st1, .st2 = st2, .st3 = st3
+      .x4 = NULL, .st0 = st0, .st1 = st1, .st2 = st2, .st3 = st3
     };
   }
 #else
