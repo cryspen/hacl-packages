@@ -26,6 +26,7 @@
 #include "internal/Hacl_Hash_Blake2s.h"
 
 #include "internal/Hacl_Impl_Blake2_Constants.h"
+#include "internal/Hacl_Hash_Blake2b.h"
 #include "lib_memzero0.h"
 
 static inline void
@@ -36,11 +37,11 @@ update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, uint8_t *
     0U,
     16U,
     1U,
-    uint32_t *os = m_w;
     uint8_t *bj = d + i * 4U;
     uint32_t u = load32_le(bj);
     uint32_t r = u;
     uint32_t x = r;
+    uint32_t *os = m_w;
     os[i] = x;);
   uint32_t mask[4U] = { 0U };
   uint32_t wv_14;
@@ -63,8 +64,8 @@ update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, uint8_t *
     0U,
     4U,
     1U,
-    uint32_t *os = wv3;
     uint32_t x = wv3[i] ^ mask[i];
+    uint32_t *os = wv3;
     os[i] = x;);
   KRML_MAYBE_FOR10(i0,
     0U,
@@ -124,131 +125,127 @@ update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, uint8_t *
     uint32_t *y = m_st + 4U;
     uint32_t *z = m_st + 8U;
     uint32_t *w = m_st + 12U;
-    uint32_t a = 0U;
-    uint32_t b0 = 1U;
-    uint32_t c0 = 2U;
-    uint32_t d10 = 3U;
-    uint32_t *wv_a0 = wv + a * 4U;
-    uint32_t *wv_b0 = wv + b0 * 4U;
+    uint32_t *wv_a = wv;
+    uint32_t *wv_b0 = wv + 4U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
+      uint32_t x1 = wv_a[i] + wv_b0[i];
+      uint32_t *os = wv_a;
+      os[i] = x1;);
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a[i] + x[i];
+      uint32_t *os = wv_a;
+      os[i] = x1;);
+    uint32_t *wv_a0 = wv + 12U;
+    uint32_t *wv_b1 = wv;
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a0[i] ^ wv_b1[i];
       uint32_t *os = wv_a0;
-      uint32_t x1 = wv_a0[i] + wv_b0[i];
       os[i] = x1;);
+    uint32_t *r10 = wv_a0;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a0;
-      uint32_t x1 = wv_a0[i] + x[i];
-      os[i] = x1;);
-    uint32_t *wv_a1 = wv + d10 * 4U;
-    uint32_t *wv_b1 = wv + a * 4U;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = wv_a1;
-      uint32_t x1 = wv_a1[i] ^ wv_b1[i];
-      os[i] = x1;);
-    uint32_t *r10 = wv_a1;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = r10;
       uint32_t x1 = r10[i];
       uint32_t x10 = x1 >> 16U | x1 << 16U;
+      uint32_t *os = r10;
       os[i] = x10;);
-    uint32_t *wv_a2 = wv + c0 * 4U;
-    uint32_t *wv_b2 = wv + d10 * 4U;
+    uint32_t *wv_a1 = wv + 8U;
+    uint32_t *wv_b2 = wv + 12U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
+      uint32_t x1 = wv_a1[i] + wv_b2[i];
+      uint32_t *os = wv_a1;
+      os[i] = x1;);
+    uint32_t *wv_a2 = wv + 4U;
+    uint32_t *wv_b3 = wv + 8U;
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a2[i] ^ wv_b3[i];
       uint32_t *os = wv_a2;
-      uint32_t x1 = wv_a2[i] + wv_b2[i];
       os[i] = x1;);
-    uint32_t *wv_a3 = wv + b0 * 4U;
-    uint32_t *wv_b3 = wv + c0 * 4U;
+    uint32_t *r12 = wv_a2;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a3;
-      uint32_t x1 = wv_a3[i] ^ wv_b3[i];
-      os[i] = x1;);
-    uint32_t *r12 = wv_a3;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = r12;
       uint32_t x1 = r12[i];
       uint32_t x10 = x1 >> 12U | x1 << 20U;
+      uint32_t *os = r12;
       os[i] = x10;);
-    uint32_t *wv_a4 = wv + a * 4U;
-    uint32_t *wv_b4 = wv + b0 * 4U;
+    uint32_t *wv_a3 = wv;
+    uint32_t *wv_b4 = wv + 4U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
+      uint32_t x1 = wv_a3[i] + wv_b4[i];
+      uint32_t *os = wv_a3;
+      os[i] = x1;);
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a3[i] + y[i];
+      uint32_t *os = wv_a3;
+      os[i] = x1;);
+    uint32_t *wv_a4 = wv + 12U;
+    uint32_t *wv_b5 = wv;
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a4[i] ^ wv_b5[i];
       uint32_t *os = wv_a4;
-      uint32_t x1 = wv_a4[i] + wv_b4[i];
       os[i] = x1;);
+    uint32_t *r13 = wv_a4;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a4;
-      uint32_t x1 = wv_a4[i] + y[i];
-      os[i] = x1;);
-    uint32_t *wv_a5 = wv + d10 * 4U;
-    uint32_t *wv_b5 = wv + a * 4U;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = wv_a5;
-      uint32_t x1 = wv_a5[i] ^ wv_b5[i];
-      os[i] = x1;);
-    uint32_t *r13 = wv_a5;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = r13;
       uint32_t x1 = r13[i];
       uint32_t x10 = x1 >> 8U | x1 << 24U;
+      uint32_t *os = r13;
       os[i] = x10;);
-    uint32_t *wv_a6 = wv + c0 * 4U;
-    uint32_t *wv_b6 = wv + d10 * 4U;
+    uint32_t *wv_a5 = wv + 8U;
+    uint32_t *wv_b6 = wv + 12U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
+      uint32_t x1 = wv_a5[i] + wv_b6[i];
+      uint32_t *os = wv_a5;
+      os[i] = x1;);
+    uint32_t *wv_a6 = wv + 4U;
+    uint32_t *wv_b7 = wv + 8U;
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
+      uint32_t x1 = wv_a6[i] ^ wv_b7[i];
       uint32_t *os = wv_a6;
-      uint32_t x1 = wv_a6[i] + wv_b6[i];
       os[i] = x1;);
-    uint32_t *wv_a7 = wv + b0 * 4U;
-    uint32_t *wv_b7 = wv + c0 * 4U;
+    uint32_t *r14 = wv_a6;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a7;
-      uint32_t x1 = wv_a7[i] ^ wv_b7[i];
-      os[i] = x1;);
-    uint32_t *r14 = wv_a7;
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
-      uint32_t *os = r14;
       uint32_t x1 = r14[i];
       uint32_t x10 = x1 >> 7U | x1 << 25U;
+      uint32_t *os = r14;
       os[i] = x10;);
     uint32_t *r15 = wv + 4U;
     uint32_t *r21 = wv + 8U;
@@ -280,131 +277,127 @@ update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, uint8_t *
     r112[1U] = x12;
     r112[2U] = x22;
     r112[3U] = x32;
-    uint32_t a0 = 0U;
-    uint32_t b = 1U;
-    uint32_t c = 2U;
-    uint32_t d1 = 3U;
-    uint32_t *wv_a = wv + a0 * 4U;
-    uint32_t *wv_b8 = wv + b * 4U;
+    uint32_t *wv_a7 = wv;
+    uint32_t *wv_b8 = wv + 4U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a;
-      uint32_t x1 = wv_a[i] + wv_b8[i];
+      uint32_t x1 = wv_a7[i] + wv_b8[i];
+      uint32_t *os = wv_a7;
       os[i] = x1;);
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a;
-      uint32_t x1 = wv_a[i] + z[i];
+      uint32_t x1 = wv_a7[i] + z[i];
+      uint32_t *os = wv_a7;
       os[i] = x1;);
-    uint32_t *wv_a8 = wv + d1 * 4U;
-    uint32_t *wv_b9 = wv + a0 * 4U;
+    uint32_t *wv_a8 = wv + 12U;
+    uint32_t *wv_b9 = wv;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a8;
       uint32_t x1 = wv_a8[i] ^ wv_b9[i];
+      uint32_t *os = wv_a8;
       os[i] = x1;);
     uint32_t *r16 = wv_a8;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = r16;
       uint32_t x1 = r16[i];
       uint32_t x13 = x1 >> 16U | x1 << 16U;
+      uint32_t *os = r16;
       os[i] = x13;);
-    uint32_t *wv_a9 = wv + c * 4U;
-    uint32_t *wv_b10 = wv + d1 * 4U;
+    uint32_t *wv_a9 = wv + 8U;
+    uint32_t *wv_b10 = wv + 12U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a9;
       uint32_t x1 = wv_a9[i] + wv_b10[i];
+      uint32_t *os = wv_a9;
       os[i] = x1;);
-    uint32_t *wv_a10 = wv + b * 4U;
-    uint32_t *wv_b11 = wv + c * 4U;
+    uint32_t *wv_a10 = wv + 4U;
+    uint32_t *wv_b11 = wv + 8U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a10;
       uint32_t x1 = wv_a10[i] ^ wv_b11[i];
+      uint32_t *os = wv_a10;
       os[i] = x1;);
     uint32_t *r17 = wv_a10;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = r17;
       uint32_t x1 = r17[i];
       uint32_t x13 = x1 >> 12U | x1 << 20U;
+      uint32_t *os = r17;
       os[i] = x13;);
-    uint32_t *wv_a11 = wv + a0 * 4U;
-    uint32_t *wv_b12 = wv + b * 4U;
+    uint32_t *wv_a11 = wv;
+    uint32_t *wv_b12 = wv + 4U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a11;
       uint32_t x1 = wv_a11[i] + wv_b12[i];
-      os[i] = x1;);
-    KRML_MAYBE_FOR4(i,
-      0U,
-      4U,
-      1U,
       uint32_t *os = wv_a11;
-      uint32_t x1 = wv_a11[i] + w[i];
       os[i] = x1;);
-    uint32_t *wv_a12 = wv + d1 * 4U;
-    uint32_t *wv_b13 = wv + a0 * 4U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a12;
+      uint32_t x1 = wv_a11[i] + w[i];
+      uint32_t *os = wv_a11;
+      os[i] = x1;);
+    uint32_t *wv_a12 = wv + 12U;
+    uint32_t *wv_b13 = wv;
+    KRML_MAYBE_FOR4(i,
+      0U,
+      4U,
+      1U,
       uint32_t x1 = wv_a12[i] ^ wv_b13[i];
+      uint32_t *os = wv_a12;
       os[i] = x1;);
     uint32_t *r18 = wv_a12;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = r18;
       uint32_t x1 = r18[i];
       uint32_t x13 = x1 >> 8U | x1 << 24U;
+      uint32_t *os = r18;
       os[i] = x13;);
-    uint32_t *wv_a13 = wv + c * 4U;
-    uint32_t *wv_b14 = wv + d1 * 4U;
+    uint32_t *wv_a13 = wv + 8U;
+    uint32_t *wv_b14 = wv + 12U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a13;
       uint32_t x1 = wv_a13[i] + wv_b14[i];
+      uint32_t *os = wv_a13;
       os[i] = x1;);
-    uint32_t *wv_a14 = wv + b * 4U;
-    uint32_t *wv_b = wv + c * 4U;
+    uint32_t *wv_a14 = wv + 4U;
+    uint32_t *wv_b = wv + 8U;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = wv_a14;
       uint32_t x1 = wv_a14[i] ^ wv_b[i];
+      uint32_t *os = wv_a14;
       os[i] = x1;);
     uint32_t *r19 = wv_a14;
     KRML_MAYBE_FOR4(i,
       0U,
       4U,
       1U,
-      uint32_t *os = r19;
       uint32_t x1 = r19[i];
       uint32_t x13 = x1 >> 7U | x1 << 25U;
+      uint32_t *os = r19;
       os[i] = x13;);
     uint32_t *r113 = wv + 4U;
     uint32_t *r2 = wv + 8U;
@@ -446,34 +439,35 @@ update_block(uint32_t *wv, uint32_t *hash, bool flag, uint64_t totlen, uint8_t *
     0U,
     4U,
     1U,
-    uint32_t *os = s0;
     uint32_t x = s0[i] ^ r0[i];
-    os[i] = x;);
-  KRML_MAYBE_FOR4(i,
-    0U,
-    4U,
-    1U,
     uint32_t *os = s0;
+    os[i] = x;);
+  KRML_MAYBE_FOR4(i,
+    0U,
+    4U,
+    1U,
     uint32_t x = s0[i] ^ r2[i];
+    uint32_t *os = s0;
     os[i] = x;);
   KRML_MAYBE_FOR4(i,
     0U,
     4U,
     1U,
-    uint32_t *os = s1;
     uint32_t x = s1[i] ^ r1[i];
+    uint32_t *os = s1;
     os[i] = x;);
   KRML_MAYBE_FOR4(i,
     0U,
     4U,
     1U,
-    uint32_t *os = s1;
     uint32_t x = s1[i] ^ r3[i];
+    uint32_t *os = s1;
     os[i] = x;);
 }
 
 void Hacl_Hash_Blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn)
 {
+  uint32_t tmp[8U] = { 0U };
   uint32_t *r0 = hash;
   uint32_t *r1 = hash + 4U;
   uint32_t *r2 = hash + 8U;
@@ -494,16 +488,67 @@ void Hacl_Hash_Blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn)
   r3[1U] = iv5;
   r3[2U] = iv6;
   r3[3U] = iv7;
-  uint32_t kk_shift_8 = kk << 8U;
-  uint32_t iv0_ = iv0 ^ (0x01010000U ^ (kk_shift_8 ^ nn));
+  uint8_t salt[8U] = { 0U };
+  uint8_t personal[8U] = { 0U };
+  Hacl_Hash_Blake2s_blake2s_params
+  p =
+    {
+      .digest_length = 32U, .key_length = 0U, .fanout = 1U, .depth = 1U, .leaf_length = 0U,
+      .node_offset = 0U, .xof_length = 0U, .node_depth = 0U, .inner_length = 0U, .salt = salt,
+      .personal = personal
+    };
+  uint32_t *uu____0 = tmp + 4U;
+  KRML_MAYBE_FOR2(i,
+    0U,
+    2U,
+    1U,
+    uint8_t *bj = p.salt + i * 4U;
+    uint32_t u = load32_le(bj);
+    uint32_t r = u;
+    uint32_t x = r;
+    uint32_t *os = uu____0;
+    os[i] = x;);
+  uint32_t *uu____1 = tmp + 6U;
+  KRML_MAYBE_FOR2(i,
+    0U,
+    2U,
+    1U,
+    uint8_t *bj = p.personal + i * 4U;
+    uint32_t u = load32_le(bj);
+    uint32_t r = u;
+    uint32_t x = r;
+    uint32_t *os = uu____1;
+    os[i] = x;);
+  tmp[0U] = nn ^ (kk << 8U ^ ((uint32_t)p.fanout << 16U ^ (uint32_t)p.depth << 24U));
+  tmp[1U] = p.leaf_length;
+  tmp[2U] = p.node_offset;
+  tmp[3U] =
+    (uint32_t)p.xof_length
+    ^ ((uint32_t)p.node_depth << 16U ^ (uint32_t)p.inner_length << 24U);
+  uint32_t tmp0 = tmp[0U];
+  uint32_t tmp1 = tmp[1U];
+  uint32_t tmp2 = tmp[2U];
+  uint32_t tmp3 = tmp[3U];
+  uint32_t tmp4 = tmp[4U];
+  uint32_t tmp5 = tmp[5U];
+  uint32_t tmp6 = tmp[6U];
+  uint32_t tmp7 = tmp[7U];
+  uint32_t iv0_ = iv0 ^ tmp0;
+  uint32_t iv1_ = iv1 ^ tmp1;
+  uint32_t iv2_ = iv2 ^ tmp2;
+  uint32_t iv3_ = iv3 ^ tmp3;
+  uint32_t iv4_ = iv4 ^ tmp4;
+  uint32_t iv5_ = iv5 ^ tmp5;
+  uint32_t iv6_ = iv6 ^ tmp6;
+  uint32_t iv7_ = iv7 ^ tmp7;
   r0[0U] = iv0_;
-  r0[1U] = iv1;
-  r0[2U] = iv2;
-  r0[3U] = iv3;
-  r1[0U] = iv4;
-  r1[1U] = iv5;
-  r1[2U] = iv6;
-  r1[3U] = iv7;
+  r0[1U] = iv1_;
+  r0[2U] = iv2_;
+  r0[3U] = iv3_;
+  r1[0U] = iv4_;
+  r1[1U] = iv5_;
+  r1[2U] = iv6_;
+  r1[3U] = iv7_;
 }
 
 static void update_key(uint32_t *wv, uint32_t *hash, uint32_t kk, uint8_t *k, uint32_t ll)
@@ -519,7 +564,7 @@ static void update_key(uint32_t *wv, uint32_t *hash, uint32_t kk, uint8_t *k, ui
   {
     update_block(wv, hash, false, lb, b);
   }
-  Lib_Memzero0_memzero(b, 64U, uint8_t);
+  Lib_Memzero0_memzero(b, 64U, uint8_t, void *);
 }
 
 void
@@ -556,7 +601,7 @@ Hacl_Hash_Blake2s_update_last(
   memcpy(b, last, rem * sizeof (uint8_t));
   uint64_t totlen = prev + (uint64_t)len;
   update_block(wv, hash, true, totlen, b);
-  Lib_Memzero0_memzero(b, 64U, uint8_t);
+  Lib_Memzero0_memzero(b, 64U, uint8_t, void *);
 }
 
 static void
@@ -612,9 +657,10 @@ void Hacl_Hash_Blake2s_finish(uint32_t nn, uint8_t *output, uint32_t *hash)
   uint32_t *row1 = hash + 4U;
   KRML_MAYBE_FOR4(i, 0U, 4U, 1U, store32_le(first + i * 4U, row0[i]););
   KRML_MAYBE_FOR4(i, 0U, 4U, 1U, store32_le(second + i * 4U, row1[i]););
+  KRML_MAYBE_UNUSED_VAR(b);
   uint8_t *final = b;
   memcpy(output, final, nn * sizeof (uint8_t));
-  Lib_Memzero0_memzero(b, 32U, uint8_t);
+  Lib_Memzero0_memzero(b, 32U, uint8_t, void *);
 }
 
 /**
@@ -626,12 +672,12 @@ Hacl_Hash_Blake2s_state_t *Hacl_Hash_Blake2s_malloc(void)
   uint32_t *wv = (uint32_t *)KRML_HOST_CALLOC(16U, sizeof (uint32_t));
   uint32_t *b = (uint32_t *)KRML_HOST_CALLOC(16U, sizeof (uint32_t));
   Hacl_Hash_Blake2s_block_state_t block_state = { .fst = wv, .snd = b };
+  Hacl_Hash_Blake2s_init(block_state.snd, 0U, 32U);
   Hacl_Hash_Blake2s_state_t
   s = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
   Hacl_Hash_Blake2s_state_t
   *p = (Hacl_Hash_Blake2s_state_t *)KRML_HOST_MALLOC(sizeof (Hacl_Hash_Blake2s_state_t));
   p[0U] = s;
-  Hacl_Hash_Blake2s_init(block_state.snd, 0U, 32U);
   return p;
 }
 
@@ -640,13 +686,9 @@ Hacl_Hash_Blake2s_state_t *Hacl_Hash_Blake2s_malloc(void)
 */
 void Hacl_Hash_Blake2s_reset(Hacl_Hash_Blake2s_state_t *state)
 {
-  Hacl_Hash_Blake2s_state_t scrut = *state;
-  uint8_t *buf = scrut.buf;
-  Hacl_Hash_Blake2s_block_state_t block_state = scrut.block_state;
+  Hacl_Hash_Blake2s_block_state_t block_state = (*state).block_state;
   Hacl_Hash_Blake2s_init(block_state.snd, 0U, 32U);
-  Hacl_Hash_Blake2s_state_t
-  tmp = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
-  state[0U] = tmp;
+  state->total_len = (uint64_t)0U;
 }
 
 /**
@@ -655,8 +697,8 @@ void Hacl_Hash_Blake2s_reset(Hacl_Hash_Blake2s_state_t *state)
 Hacl_Streaming_Types_error_code
 Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint32_t chunk_len)
 {
-  Hacl_Hash_Blake2s_state_t s = *state;
-  uint64_t total_len = s.total_len;
+  Hacl_Hash_Blake2s_block_state_t block_state = (*state).block_state;
+  uint64_t total_len = (*state).total_len;
   if ((uint64_t)chunk_len > 0xffffffffffffffffULL - total_len)
   {
     return Hacl_Streaming_Types_MaximumLengthExceeded;
@@ -672,10 +714,8 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
   }
   if (chunk_len <= 64U - sz)
   {
-    Hacl_Hash_Blake2s_state_t s1 = *state;
-    Hacl_Hash_Blake2s_block_state_t block_state1 = s1.block_state;
-    uint8_t *buf = s1.buf;
-    uint64_t total_len1 = s1.total_len;
+    uint8_t *buf = (*state).buf;
+    uint64_t total_len1 = (*state).total_len;
     uint32_t sz1;
     if (total_len1 % (uint64_t)64U == 0ULL && total_len1 > 0ULL)
     {
@@ -688,22 +728,12 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     uint8_t *buf2 = buf + sz1;
     memcpy(buf2, chunk, chunk_len * sizeof (uint8_t));
     uint64_t total_len2 = total_len1 + (uint64_t)chunk_len;
-    *state
-    =
-      (
-        (Hacl_Hash_Blake2s_state_t){
-          .block_state = block_state1,
-          .buf = buf,
-          .total_len = total_len2
-        }
-      );
+    state->total_len = total_len2;
   }
   else if (sz == 0U)
   {
-    Hacl_Hash_Blake2s_state_t s1 = *state;
-    Hacl_Hash_Blake2s_block_state_t block_state1 = s1.block_state;
-    uint8_t *buf = s1.buf;
-    uint64_t total_len1 = s1.total_len;
+    uint8_t *buf = (*state).buf;
+    uint64_t total_len1 = (*state).total_len;
     uint32_t sz1;
     if (total_len1 % (uint64_t)64U == 0ULL && total_len1 > 0ULL)
     {
@@ -716,8 +746,8 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     if (!(sz1 == 0U))
     {
       uint64_t prevlen = total_len1 - (uint64_t)sz1;
-      uint32_t *wv = block_state1.fst;
-      uint32_t *hash = block_state1.snd;
+      uint32_t *wv = block_state.fst;
+      uint32_t *hash = block_state.snd;
       uint32_t nb = 1U;
       Hacl_Hash_Blake2s_update_multi(64U, wv, hash, prevlen, buf, nb);
     }
@@ -735,31 +765,21 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     uint32_t data2_len = chunk_len - data1_len;
     uint8_t *data1 = chunk;
     uint8_t *data2 = chunk + data1_len;
-    uint32_t *wv = block_state1.fst;
-    uint32_t *hash = block_state1.snd;
+    uint32_t *wv = block_state.fst;
+    uint32_t *hash = block_state.snd;
     uint32_t nb = data1_len / 64U;
     Hacl_Hash_Blake2s_update_multi(data1_len, wv, hash, total_len1, data1, nb);
     uint8_t *dst = buf;
     memcpy(dst, data2, data2_len * sizeof (uint8_t));
-    *state
-    =
-      (
-        (Hacl_Hash_Blake2s_state_t){
-          .block_state = block_state1,
-          .buf = buf,
-          .total_len = total_len1 + (uint64_t)chunk_len
-        }
-      );
+    state->total_len = total_len1 + (uint64_t)chunk_len;
   }
   else
   {
     uint32_t diff = 64U - sz;
     uint8_t *chunk1 = chunk;
     uint8_t *chunk2 = chunk + diff;
-    Hacl_Hash_Blake2s_state_t s1 = *state;
-    Hacl_Hash_Blake2s_block_state_t block_state10 = s1.block_state;
-    uint8_t *buf0 = s1.buf;
-    uint64_t total_len10 = s1.total_len;
+    uint8_t *buf = (*state).buf;
+    uint64_t total_len10 = (*state).total_len;
     uint32_t sz10;
     if (total_len10 % (uint64_t)64U == 0ULL && total_len10 > 0ULL)
     {
@@ -769,22 +789,12 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     {
       sz10 = (uint32_t)(total_len10 % (uint64_t)64U);
     }
-    uint8_t *buf2 = buf0 + sz10;
+    uint8_t *buf2 = buf + sz10;
     memcpy(buf2, chunk1, diff * sizeof (uint8_t));
     uint64_t total_len2 = total_len10 + (uint64_t)diff;
-    *state
-    =
-      (
-        (Hacl_Hash_Blake2s_state_t){
-          .block_state = block_state10,
-          .buf = buf0,
-          .total_len = total_len2
-        }
-      );
-    Hacl_Hash_Blake2s_state_t s10 = *state;
-    Hacl_Hash_Blake2s_block_state_t block_state1 = s10.block_state;
-    uint8_t *buf = s10.buf;
-    uint64_t total_len1 = s10.total_len;
+    state->total_len = total_len2;
+    uint8_t *buf0 = (*state).buf;
+    uint64_t total_len1 = (*state).total_len;
     uint32_t sz1;
     if (total_len1 % (uint64_t)64U == 0ULL && total_len1 > 0ULL)
     {
@@ -797,10 +807,10 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     if (!(sz1 == 0U))
     {
       uint64_t prevlen = total_len1 - (uint64_t)sz1;
-      uint32_t *wv = block_state1.fst;
-      uint32_t *hash = block_state1.snd;
+      uint32_t *wv = block_state.fst;
+      uint32_t *hash = block_state.snd;
       uint32_t nb = 1U;
-      Hacl_Hash_Blake2s_update_multi(64U, wv, hash, prevlen, buf, nb);
+      Hacl_Hash_Blake2s_update_multi(64U, wv, hash, prevlen, buf0, nb);
     }
     uint32_t ite;
     if
@@ -817,21 +827,13 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
     uint32_t data2_len = chunk_len - diff - data1_len;
     uint8_t *data1 = chunk2;
     uint8_t *data2 = chunk2 + data1_len;
-    uint32_t *wv = block_state1.fst;
-    uint32_t *hash = block_state1.snd;
+    uint32_t *wv = block_state.fst;
+    uint32_t *hash = block_state.snd;
     uint32_t nb = data1_len / 64U;
     Hacl_Hash_Blake2s_update_multi(data1_len, wv, hash, total_len1, data1, nb);
-    uint8_t *dst = buf;
+    uint8_t *dst = buf0;
     memcpy(dst, data2, data2_len * sizeof (uint8_t));
-    *state
-    =
-      (
-        (Hacl_Hash_Blake2s_state_t){
-          .block_state = block_state1,
-          .buf = buf,
-          .total_len = total_len1 + (uint64_t)(chunk_len - diff)
-        }
-      );
+    state->total_len = total_len1 + (uint64_t)(chunk_len - diff);
   }
   return Hacl_Streaming_Types_Success;
 }
@@ -841,10 +843,9 @@ Hacl_Hash_Blake2s_update(Hacl_Hash_Blake2s_state_t *state, uint8_t *chunk, uint3
 */
 void Hacl_Hash_Blake2s_digest(Hacl_Hash_Blake2s_state_t *state, uint8_t *output)
 {
-  Hacl_Hash_Blake2s_state_t scrut = *state;
-  Hacl_Hash_Blake2s_block_state_t block_state = scrut.block_state;
-  uint8_t *buf_ = scrut.buf;
-  uint64_t total_len = scrut.total_len;
+  Hacl_Hash_Blake2s_block_state_t block_state = (*state).block_state;
+  uint8_t *buf_ = (*state).buf;
+  uint64_t total_len = (*state).total_len;
   uint32_t r;
   if (total_len % (uint64_t)64U == 0ULL && total_len > 0ULL)
   {
@@ -862,6 +863,7 @@ void Hacl_Hash_Blake2s_digest(Hacl_Hash_Blake2s_state_t *state, uint8_t *output)
   uint32_t *dst_b = tmp_block_state.snd;
   memcpy(dst_b, src_b, 16U * sizeof (uint32_t));
   uint64_t prev_len = total_len - (uint64_t)r;
+  uint8_t *buf_multi = buf_1;
   uint32_t ite;
   if (r % 64U == 0U && r > 0U)
   {
@@ -872,7 +874,6 @@ void Hacl_Hash_Blake2s_digest(Hacl_Hash_Blake2s_state_t *state, uint8_t *output)
     ite = r % 64U;
   }
   uint8_t *buf_last = buf_1 + r - ite;
-  uint8_t *buf_multi = buf_1;
   uint32_t *wv1 = tmp_block_state.fst;
   uint32_t *hash0 = tmp_block_state.snd;
   uint32_t nb = 0U;
@@ -925,7 +926,7 @@ Hacl_Hash_Blake2s_hash_with_key(
   Hacl_Hash_Blake2s_init(b, key_len, output_len);
   update(b1, b, key_len, key, input_len, input);
   Hacl_Hash_Blake2s_finish(output_len, output, b);
-  Lib_Memzero0_memzero(b1, 16U, uint32_t);
-  Lib_Memzero0_memzero(b, 16U, uint32_t);
+  Lib_Memzero0_memzero(b1, 16U, uint32_t, void *);
+  Lib_Memzero0_memzero(b, 16U, uint32_t, void *);
 }
 
