@@ -154,4 +154,5 @@ def test(args):
 
     # parse file
     config = json.loads(data)
-    run_tests(config["tests"], "Debug", algorithms=algorithms, coverage=args.coverage)
+    tests = {**config["tests"], **config["libcrux_tests"]}
+    run_tests(tests, "Debug", algorithms=algorithms, coverage=args.coverage)

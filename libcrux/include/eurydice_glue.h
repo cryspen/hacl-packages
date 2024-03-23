@@ -45,7 +45,8 @@ typedef struct {
 
 #define core_array_TryFromSliceError uint8_t
 
-#define core_array_equality___Array_A__N___eq(sz, a1, a2, t, _, _ret_t) (memcmp(a1, a2, sz * sizeof(t)) == 0)
+#define Eurydice_array_eq(sz, a1, a2, t, _, _ret_t) (memcmp(a1, a2, sz * sizeof(t)) == 0)
+#define core_array_equality___core__cmp__PartialEq__Array_B__N___for__Array_A__N____eq Eurydice_array_eq
 
 #define core_slice___Slice_T___split_at(slice, mid, element_type, ret_t) \
   ((ret_t){ \
@@ -74,8 +75,12 @@ static inline void core_num__u32_8__to_be_bytes(uint32_t src, uint8_t dst[4]) {
   memcpy(dst, &x, 4);
 }
 
-static inline int64_t core_convert_num__i64_59__from(int32_t x) { return x; }
-static inline int32_t core_convert_num__i32_56__from(int16_t x) { return x; }
+static inline int64_t
+core_convert_num___core__convert__From_i32__for_i64__59__from(int32_t x)
+{
+  return x;
+}
+
 // unsigned overflow wraparound semantics in C
 static inline uint16_t core_num__u16_7__wrapping_add(uint16_t x, uint16_t y) { return x + y; }
 static inline uint8_t core_num__u8_6__wrapping_sub(uint8_t x, uint8_t y) { return x - y; }
@@ -90,13 +95,16 @@ static inline uint8_t Eurydice_shr_pv_u8(uint8_t *p, int32_t v) { return (*p) >>
 // ITERATORS
 
 #define core_num_nonzero_NonZeroUsize size_t
-#define core_iter_range__core__ops__range__Range_A__3__next(iter_ptr, t, ret_t) ( \
+#define Eurydice_range_iter_next(iter_ptr, t, ret_t) ( \
   ((iter_ptr)->start == (iter_ptr)->end) ? \
     ((ret_t) { .tag = core_option_None }) : \
     ((ret_t) { .tag = core_option_Some, .f0 = (iter_ptr)->start++ }) \
   )
 
-#define core_iter_traits_collect__I__into_iter(x, t, _ret_t) (x)
+#define core_iter_range___core__iter__traits__iterator__Iterator_for_core__ops__range__Range_A___3__next Eurydice_range_iter_next
+
+#define Eurydice_into_iter(x, t, _ret_t) (x)
+#define core_iter_traits_collect___core__iter__traits__collect__IntoIterator_for_I___into_iter Eurydice_into_iter
 
 typedef struct {
   Eurydice_slice slice;
@@ -123,7 +131,7 @@ static inline Eurydice_slice chunk_next(Eurydice_chunks *chunks, size_t element_
     .chunk_size = sz_ })
 #define core_slice_iter_Chunks Eurydice_chunks
 #define core_slice_iter_ChunksExact Eurydice_chunks
-#define core_slice_iter__core__slice__iter__Chunks__a__T__70__next(iter, t, ret_t) \
+#define core_slice_iter___core__iter__traits__iterator__Iterator_for_core__slice__iter__Chunks__a__T___70__next(iter, t, ret_t) \
   (((iter)->slice.len == 0) ? \
     ((ret_t) { .tag = core_option_None }) : \
     ((ret_t){ \
