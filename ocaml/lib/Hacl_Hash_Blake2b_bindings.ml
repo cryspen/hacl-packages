@@ -5,6 +5,32 @@ module Bindings(F:Cstubs.FOREIGN) =
     module Hacl_Streaming_Types_applied =
       (Hacl_Streaming_Types_bindings.Bindings)(Hacl_Streaming_Types_stubs)
     open Hacl_Streaming_Types_applied
+    type hacl_Hash_Blake2s_blake2_params =
+      [ `hacl_Hash_Blake2s_blake2_params ] structure
+    let (hacl_Hash_Blake2s_blake2_params :
+      [ `hacl_Hash_Blake2s_blake2_params ] structure typ) =
+      structure "Hacl_Hash_Blake2s_blake2_params_s"
+    let hacl_Hash_Blake2s_blake2_params_digest_length =
+      field hacl_Hash_Blake2s_blake2_params "digest_length" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_key_length =
+      field hacl_Hash_Blake2s_blake2_params "key_length" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_fanout =
+      field hacl_Hash_Blake2s_blake2_params "fanout" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_depth =
+      field hacl_Hash_Blake2s_blake2_params "depth" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_leaf_length =
+      field hacl_Hash_Blake2s_blake2_params "leaf_length" uint32_t
+    let hacl_Hash_Blake2s_blake2_params_node_offset =
+      field hacl_Hash_Blake2s_blake2_params "node_offset" uint64_t
+    let hacl_Hash_Blake2s_blake2_params_node_depth =
+      field hacl_Hash_Blake2s_blake2_params "node_depth" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_inner_length =
+      field hacl_Hash_Blake2s_blake2_params "inner_length" uint8_t
+    let hacl_Hash_Blake2s_blake2_params_salt =
+      field hacl_Hash_Blake2s_blake2_params "salt" (ptr uint8_t)
+    let hacl_Hash_Blake2s_blake2_params_personal =
+      field hacl_Hash_Blake2s_blake2_params "personal" (ptr uint8_t)
+    let _ = seal hacl_Hash_Blake2s_blake2_params
     let hacl_Hash_Blake2b_init =
       foreign "Hacl_Hash_Blake2b_init"
         ((ptr uint64_t) @-> (uint32_t @-> (uint32_t @-> (returning void))))
