@@ -1,14 +1,45 @@
+/* Hand-written file */
+
 #pragma once
 
-#include "eurydice_glue.h"
-#include "libcrux_kyber.h"
+#include "Eurydice.h"
 
-extern K___uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t__uint8_t_840size_t_
-libcrux_digest_shake128x4f(size_t len,
-                           Eurydice_slice input0,
-                           Eurydice_slice input1,
-                           Eurydice_slice input2,
-                           Eurydice_slice input3);
+#include <stdint.h>
+#include <string.h>
 
-#define libcrux_digest_shake128x4(len, input0, input1, input2, input3, _)      \
-  libcrux_digest_shake128x4f(len, input0, input1, input2, input3)
+#ifdef HACL_CAN_COMPILE_VEC256
+#include "libintvector.h"
+typedef struct libcrux_digest_incremental_x4_Shake128StateX4
+{
+  Lib_IntVector_Intrinsics_vec256* x4;
+  uint64_t* st0;
+  uint64_t* st1;
+  uint64_t* st2;
+  uint64_t* st3;
+} libcrux_digest_incremental_x4_Shake128StateX4;
+#else
+typedef struct libcrux_digest_incremental_x4_Shake128StateX4
+{
+  uint64_t* st0;
+  uint64_t* st1;
+  uint64_t* st2;
+  uint64_t* st3;
+} libcrux_digest_incremental_x4_Shake128StateX4;
+#endif
+
+extern void
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(
+  libcrux_digest_incremental_x4_Shake128StateX4* xof_state,
+  size_t block_len,
+  uint8_t* output);
+
+#define libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks( \
+  num_blocks, num, xof_state, output, c)                                                                 \
+  libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(     \
+    xof_state, num_blocks, (uint8_t*)output[0])
+
+void
+libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
+  size_t k,
+  libcrux_digest_incremental_x4_Shake128StateX4* x0,
+  Eurydice_slice x1[3U]);

@@ -9917,15 +9917,18 @@ Hacl_Hash_SHA3_Simd256_sha3_512(
   memcpy(b36 + 64U - remOut, hbuf + 768U, remOut * sizeof (uint8_t));
 }
 
-uint64_t *Hacl_Hash_SHA3_Simd256_state_malloc(void)
+Lib_IntVector_Intrinsics_vec256 *Hacl_Hash_SHA3_Simd256_state_malloc(void)
 {
-  uint64_t *buf = (uint64_t *)KRML_HOST_CALLOC(100U, sizeof (uint64_t));
+  Lib_IntVector_Intrinsics_vec256 *buf = (Lib_IntVector_Intrinsics_vec256 *)KRML_ALIGNED_MALLOC(32,25U * sizeof (Lib_IntVector_Intrinsics_vec256));
+  for (int i = 0; i < 25; i++){
+    buf[i] = Lib_IntVector_Intrinsics_vec256_zero;
+  }
   return buf;
 }
 
-void Hacl_Hash_SHA3_Simd256_state_free(uint64_t *s)
+void Hacl_Hash_SHA3_Simd256_state_free(Lib_IntVector_Intrinsics_vec256 *s)
 {
-  KRML_HOST_FREE(s);
+  KRML_ALIGNED_FREE(s);
 }
 
 void
