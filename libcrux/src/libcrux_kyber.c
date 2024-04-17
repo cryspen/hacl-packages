@@ -2159,10 +2159,10 @@ generate_keypair_unpacked___3size_t_1184size_t_1152size_t_2size_t_128size_t(
       K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t);
   Eurydice_slice seed_for_A = uu____0.fst;
   Eurydice_slice seed_for_secret_and_error = uu____0.snd;
-  int32_t A_transpose[3U][3U][256U];
+  int32_t a_transpose[3U][3U][256U];
   uint8_t ret[34U];
   into_padded_array___34size_t(seed_for_A, ret);
-  sample_matrix_A___3size_t(ret, true, A_transpose);
+  sample_matrix_A___3size_t(ret, true, a_transpose);
   uint8_t prf_input[33U];
   into_padded_array___33size_t(seed_for_secret_and_error, prf_input);
   uint8_t uu____1[33U];
@@ -2182,29 +2182,65 @@ generate_keypair_unpacked___3size_t_1184size_t_1152size_t_2size_t_128size_t(
          (size_t)3U * sizeof(int32_t[256U]));
   int32_t t_as_ntt[3U][256U];
   compute_As_plus_e___3size_t(
-    A_transpose, secret_as_ntt, error_as_ntt, t_as_ntt);
+    a_transpose, secret_as_ntt, error_as_ntt, t_as_ntt);
   int32_t uu____4[3U][256U];
   memcpy(uu____4, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
   uint8_t public_key_serialized[1184U];
   serialize_public_key___3size_t_1152size_t_1184size_t(
     uu____4, seed_for_A, public_key_serialized);
-  int32_t uu____5[3U][256U];
-  memcpy(uu____5, secret_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
-  int32_t uu____6[3U][256U];
-  memcpy(uu____6, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
-  int32_t uu____7[3U][3U][256U];
-  memcpy(uu____7, A_transpose, (size_t)3U * sizeof(int32_t[3U][256U]));
+  core_ops_range_Range__size_t iter0 =
+    core_iter_traits_collect___core__iter__traits__collect__IntoIterator_for_I___into_iter(
+      ((core_ops_range_Range__size_t){ .start = (size_t)0U,
+                                       .end = (size_t)3U }),
+      core_ops_range_Range__size_t,
+      core_ops_range_Range__size_t);
+  while (true) {
+    core_option_Option__size_t uu____5 =
+      core_iter_range___core__iter__traits__iterator__Iterator_for_core__ops__range__Range_A___3__next(
+        &iter0, size_t, core_option_Option__size_t);
+    if (uu____5.tag == core_option_None) {
+      break;
+    } else {
+      size_t i = uu____5.f0;
+      core_ops_range_Range__size_t iter =
+        core_iter_traits_collect___core__iter__traits__collect__IntoIterator_for_I___into_iter(
+          ((core_ops_range_Range__size_t){ .start = (size_t)0U,
+                                           .end = (size_t)256U }),
+          core_ops_range_Range__size_t,
+          core_ops_range_Range__size_t);
+      while (true) {
+        core_option_Option__size_t uu____6 =
+          core_iter_range___core__iter__traits__iterator__Iterator_for_core__ops__range__Range_A___3__next(
+            &iter, size_t, core_option_Option__size_t);
+        if (uu____6.tag == core_option_None) {
+          break;
+        } else {
+          size_t j = uu____6.f0;
+          uint16_t uu____7 = to_unsigned_representative(secret_as_ntt[i][j]);
+          secret_as_ntt[i][j] = (int32_t)uu____7;
+          uint16_t uu____8 = to_unsigned_representative(t_as_ntt[i][j]);
+          t_as_ntt[i][j] = (int32_t)uu____8;
+        }
+      }
+    }
+  }
+  int32_t uu____9[3U][256U];
+  memcpy(uu____9, secret_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
+  int32_t uu____10[3U][256U];
+  memcpy(uu____10, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
+  int32_t uu____11[3U][3U][256U];
+  memcpy(uu____11, a_transpose, (size_t)3U * sizeof(int32_t[3U][256U]));
   __libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t_
-    uu____8;
-  memcpy(uu____8.fst, uu____5, (size_t)3U * sizeof(int32_t[256U]));
-  memcpy(uu____8.snd, uu____6, (size_t)3U * sizeof(int32_t[256U]));
-  memcpy(uu____8.thd, uu____7, (size_t)3U * sizeof(int32_t[3U][256U]));
-  uint8_t uu____9[1184U];
-  memcpy(uu____9, public_key_serialized, (size_t)1184U * sizeof(uint8_t));
+    uu____12;
+  memcpy(uu____12.fst, uu____9, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(uu____12.snd, uu____10, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(uu____12.thd, uu____11, (size_t)3U * sizeof(int32_t[3U][256U]));
+  uint8_t uu____13[1184U];
+  memcpy(uu____13, public_key_serialized, (size_t)1184U * sizeof(uint8_t));
   __libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t__uint8_t_1184size_t_
     lit;
-  lit.fst = uu____8;
-  memcpy(lit.snd, uu____9, (size_t)1184U * sizeof(uint8_t));
+  lit.fst = uu____12;
+  memcpy(lit.snd, uu____13, (size_t)1184U * sizeof(uint8_t));
   return lit;
 }
 
@@ -2226,8 +2262,8 @@ generate_keypair___3size_t_1152size_t_1184size_t_1152size_t_2size_t_128size_t(
   memcpy(secret_as_ntt, uu____0.fst.fst, (size_t)3U * sizeof(int32_t[256U]));
   int32_t _t_as_ntt[3U][256U];
   memcpy(_t_as_ntt, uu____0.fst.snd, (size_t)3U * sizeof(int32_t[256U]));
-  int32_t _A_transpose[3U][3U][256U];
-  memcpy(_A_transpose, uu____0.fst.thd, (size_t)3U * sizeof(int32_t[3U][256U]));
+  int32_t _a_transpose[3U][3U][256U];
+  memcpy(_a_transpose, uu____0.fst.thd, (size_t)3U * sizeof(int32_t[3U][256U]));
   uint8_t public_key_serialized[1184U];
   memcpy(public_key_serialized, uu____0.snd, (size_t)1184U * sizeof(uint8_t));
   int32_t uu____1[3U][256U];
@@ -2450,8 +2486,8 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
   memcpy(s_as_ntt, uu____0.fst.fst, (size_t)3U * sizeof(int32_t[256U]));
   int32_t t_as_ntt[3U][256U];
   memcpy(t_as_ntt, uu____0.fst.snd, (size_t)3U * sizeof(int32_t[256U]));
-  int32_t A_transpose[3U][3U][256U];
-  memcpy(A_transpose, uu____0.fst.thd, (size_t)3U * sizeof(int32_t[3U][256U]));
+  int32_t a_transpose[3U][3U][256U];
+  memcpy(a_transpose, uu____0.fst.thd, (size_t)3U * sizeof(int32_t[3U][256U]));
   uint8_t ind_cpa_public_key[1184U];
   memcpy(ind_cpa_public_key, uu____0.snd, (size_t)1184U * sizeof(uint8_t));
   uint8_t public_key_hash[32U];
@@ -2472,7 +2508,7 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
   int32_t uu____3[3U][256U];
   memcpy(uu____3, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
   int32_t uu____4[3U][3U][256U];
-  memcpy(uu____4, A_transpose, (size_t)3U * sizeof(int32_t[3U][256U]));
+  memcpy(uu____4, a_transpose, (size_t)3U * sizeof(int32_t[3U][256U]));
   uint8_t uu____5[32U];
   memcpy(uu____5, rej, (size_t)32U * sizeof(uint8_t));
   uint8_t uu____6[32U];
@@ -3177,7 +3213,7 @@ into_padded_array___1088size_t(Eurydice_slice slice, uint8_t ret[1088U])
 static void
 encrypt_unpacked___3size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t(
   int32_t (*t_as_ntt)[256U],
-  int32_t (*A_transpose)[3U][256U],
+  int32_t (*a_transpose)[3U][256U],
   uint8_t message[32U],
   Eurydice_slice randomness,
   uint8_t ret[1088U])
@@ -3204,7 +3240,7 @@ encrypt_unpacked___3size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4s
     Eurydice_array_to_slice((size_t)128U, prf_output, uint8_t, Eurydice_slice),
     error_2);
   int32_t u[3U][256U];
-  compute_vector_u___3size_t(A_transpose, r_as_ntt, error_1, u);
+  compute_vector_u___3size_t(a_transpose, r_as_ntt, error_1, u);
   uint8_t uu____2[32U];
   memcpy(uu____2, message, (size_t)32U * sizeof(uint8_t));
   int32_t message_as_ring_element[256U];
@@ -3745,7 +3781,7 @@ static void
 decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t_1120size_t(
   int32_t (*secret_as_ntt)[256U],
   int32_t (*t_as_ntt)[256U],
-  int32_t (*A_transpose)[3U][256U],
+  int32_t (*a_transpose)[3U][256U],
   Eurydice_slice implicit_rejection_value,
   Eurydice_slice ind_cpa_public_key_hash,
   uint8_t (*ciphertext)[1088U],
@@ -3794,7 +3830,7 @@ decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152s
     Eurydice_array_to_slice((size_t)1120U, to_hash, uint8_t, Eurydice_slice),
     implicit_rejection_shared_secret);
   int32_t(*uu____2)[256U] = t_as_ntt;
-  int32_t(*uu____3)[3U][256U] = A_transpose;
+  int32_t(*uu____3)[3U][256U] = a_transpose;
   uint8_t uu____4[32U];
   memcpy(uu____4, decrypted, (size_t)32U * sizeof(uint8_t));
   uint8_t expected_ciphertext[1088U];
