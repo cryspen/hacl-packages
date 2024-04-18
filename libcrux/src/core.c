@@ -7,7 +7,7 @@
 
 #include "internal/core.h"
 
-typedef size_t RangeFrom__size_t;
-
 typedef size_t RangeTo__size_t;
+
+typedef size_t RangeFrom__size_t;
 

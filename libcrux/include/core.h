@@ -10,17 +10,21 @@
 
 #include "eurydice_glue.h"
 
-#define core_option_None 0
-#define core_option_Some 1
-
-typedef uint8_t core_option_Option__size_t_tags;
-
 typedef struct core_ops_range_Range__size_t_s
 {
   size_t start;
   size_t end;
 }
 core_ops_range_Range__size_t;
+
+extern uint8_t Eurydice_bitand_pv_u8(uint8_t *x, uint8_t y);
+
+extern uint8_t Eurydice_shr_pv_u8(uint8_t *x, int32_t y);
+
+#define core_option_None 0
+#define core_option_Some 1
+
+typedef uint8_t core_option_Option__size_t_tags;
 
 
 #define __core_H_DEFINED

@@ -8,7 +8,6 @@
 #ifndef __libcrux_kyber_H
 #define __libcrux_kyber_H
 
-#include "Eurydice.h"
 #include "core.h"
 #include "eurydice_glue.h"
 #include "libcrux_digest.h"
@@ -85,23 +84,6 @@ typedef struct libcrux_kyber_types_MlKemKeyPair___2400size_t_1184size_t_s
 
 libcrux_kyber_types_MlKemKeyPair___2400size_t_1184size_t
 libcrux_kyber_kyber768_generate_key_pair(uint8_t randomness[64U]);
-
-#define core_result_Ok 0
-#define core_result_Err 1
-
-typedef uint8_t
-  core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError_tags;
-
-typedef struct
-  core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError_s
-{
-  core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError_tags tag;
-  union
-  {
-    uint8_t case_Ok[32U];
-    core_array_TryFromSliceError case_Err;
-  } val;
-} core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError;
 
 typedef struct libcrux_kyber_MlKemState___3size_t_s
 {

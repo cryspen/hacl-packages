@@ -2471,12 +2471,27 @@ libcrux_kyber_kyber768_generate_key_pair(uint8_t randomness[64U])
     uu____0);
 }
 
+#define Ok 0
+#define Err 1
+
+typedef uint8_t Result__uint8_t_32size_t__core_array_TryFromSliceError_tags;
+
+typedef struct Result__uint8_t_32size_t__core_array_TryFromSliceError_s
+{
+  Result__uint8_t_32size_t__core_array_TryFromSliceError_tags tag;
+  union
+  {
+    uint8_t case_Ok[32U];
+    core_array_TryFromSliceError case_Err;
+  } val;
+} Result__uint8_t_32size_t__core_array_TryFromSliceError;
+
 static void
 unwrap__uint8_t_32size_t__core_array_TryFromSliceError(
-  core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError self,
+  Result__uint8_t_32size_t__core_array_TryFromSliceError self,
   uint8_t ret[32U])
 {
-  if (self.tag == core_result_Ok) {
+  if (self.tag == Ok) {
     uint8_t f0[32U];
     memcpy(f0, self.val.case_Ok, (size_t)32U * sizeof(uint8_t));
     memcpy(ret, f0, (size_t)32U * sizeof(uint8_t));
@@ -2531,7 +2546,7 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
       (size_t)1184U, ind_cpa_public_key, uint8_t, Eurydice_slice),
     ind_cpa_public_key_hash);
   uint8_t rej[32U];
-  core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError dst;
+  Result__uint8_t_32size_t__core_array_TryFromSliceError dst;
   Eurydice_slice_to_array2(
     &dst, implicit_rejection_value, Eurydice_slice, uint8_t[32U], void*);
   unwrap__uint8_t_32size_t__core_array_TryFromSliceError(dst, rej);
