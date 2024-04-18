@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Eurydice.h"
+#include "eurydice_glue.h"
 
 #include <stdint.h>
 #include <string.h>
