@@ -2495,7 +2495,7 @@ from___1184size_t(uint8_t value[1184U], uint8_t ret[1184U])
   memcpy(ret, uu____0, (size_t)1184U * sizeof(uint8_t));
 }
 
-static K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t__
+static K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__
 generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_2size_t_128size_t(
   uint8_t randomness[64U])
 {
@@ -2549,18 +2549,18 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
   memcpy(uu____5, rej, (size_t)32U * sizeof(uint8_t));
   uint8_t uu____6[32U];
   memcpy(uu____6, public_key_hash, (size_t)32U * sizeof(uint8_t));
-  K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t__
+  K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__
     lit;
-  memcpy(lit.fst.fst, uu____2, (size_t)3U * sizeof(int32_t[256U]));
-  memcpy(lit.fst.snd, uu____3, (size_t)3U * sizeof(int32_t[256U]));
-  memcpy(lit.fst.thd, uu____4, (size_t)3U * sizeof(int32_t[3U][256U]));
-  memcpy(lit.fst.f3, uu____5, (size_t)32U * sizeof(uint8_t));
-  memcpy(lit.fst.f4, uu____6, (size_t)32U * sizeof(uint8_t));
+  memcpy(lit.fst.s_as_ntt, uu____2, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(lit.fst.t_as_ntt, uu____3, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(lit.fst.a_transpose, uu____4, (size_t)3U * sizeof(int32_t[3U][256U]));
+  memcpy(lit.fst.rej, uu____5, (size_t)32U * sizeof(uint8_t));
+  memcpy(lit.fst.public_key_hash, uu____6, (size_t)32U * sizeof(uint8_t));
   memcpy(lit.snd, pubkey, (size_t)1184U * sizeof(uint8_t));
   return lit;
 }
 
-K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t__
+K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__
 libcrux_kyber_kyber768_generate_key_pair_unpacked(uint8_t randomness[64U])
 {
   uint8_t uu____0[64U];
@@ -3815,14 +3815,17 @@ libcrux_kyber_kyber768_decapsulate(uint8_t (*secret_key)[2400U],
 
 static void
 decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t_1120size_t(
-  int32_t (*secret_as_ntt)[256U],
-  int32_t (*t_as_ntt)[256U],
-  int32_t (*a_transpose)[3U][256U],
-  Eurydice_slice implicit_rejection_value,
-  Eurydice_slice ind_cpa_public_key_hash,
+  libcrux_kyber_MlKemState___3size_t* state,
   uint8_t (*ciphertext)[1088U],
   uint8_t ret[32U])
 {
+  int32_t(*secret_as_ntt)[256U] = state->s_as_ntt;
+  int32_t(*t_as_ntt)[256U] = state->t_as_ntt;
+  int32_t(*a_transpose)[3U][256U] = state->a_transpose;
+  Eurydice_slice implicit_rejection_value =
+    Eurydice_array_to_slice((size_t)32U, state->rej, uint8_t, Eurydice_slice);
+  Eurydice_slice ind_cpa_public_key_hash = Eurydice_array_to_slice(
+    (size_t)32U, state->public_key_hash, uint8_t, Eurydice_slice);
   uint8_t decrypted[32U];
   decrypt_unpacked___3size_t_1088size_t_960size_t_10size_t_4size_t(
     secret_as_ntt, ciphertext[0U], decrypted);
@@ -3890,22 +3893,12 @@ decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152s
 
 void
 libcrux_kyber_kyber768_decapsulate_unpacked(
-  int32_t (*secret_as_ntt)[256U],
-  int32_t (*t_as_ntt)[256U],
-  int32_t (*a_transpose)[3U][256U],
-  Eurydice_slice implicit_rejection_value,
-  Eurydice_slice ind_cpa_public_key_hash,
+  libcrux_kyber_MlKemState___3size_t* state,
   uint8_t (*ciphertext)[1088U],
   uint8_t ret[32U])
 {
   uint8_t ret0[32U];
   decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t_1120size_t(
-    secret_as_ntt,
-    t_as_ntt,
-    a_transpose,
-    implicit_rejection_value,
-    ind_cpa_public_key_hash,
-    ciphertext,
-    ret0);
+    state, ciphertext, ret0);
   memcpy(ret, ret0, (size_t)32U * sizeof(uint8_t));
 }

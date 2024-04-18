@@ -103,25 +103,23 @@ typedef struct
   } val;
 } core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError;
 
-typedef struct
-  K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t__uint8_t_32size_t__uint8_t_32size_t__s
+typedef struct libcrux_kyber_MlKemState___3size_t_s
 {
-  int32_t fst[3U][256U];
-  int32_t snd[3U][256U];
-  int32_t thd[3U][3U][256U];
-  uint8_t f3[32U];
-  uint8_t f4[32U];
-} K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t__uint8_t_32size_t__uint8_t_32size_t_;
+  int32_t s_as_ntt[3U][256U];
+  int32_t t_as_ntt[3U][256U];
+  int32_t a_transpose[3U][3U][256U];
+  uint8_t rej[32U];
+  uint8_t public_key_hash[32U];
+} libcrux_kyber_MlKemState___3size_t;
 
 typedef struct
-  K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t___s
+  K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t___s
 {
-  K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t__uint8_t_32size_t__uint8_t_32size_t_
-    fst;
+  libcrux_kyber_MlKemState___3size_t fst;
   uint8_t snd[1184U];
-} K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t__;
+} K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__;
 
-K___libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t____libcrux_kyber_arithmetic_PolynomialRingElement_3size_t__3size_t____uint8_t_32size_t____uint8_t_32size_t__libcrux_kyber_types_MlKemPublicKey__1184size_t__
+K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__
 libcrux_kyber_kyber768_generate_key_pair_unpacked(uint8_t randomness[64U]);
 
 typedef struct
@@ -139,12 +137,9 @@ void libcrux_kyber_kyber768_decapsulate(uint8_t (*secret_key)[2400U],
                                         uint8_t (*ciphertext)[1088U],
                                         uint8_t ret[32U]);
 
-void libcrux_kyber_kyber768_decapsulate_unpacked(
-  int32_t (*secret_as_ntt)[256U],
-  int32_t (*t_as_ntt)[256U],
-  int32_t (*a_transpose)[3U][256U],
-  Eurydice_slice implicit_rejection_value,
-  Eurydice_slice ind_cpa_public_key_hash,
+void
+libcrux_kyber_kyber768_decapsulate_unpacked(
+  libcrux_kyber_MlKemState___3size_t* state,
   uint8_t (*ciphertext)[1088U],
   uint8_t ret[32U]);
 
