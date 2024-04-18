@@ -105,11 +105,11 @@ typedef struct
 
 typedef struct libcrux_kyber_MlKemState___3size_t_s
 {
-  int32_t s_as_ntt[3U][256U];
+  int32_t secret_as_ntt[3U][256U];
   int32_t t_as_ntt[3U][256U];
   int32_t a_transpose[3U][3U][256U];
   uint8_t rej[32U];
-  uint8_t public_key_hash[32U];
+  uint8_t ind_cpa_public_key_hash[32U];
 } libcrux_kyber_MlKemState___3size_t;
 
 typedef struct

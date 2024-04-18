@@ -2518,18 +2518,18 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
     uu____0 =
       generate_keypair_unpacked___3size_t_1184size_t_1152size_t_2size_t_128size_t(
         ind_cpa_keypair_randomness);
-  int32_t s_as_ntt[3U][256U];
-  memcpy(s_as_ntt, uu____0.fst.fst, (size_t)3U * sizeof(int32_t[256U]));
+  int32_t secret_as_ntt[3U][256U];
+  memcpy(secret_as_ntt, uu____0.fst.fst, (size_t)3U * sizeof(int32_t[256U]));
   int32_t t_as_ntt[3U][256U];
   memcpy(t_as_ntt, uu____0.fst.snd, (size_t)3U * sizeof(int32_t[256U]));
   int32_t a_transpose[3U][3U][256U];
   memcpy(a_transpose, uu____0.fst.thd, (size_t)3U * sizeof(int32_t[3U][256U]));
   uint8_t ind_cpa_public_key[1184U];
   memcpy(ind_cpa_public_key, uu____0.snd, (size_t)1184U * sizeof(uint8_t));
-  uint8_t public_key_hash[32U];
+  uint8_t ind_cpa_public_key_hash[32U];
   H(Eurydice_array_to_slice(
       (size_t)1184U, ind_cpa_public_key, uint8_t, Eurydice_slice),
-    public_key_hash);
+    ind_cpa_public_key_hash);
   uint8_t rej[32U];
   core_result_Result__uint8_t_32size_t__core_array_TryFromSliceError dst;
   Eurydice_slice_to_array2(
@@ -2540,7 +2540,7 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
   uint8_t pubkey[1184U];
   from___1184size_t(uu____1, pubkey);
   int32_t uu____2[3U][256U];
-  memcpy(uu____2, s_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(uu____2, secret_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
   int32_t uu____3[3U][256U];
   memcpy(uu____3, t_as_ntt, (size_t)3U * sizeof(int32_t[256U]));
   int32_t uu____4[3U][3U][256U];
@@ -2548,14 +2548,15 @@ generate_keypair_unpacked___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_
   uint8_t uu____5[32U];
   memcpy(uu____5, rej, (size_t)32U * sizeof(uint8_t));
   uint8_t uu____6[32U];
-  memcpy(uu____6, public_key_hash, (size_t)32U * sizeof(uint8_t));
+  memcpy(uu____6, ind_cpa_public_key_hash, (size_t)32U * sizeof(uint8_t));
   K___libcrux_kyber_MlKemState__3size_t___libcrux_kyber_types_MlKemPublicKey__1184size_t__
     lit;
-  memcpy(lit.fst.s_as_ntt, uu____2, (size_t)3U * sizeof(int32_t[256U]));
+  memcpy(lit.fst.secret_as_ntt, uu____2, (size_t)3U * sizeof(int32_t[256U]));
   memcpy(lit.fst.t_as_ntt, uu____3, (size_t)3U * sizeof(int32_t[256U]));
   memcpy(lit.fst.a_transpose, uu____4, (size_t)3U * sizeof(int32_t[3U][256U]));
   memcpy(lit.fst.rej, uu____5, (size_t)32U * sizeof(uint8_t));
-  memcpy(lit.fst.public_key_hash, uu____6, (size_t)32U * sizeof(uint8_t));
+  memcpy(
+    lit.fst.ind_cpa_public_key_hash, uu____6, (size_t)32U * sizeof(uint8_t));
   memcpy(lit.snd, pubkey, (size_t)1184U * sizeof(uint8_t));
   return lit;
 }
@@ -3819,13 +3820,13 @@ decapsulate_unpacked___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152s
   uint8_t (*ciphertext)[1088U],
   uint8_t ret[32U])
 {
-  int32_t(*secret_as_ntt)[256U] = state->s_as_ntt;
+  int32_t(*secret_as_ntt)[256U] = state->secret_as_ntt;
   int32_t(*t_as_ntt)[256U] = state->t_as_ntt;
   int32_t(*a_transpose)[3U][256U] = state->a_transpose;
   Eurydice_slice implicit_rejection_value =
     Eurydice_array_to_slice((size_t)32U, state->rej, uint8_t, Eurydice_slice);
   Eurydice_slice ind_cpa_public_key_hash = Eurydice_array_to_slice(
-    (size_t)32U, state->public_key_hash, uint8_t, Eurydice_slice);
+    (size_t)32U, state->ind_cpa_public_key_hash, uint8_t, Eurydice_slice);
   uint8_t decrypted[32U];
   decrypt_unpacked___3size_t_1088size_t_960size_t_10size_t_4size_t(
     secret_as_ntt, ciphertext[0U], decrypted);
