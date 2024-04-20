@@ -97,6 +97,21 @@ BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
   ->Setup(DoSetup);
 #endif
 
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2b_oneshot(benchmark::State& state)
+{
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state)
+    blake2b(digest2b.data(), (const void*)input.data(), NULL, digest2b.size(), input.size(), 0);
+}
+
+BENCHMARK(libb2_blake2b_oneshot)->Setup(DoSetup);
+#endif
+
 // -----------------------------------------------------------------------------
 
 static void
@@ -148,6 +163,19 @@ OpenSSL_blake2b_oneshot_keyed(benchmark::State& state)
 }
 
 BENCHMARK(OpenSSL_blake2b_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2b_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state)
+    blake2b(digest2b.data(), (const void*)input.data(), (const void*)key.data(), digest2b.size(), input.size(), key.size());
+}
+
+BENCHMARK(libb2_blake2b_oneshot_keyed)->Setup(DoSetup);
 #endif
 
 
@@ -209,6 +237,21 @@ BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
   ->Setup(DoSetup);
 #endif
 
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2s_oneshot(benchmark::State& state)
+{
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state)
+    blake2s(digest2s.data(), (const void*)input.data(), NULL, digest2s.size(), input.size(), 0);
+}
+
+BENCHMARK(libb2_blake2s_oneshot)->Setup(DoSetup);
+#endif
+
 // -----------------------------------------------------------------------------
 
 static void
@@ -261,6 +304,20 @@ OpenSSL_blake2s_oneshot_keyed(benchmark::State& state)
 
 BENCHMARK(OpenSSL_blake2s_oneshot_keyed)->Setup(DoSetup);
 #endif
+
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2s_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state)
+    blake2s(digest2s.data(), (const void*)input.data(), (const void*)key.data(), digest2s.size(), input.size(), key.size());
+}
+
+BENCHMARK(libb2_blake2s_oneshot_keyed)->Setup(DoSetup);
+#endif
+
 
 // -----------------------------------------------------------------------------
 

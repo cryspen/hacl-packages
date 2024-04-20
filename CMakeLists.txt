@@ -65,6 +65,9 @@ include(${PROJECT_SOURCE_DIR}/build/config.cmake)
 # Constants used throughout hacl and the build.
 include(config/constants.cmake)
 
+# for libb2
+include(FindPkgConfig)
+
 # Set system processor to 32-bit.
 # Note that this only works on intel for now.
 if(CMAKE_C_FLAGS MATCHES ".*-m32.*")
@@ -524,6 +527,14 @@ if(ENABLE_BENCHMARKS)
         else()
             target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
         endif(ENABLE_OPENSSL_BENCHMARKS)
+
+        if(ENABLE_LIBB2_BENCHMARKS)
+          pkg_check_modules (LIBB2 REQUIRED libb2)
+          target_link_libraries(${BENCH_NAME} PRIVATE ${LIBB2_LIBRARIES})
+          target_link_directories(${BENCH_NAME} PRIVATE ${LIBB2_LIBRARY_DIRS})
+          target_include_directories(${BENCH_NAME} PUBLIC ${LIBB2_INCLUDE_DIRS})
+          target_compile_options(${BENCH_NAME} PUBLIC ${LIBB2_CFLAGS_OTHER})
+        endif(ENABLE_LIBB2_BENCHMARKS)
 
         if(ENABLE_LIBTOMCRYPT_BENCHMARKS)
             if(DEFINED ENV{LIBTOMCRYPT_HOME})
