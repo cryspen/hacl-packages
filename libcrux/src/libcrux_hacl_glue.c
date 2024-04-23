@@ -83,11 +83,10 @@ inline void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
   size_t k,
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
-  Eurydice_slice x1[3U])
+  Eurydice_slice x1[k])
 {
-  (void)k;
 #ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support()) {
+  if (libcrux_platform_simd256_support() && k >= 3) {
     Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
       x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[0].ptr, x1[0].len);
   } else {
@@ -95,12 +94,18 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
     // meaning we can safely downcast into a uint32_t.
     Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
     Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+    if (k >= 3)
+      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+    if (k >= 4)
+      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, (uint32_t) x1[3].len);
   }
 #else
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
   Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+  if (k >= 3)
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+  if (k >= 4)
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, (uint32_t) x1[3].len);
 #endif
 }
 
@@ -108,31 +113,34 @@ inline void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(
   libcrux_digest_incremental_x4_Shake128StateX4* x1,
   size_t block_len,
-  uint8_t* output)
+  size_t num,
+  uint8_t output[num][block_len])
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support()) {
+  if (libcrux_platform_simd256_support() && k >= 3) {
     uint8_t* tmp = KRML_HOST_MALLOC(block_len);
     Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(x1->x4,
-                                                    output,
-                                                    output + block_len,
-                                                    output + 2 * block_len,
+                                                    output[0],
+                                                    output[1],
+                                                    output[2],
                                                     tmp,
                                                     block_len);
     free(tmp);
   } else {
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output, block_len);
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
-      x1->st1, output + block_len, block_len);
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
-      x1->st2, output + 2 * block_len, block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output[0], block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output[1], block_len);
+    if (num >= 3)
+      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output[2], block_len);
+    if (num >= 4)
+      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output[3], block_len);
   }
 #else
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output, block_len);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
-    x1->st1, output + block_len, block_len);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(
-    x1->st2, output + 2 * block_len, block_len);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output[0], block_len);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output[1], block_len);
+  if (num >= 3)
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output[2], block_len);
+  if (num >= 4)
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output[3], block_len);
 #endif
 }
 
