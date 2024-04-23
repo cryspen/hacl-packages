@@ -32,12 +32,12 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   libcrux_digest_incremental_x4_Shake128StateX4* xof_state,
   size_t block_len,
   size_t num,
-  uint8_t output[num][block_len]);
+  uint8_t *output);
 
 #define libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks( \
   block_len, num, xof_state, output, c)                                                                 \
   libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(     \
-    xof_state, block_len, num, output)
+    xof_state, block_len, num, (uint8_t *) output)
 
 // The last parameter should be x1[k] but Eurydice issues a prototype that has lost the length information.
 void

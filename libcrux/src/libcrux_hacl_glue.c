@@ -113,33 +113,33 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   libcrux_digest_incremental_x4_Shake128StateX4* x1,
   size_t block_len,
   size_t num,
-  uint8_t output[num][block_len])
+  uint8_t *output)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
   if (libcrux_platform_simd256_support() && num >= 3) {
     uint8_t* tmp = KRML_HOST_MALLOC(block_len);
     Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(x1->x4,
-                                                    output[0],
-                                                    output[1],
-                                                    output[2],
+                                                    output + 0 * block_len,
+                                                    output + 1 * block_len,
+                                                    output + 2 * block_len,
                                                     tmp,
                                                     block_len);
     free(tmp);
   } else {
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output[0], block_len);
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output[1], block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output + 0 * block_len, block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output + 1 * block_len, block_len);
     if (num >= 3)
-      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output[2], block_len);
+      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output + 2 * block_len, block_len);
     if (num >= 4)
-      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output[3], block_len);
+      Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output + 3 * block_len, block_len);
   }
 #else
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output[0], block_len);
-  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output[1], block_len);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output + 0 * block_len, block_len);
+  Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output + 1 * block_len, block_len);
   if (num >= 3)
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output[2], block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st2, output + 2 * block_len, block_len);
   if (num >= 4)
-    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output[3], block_len);
+    Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st3, output + 3 * block_len, block_len);
 #endif
 }
 
