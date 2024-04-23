@@ -83,7 +83,8 @@ inline void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
   size_t k,
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
-  Eurydice_slice x1[k])
+  //Eurydice_slice x1[k])
+  Eurydice_slice *x1)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
   if (libcrux_platform_simd256_support() && k >= 3) {
