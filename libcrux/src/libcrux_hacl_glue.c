@@ -50,8 +50,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 #ifdef HACL_CAN_COMPILE_VEC256
   if (libcrux_platform_simd256_support()) {
     return (libcrux_digest_incremental_x4_Shake128StateX4){
-      .x4 =
-        (Lib_IntVector_Intrinsics_vec256*)Hacl_Hash_SHA3_Simd256_state_malloc(),
+      .x4 = Hacl_Hash_SHA3_Simd256_state_malloc(),
       .st0 = NULL,
       .st1 = NULL,
       .st2 = NULL,
@@ -80,31 +79,31 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 inline void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
   size_t k,
-  libcrux_digest_incremental_x4_Shake128StateX4* x0,
+  libcrux_digest_incremental_x4_Shake128StateX4* state,
   //Eurydice_slice x1[k])
   Eurydice_slice *x1)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support() && k >= 3) {
+  if (libcrux_platform_simd256_support()) {
     Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
-      x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[0].ptr, x1[0].len);
+      state->x4, x1[0].ptr, x1[1].ptr, x1[2 % k].ptr, x1[3 % k].ptr, x1[0].len);
   } else {
     // This function requires that the data be no longer than a partial block,
     // meaning we can safely downcast into a uint32_t.
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st0, x1[0].ptr, (uint32_t) x1[0].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st1, x1[1].ptr, (uint32_t) x1[1].len);
     if (k >= 3)
-      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st2, x1[2].ptr, (uint32_t) x1[2].len);
     if (k >= 4)
-      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, (uint32_t) x1[3].len);
+      Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st3, x1[3].ptr, (uint32_t) x1[3].len);
   }
 #else
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st0, x1[0].ptr, (uint32_t) x1[0].len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st1, x1[1].ptr, (uint32_t) x1[1].len);
   if (k >= 3)
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st2, x1[2].ptr, (uint32_t) x1[2].len);
   if (k >= 4)
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st3, x1[3].ptr, (uint32_t) x1[3].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(state->st3, x1[3].ptr, (uint32_t) x1[3].len);
 #endif
 }
 
@@ -116,15 +115,18 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   uint8_t *output)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support() && num >= 3) {
-    uint8_t* tmp = KRML_HOST_MALLOC(block_len);
+  if (libcrux_platform_simd256_support()) {
+    // FIXME: the API does not allow aliased inputs -- discuss with Mamone
+    uint8_t* tmp1 = KRML_HOST_MALLOC(block_len);
+    uint8_t* tmp2 = KRML_HOST_MALLOC(block_len);
     Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(x1->x4,
                                                     output + 0 * block_len,
                                                     output + 1 * block_len,
-                                                    output + 2 * block_len,
-                                                    tmp,
+                                                    num >= 3 ? output + 2 * block_len : tmp1,
+                                                    num >= 4 ? output + 3 * block_len : tmp2,
                                                     block_len);
-    free(tmp);
+    free(tmp1);
+    free(tmp2);
   } else {
     Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st0, output + 0 * block_len, block_len);
     Hacl_Hash_SHA3_Scalar_shake128_squeeze_nblocks(x1->st1, output + 1 * block_len, block_len);
