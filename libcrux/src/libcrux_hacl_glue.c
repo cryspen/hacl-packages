@@ -91,14 +91,16 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
     Hacl_Hash_SHA3_Simd256_shake128_absorb_final(
       x0->x4, x1[0].ptr, x1[1].ptr, x1[2].ptr, x1[0].ptr, x1[0].len);
   } else {
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, x1[0].len);
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, x1[1].len);
-    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, x1[2].len);
+    // This function requires that the data be no longer than a partial block,
+    // meaning we can safely downcast into a uint32_t.
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
+    Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
   }
 #else
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, x1[0].len);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, x1[1].len);
-  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, x1[2].len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st0, x1[0].ptr, (uint32_t) x1[0].len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st1, x1[1].ptr, (uint32_t) x1[1].len);
+  Hacl_Hash_SHA3_Scalar_shake128_absorb_final(x0->st2, x1[2].ptr, (uint32_t) x1[2].len);
 #endif
 }
 
