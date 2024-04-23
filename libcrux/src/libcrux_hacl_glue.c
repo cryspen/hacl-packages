@@ -5,7 +5,6 @@
 #include "libcrux_platform.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
-#include "EverCrypt_AutoConfig2.h"
 #include "Hacl_Hash_SHA3_Simd256.h"
 #endif
 #include "Hacl_Hash_SHA3_Scalar.h"
@@ -13,10 +12,9 @@
 bool
 libcrux_platform_simd256_support(void)
 {
-  // TODO: Replace this with HACL platform support.
 #ifdef HACL_CAN_COMPILE_VEC256
-  EverCrypt_AutoConfig2_init();
-  return EverCrypt_AutoConfig2_has_avx2();
+  // TODO: call runtime CPU detection to detect whether the target machine does have AVX2
+  return true;
 #endif
   return false;
 }
@@ -118,7 +116,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   uint8_t output[num][block_len])
 {
 #ifdef HACL_CAN_COMPILE_VEC256
-  if (libcrux_platform_simd256_support() && k >= 3) {
+  if (libcrux_platform_simd256_support() && num >= 3) {
     uint8_t* tmp = KRML_HOST_MALLOC(block_len);
     Hacl_Hash_SHA3_Simd256_shake128_squeeze_nblocks(x1->x4,
                                                     output[0],
