@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "Libcrux_Kem_Kyber_Kyber768.h"
-#include "libcrux_kyber.h"
+#include "libcrux_kyber768.h"
 
 void
 Libcrux_Kyber768_GenerateKeyPair(uint8_t* pk,

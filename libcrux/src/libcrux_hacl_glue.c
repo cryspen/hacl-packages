@@ -1,7 +1,7 @@
 #include "libcrux_hacl_glue.h"
 #include "Hacl_Hash_SHA3.h"
 #include "libcrux_digest.h"
-#include "libcrux_kyber.h"
+#include "libcrux_kyber768.h"
 #include "libcrux_platform.h"
 
 #ifdef HACL_CAN_COMPILE_VEC256
