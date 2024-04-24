@@ -168,6 +168,10 @@
             {
                 "file": "Hacl_Hash_SHA3.c",
                 "features": "std"
+            },
+            {
+                "file": "Hacl_Hash_SHA3_Simd256.c",
+                "features": "vec256"
             }
         ],
         "sha2": [
