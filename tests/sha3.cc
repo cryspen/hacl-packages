@@ -149,8 +149,8 @@ TEST(ApiSuite, ApiTest)
     uint32_t digest_size = 42;
     uint8_t digest[42];
 
-    Hacl_Hash_SHA3_shake128_hacl(
-      message_size, (uint8_t*)message, digest_size, digest);
+    Hacl_Hash_SHA3_shake128(
+      digest, digest_size, (uint8_t*)message, message_size);
     // ANCHOR_END(example shake128)
 
     bytes expected_digest =
@@ -201,16 +201,20 @@ TEST_P(ShakeKAT, TryKAT)
     if (test_case.md.size() == 128 / 8) {
       bytes digest(test_case.md.size(), 128 / 8);
 
-      Hacl_Hash_SHA3_shake128_hacl(
-        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
+      Hacl_Hash_SHA3_shake128(digest.data(),
+                              digest.size(),
+                              test_case.msg.data(),
+                              test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
     } else if (test_case.md.size() == 256 / 8) {
       bytes digest(test_case.md.size(), 256 / 8);
 
-      Hacl_Hash_SHA3_shake256_hacl(
-        test_case.msg.size(), test_case.msg.data(), digest.size(), digest.data());
+      Hacl_Hash_SHA3_shake256(digest.data(),
+                              digest.size(),
+                              test_case.msg.data(),
+                              test_case.msg.size());
 
       EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                       << bytes_to_hex(digest) << std::endl;
