@@ -8,6 +8,11 @@
 #ifndef __libcrux_kyber_H
 #define __libcrux_kyber_H
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #include "Eurydice.h"
 #include "core.h"
 #include "eurydice_glue.h"
@@ -119,6 +124,10 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
 extern void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(
   libcrux_digest_incremental_x4_Shake128StateX4 x0);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #define __libcrux_kyber_H_DEFINED
 #endif
