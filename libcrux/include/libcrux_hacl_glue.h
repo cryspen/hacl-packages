@@ -2,6 +2,11 @@
 
 #pragma once
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #include "Eurydice.h"
 
 #include <stdint.h>
@@ -45,3 +50,7 @@ libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4_
   size_t k,
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
   Eurydice_slice *x1);
+
+#if defined(__cplusplus)
+}
+#endif
