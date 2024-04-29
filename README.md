@@ -99,8 +99,8 @@ cp config\default_config_msvc.cmake build\config.cmake
 cp config\default_config_msvc.h build\config.h
 
 # Build
-# Use  --config Release in the build for release mode
 cmake -B build -DBUILD_LIBCRUX=1 -G "Visual Studio 17 2022" -A x64 -DUSE_MSVC=1 -DENABLE_TESTS=ON -DENABLE_BENCHMARKS=ON
+# Use --config Release to build in release mode
 cmake --build build
 ```
 </details>
