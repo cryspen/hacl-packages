@@ -49,7 +49,7 @@ endif()
 
 set(hacl_VERSION_TWEAK "")
 
-# Load global config from exteral file.
+# Load global config from external file.
 # This file must be generated before running cmake with ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
 # needed.

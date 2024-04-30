@@ -35,10 +35,10 @@ class Config:
         """
         # With old compilers like GCC 4.8 we have to set -march=native for this
         # to work.
-        copmiler_version = subprocess.run(
+        compiler_version = subprocess.run(
             self.compiler + " --version", stdout=subprocess.PIPE, shell=True, check=True
         )
-        stdout = copmiler_version.stdout.decode("utf-8")
+        stdout = compiler_version.stdout.decode("utf-8")
         args = ""
         if "4.8" in stdout and "gcc" in stdout:
             processor = platform.processor()
