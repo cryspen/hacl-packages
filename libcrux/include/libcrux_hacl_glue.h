@@ -7,7 +7,7 @@ extern "C"
 {
 #endif
 
-#include "Eurydice.h"
+#include "core.h"
 
 #include <stdint.h>
 #include <string.h>
