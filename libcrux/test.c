@@ -2,6 +2,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(__aarch64__)
+static uint64_t __rdtsc(void) {
+    uint64_t tsc;
+    asm volatile("mrs %0, cntvct_el0" : "=r"(tsc));
+    return tsc;
+}
+#elif defined(_WIN32)
+#include <intrin.h>
+#else
+#include <x86intrin.h>
+#endif
+
 #include "Libcrux_Kem_Kyber_Kyber768.h"
 
 int main (int argc, char *argv[]) {
@@ -11,9 +23,10 @@ int main (int argc, char *argv[]) {
   }
 
   char *end;
-  int N = strtol(argv[1], &end, 10);
+  long N = strtol(argv[1], &end, 10);
 
   // All three of the operations below are slow.
+  uint64_t start = __rdtsc();
 
   // First operation: generating a key pair.
   uint8_t randomness64[64] = { 0 };
@@ -36,6 +49,8 @@ int main (int argc, char *argv[]) {
   // Third operation: decapsulation
   for (int i = 0; i < N; ++i)
     Libcrux_Kyber768_Decapsulate(sharedSecret, &ciphertext, &secret_key);
+
+  printf("# of cycles elapsed for %ld iterations: %"PRIu64"\n", N, __rdtsc() - start);
 
   return 0;
 }
