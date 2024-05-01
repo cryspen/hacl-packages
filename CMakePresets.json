@@ -1,0 +1,110 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default Config",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
+        "BUILD_LIBCRUX": "ON",
+        "ENABLE_TESTS": "ON",
+        "ENABLE_BENCHMARKS": "ON"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      }
+    },
+    {
+      "name": "ninja.msvc",
+      "inherits": "default",
+      "displayName": "x64 Ninja Multi-Config MSVC",
+      "description": "x64 MSVC build using Ninja Multi-Config generator",
+      "cacheVariables": {
+        "USE_MSVC": "ON"
+      }
+    },
+    {
+      "name": "ninja.clang",
+      "inherits": "default",
+      "displayName": "x64 Ninja Multi-Config Clang",
+      "description": "x64 Clang build using Ninja Multi-Config generator"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ninja.msvc.Release",
+      "description": "x64 MSVC build using Ninja Multi-Config generator - Release",
+      "displayName": "Release",
+      "configurePreset": "ninja.msvc",
+      "configuration": "Release"
+    },
+    {
+      "name": "ninja.msvc.Debug",
+      "description": "x64 MSVC build using Ninja Multi-Config generator - Debug",
+      "displayName": "Debug",
+      "configurePreset": "ninja.msvc",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ninja.msvc.MinSizeRel",
+      "description": "x64 MSVC build using Ninja Multi-Config generator - MinSizeRel",
+      "displayName": "MinSizeRel",
+      "configurePreset": "ninja.msvc",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "ninja.msvc.RelWithDebInfo",
+      "description": "x64 MSVC build using Ninja Multi-Config generator - RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "ninja.msvc",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ninja.clang.Release",
+      "description": "x64 Clang build using Ninja Multi-Config generator - Release",
+      "displayName": "Release",
+      "configurePreset": "ninja.clang",
+      "configuration": "Release"
+    },
+    {
+      "name": "ninja.clang.Debug",
+      "description": "x64 Clang build using Ninja Multi-Config generator - Debug",
+      "displayName": "Debug",
+      "configurePreset": "ninja.clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ninja.clang.MinSizeRel",
+      "description": "x64 Clang build using Ninja Multi-Config generator - MinSizeRel",
+      "displayName": "MinSizeRel",
+      "configurePreset": "ninja.clang",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "ninja.clang.RelWithDebInfo",
+      "description": "x64 Clang build using Ninja Multi-Config generator - RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "ninja.clang",
+      "configuration": "RelWithDebInfo"
+    }
+  ]
+}
