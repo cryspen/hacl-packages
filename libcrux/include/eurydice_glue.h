@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -61,6 +65,7 @@ typedef struct
 }
 result_tryfromslice_flexible;
 
+// See note in karamel/lib/Inlining.ml if you change this
 #define Eurydice_slice_to_array2(dst, src, _, t_arr, _ret_t) Eurydice_slice_to_array3((result_tryfromslice_flexible *)dst, src, sizeof(t_arr))
 
 static inline void Eurydice_slice_to_array3(result_tryfromslice_flexible *dst, Eurydice_slice src, size_t sz) {
@@ -103,6 +108,7 @@ static inline uint8_t Eurydice_shr_pv_u8(uint8_t *p, int32_t v) { return (*p) >>
 
 #define core_iter_range___core__iter__traits__iterator__Iterator_for_core__ops__range__Range_A___3__next Eurydice_range_iter_next
 
+// See note in karamel/lib/Inlining.ml if you change this
 #define Eurydice_into_iter(x, t, _ret_t) (x)
 #define core_iter_traits_collect___core__iter__traits__collect__IntoIterator_for_I___into_iter Eurydice_into_iter
 
@@ -209,3 +215,6 @@ typedef struct {
 
 #define EURYDICE_REPLACE(ptr, new_v, t) ({ t old_v = *ptr; *ptr = new_v; old_v; })
 
+#if defined(__cplusplus)
+}
+#endif
