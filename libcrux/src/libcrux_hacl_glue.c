@@ -10,12 +10,17 @@
 #endif
 #include "Hacl_Hash_SHA3_Scalar.h"
 
+static int evercrypt_initialized = false;
+
 bool
 libcrux_platform_simd256_support(void)
 {
 #ifdef HACL_CAN_COMPILE_VEC256
   // TODO: call runtime CPU detection to detect whether the target machine does have AVX2
-  EverCrypt_AutoConfig2_init();
+  if (!evercrypt_initialized) {
+    EverCrypt_AutoConfig2_init();
+    evercrypt_initialized = true;
+  }
   return EverCrypt_AutoConfig2_has_avx2();
 #endif
   return false;
