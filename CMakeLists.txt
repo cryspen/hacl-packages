@@ -88,8 +88,11 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 include(build/config.cmake)
 
 # Configure different targets
-# TODO: Set flags for MSVC
-if(NOT MSVC)
+if(MSVC)
+    add_compile_options(
+        /Ob3
+    )
+else()
     add_compile_options(
         # -Wall
         # -Wextra
@@ -102,12 +105,20 @@ if(NOT MSVC)
     )
 endif()
 
-if(WIN32 AND NOT MSVC)
-    # Enable everywhere for windows as long as libintvector.h is not included correctly.
-    add_compile_options(
-        -mavx
-        -mavx2
-    )
+if(WIN32)
+    # Enable AVX and AVX2 everywhere for Windows as long as libintvector.h is not included correctly.
+    if(MSVC)
+        add_compile_options(
+            /arch:AVX
+            /arch:AVX2
+        )
+    else()
+	    # On Windows with clang-cl (our default) we take the Linux assembly
+        add_compile_options(
+            -mavx
+            -mavx2
+        )
+    endif()
 endif()
 
 # Set include paths
