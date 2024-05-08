@@ -113,7 +113,7 @@ if(WIN32)
             $<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX2>
         )
     else()
-	    # On Windows with clang-cl (our default) we take the Linux assembly
+        # On Windows with clang-cl (our default) we take the Linux assembly
         add_compile_options(
             -mavx
             -mavx2
