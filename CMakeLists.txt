@@ -90,7 +90,7 @@ include(build/config.cmake)
 # Configure different targets
 if(MSVC)
     add_compile_options(
-        /Ob3
+        $<$<COMPILE_LANGUAGE:C,CXX>:/Ob3>
     )
 else()
     add_compile_options(
@@ -109,8 +109,8 @@ if(WIN32)
     # Enable AVX and AVX2 everywhere for Windows as long as libintvector.h is not included correctly.
     if(MSVC)
         add_compile_options(
-            /arch:AVX
-            /arch:AVX2
+            $<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX>
+            $<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX2>
         )
     else()
 	    # On Windows with clang-cl (our default) we take the Linux assembly

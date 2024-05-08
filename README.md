@@ -21,7 +21,7 @@ We need the following dependencies ...
 - [cmake] (3.17 or newer)
 - [ninja] (1.10 or newer)
 - [python] (3.6 or newer)
-- [clang] (7 or newer) or [gcc] (7 or newer)
+- [clang] (7 or newer), [gcc] (7 or newer), or MSVC on Windows (tested with 19.39.33519)
 
 Depending on your system you can install them as follows (click to expand) ...
 
@@ -73,37 +73,110 @@ $ brew install gcc
 ```
 </details>
 
+<details>
+  <summary><b>Windows</b></summary>
+```powershell
+> winget install vswhere
+> winget install python
+> winget install Ninja-build.Ninja
+```
+
+To use WinGet to install Visual Studio 2022 with all the required components, first create an installation configuration file `vsconfig` with
+the following contents:
+
+```json
+{
+  "version": "1.0",
+  "components": [
+    "Microsoft.Component.MSBuild",
+    "Microsoft.VisualStudio.Component.CoreEditor",
+    "Microsoft.VisualStudio.Component.NuGet",
+    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
+    "Microsoft.VisualStudio.Component.TextTemplating",
+    "Microsoft.VisualStudio.Component.VC.CoreIde",
+    "Microsoft.VisualStudio.Component.VC.Redist.14.Latest",
+    "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+    "Microsoft.VisualStudio.Component.VC.Llvm.Clang",
+    "Microsoft.VisualStudio.ComponentGroup.ArchitectureTools.Native",
+    "Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions.CMake",
+    "Microsoft.VisualStudio.Component.VC.CMake.Project",
+    "Microsoft.VisualStudio.Component.Windows11SDK.22621",
+    "Microsoft.VisualStudio.Component.Windows11Sdk.WindowsPerformanceToolkit",
+    "Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core",
+    "Microsoft.VisualStudio.Workload.CoreEditor",
+    "Microsoft.VisualStudio.Workload.NativeDesktop"
+  ]
+}
+```
+
+Then, for instance, to install the Community edition of Visual Studio 2022 run the following command:
+
+```powershell
+> winget install --source winget --exact --id Microsoft.VisualStudio.2022.Community --override "--passive --config C:\vsconfig"
+```
+</details>
+
 ## Build (and test) HACL Packages
 
 You can run ...
 
 ```sh
-$ ./mach build --test
+$ python mach build --test
 ```
 
-... to build HACL Packages and run the tests. All actions are driven by [mach]. See `./mach --help` for details.
+... to build HACL Packages and run the tests. All actions are driven by [mach]. See `python mach --help` for details.
 
-### MSVC Build
+## Detailed build instructions
 
-The hacl-packages build is designed for non-MSVC compilers.
-Building with MSVC can be achieved as follows.
+### Using `mach`
 
+When switching between MSVC and Clang builds, invalidate the CMake cache by deleting `build\.cache` and `build\CMakeCache.txt`
 
 <details>
-  <summary><b>MSVC Build</b></summary>
+  <summary><b>x64 Release distribution for Windows using Clang</b></summary>
 
+From a Developer Command Prompt for VS 2022.
 ```powershell
-# Setup build directory
-mkdir build
-cp config\default_config_msvc.cmake build\config.cmake
-cp config\default_config_msvc.h build\config.h
-
-# Build
-cmake -B build -DBUILD_LIBCRUX=1 -G "Visual Studio 17 2022" -A x64 -DUSE_MSVC=1 -DENABLE_TESTS=ON -DENABLE_BENCHMARKS=ON
-# Use --config Release to build in release mode
-cmake --build build
+python mach build --release --benchmark --no-openssl
 ```
 </details>
+
+<details>
+  <summary><b>x64 Release distribution for Windows using MSVC</b></summary>
+
+From a Developer Command Prompt for VS 2022.
+```powershell
+python mach build --release --benchmark --msvc --no-openssl
+```
+</details>
+
+
+### Using CMake
+
+CMake presets have the advantage to provide a consistent build experience across VS, VS Code, and CLI ([CMake Presets integration in Visual Studio and Visual Studio Code](https://devblogs.microsoft.com/cppblog/cmake-presets-integration-in-visual-studio-and-visual-studio-code/)). For instance, when loading the `hacl-packages` folder in Visual Studio 2022, configuration and build presets can be selected from drop-down lists in the toolbar. The presets provided use the Ninja Multi-Config generator. The examples below, show how to build with these presets from a CLI.
+
+<details>
+  <summary><b>x64 Release distribution for Windows using Clang</b></summary>
+
+From a Developer Command Prompt for VS 2022.
+```powershell
+cmake --preset ninja.clang
+# The build will be in build\ninja.clang\Release
+cmake --build --preset ninja.clang.Release
+```
+</details>
+
+<details>
+  <summary><b>x64 Release distribution for Windows using MSVC</b></summary>
+
+From a Developer Command Prompt for VS 2022.
+```powershell
+cmake --preset ninja.msvc
+# The build will be in build\ninja.msvc\Release
+cmake --build --preset ninja.msvc.Release
+```
+</details>
+
 
 ## Platform support
 
@@ -185,7 +258,7 @@ packages.
 
 Testing is done with [gtest] and requires a C++11 compiler (or C++20 MSVC).
 
-### Measure Test Coverage
+### Measure Test Coverage (on Linux using LLVM)
 
 Test coverage in HACL Packages can be measured with ...
 
@@ -195,13 +268,13 @@ Test coverage in HACL Packages can be measured with ...
 ./tools/coverage.sh
 ```
 
-Note that only clang is supported as a compiler and you may get an error ...
+Note that only Clang is supported as a compiler and you may get an error ...
 
 ```
 cc: error: unrecognized command-line option ‘-fprofile-instr-generate’; did you mean ‘-fprofile-generate’?
 ```
 
-... when your default compiler is not clang.
+... when your default compiler is not Clang.
 In this case, try to set the `CC` and `CXX` environment variables accordingly ...
 
 ```sh
