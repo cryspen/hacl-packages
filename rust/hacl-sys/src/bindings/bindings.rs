@@ -579,15 +579,15 @@ extern "C" {
     pub fn Hacl_Hash_SHA2_hash_384(output: *mut u8, input: *mut u8, input_len: u32);
 }
 extern "C" {
-    #[doc = "Compute the public key from the private key.\n\nThe outparam `public_key`  points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32]."]
+    #[doc = "Compute the public key from the private key.\n\n@param[out] public_key Points to 32 bytes of valid memory, i.e., `uint8_t[32]`. Must not overlap the memory location of `private_key`.\n@param[in] private_key Points to 32 bytes of valid memory containing the private key, i.e., `uint8_t[32]`."]
     pub fn Hacl_Ed25519_secret_to_public(public_key: *mut u8, private_key: *mut u8);
 }
 extern "C" {
-    #[doc = "Compute the expanded keys for an Ed25519 signature.\n\nThe outparam `expanded_keys` points to 96 bytes of valid memory, i.e., uint8_t[96].\nThe argument `private_key`   points to 32 bytes of valid memory, i.e., uint8_t[32].\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    #[doc = "Compute the expanded keys for an Ed25519 signature.\n\n@param[out] expanded_keys Points to 96 bytes of valid memory, i.e., `uint8_t[96]`. Must not overlap the memory location of `private_key`.\n@param[in] private_key Points to 32 bytes of valid memory containing the private key, i.e., `uint8_t[32]`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
     pub fn Hacl_Ed25519_expand_keys(expanded_keys: *mut u8, private_key: *mut u8);
 }
 extern "C" {
-    #[doc = "Create an Ed25519 signature with the (precomputed) expanded keys.\n\nThe outparam `signature`     points to 64 bytes of valid memory, i.e., uint8_t[64].\nThe argument `expanded_keys` points to 96 bytes of valid memory, i.e., uint8_t[96].\nThe argument `msg`    points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\n\nThe argument `expanded_keys` is obtained through `expand_keys`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    #[doc = "Create an Ed25519 signature with the (precomputed) expanded keys.\n\n@param[out] signature Points to 64 bytes of valid memory, i.e., `uint8_t[64]`. Must not overlap the memory locations of `expanded_keys` nor `msg`.\n@param[in] expanded_keys Points to 96 bytes of valid memory, i.e., `uint8_t[96]`, containing the expanded keys obtained by invoking `expand_keys`.\n@param[in] msg_len Length of `msg`.\n@param[in] msg Points to `msg_len` bytes of valid memory containing the message, i.e., `uint8_t[msg_len]`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
     pub fn Hacl_Ed25519_sign_expanded(
         signature: *mut u8,
         expanded_keys: *mut u8,
@@ -596,11 +596,11 @@ extern "C" {
     );
 }
 extern "C" {
-    #[doc = "Create an Ed25519 signature.\n\nThe outparam `signature`   points to 64 bytes of valid memory, i.e., uint8_t[64].\nThe argument `private_key` points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `msg`  points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\n\nThe function first calls `expand_keys` and then invokes `sign_expanded`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
+    #[doc = "Create an Ed25519 signature.\n\n@param[out] signature Points to 64 bytes of valid memory, i.e., `uint8_t[64]`. Must not overlap the memory locations of `private_key` nor `msg`.\n@param[in] private_key Points to 32 bytes of valid memory containing the private key, i.e., `uint8_t[32]`.\n@param[in] msg_len Length of `msg`.\n@param[in] msg Points to `msg_len` bytes of valid memory containing the message, i.e., `uint8_t[msg_len]`.\n\nThe function first calls `expand_keys` and then invokes `sign_expanded`.\n\nIf one needs to sign several messages under the same private key, it is more efficient\nto call `expand_keys` only once and `sign_expanded` multiple times, for each message."]
     pub fn Hacl_Ed25519_sign(signature: *mut u8, private_key: *mut u8, msg_len: u32, msg: *mut u8);
 }
 extern "C" {
-    #[doc = "Verify an Ed25519 signature.\n\nThe function returns `true` if the signature is valid and `false` otherwise.\n\nThe argument `public_key` points to 32 bytes of valid memory, i.e., uint8_t[32].\nThe argument `msg` points to `msg_len` bytes of valid memory, i.e., uint8_t[msg_len].\nThe argument `signature`  points to 64 bytes of valid memory, i.e., uint8_t[64]."]
+    #[doc = "Verify an Ed25519 signature.\n\n@param public_key Points to 32 bytes of valid memory containing the public key, i.e., `uint8_t[32]`.\n@param msg_len Length of `msg`.\n@param msg Points to `msg_len` bytes of valid memory containing the message, i.e., `uint8_t[msg_len]`.\n@param signature Points to 64 bytes of valid memory containing the signature, i.e., `uint8_t[64]`.\n\n@return Returns `true` if the signature is valid and `false` otherwise."]
     pub fn Hacl_Ed25519_verify(
         public_key: *mut u8,
         msg_len: u32,
@@ -663,9 +663,129 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2s_block_state_t_s {
+pub struct Hacl_Hash_Blake2b_blake2_params_s {
+    pub digest_length: u8,
+    pub key_length: u8,
+    pub fanout: u8,
+    pub depth: u8,
+    pub leaf_length: u32,
+    pub node_offset: u64,
+    pub node_depth: u8,
+    pub inner_length: u8,
+    pub salt: *mut u8,
+    pub personal: *mut u8,
+}
+pub type Hacl_Hash_Blake2b_blake2_params = Hacl_Hash_Blake2b_blake2_params_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct K____uint64_t___uint64_t__s {
+    pub fst: *mut u64,
+    pub snd: *mut u64,
+}
+pub type K____uint64_t___uint64_t_ = K____uint64_t___uint64_t__s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_block_state_t_s {
+    pub fst: u8,
+    pub snd: u8,
+    pub thd: K____uint64_t___uint64_t_,
+}
+pub type Hacl_Hash_Blake2b_block_state_t = Hacl_Hash_Blake2b_block_state_t_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2b_state_t_s {
+    pub block_state: Hacl_Hash_Blake2b_block_state_t,
+    pub buf: *mut u8,
+    pub total_len: u64,
+}
+pub type Hacl_Hash_Blake2b_state_t = Hacl_Hash_Blake2b_state_t_s;
+extern "C" {
+    #[doc = "General-purpose allocation function that gives control over all\nBlake2 parameters, including the key. Further resettings of the state SHALL be\ndone with `reset_with_params_and_key`, and SHALL feature the exact same values\nfor the `key_length` and `digest_length` fields as passed here. In other words,\nonce you commit to a digest and key length, the only way to change these\nparameters is to allocate a new object.\n\nThe caller must satisfy the following requirements.\n- The length of the key k MUST match the value of the field key_length in the\nparameters.\n- The key_length must not exceed 32 for S, 64 for B.\n- The digest_length must not exceed 32 for S, 64 for B."]
+    pub fn Hacl_Hash_Blake2b_malloc_with_params_and_key(
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    ) -> *mut Hacl_Hash_Blake2b_state_t;
+}
+extern "C" {
+    #[doc = "Specialized allocation function that picks default values for all\nparameters, except for the key_length. Further resettings of the state SHALL be\ndone with `reset_with_key`, and SHALL feature the exact same key length `kk` as\npassed here. In other words, once you commit to a key length, the only way to\nchange this parameter is to allocate a new object.\n\nThe caller must satisfy the following requirements.\n- The key_length must not exceed 32 for S, 64 for B."]
+    pub fn Hacl_Hash_Blake2b_malloc_with_key(k: *mut u8, kk: u8) -> *mut Hacl_Hash_Blake2b_state_t;
+}
+extern "C" {
+    #[doc = "Specialized allocation function that picks default values for all\nparameters, and has no key. Effectively, this is what you want if you intend to\nuse Blake2 as a hash function. Further resettings of the state SHALL be done with `reset`."]
+    pub fn Hacl_Hash_Blake2b_malloc() -> *mut Hacl_Hash_Blake2b_state_t;
+}
+extern "C" {
+    #[doc = "General-purpose re-initialization function with parameters and\nkey. You cannot change digest_length or key_length, meaning those values in\nthe parameters object must be the same as originally decided via one of the\nmalloc functions. All other values of the parameter can be changed. The behavior\nis unspecified if you violate this precondition."]
+    pub fn Hacl_Hash_Blake2b_reset_with_key_and_params(
+        s: *mut Hacl_Hash_Blake2b_state_t,
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Specialized-purpose re-initialization function with no parameters,\nand a key. The key length must be the same as originally decided via your choice\nof malloc function. All other parameters are reset to their default values. The\noriginal call to malloc MUST have set digest_length to the default value. The\nbehavior is unspecified if you violate this precondition."]
+    pub fn Hacl_Hash_Blake2b_reset_with_key(s: *mut Hacl_Hash_Blake2b_state_t, k: *mut u8);
+}
+extern "C" {
+    #[doc = "Specialized-purpose re-initialization function with no parameters\nand no key. This is what you want if you intend to use Blake2 as a hash\nfunction. The key length and digest length must have been set to their\nrespective default values via your choice of malloc function (always true if you\nused `malloc`). All other parameters are reset to their default values. The\nbehavior is unspecified if you violate this precondition."]
+    pub fn Hacl_Hash_Blake2b_reset(s: *mut Hacl_Hash_Blake2b_state_t);
+}
+extern "C" {
+    #[doc = "Update function; 0 = success, 1 = max length exceeded"]
+    pub fn Hacl_Hash_Blake2b_update(
+        state: *mut Hacl_Hash_Blake2b_state_t,
+        chunk: *mut u8,
+        chunk_len: u32,
+    ) -> Hacl_Streaming_Types_error_code;
+}
+extern "C" {
+    #[doc = "Digest function. This function expects the `output` array to hold\nat least `digest_length` bytes, where `digest_length` was determined by your\nchoice of `malloc` function. Concretely, if you used `malloc` or\n`malloc_with_key`, then the expected length is 32 for S, or 64 for B (default\ndigest length). If you used `malloc_with_params_and_key`, then the expected\nlength is whatever you chose for the `digest_length` field of your\nparameters."]
+    pub fn Hacl_Hash_Blake2b_digest(state: *mut Hacl_Hash_Blake2b_state_t, output: *mut u8);
+}
+extern "C" {
+    #[doc = "Free state function when there is no key"]
+    pub fn Hacl_Hash_Blake2b_free(state: *mut Hacl_Hash_Blake2b_state_t);
+}
+extern "C" {
+    #[doc = "Copying. This preserves all parameters."]
+    pub fn Hacl_Hash_Blake2b_copy(
+        state: *mut Hacl_Hash_Blake2b_state_t,
+    ) -> *mut Hacl_Hash_Blake2b_state_t;
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    pub fn Hacl_Hash_Blake2b_hash_with_key(
+        output: *mut u8,
+        output_len: u32,
+        input: *mut u8,
+        input_len: u32,
+        key: *mut u8,
+        key_len: u32,
+    );
+}
+extern "C" {
+    #[doc = "Write the BLAKE2b digest of message `input` using key `key` and\nparameters `params` into `output`. The `key` array must be of length\n`params.key_length`. The `output` array must be of length\n`params.digest_length`."]
+    pub fn Hacl_Hash_Blake2b_hash_with_key_and_paramas(
+        output: *mut u8,
+        input: *mut u8,
+        input_len: u32,
+        params: Hacl_Hash_Blake2b_blake2_params,
+        key: *mut u8,
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct K____uint32_t___uint32_t__s {
     pub fst: *mut u32,
     pub snd: *mut u32,
+}
+pub type K____uint32_t___uint32_t_ = K____uint32_t___uint32_t__s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Hacl_Hash_Blake2s_block_state_t_s {
+    pub fst: u8,
+    pub snd: u8,
+    pub thd: K____uint32_t___uint32_t_,
 }
 pub type Hacl_Hash_Blake2s_block_state_t = Hacl_Hash_Blake2s_block_state_t_s;
 #[repr(C)]
@@ -677,12 +797,35 @@ pub struct Hacl_Hash_Blake2s_state_t_s {
 }
 pub type Hacl_Hash_Blake2s_state_t = Hacl_Hash_Blake2s_state_t_s;
 extern "C" {
+    #[doc = "State allocation function when there are parameters and a key. The\nlength of the key k MUST match the value of the field key_length in the\nparameters. Furthermore, there is a static (not dynamically checked) requirement\nthat key_length does not exceed max_key (32 for S, 64 for B).)"]
+    pub fn Hacl_Hash_Blake2s_malloc_with_params_and_key(
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    ) -> *mut Hacl_Hash_Blake2s_state_t;
+}
+extern "C" {
+    #[doc = "State allocation function when there is just a custom key. All\nother parameters are set to their respective default values, meaning the output\nlength is the maximum allowed output (32 for S, 64 for B)."]
+    pub fn Hacl_Hash_Blake2s_malloc_with_key(k: *mut u8, kk: u8) -> *mut Hacl_Hash_Blake2s_state_t;
+}
+extern "C" {
     #[doc = "State allocation function when there is no key"]
     pub fn Hacl_Hash_Blake2s_malloc() -> *mut Hacl_Hash_Blake2s_state_t;
 }
 extern "C" {
+    #[doc = "Re-initialization function. The reinitialization API is tricky --\nyou MUST reuse the same original parameters for digest (output) length and key\nlength."]
+    pub fn Hacl_Hash_Blake2s_reset_with_key_and_params(
+        s: *mut Hacl_Hash_Blake2s_state_t,
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is a key. Note that the key\nsize is not allowed to change, which is why this function does not take a key\nlength -- the key has to be same key size that was originally passed to\n`malloc_with_key`"]
+    pub fn Hacl_Hash_Blake2s_reset_with_key(s: *mut Hacl_Hash_Blake2s_state_t, k: *mut u8);
+}
+extern "C" {
     #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_reset(state: *mut Hacl_Hash_Blake2s_state_t);
+    pub fn Hacl_Hash_Blake2s_reset(s: *mut Hacl_Hash_Blake2s_state_t);
 }
 extern "C" {
     #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
@@ -701,7 +844,13 @@ extern "C" {
     pub fn Hacl_Hash_Blake2s_free(state: *mut Hacl_Hash_Blake2s_state_t);
 }
 extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 32.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    #[doc = "Copying. The key length (or absence thereof) must match between source and destination."]
+    pub fn Hacl_Hash_Blake2s_copy(
+        state: *mut Hacl_Hash_Blake2s_state_t,
+    ) -> *mut Hacl_Hash_Blake2s_state_t;
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
     pub fn Hacl_Hash_Blake2s_hash_with_key(
         output: *mut u8,
         output_len: u32,
@@ -711,54 +860,13 @@ extern "C" {
         key_len: u32,
     );
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2b_block_state_t_s {
-    pub fst: *mut u64,
-    pub snd: *mut u64,
-}
-pub type Hacl_Hash_Blake2b_block_state_t = Hacl_Hash_Blake2b_block_state_t_s;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct Hacl_Hash_Blake2b_state_t_s {
-    pub block_state: Hacl_Hash_Blake2b_block_state_t,
-    pub buf: *mut u8,
-    pub total_len: u64,
-}
-pub type Hacl_Hash_Blake2b_state_t = Hacl_Hash_Blake2b_state_t_s;
 extern "C" {
-    #[doc = "State allocation function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_malloc() -> *mut Hacl_Hash_Blake2b_state_t;
-}
-extern "C" {
-    #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_reset(state: *mut Hacl_Hash_Blake2b_state_t);
-}
-extern "C" {
-    #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
-    pub fn Hacl_Hash_Blake2b_update(
-        state: *mut Hacl_Hash_Blake2b_state_t,
-        chunk: *mut u8,
-        chunk_len: u32,
-    ) -> Hacl_Streaming_Types_error_code;
-}
-extern "C" {
-    #[doc = "Finish function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_digest(state: *mut Hacl_Hash_Blake2b_state_t, output: *mut u8);
-}
-extern "C" {
-    #[doc = "Free state function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_free(state: *mut Hacl_Hash_Blake2b_state_t);
-}
-extern "C" {
-    #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
-    pub fn Hacl_Hash_Blake2b_hash_with_key(
+    pub fn Hacl_Hash_Blake2s_hash_with_key_and_paramas(
         output: *mut u8,
-        output_len: u32,
         input: *mut u8,
         input_len: u32,
+        params: Hacl_Hash_Blake2b_blake2_params,
         key: *mut u8,
-        key_len: u32,
     );
 }
 extern "C" {
@@ -835,64 +943,80 @@ extern "C" {
     pub fn Hacl_Hash_SHA3_is_shake(s: *mut Hacl_Hash_SHA3_state_t) -> bool;
 }
 extern "C" {
-    pub fn Hacl_Hash_SHA3_shake128_hacl(
-        inputByteLen: u32,
+    pub fn Hacl_Hash_SHA3_absorb_inner_32(rateInBytes: u32, b: *mut u8, s: *mut u64);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA3_shake128(
+        output: *mut u8,
+        outputByteLen: u32,
         input: *mut u8,
-        outputByteLen: u32,
-        output: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_shake256_hacl(
         inputByteLen: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA3_shake256(
+        output: *mut u8,
+        outputByteLen: u32,
         input: *mut u8,
-        outputByteLen: u32,
-        output: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_224(output: *mut u8, input: *mut u8, input_len: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_256(output: *mut u8, input: *mut u8, input_len: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_384(output: *mut u8, input: *mut u8, input_len: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_sha3_512(output: *mut u8, input: *mut u8, input_len: u32);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_absorb_inner(rateInBytes: u32, block: *mut u8, s: *mut u64);
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_squeeze0(
-        s: *mut u64,
-        rateInBytes: u32,
-        outputByteLen: u32,
-        output: *mut u8,
-    );
-}
-extern "C" {
-    pub fn Hacl_Hash_SHA3_keccak(
-        rate: u32,
-        capacity: u32,
         inputByteLen: u32,
-        input: *mut u8,
-        delimitedSuffix: u8,
-        outputByteLen: u32,
-        output: *mut u8,
     );
 }
-pub type __m128i = [::std::os::raw::c_longlong; 2usize];
-pub type Lib_IntVector_Intrinsics_vec128 = __m128i;
-pub type __m256i = [::std::os::raw::c_longlong; 4usize];
-pub type Lib_IntVector_Intrinsics_vec256 = __m256i;
+extern "C" {
+    pub fn Hacl_Hash_SHA3_sha3_224(output: *mut u8, input: *mut u8, inputByteLen: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA3_sha3_256(output: *mut u8, input: *mut u8, inputByteLen: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA3_sha3_384(output: *mut u8, input: *mut u8, inputByteLen: u32);
+}
+extern "C" {
+    pub fn Hacl_Hash_SHA3_sha3_512(output: *mut u8, input: *mut u8, inputByteLen: u32);
+}
+extern "C" {
+    #[doc = "Allocate state buffer of 200-bytes"]
+    pub fn Hacl_Hash_SHA3_state_malloc() -> *mut u64;
+}
+extern "C" {
+    #[doc = "Free state buffer"]
+    pub fn Hacl_Hash_SHA3_state_free(s: *mut u64);
+}
+extern "C" {
+    #[doc = "Absorb number of input blocks and write the output state\n\nThis function is intended to receive a hash state and input buffer.\nIt prcoesses an input of multiple of 168-bytes (SHAKE128 block size),\nany additional bytes of final partial block are ignored.\n\nThe argument `state` (IN/OUT) points to hash state, i.e., uint64_t[25]\nThe argument `input` (IN) points to `inputByteLen` bytes of valid memory,\ni.e., uint8_t[inputByteLen]"]
+    pub fn Hacl_Hash_SHA3_shake128_absorb_nblocks(
+        state: *mut u64,
+        input: *mut u8,
+        inputByteLen: u32,
+    );
+}
+extern "C" {
+    #[doc = "Absorb a final partial block of input and write the output state\n\nThis function is intended to receive a hash state and input buffer.\nIt prcoesses a sequence of bytes at end of input buffer that is less\nthan 168-bytes (SHAKE128 block size),\nany bytes of full blocks at start of input buffer are ignored.\n\nThe argument `state` (IN/OUT) points to hash state, i.e., uint64_t[25]\nThe argument `input` (IN) points to `inputByteLen` bytes of valid memory,\ni.e., uint8_t[inputByteLen]\n\nNote: Full size of input buffer must be passed to `inputByteLen` including\nthe number of full-block bytes at start of input buffer that are ignored"]
+    pub fn Hacl_Hash_SHA3_shake128_absorb_final(state: *mut u64, input: *mut u8, inputByteLen: u32);
+}
+extern "C" {
+    #[doc = "Squeeze a hash state to output buffer\n\nThis function is intended to receive a hash state and output buffer.\nIt produces an output of multiple of 168-bytes (SHAKE128 block size),\nany additional bytes of final partial block are ignored.\n\nThe argument `state` (IN) points to hash state, i.e., uint64_t[25]\nThe argument `output` (OUT) points to `outputByteLen` bytes of valid memory,\ni.e., uint8_t[outputByteLen]"]
+    pub fn Hacl_Hash_SHA3_shake128_squeeze_nblocks(
+        state: *mut u64,
+        output: *mut u8,
+        outputByteLen: u32,
+    );
+}
+pub type uint32x4_t = [u32; 4usize];
+pub type Lib_IntVector_Intrinsics_vec128 = uint32x4_t;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct K____Lib_IntVector_Intrinsics_vec128___Lib_IntVector_Intrinsics_vec128__s {
+    pub fst: *mut Lib_IntVector_Intrinsics_vec128,
+    pub snd: *mut Lib_IntVector_Intrinsics_vec128,
+}
+pub type K____Lib_IntVector_Intrinsics_vec128___Lib_IntVector_Intrinsics_vec128_ =
+    K____Lib_IntVector_Intrinsics_vec128___Lib_IntVector_Intrinsics_vec128__s;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hacl_Hash_Blake2s_Simd128_block_state_t_s {
-    pub fst: *mut Lib_IntVector_Intrinsics_vec128,
-    pub snd: *mut Lib_IntVector_Intrinsics_vec128,
+    pub fst: u8,
+    pub snd: u8,
+    pub thd: K____Lib_IntVector_Intrinsics_vec128___Lib_IntVector_Intrinsics_vec128_,
 }
 pub type Hacl_Hash_Blake2s_Simd128_block_state_t = Hacl_Hash_Blake2s_Simd128_block_state_t_s;
 #[repr(C)]
@@ -904,12 +1028,41 @@ pub struct Hacl_Hash_Blake2s_Simd128_state_t_s {
 }
 pub type Hacl_Hash_Blake2s_Simd128_state_t = Hacl_Hash_Blake2s_Simd128_state_t_s;
 extern "C" {
+    #[doc = "State allocation function when there are parameters and a key. The\nlength of the key k MUST match the value of the field key_length in the\nparameters. Furthermore, there is a static (not dynamically checked) requirement\nthat key_length does not exceed max_key (128 for S, 64 for B).)"]
+    pub fn Hacl_Hash_Blake2s_Simd128_malloc_with_params_and_key(
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    ) -> *mut Hacl_Hash_Blake2s_Simd128_state_t;
+}
+extern "C" {
+    #[doc = "State allocation function when there is just a custom key. All\nother parameters are set to their respective default values, meaning the output\nlength is the maximum allowed output (128 for S, 64 for B)."]
+    pub fn Hacl_Hash_Blake2s_Simd128_malloc_with_key0(
+        k: *mut u8,
+        kk: u8,
+    ) -> *mut Hacl_Hash_Blake2s_Simd128_state_t;
+}
+extern "C" {
     #[doc = "State allocation function when there is no key"]
     pub fn Hacl_Hash_Blake2s_Simd128_malloc() -> *mut Hacl_Hash_Blake2s_Simd128_state_t;
 }
 extern "C" {
+    #[doc = "Re-initialization function. The reinitialization API is tricky --\nyou MUST reuse the same original parameters for digest (output) length and key\nlength."]
+    pub fn Hacl_Hash_Blake2s_Simd128_reset_with_key_and_params(
+        s: *mut Hacl_Hash_Blake2s_Simd128_state_t,
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is a key. Note that the key\nsize is not allowed to change, which is why this function does not take a key\nlength -- the key has to be same key size that was originally passed to\n`malloc_with_key`"]
+    pub fn Hacl_Hash_Blake2s_Simd128_reset_with_key(
+        s: *mut Hacl_Hash_Blake2s_Simd128_state_t,
+        k: *mut u8,
+    );
+}
+extern "C" {
     #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2s_Simd128_reset(state: *mut Hacl_Hash_Blake2s_Simd128_state_t);
+    pub fn Hacl_Hash_Blake2s_Simd128_reset(s: *mut Hacl_Hash_Blake2s_Simd128_state_t);
 }
 extern "C" {
     #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
@@ -931,7 +1084,13 @@ extern "C" {
     pub fn Hacl_Hash_Blake2s_Simd128_free(state: *mut Hacl_Hash_Blake2s_Simd128_state_t);
 }
 extern "C" {
-    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 32.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
+    #[doc = "Copying. The key length (or absence thereof) must match between source and destination."]
+    pub fn Hacl_Hash_Blake2s_Simd128_copy(
+        state: *mut Hacl_Hash_Blake2s_Simd128_state_t,
+    ) -> *mut Hacl_Hash_Blake2s_Simd128_state_t;
+}
+extern "C" {
+    #[doc = "Write the BLAKE2s digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
     pub fn Hacl_Hash_Blake2s_Simd128_hash_with_key(
         output: *mut u8,
         output_len: u32,
@@ -941,11 +1100,29 @@ extern "C" {
         key_len: u32,
     );
 }
+extern "C" {
+    pub fn Hacl_Hash_Blake2s_Simd128_hash_with_key_and_paramas(
+        output: *mut u8,
+        input: *mut u8,
+        input_len: u32,
+        params: Hacl_Hash_Blake2b_blake2_params,
+        key: *mut u8,
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct K____Lib_IntVector_Intrinsics_vec256___Lib_IntVector_Intrinsics_vec256__s {
+    pub fst: *mut *mut ::std::os::raw::c_void,
+    pub snd: *mut *mut ::std::os::raw::c_void,
+}
+pub type K____Lib_IntVector_Intrinsics_vec256___Lib_IntVector_Intrinsics_vec256_ =
+    K____Lib_IntVector_Intrinsics_vec256___Lib_IntVector_Intrinsics_vec256__s;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Hacl_Hash_Blake2b_Simd256_block_state_t_s {
-    pub fst: *mut Lib_IntVector_Intrinsics_vec256,
-    pub snd: *mut Lib_IntVector_Intrinsics_vec256,
+    pub fst: u8,
+    pub snd: u8,
+    pub thd: K____Lib_IntVector_Intrinsics_vec256___Lib_IntVector_Intrinsics_vec256_,
 }
 pub type Hacl_Hash_Blake2b_Simd256_block_state_t = Hacl_Hash_Blake2b_Simd256_block_state_t_s;
 #[repr(C)]
@@ -957,12 +1134,41 @@ pub struct Hacl_Hash_Blake2b_Simd256_state_t_s {
 }
 pub type Hacl_Hash_Blake2b_Simd256_state_t = Hacl_Hash_Blake2b_Simd256_state_t_s;
 extern "C" {
+    #[doc = "State allocation function when there are parameters and a key. The\nlength of the key k MUST match the value of the field key_length in the\nparameters. Furthermore, there is a static (not dynamically checked) requirement\nthat key_length does not exceed max_key (256 for S, 64 for B).)"]
+    pub fn Hacl_Hash_Blake2b_Simd256_malloc_with_params_and_key(
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    ) -> *mut Hacl_Hash_Blake2b_Simd256_state_t;
+}
+extern "C" {
+    #[doc = "State allocation function when there is just a custom key. All\nother parameters are set to their respective default values, meaning the output\nlength is the maximum allowed output (256 for S, 64 for B)."]
+    pub fn Hacl_Hash_Blake2b_Simd256_malloc_with_key0(
+        k: *mut u8,
+        kk: u8,
+    ) -> *mut Hacl_Hash_Blake2b_Simd256_state_t;
+}
+extern "C" {
     #[doc = "State allocation function when there is no key"]
     pub fn Hacl_Hash_Blake2b_Simd256_malloc() -> *mut Hacl_Hash_Blake2b_Simd256_state_t;
 }
 extern "C" {
+    #[doc = "Re-initialization function. The reinitialization API is tricky --\nyou MUST reuse the same original parameters for digest (output) length and key\nlength."]
+    pub fn Hacl_Hash_Blake2b_Simd256_reset_with_key_and_params(
+        s: *mut Hacl_Hash_Blake2b_Simd256_state_t,
+        p: *mut Hacl_Hash_Blake2b_blake2_params,
+        k: *mut u8,
+    );
+}
+extern "C" {
+    #[doc = "Re-initialization function when there is a key. Note that the key\nsize is not allowed to change, which is why this function does not take a key\nlength -- the key has to be same key size that was originally passed to\n`malloc_with_key`"]
+    pub fn Hacl_Hash_Blake2b_Simd256_reset_with_key(
+        s: *mut Hacl_Hash_Blake2b_Simd256_state_t,
+        k: *mut u8,
+    );
+}
+extern "C" {
     #[doc = "Re-initialization function when there is no key"]
-    pub fn Hacl_Hash_Blake2b_Simd256_reset(state: *mut Hacl_Hash_Blake2b_Simd256_state_t);
+    pub fn Hacl_Hash_Blake2b_Simd256_reset(s: *mut Hacl_Hash_Blake2b_Simd256_state_t);
 }
 extern "C" {
     #[doc = "Update function when there is no key; 0 = success, 1 = max length exceeded"]
@@ -984,6 +1190,12 @@ extern "C" {
     pub fn Hacl_Hash_Blake2b_Simd256_free(state: *mut Hacl_Hash_Blake2b_Simd256_state_t);
 }
 extern "C" {
+    #[doc = "Copying. The key length (or absence thereof) must match between source and destination."]
+    pub fn Hacl_Hash_Blake2b_Simd256_copy(
+        state: *mut Hacl_Hash_Blake2b_Simd256_state_t,
+    ) -> *mut Hacl_Hash_Blake2b_Simd256_state_t;
+}
+extern "C" {
     #[doc = "Write the BLAKE2b digest of message `input` using key `key` into `output`.\n\n@param output Pointer to `output_len` bytes of memory where the digest is written to.\n@param output_len Length of the to-be-generated digest with 1 <= `output_len` <= 64.\n@param input Pointer to `input_len` bytes of memory where the input message is read from.\n@param input_len Length of the input message.\n@param key Pointer to `key_len` bytes of memory where the key is read from.\n@param key_len Length of the key. Can be 0."]
     pub fn Hacl_Hash_Blake2b_Simd256_hash_with_key(
         output: *mut u8,
@@ -992,6 +1204,15 @@ extern "C" {
         input_len: u32,
         key: *mut u8,
         key_len: u32,
+    );
+}
+extern "C" {
+    pub fn Hacl_Hash_Blake2b_Simd256_hash_with_key_and_paramas(
+        output: *mut u8,
+        input: *mut u8,
+        input_len: u32,
+        params: Hacl_Hash_Blake2b_blake2_params,
+        key: *mut u8,
     );
 }
 #[repr(C)]

@@ -129,11 +129,11 @@ module Keccak = struct
     let shake128 ~msg ~digest =
       (* Hacl.SHA3.shake128_hacl *)
       assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake128_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
+      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake128 (C.ctypes_buf digest) (C.size_uint32 digest) (C.ctypes_buf msg) (C.size_uint32 msg)
     let shake256 ~msg ~digest =
       (* Hacl.SHA3.shake256_hacl *)
       assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake256_hacl (C.size_uint32 msg) (C.ctypes_buf msg) (C.size_uint32 digest) (C.ctypes_buf digest)
+      Hacl_Hash_SHA3.hacl_Hash_SHA3_shake256 (C.ctypes_buf digest) (C.size_uint32 digest) (C.ctypes_buf msg) (C.size_uint32 msg)
     let keccak ~rate ~capacity ~suffix ~msg ~digest =
       (* Hacl.Impl.SHA3.keccak *)
       assert (rate mod 8 = 0 && rate / 8 > 0 && rate <= 1600);
