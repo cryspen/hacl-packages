@@ -114,12 +114,12 @@ SHAKE128 and SHAKE256 have a 128- or 256-bit security strength and can produce a
 
 `````{tabs}
 ````{tab} 128-bit security strength
-```{doxygenfunction} Hacl_Hash_SHA3_shake128_hacl
+```{doxygenfunction} Hacl_Hash_SHA3_shake128
 ```
 ````
 
 ````{tab} 256-bit security strength
-```{doxygenfunction} Hacl_Hash_SHA3_shake256_hacl
+```{doxygenfunction} Hacl_Hash_SHA3_shake256
 ```
 ````
 `````

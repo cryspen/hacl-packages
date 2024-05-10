@@ -408,12 +408,6 @@ module Keccak : sig
   val shake256 : msg:bytes -> size:int -> bytes
   (** [shake256 msg size] hashes [msg] using SHAKE-256 and returns a digest of [size] bytes. *)
 
-  val keccak : rate:int -> capacity:int -> suffix:int -> msg:bytes -> size:int -> bytes
-  (** Direct access to the general Keccak function, of which all the SHA-3 and SHAKE functions
-      are {{:https://en.wikipedia.org/wiki/SHA-3#Instances}instances}. While the library
-      does run some sanity checks for the parameters, users should be extremely careful
-      if using the Keccak function directly. *)
-
   (** Versions of these functions which write their output in a buffer passed in as
       an argument *)
   module Noalloc : sig
@@ -422,12 +416,6 @@ module Keccak : sig
 
     val shake256 : msg:bytes -> digest:bytes -> unit
     (** [shake256 msg digest] hashes [msg] using SHAKE-256 and outputs the result in [digest]. *)
-
-    val keccak : rate:int -> capacity:int -> suffix:int -> msg:bytes -> digest:bytes -> unit
-    (** Direct access to the general Keccak function, of which all the SHA-3 and SHAKE functions
-        are {{:https://en.wikipedia.org/wiki/SHA-3#Instances}instances}. While the library
-        does run some sanity checks for the parameters, users should be extremely careful
-        if using the Keccak function directly. *)
   end
 end
 (** SHAKE-128, SHAKE-256, and the general Keccak function

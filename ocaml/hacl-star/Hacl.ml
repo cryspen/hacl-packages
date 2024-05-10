@@ -134,12 +134,6 @@ module Keccak = struct
       (* Hacl.SHA3.shake256_hacl *)
       assert (C.disjoint msg digest);
       Hacl_Hash_SHA3.hacl_Hash_SHA3_shake256 (C.ctypes_buf digest) (C.size_uint32 digest) (C.ctypes_buf msg) (C.size_uint32 msg)
-    let keccak ~rate ~capacity ~suffix ~msg ~digest =
-      (* Hacl.Impl.SHA3.keccak *)
-      assert (rate mod 8 = 0 && rate / 8 > 0 && rate <= 1600);
-      assert (capacity + rate = 1600);
-      assert (C.disjoint msg digest);
-      Hacl_Hash_SHA3.hacl_Hash_SHA3_keccak (UInt32.of_int rate) (UInt32.of_int capacity) (C.size_uint32 msg) (C.ctypes_buf msg) (UInt8.of_int suffix) (C.size_uint32 digest) (C.ctypes_buf digest)
   end
   let shake128 ~msg ~size =
     let digest = C.make size in
@@ -148,10 +142,6 @@ module Keccak = struct
   let shake256 ~msg ~size =
     let digest = C.make size in
     Noalloc.shake256 ~msg ~digest;
-    digest
-  let keccak ~rate ~capacity ~suffix ~msg ~size =
-    let digest = C.make size in
-    Noalloc.keccak ~rate ~capacity ~suffix ~msg ~digest;
     digest
 end
 
