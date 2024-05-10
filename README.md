@@ -75,7 +75,6 @@ $ brew install gcc
 
 <details>
   <summary><b>Windows</b></summary>
-```powershell
 > winget install vswhere
 > winget install python
 > winget install Ninja-build.Ninja
