@@ -445,6 +445,7 @@ set(BENCHMARK_SOURCES
 	${PROJECT_SOURCE_DIR}/benchmarks/drbg.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/hmac.cc
 	${PROJECT_SOURCE_DIR}/benchmarks/rsapss.cc
+	${PROJECT_SOURCE_DIR}/benchmarks/kyber.cc
 )
 set(VALE_SOURCES_osx
 	${PROJECT_SOURCE_DIR}/vale/src/cpuid-x86_64-darwin.S
@@ -476,6 +477,11 @@ set(VALE_SOURCES_msvc
 )
 set(LIBCRUX_SOURCES
 	${PROJECT_SOURCE_DIR}/libcrux/src/Libcrux_Kem_Kyber_Kyber768.c
+	${PROJECT_SOURCE_DIR}/libcrux/src/libcrux_kyber512.c
+	${PROJECT_SOURCE_DIR}/libcrux/src/libcrux_kyber768.c
+	${PROJECT_SOURCE_DIR}/libcrux/src/libcrux_kyber1024.c
+	${PROJECT_SOURCE_DIR}/libcrux/src/libcrux_hacl_glue.c
+	${PROJECT_SOURCE_DIR}/libcrux/src/core.c
 )
 set(ALGORITHM_TEST_FILES
 	TEST_FILES_detection

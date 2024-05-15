@@ -83,6 +83,28 @@ $ ./mach build --test
 
 ... to build HACL Packages and run the tests. All actions are driven by [mach]. See `./mach --help` for details.
 
+### MSVC Build
+
+The hacl-packages build is designed for non-MSVC compilers.
+Building with MSVC can be achieved as follows.
+
+
+<details>
+  <summary><b>MSVC Build</b></summary>
+
+```powershell
+# Setup build directory
+mkdir build
+cp config\default_config_msvc.cmake build\config.cmake
+cp config\default_config_msvc.h build\config.h
+
+# Build
+cmake -B build -DBUILD_LIBCRUX=1 -G "Visual Studio 17 2022" -A x64 -DUSE_MSVC=1 -DENABLE_TESTS=ON -DENABLE_BENCHMARKS=ON
+# Use --config Release to build in release mode
+cmake --build build
+```
+</details>
+
 ## Platform support
 
 The HACL Packages are supported based on the following tiers.

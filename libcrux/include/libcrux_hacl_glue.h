@@ -2,6 +2,11 @@
 
 #pragma once
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #include "Eurydice.h"
 
 #include <stdint.h>
@@ -31,15 +36,21 @@ extern void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(
   libcrux_digest_incremental_x4_Shake128StateX4* xof_state,
   size_t block_len,
-  uint8_t* output);
+  size_t num,
+  uint8_t *output);
 
 #define libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks( \
-  num_blocks, num, xof_state, output, c)                                                                 \
+  block_len, num, xof_state, output, c)                                                                 \
   libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__squeeze_blocks_f(     \
-    xof_state, num_blocks, (uint8_t*)output[0])
+    xof_state, block_len, num, (uint8_t *) output)
 
+// The last parameter should be x1[k] but Eurydice issues a prototype that has lost the length information.
 void
 libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
   size_t k,
   libcrux_digest_incremental_x4_Shake128StateX4* x0,
-  Eurydice_slice x1[3U]);
+  Eurydice_slice *x1);
+
+#if defined(__cplusplus)
+}
+#endif
