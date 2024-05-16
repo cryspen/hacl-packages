@@ -23,7 +23,7 @@
  */
 
 
-#include "internal/Hacl_RSA.h"
+#include "Hacl_RSA.h"
 
 #include "internal/Hacl_Bignum_Base.h"
 #include "internal/Hacl_Bignum.h"
@@ -52,7 +52,7 @@ static inline uint64_t check_num_bits_u64(uint32_t bs, uint64_t *b)
   return res;
 }
 
-uint64_t Hacl_Impl_RSA_Keys_check_modulus_u64(uint32_t modBits, uint64_t *n)
+static inline uint64_t check_modulus_u64(uint32_t modBits, uint64_t *n)
 {
   uint32_t nLen = (modBits - 1U) / 64U + 1U;
   uint64_t bits0 = n[0U] & 1ULL;
@@ -76,7 +76,7 @@ uint64_t Hacl_Impl_RSA_Keys_check_modulus_u64(uint32_t modBits, uint64_t *n)
   return m0 & (m1 & m2);
 }
 
-uint64_t Hacl_Impl_RSA_Keys_check_exponent_u64(uint32_t eBits, uint64_t *e)
+static inline uint64_t check_exponent_u64(uint32_t eBits, uint64_t *e)
 {
   uint32_t eLen = (eBits - 1U) / 64U + 1U;
   KRML_CHECK_SIZE(sizeof (uint64_t), eLen);
@@ -118,8 +118,6 @@ Hacl_RSA_rsa_dec(
 )
 {
   uint32_t nLen = (modBits - 1U) / 64U + 1U;
-  uint32_t emBits = modBits - 1U;
-  uint32_t emLen = (emBits - 1U) / 8U + 1U;
   uint32_t k = (modBits - 1U) / 8U + 1U;
   KRML_CHECK_SIZE(sizeof (uint64_t), nLen);
   uint64_t m[nLen];
@@ -130,47 +128,64 @@ Hacl_RSA_rsa_dec(
   KRML_CHECK_SIZE(sizeof (uint64_t), nLen);
   uint64_t m_[nLen];
   memset(m_, 0U, nLen * sizeof (uint64_t));
-  Hacl_Bignum_Convert_bn_from_bytes_be_uint64(emLen, cipher, m);
+  Hacl_Bignum_Convert_bn_from_bytes_be_uint64(k, cipher, m);
   uint32_t nLen1 = (modBits - 1U) / 64U + 1U;
   uint32_t eLen = (eBits - 1U) / 64U + 1U;
   uint64_t *n = skey;
   uint64_t *r2 = skey + nLen1;
   uint64_t *e = skey + nLen1 + nLen1;
   uint64_t *d = skey + nLen1 + nLen1 + eLen;
-  uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
-  Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_precomp_u64((modBits - 1U) / 64U + 1U,
-    n,
-    mu,
-    r2,
-    m,
-    dBits,
-    d,
-    s);
-  uint64_t mu0 = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
-  Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u64((modBits - 1U) / 64U + 1U,
-    n,
-    mu0,
-    r2,
-    s,
-    eBits,
-    e,
-    m_);
-  uint64_t mask = 0xFFFFFFFFFFFFFFFFULL;
+  uint64_t acc = 0ULL;
   for (uint32_t i = 0U; i < nLen1; i++)
   {
-    uint64_t uu____0 = FStar_UInt64_eq_mask(m[i], m_[i]);
-    mask = uu____0 & mask;
+    uint64_t beq = FStar_UInt64_eq_mask(m[i], n[i]);
+    uint64_t blt = ~FStar_UInt64_gte_mask(m[i], n[i]);
+    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
   }
-  uint64_t mask1 = mask;
-  uint64_t eq_m = mask1;
-  for (uint32_t i = 0U; i < nLen1; i++)
+  uint64_t lt_c = acc;
+  bool eq_b;
+  if (lt_c == 0xFFFFFFFFFFFFFFFFULL)
   {
-    uint64_t *os = s;
-    uint64_t x = s[i];
-    uint64_t x0 = eq_m & x;
-    os[i] = x0;
+    uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+    Hacl_Bignum_Exponentiation_bn_mod_exp_consttime_precomp_u64((modBits - 1U) / 64U + 1U,
+      n,
+      mu,
+      r2,
+      m,
+      dBits,
+      d,
+      s);
+    uint64_t mu0 = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
+    Hacl_Bignum_Exponentiation_bn_mod_exp_vartime_precomp_u64((modBits - 1U) / 64U + 1U,
+      n,
+      mu0,
+      r2,
+      s,
+      eBits,
+      e,
+      m_);
+    uint64_t mask = 0xFFFFFFFFFFFFFFFFULL;
+    for (uint32_t i = 0U; i < nLen1; i++)
+    {
+      uint64_t uu____0 = FStar_UInt64_eq_mask(m[i], m_[i]);
+      mask = uu____0 & mask;
+    }
+    uint64_t mask1 = mask;
+    uint64_t eq_m = mask1;
+    for (uint32_t i = 0U; i < nLen1; i++)
+    {
+      uint64_t *os = s;
+      uint64_t x = s[i];
+      uint64_t x0 = eq_m & x;
+      os[i] = x0;
+    }
+    eq_b = eq_m == 0xFFFFFFFFFFFFFFFFULL;
   }
-  bool eq_b = eq_m == 0xFFFFFFFFFFFFFFFFULL;
+  else
+  {
+    memset(s, 0U, nLen1 * sizeof (uint64_t));
+    eq_b = false;
+  }
   Hacl_Bignum_Convert_bn_to_bytes_be_uint64(k, s, plain);
   return eq_b;
 }
@@ -198,14 +213,12 @@ Hacl_RSA_rsa_enc(
 {
   uint32_t nLen = (modBits - 1U) / 64U + 1U;
   uint32_t k = (modBits - 1U) / 8U + 1U;
-  uint32_t emBits = modBits - 1U;
-  uint32_t emLen = (emBits - 1U) / 8U + 1U;
   KRML_CHECK_SIZE(sizeof (uint64_t), nLen);
   uint64_t s[nLen];
   memset(s, 0U, nLen * sizeof (uint64_t));
   KRML_CHECK_SIZE(sizeof (uint64_t), (modBits - 1U) / 64U + 1U);
-  uint64_t m[(modBits - 1U) / 64U + 1U];
-  memset(m, 0U, ((modBits - 1U) / 64U + 1U) * sizeof (uint64_t));
+  uint64_t c[(modBits - 1U) / 64U + 1U];
+  memset(c, 0U, ((modBits - 1U) / 64U + 1U) * sizeof (uint64_t));
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(k, plain, s);
   uint32_t nLen1 = (modBits - 1U) / 64U + 1U;
   uint64_t *n = pkey;
@@ -219,7 +232,7 @@ Hacl_RSA_rsa_enc(
     acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
   }
   uint64_t mask = acc;
-  bool res;
+  bool b;
   if (mask == 0xFFFFFFFFFFFFFFFFULL)
   {
     uint64_t mu = Hacl_Bignum_ModInvLimb_mod_inv_uint64(n[0U]);
@@ -230,36 +243,16 @@ Hacl_RSA_rsa_enc(
       s,
       eBits,
       e,
-      m);
-    bool ite;
-    if (!((modBits - 1U) % 8U == 0U))
-    {
-      ite = true;
-    }
-    else
-    {
-      uint32_t i = (modBits - 1U) / 64U;
-      uint32_t j = (modBits - 1U) % 64U;
-      uint64_t tmp = m[i];
-      uint64_t get_bit = tmp >> j & 1ULL;
-      ite = get_bit == 0ULL;
-    }
-    if (ite)
-    {
-      res = true;
-    }
-    else
-    {
-      res = false;
-    }
+      c);
+    b = true;
   }
   else
   {
-    res = false;
+    memset(c, 0U, nLen1 * sizeof (uint64_t));
+    c[0U] = 0ULL;
+    b = false;
   }
-  bool b = res;
-  uint64_t *m1 = m;
-  Hacl_Bignum_Convert_bn_to_bytes_be_uint64(emLen, m1, cipher);
+  Hacl_Bignum_Convert_bn_to_bytes_be_uint64(k, c, cipher);
   return b;
 }
 
@@ -311,8 +304,8 @@ uint64_t
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(nbLen, nb, n);
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64((modBits - 1U) / 64U + 1U, modBits - 1U, n, r2);
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(ebLen, eb, e);
-  uint64_t m0 = Hacl_Impl_RSA_Keys_check_modulus_u64(modBits, n);
-  uint64_t m1 = Hacl_Impl_RSA_Keys_check_exponent_u64(eBits, e);
+  uint64_t m0 = check_modulus_u64(modBits, n);
+  uint64_t m1 = check_exponent_u64(eBits, e);
   uint64_t m = m0 & m1;
   bool b = m == 0xFFFFFFFFFFFFFFFFULL;
   if (b)
@@ -399,12 +392,12 @@ uint64_t
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(nbLen1, nb, n);
   Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64((modBits - 1U) / 64U + 1U, modBits - 1U, n, r2);
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(ebLen1, eb, e);
-  uint64_t m0 = Hacl_Impl_RSA_Keys_check_modulus_u64(modBits, n);
-  uint64_t m10 = Hacl_Impl_RSA_Keys_check_exponent_u64(eBits, e);
+  uint64_t m0 = check_modulus_u64(modBits, n);
+  uint64_t m10 = check_exponent_u64(eBits, e);
   uint64_t m = m0 & m10;
   bool b = m == 0xFFFFFFFFFFFFFFFFULL;
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(dbLen, db, d);
-  uint64_t m1 = Hacl_Impl_RSA_Keys_check_exponent_u64(dBits, d);
+  uint64_t m1 = check_exponent_u64(dBits, d);
   bool b0 = b && m1 == 0xFFFFFFFFFFFFFFFFULL;
   if (b0)
   {

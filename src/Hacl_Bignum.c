@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <stdio.h>
 
 #include "internal/Hacl_Bignum.h"
 
@@ -620,6 +621,146 @@ Hacl_Bignum_bn_add_mod_n_u64(
   }
 }
 
+static void
+bn_add_mod_n_vartime_u32(uint32_t len1, uint32_t *n, uint32_t *a, uint32_t *b, uint32_t *res)
+{
+  uint32_t c0 = 0U;
+  for (uint32_t i = 0U; i < len1 / 4U; i++)
+  {
+    uint32_t t1 = a[4U * i];
+    uint32_t t20 = b[4U * i];
+    uint32_t *res_i0 = res + 4U * i;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u32(c0, t1, t20, res_i0);
+    uint32_t t10 = a[4U * i + 1U];
+    uint32_t t21 = b[4U * i + 1U];
+    uint32_t *res_i1 = res + 4U * i + 1U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u32(c0, t10, t21, res_i1);
+    uint32_t t11 = a[4U * i + 2U];
+    uint32_t t22 = b[4U * i + 2U];
+    uint32_t *res_i2 = res + 4U * i + 2U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u32(c0, t11, t22, res_i2);
+    uint32_t t12 = a[4U * i + 3U];
+    uint32_t t2 = b[4U * i + 3U];
+    uint32_t *res_i = res + 4U * i + 3U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u32(c0, t12, t2, res_i);
+  }
+  for (uint32_t i = len1 / 4U * 4U; i < len1; i++)
+  {
+    uint32_t t1 = a[i];
+    uint32_t t2 = b[i];
+    uint32_t *res_i = res + i;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u32(c0, t1, t2, res_i);
+  }
+  uint32_t c00 = c0;
+  KRML_CHECK_SIZE(sizeof (uint32_t), len1);
+  uint32_t tmp[len1];
+  memset(tmp, 0U, len1 * sizeof (uint32_t));
+  uint32_t c = 0U;
+  for (uint32_t i = 0U; i < len1 / 4U; i++)
+  {
+    uint32_t t1 = res[4U * i];
+    uint32_t t20 = n[4U * i];
+    uint32_t *res_i0 = tmp + 4U * i;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u32(c, t1, t20, res_i0);
+    uint32_t t10 = res[4U * i + 1U];
+    uint32_t t21 = n[4U * i + 1U];
+    uint32_t *res_i1 = tmp + 4U * i + 1U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u32(c, t10, t21, res_i1);
+    uint32_t t11 = res[4U * i + 2U];
+    uint32_t t22 = n[4U * i + 2U];
+    uint32_t *res_i2 = tmp + 4U * i + 2U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u32(c, t11, t22, res_i2);
+    uint32_t t12 = res[4U * i + 3U];
+    uint32_t t2 = n[4U * i + 3U];
+    uint32_t *res_i = tmp + 4U * i + 3U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u32(c, t12, t2, res_i);
+  }
+  for (uint32_t i = len1 / 4U * 4U; i < len1; i++)
+  {
+    uint32_t t1 = res[i];
+    uint32_t t2 = n[i];
+    uint32_t *res_i = tmp + i;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u32(c, t1, t2, res_i);
+  }
+  uint32_t c1 = c;
+  bool uc0 = c00 == 0U;
+  bool uc1 = c1 == 0U;
+  if (!uc0 && uc1)
+  {
+    memcpy(res, tmp, len1 * sizeof (uint32_t));
+  }
+}
+
+static void
+bn_add_mod_n_vartime_u64(uint32_t len1, uint64_t *n, uint64_t *a, uint64_t *b, uint64_t *res)
+{
+  uint64_t c0 = 0ULL;
+  for (uint32_t i = 0U; i < len1 / 4U; i++)
+  {
+    uint64_t t1 = a[4U * i];
+    uint64_t t20 = b[4U * i];
+    uint64_t *res_i0 = res + 4U * i;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, t1, t20, res_i0);
+    uint64_t t10 = a[4U * i + 1U];
+    uint64_t t21 = b[4U * i + 1U];
+    uint64_t *res_i1 = res + 4U * i + 1U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, t10, t21, res_i1);
+    uint64_t t11 = a[4U * i + 2U];
+    uint64_t t22 = b[4U * i + 2U];
+    uint64_t *res_i2 = res + 4U * i + 2U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, t11, t22, res_i2);
+    uint64_t t12 = a[4U * i + 3U];
+    uint64_t t2 = b[4U * i + 3U];
+    uint64_t *res_i = res + 4U * i + 3U;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, t12, t2, res_i);
+  }
+  for (uint32_t i = len1 / 4U * 4U; i < len1; i++)
+  {
+    uint64_t t1 = a[i];
+    uint64_t t2 = b[i];
+    uint64_t *res_i = res + i;
+    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, t1, t2, res_i);
+  }
+  uint64_t c00 = c0;
+  KRML_CHECK_SIZE(sizeof (uint64_t), len1);
+  uint64_t tmp[len1];
+  memset(tmp, 0U, len1 * sizeof (uint64_t));
+  uint64_t c = 0ULL;
+  for (uint32_t i = 0U; i < len1 / 4U; i++)
+  {
+    uint64_t t1 = res[4U * i];
+    uint64_t t20 = n[4U * i];
+    uint64_t *res_i0 = tmp + 4U * i;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u64(c, t1, t20, res_i0);
+    uint64_t t10 = res[4U * i + 1U];
+    uint64_t t21 = n[4U * i + 1U];
+    uint64_t *res_i1 = tmp + 4U * i + 1U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u64(c, t10, t21, res_i1);
+    uint64_t t11 = res[4U * i + 2U];
+    uint64_t t22 = n[4U * i + 2U];
+    uint64_t *res_i2 = tmp + 4U * i + 2U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u64(c, t11, t22, res_i2);
+    uint64_t t12 = res[4U * i + 3U];
+    uint64_t t2 = n[4U * i + 3U];
+    uint64_t *res_i = tmp + 4U * i + 3U;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u64(c, t12, t2, res_i);
+  }
+  for (uint32_t i = len1 / 4U * 4U; i < len1; i++)
+  {
+    uint64_t t1 = res[i];
+    uint64_t t2 = n[i];
+    uint64_t *res_i = tmp + i;
+    c = Lib_IntTypes_Intrinsics_sub_borrow_u64(c, t1, t2, res_i);
+  }
+  uint64_t c1 = c;
+  bool uc0 = c00 == 0ULL;
+  bool uc1 = c1 == 0ULL;
+  if (!uc0 || uc1)
+  {
+    memcpy(res, tmp, len1 * sizeof (uint64_t));
+  }
+}
+
 void
 Hacl_Bignum_bn_sub_mod_n_u32(
   uint32_t len1,
@@ -1044,6 +1185,7 @@ Hacl_Bignum_Montgomery_bn_precomp_r2_mod_n_u64(
   for (uint32_t i0 = 0U; i0 < 128U * len - nBits; i0++)
   {
     Hacl_Bignum_bn_add_mod_n_u64(len, n, res, res, res);
+//    bn_add_mod_n_u64(len, n, res, res, res);
   }
 }
 
@@ -1346,12 +1488,8 @@ Hacl_Bignum_AlmostMontgomery_bn_almost_mont_reduction_u64(
   memset(tmp, 0U, len * sizeof (uint64_t));
   uint64_t c1 = Hacl_Bignum_Addition_bn_sub_eq_len_u64(len, res, n, tmp);
   KRML_MAYBE_UNUSED_VAR(c1);
-  uint64_t m = 0ULL - c00;
-  for (uint32_t i = 0U; i < len; i++)
-  {
-    uint64_t *os = res;
-    uint64_t x = (m & tmp[i]) | (~m & res[i]);
-    os[i] = x;
+  if (c00 > 0LL) {
+	memcpy(res, tmp, len * sizeof (uint64_t));
   }
 }
 

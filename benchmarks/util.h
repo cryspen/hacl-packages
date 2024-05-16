@@ -157,7 +157,7 @@ generate_rsapss_key(uint8_t** e,
     "5874020d9f8662e22c000c8af6247be141bab2abf4a712ee1590d260bf3bb907a151604ec9"
     "354fc806f86eeaeb4df53dd822412189567fb5fc0bc2082a7c4f613834a72f985c27");
 
-  *eBits = (uint32_t)_e.size() * 8;
+  *eBits = 17;
   *dBits = (uint32_t)_d.size() * 8;
   *nBits = (uint32_t)_n.size() * 8;
 
