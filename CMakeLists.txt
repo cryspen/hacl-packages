@@ -56,10 +56,12 @@ set(hacl_VERSION_TWEAK "")
 # needed.
 # We copy a default config from config/default_config.cmake or
 # config/default_config_msvc.cmake
-if(USE_MSVC)
-    configure_file(${PROJECT_SOURCE_DIR}/config/default_config_msvc.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
-else()
-     configure_file(${PROJECT_SOURCE_DIR}/config/default_config.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/build/config.cmake)
+    if(USE_MSVC)
+        configure_file(${PROJECT_SOURCE_DIR}/config/default_config_msvc.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+    else()
+        configure_file(${PROJECT_SOURCE_DIR}/config/default_config.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+    endif()
 endif()
 
 # Now include the config.
