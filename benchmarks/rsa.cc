@@ -207,6 +207,6 @@ HACL_RSA_dec(benchmark::State& state)
   free(e);
 }
 
-//BENCHMARK(HACL_RSA_dec)->Setup(DoSetup);
+BENCHMARK(HACL_RSA_dec)->Setup(DoSetup);
 
 BENCHMARK_MAIN();
