@@ -19,7 +19,8 @@
 
 #define Lib_IntVector_Intrinsics_bit_mask64(x) -((x) & 1)
 
-#if defined(__x86_64__) || defined(_M_X64)
+/* Covers x64 *and* x86 when AVX2 is available */
+#if defined(__x86_64__) || defined(_M_X64) || defined(_X86_) || defined(_M_IX86) || defined(__i386__)
 
 #if defined(HACL_CAN_COMPILE_VEC128)
 
