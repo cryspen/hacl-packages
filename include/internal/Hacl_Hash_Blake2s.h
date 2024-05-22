@@ -36,6 +36,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 #include "internal/Hacl_Impl_Blake2_Constants.h"
+#include "internal/Hacl_Hash_Blake2b.h"
 #include "../Hacl_Hash_Blake2s.h"
 
 void Hacl_Hash_Blake2s_init(uint32_t *hash, uint32_t kk, uint32_t nn);
@@ -55,6 +56,7 @@ Hacl_Hash_Blake2s_update_last(
   uint32_t len,
   uint32_t *wv,
   uint32_t *hash,
+  bool last_node,
   uint64_t prev,
   uint32_t rem,
   uint8_t *d

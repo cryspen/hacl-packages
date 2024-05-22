@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Hash_Blake2b_Simd256_H
-#define __internal_Hacl_Hash_Blake2b_Simd256_H
+#ifndef __Hacl_SHA2_Types_H
+#define __Hacl_SHA2_Types_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,59 +35,34 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
-#include "internal/Hacl_Hash_Blake2b.h"
-#include "../Hacl_Hash_Blake2b_Simd256.h"
-#include "libintvector.h"
+typedef struct Hacl_Hash_SHA2_uint8_2p_s
+{
+  uint8_t *fst;
+  uint8_t *snd;
+}
+Hacl_Hash_SHA2_uint8_2p;
 
-void
-Hacl_Hash_Blake2b_Simd256_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk, uint32_t nn);
+typedef struct Hacl_Hash_SHA2_uint8_3p_s
+{
+  uint8_t *fst;
+  Hacl_Hash_SHA2_uint8_2p snd;
+}
+Hacl_Hash_SHA2_uint8_3p;
 
-void
-Hacl_Hash_Blake2b_Simd256_update_multi(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  FStar_UInt128_uint128 prev,
-  uint8_t *blocks,
-  uint32_t nb
-);
+typedef struct Hacl_Hash_SHA2_uint8_4p_s
+{
+  uint8_t *fst;
+  Hacl_Hash_SHA2_uint8_3p snd;
+}
+Hacl_Hash_SHA2_uint8_4p;
 
-void
-Hacl_Hash_Blake2b_Simd256_update_last(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  bool last_node,
-  FStar_UInt128_uint128 prev,
-  uint32_t rem,
-  uint8_t *d
-);
+typedef uint8_t *Hacl_Hash_SHA2_bufx1;
 
-void
-Hacl_Hash_Blake2b_Simd256_finish(
-  uint32_t nn,
-  uint8_t *output,
-  Lib_IntVector_Intrinsics_vec256 *hash
-);
-
-void
-Hacl_Hash_Blake2b_Simd256_load_state256b_from_state32(
-  Lib_IntVector_Intrinsics_vec256 *st,
-  uint64_t *st32
-);
-
-void
-Hacl_Hash_Blake2b_Simd256_store_state256b_to_state32(
-  uint64_t *st32,
-  Lib_IntVector_Intrinsics_vec256 *st
-);
-
-Lib_IntVector_Intrinsics_vec256 *Hacl_Hash_Blake2b_Simd256_malloc_with_key(void);
+typedef Hacl_Hash_SHA2_uint8_4p Hacl_Hash_SHA2_bufx4;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Hash_Blake2b_Simd256_H_DEFINED
+#define __Hacl_SHA2_Types_H_DEFINED
 #endif
