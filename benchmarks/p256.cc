@@ -284,7 +284,7 @@ HACL_P256_ECDH(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_P256_ECDH)->Setup(DoSetup);
+//BENCHMARK(HACL_P256_ECDH)->Setup(DoSetup);
 
 extern "C" void point_mul_secp256r1(unsigned char outx[32], unsigned char outy[32],
                         const unsigned char scalar[32],
@@ -310,7 +310,7 @@ ECCKiila_P256_ECDH(benchmark::State& state)
   }
 }
 
-BENCHMARK(ECCKiila_P256_ECDH)->Setup(DoSetup);
+//BENCHMARK(ECCKiila_P256_ECDH)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -341,7 +341,7 @@ OpenSSL_P256_ECDH(benchmark::State& state)
   EC_KEY_free(sk_b);
 }
 
-BENCHMARK(OpenSSL_P256_ECDH)->Setup(DoSetup);
+//BENCHMARK(OpenSSL_P256_ECDH)->Setup(DoSetup);
 #endif
 
 static void
@@ -357,7 +357,7 @@ HACL_P256_S2P(benchmark::State& state)
   }
 }
 
-BENCHMARK(HACL_P256_S2P)->Setup(DoSetup);
+//BENCHMARK(HACL_P256_S2P)->Setup(DoSetup);
 
 extern "C" void point_mul_g_secp256r1(unsigned char outx[32], unsigned char outy[32],
 				      const unsigned char scalar[32]);
@@ -376,7 +376,7 @@ ECCKiila_P256_S2P(benchmark::State& state)
   }
 }
 
-BENCHMARK(ECCKiila_P256_S2P)->Setup(DoSetup);
+//BENCHMARK(ECCKiila_P256_S2P)->Setup(DoSetup);
 
 #ifndef NO_OPENSSL
 static void
@@ -391,7 +391,7 @@ OpenSSL_P256_S2P(benchmark::State& state)
   EVP_PKEY_free(pk_a);
 }
 
-BENCHMARK(OpenSSL_P256_S2P)->Setup(DoSetup);
+//BENCHMARK(OpenSSL_P256_S2P)->Setup(DoSetup);
 #endif
 
 extern "C"
@@ -421,7 +421,7 @@ ECCKiila_P256_ECDH2(benchmark::State& state)
   }
 }
 
-BENCHMARK(ECCKiila_P256_ECDH2)->Setup(DoSetup);
+//BENCHMARK(ECCKiila_P256_ECDH2)->Setup(DoSetup);
 
 
 

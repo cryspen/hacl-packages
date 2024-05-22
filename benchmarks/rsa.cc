@@ -57,7 +57,7 @@ BENCHMARK(HACL_RSA_enc)->Setup(DoSetup);
  * For do_encrypt(), load an RSA public key from pub_key_der[].
  * For do_decrypt(), load an RSA private key from priv_key_der[].
  */
-static EVP_PKEY *get_key(OSSL_LIB_CTX *libctx, const char *propq)
+static EVP_PKEY *get_pub_key(OSSL_LIB_CTX *libctx, const char *propq)
 {
     OSSL_DECODER_CTX *dctx = NULL;
     EVP_PKEY *pkey = NULL;
@@ -75,6 +75,7 @@ static EVP_PKEY *get_key(OSSL_LIB_CTX *libctx, const char *propq)
     OSSL_DECODER_CTX_free(dctx);
     return pkey;
 }
+
 
 /* Set optional parameters for RSA OAEP Padding */
 static void set_optional_params(OSSL_PARAM *p, const char *propq)
@@ -123,7 +124,7 @@ OPENSSL_RSA_enc(benchmark::State& state)
 
 
     /* Get public key */
-    pub_key = get_key(libctx, propq);
+    pub_key = get_pub_key(libctx, propq);
     if (pub_key == NULL) {
         fprintf(stderr, "Get public key failed.\n");
         goto cleanup;
@@ -135,6 +136,8 @@ OPENSSL_RSA_enc(benchmark::State& state)
     }
     set_optional_params(params, propq);
     /* If no optional parameters are required then NULL can be passed */
+	
+    for (auto _ : state) {
     if (EVP_PKEY_encrypt_init_ex(ctx, params) <= 0) {
         fprintf(stderr, "EVP_PKEY_encrypt_init_ex() failed.\n");
         goto cleanup;
@@ -153,21 +156,18 @@ OPENSSL_RSA_enc(benchmark::State& state)
         fprintf(stderr, "EVP_PKEY_encrypt() failed.\n");
         goto cleanup;
     }
-	
-    for (auto _ : state) {
-       EVP_PKEY_encrypt(ctx, buf, &buf_len, msg, msg_len);
     }
 
     ret = 1;
 
 cleanup:
-    if (!ret)
-        OPENSSL_free(buf);
+    OPENSSL_free(buf);
     EVP_PKEY_free(pub_key);
     EVP_PKEY_CTX_free(ctx);
 }
 
 BENCHMARK(OPENSSL_RSA_enc)->Setup(DoSetup);
+
 
 void
 HACL_RSA_dec(benchmark::State& state)
@@ -208,5 +208,124 @@ HACL_RSA_dec(benchmark::State& state)
 }
 
 BENCHMARK(HACL_RSA_dec)->Setup(DoSetup);
+
+static EVP_PKEY *get_priv_key(OSSL_LIB_CTX *libctx, const char *propq)
+{
+    OSSL_DECODER_CTX *dctx = NULL;
+    EVP_PKEY *pkey = NULL;
+    int selection;
+    const unsigned char *data;
+    size_t data_len;
+
+    selection = EVP_PKEY_KEYPAIR;
+    data = priv_key_der;
+    data_len = sizeof(priv_key_der);
+
+    dctx = OSSL_DECODER_CTX_new_for_pkey(&pkey, "DER", NULL, "RSA",
+                                         selection, libctx, propq);
+    (void)OSSL_DECODER_from_data(dctx, &data, &data_len);
+    OSSL_DECODER_CTX_free(dctx);
+    return pkey;
+}
+
+void
+OPENSSL_RSA_dec(benchmark::State& state)
+{
+    int ret = 0;
+    size_t ctxt_len = 0;
+    unsigned char *ctxt = NULL;
+    size_t ptxt_len = 0;
+    unsigned char *ptxt = NULL;
+    const char *propq = NULL;
+    EVP_PKEY_CTX *ctx = NULL;
+    EVP_PKEY *priv_key = NULL;
+    OSSL_PARAM params[5];
+    OSSL_LIB_CTX *libctx = NULL;
+    EVP_PKEY_CTX *pctx = NULL;
+    EVP_PKEY *pub_key = NULL;
+
+    size_t msg_len = sizeof(msg) - 1;
+    size_t cipherlen = 512;
+
+    /* Get public key */
+    pub_key = get_pub_key(libctx, propq);
+    if (pub_key == NULL) {
+        fprintf(stderr, "Get public key failed.\n");
+        goto cleanup;
+    }
+    pctx = EVP_PKEY_CTX_new_from_pkey(libctx, pub_key, propq);
+    if (pctx == NULL) {
+        fprintf(stderr, "EVP_PKEY_CTX_new_from_pkey() failed.\n");
+        goto cleanup;
+    }
+    set_optional_params(params, propq);
+    /* If no optional parameters are required then NULL can be passed */
+    if (EVP_PKEY_encrypt_init_ex(pctx, params) <= 0) {
+        fprintf(stderr, "EVP_PKEY_encrypt_init_ex() failed.\n");
+        goto cleanup;
+    }
+    /* Calculate the size required to hold the encrypted data */
+    if (EVP_PKEY_encrypt(pctx, NULL, &ctxt_len, msg, msg_len) <= 0) {
+        fprintf(stderr, "EVP_PKEY_encrypt() failed.\n");
+        goto cleanup;
+    }
+    ctxt = (unsigned char*) OPENSSL_zalloc(ctxt_len);
+    if (ctxt  == NULL) {
+        fprintf(stderr, "Malloc failed.\n");
+        goto cleanup;
+    }
+    if (EVP_PKEY_encrypt(pctx, ctxt, &ctxt_len, msg, msg_len) <= 0) {
+        fprintf(stderr, "EVP_PKEY_encrypt() failed.\n");
+        goto cleanup;
+    }
+
+    /* Get private key */
+    priv_key = get_priv_key(libctx, propq);
+    if (priv_key == NULL) {
+        fprintf(stderr, "Get private key failed.\n");
+        goto cleanup;
+    }
+    ctx = EVP_PKEY_CTX_new_from_pkey(libctx, priv_key, propq);
+    if (ctx == NULL) {
+        fprintf(stderr, "EVP_PKEY_CTX_new_from_pkey() failed.\n");
+        goto cleanup;
+    }
+    set_optional_params(params, propq);
+    /* If no optional parameters are required then NULL can be passed */
+ 
+    for (auto _ : state) {
+    if (EVP_PKEY_decrypt_init_ex(ctx, params) <= 0) {
+        fprintf(stderr, "EVP_PKEY_decrypt_init_ex() failed.\n");
+        goto cleanup;
+    }
+
+   /* Calculate the size required to hold the decrypted data */
+    if (EVP_PKEY_decrypt(ctx, NULL, &ptxt_len, ctxt, ctxt_len) <= 0) {
+        fprintf(stderr, "EVP_PKEY_decrypt() failed 1.\n");
+        goto cleanup;
+    }
+    ptxt = (unsigned char*) OPENSSL_zalloc(ptxt_len);
+    if (ptxt  == NULL) {
+        fprintf(stderr, "Malloc failed.\n");
+        goto cleanup;
+    }
+    if (EVP_PKEY_decrypt(ctx, ptxt, &ptxt_len, ctxt, ctxt_len) <= 0) {
+        fprintf(stderr, "EVP_PKEY_decrypt() failed 2.\n");
+        goto cleanup;
+    }
+    }
+
+    ret = 1;
+
+cleanup:
+    OPENSSL_free(ptxt);
+    OPENSSL_free(ctxt);
+    EVP_PKEY_free(priv_key);
+    EVP_PKEY_CTX_free(ctx);
+    EVP_PKEY_free(pub_key);
+    EVP_PKEY_CTX_free(pctx);
+}
+
+BENCHMARK(OPENSSL_RSA_dec)->Setup(DoSetup);
 
 BENCHMARK_MAIN();
