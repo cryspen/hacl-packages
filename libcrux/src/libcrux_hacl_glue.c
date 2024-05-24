@@ -33,21 +33,15 @@ libcrux_sha3_portable_shake256_(size_t len, uint8_t* out, Eurydice_slice input)
 }
 
 inline void
-libcrux_digest_shake128_(size_t len, Eurydice_slice input, uint8_t* out)
+libcrux_sha3_portable_sha512(Eurydice_slice output, Eurydice_slice input)
 {
-  Hacl_Hash_SHA3_shake128_hacl(input.len, input.ptr, (uint32_t)len, out);
+  Hacl_Hash_SHA3_sha3_512(output.ptr, input.ptr, (uint32_t)input.len);
 }
 
 inline void
-libcrux_sha3_portable_sha512(Eurydice_slice x0, Eurydice_slice x1)
+libcrux_sha3_portable_sha256(Eurydice_slice output, Eurydice_slice input)
 {
-  Hacl_Hash_SHA3_sha3_512(x1.ptr, x0.ptr, (uint32_t)x0.len);
-}
-
-inline void
-libcrux_sha3_portable_sha256(Eurydice_slice x0, Eurydice_slice x1)
-{
-  Hacl_Hash_SHA3_sha3_256(x1.ptr, x0.ptr, (uint32_t)x0.len);
+  Hacl_Hash_SHA3_sha3_256(output.ptr, input.ptr, (uint32_t)input.len);
 }
 
 
