@@ -2897,17 +2897,21 @@ libcrux_ml_kem_ntt_ntt_layer_int_vec_step__libcrux_ml_kem_libcrux_polynomials_Po
   int16_t b[16U],
   int16_t zeta_r)
 {
+  int16_t a0[16U];
+  memcpy(a0, a, (size_t)16U * sizeof(int16_t));
+  int16_t b0[16U];
+  memcpy(b0, b, (size_t)16U * sizeof(int16_t));
   int16_t t[16U];
   libcrux_ml_kem_libcrux_polynomials_libcrux_traits_montgomery_multiply_fe__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    b, zeta_r, t);
+    b0, zeta_r, t);
   libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___sub(
-    a, &t, b);
+    a0, &t, b0);
   libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___add(
-    a, &t, a);
+    a0, &t, a0);
   K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector
     lit;
-  memcpy(lit.fst, a, (size_t)16U * sizeof(int16_t));
-  memcpy(lit.snd, b, (size_t)16U * sizeof(int16_t));
+  memcpy(lit.fst, a0, (size_t)16U * sizeof(int16_t));
+  memcpy(lit.snd, b0, (size_t)16U * sizeof(int16_t));
   return lit;
 }
 
@@ -3053,6 +3057,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector re_as_ntt[4U][16U];
   for (size_t i = (size_t)0U; i < (size_t)4U; i++) {
     libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_2size_t_128size_t(
@@ -3066,8 +3071,8 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   }
   for (size_t i = (size_t)0U; i < (size_t)4U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[4U][128U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___4size_t_128size_t(
@@ -3097,7 +3102,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
          uu____2,
          (size_t)4U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
@@ -3632,6 +3637,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector error_1[4U][16U];
   for (size_t i = (size_t)0U; i < (size_t)4U; i++) {
     libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_128size_t_2size_t(
@@ -3645,8 +3651,8 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   }
   for (size_t i = (size_t)0U; i < (size_t)4U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[4U][128U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___4size_t_128size_t(
@@ -3674,7 +3680,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
          uu____2,
          (size_t)4U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
@@ -3772,20 +3778,24 @@ libcrux_ml_kem_invert_ntt_inv_ntt_layer_int_vec_step_reduce__libcrux_ml_kem_libc
   int16_t b[16U],
   int16_t zeta_r)
 {
+  int16_t a0[16U];
+  memcpy(a0, a, (size_t)16U * sizeof(int16_t));
+  int16_t b0[16U];
+  memcpy(b0, b, (size_t)16U * sizeof(int16_t));
   int16_t a_minus_b[16U];
   libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___sub(
-    b, &a, a_minus_b);
+    b0, &a0, a_minus_b);
   int16_t ret[16U];
   libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___add(
-    a, &b, ret);
+    a0, &b0, ret);
   libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___barrett_reduce(
-    ret, a);
+    ret, a0);
   libcrux_ml_kem_libcrux_polynomials_libcrux_traits_montgomery_multiply_fe__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    a_minus_b, zeta_r, b);
+    a_minus_b, zeta_r, b0);
   K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector
     lit;
-  memcpy(lit.fst, a, (size_t)16U * sizeof(int16_t));
-  memcpy(lit.snd, b, (size_t)16U * sizeof(int16_t));
+  memcpy(lit.fst, a0, (size_t)16U * sizeof(int16_t));
+  memcpy(lit.snd, b0, (size_t)16U * sizeof(int16_t));
   return lit;
 }
 
@@ -3976,13 +3986,18 @@ libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vec
   libcrux_ml_kem_libcrux_polynomials_PortableVector result[16U],
   libcrux_ml_kem_libcrux_polynomials_PortableVector ret[16U])
 {
+  libcrux_ml_kem_libcrux_polynomials_PortableVector result0[16U];
+  memcpy(result0,
+         result,
+         (size_t)16U *
+           sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector));
   for (size_t i = (size_t)0U;
        i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT;
        i++) {
     size_t i0 = i;
     int16_t coefficient_normal_form[16U];
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___montgomery_multiply_by_constant(
-      result[i0], (int16_t)1441, coefficient_normal_form);
+      result0[i0], (int16_t)1441, coefficient_normal_form);
     int16_t tmp0[16U];
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___add(
       self[0U][i0], &message[0U][i0], tmp0);
@@ -3992,10 +4007,10 @@ libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vec
     int16_t uu____0[16U];
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___barrett_reduce(
       tmp, uu____0);
-    memcpy(result[i0], uu____0, (size_t)16U * sizeof(int16_t));
+    memcpy(result0[i0], uu____0, (size_t)16U * sizeof(int16_t));
   }
   memcpy(ret,
-         result,
+         result0,
          (size_t)16U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector));
 }
@@ -5039,23 +5054,28 @@ libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vec
   libcrux_ml_kem_libcrux_polynomials_PortableVector b[16U],
   libcrux_ml_kem_libcrux_polynomials_PortableVector ret[16U])
 {
+  libcrux_ml_kem_libcrux_polynomials_PortableVector b0[16U];
+  memcpy(b0,
+         b,
+         (size_t)16U *
+           sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector));
   for (size_t i = (size_t)0U;
        i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT;
        i++) {
     size_t i0 = i;
     int16_t coefficient_normal_form[16U];
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___montgomery_multiply_by_constant(
-      b[i0], (int16_t)1441, coefficient_normal_form);
+      b0[i0], (int16_t)1441, coefficient_normal_form);
     int16_t uu____0[16U];
     int16_t ret0[16U];
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___sub(
       self[0U][i0], &coefficient_normal_form, ret0);
     libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___barrett_reduce(
       ret0, uu____0);
-    memcpy(b[i0], uu____0, (size_t)16U * sizeof(int16_t));
+    memcpy(b0[i0], uu____0, (size_t)16U * sizeof(int16_t));
   }
   memcpy(ret,
-         b,
+         b0,
          (size_t)16U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector));
 }
@@ -5933,6 +5953,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector re_as_ntt[2U][16U];
   for (size_t i = (size_t)0U; i < (size_t)2U; i++) {
     libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_3size_t_192size_t(
@@ -5946,8 +5967,8 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   }
   for (size_t i = (size_t)0U; i < (size_t)2U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[2U][192U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___2size_t_192size_t(
@@ -5977,7 +5998,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
          uu____2,
          (size_t)2U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
@@ -6436,6 +6457,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector error_1[2U][16U];
   for (size_t i = (size_t)0U; i < (size_t)2U; i++) {
     libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_128size_t_2size_t(
@@ -6449,8 +6471,8 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   }
   for (size_t i = (size_t)0U; i < (size_t)2U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[2U][128U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___2size_t_128size_t(
@@ -6478,7 +6500,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
          uu____2,
          (size_t)2U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
@@ -7963,6 +7985,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector re_as_ntt[3U][16U];
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
     libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
@@ -7976,8 +7999,8 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   }
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[3U][128U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___3size_t_128size_t(
@@ -8007,7 +8030,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
          uu____2,
          (size_t)3U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
@@ -8448,6 +8471,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   uint8_t prf_input[33U],
   uint8_t domain_separator)
 {
+  uint8_t domain_separator0 = domain_separator;
   libcrux_ml_kem_libcrux_polynomials_PortableVector error_1[3U][16U];
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
     libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_128size_t_2size_t(
@@ -8461,8 +8485,8 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
   }
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
     size_t i0 = i;
-    prf_inputs[i0][32U] = domain_separator;
-    domain_separator = (uint32_t)domain_separator + 1U;
+    prf_inputs[i0][32U] = domain_separator0;
+    domain_separator0 = (uint32_t)domain_separator0 + 1U;
   }
   uint8_t prf_outputs[3U][128U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___3size_t_128size_t(
@@ -8490,7 +8514,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomia
          uu____2,
          (size_t)3U *
            sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
-  lit.snd = domain_separator;
+  lit.snd = domain_separator0;
   return lit;
 }
 
