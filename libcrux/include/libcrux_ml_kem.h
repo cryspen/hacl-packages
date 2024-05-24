@@ -117,43 +117,45 @@ extern "C"
     Eurydice_slice x3,
     Eurydice_slice x4);
 
-//   typedef libcrux_sha3_neon_x2_incremental_KeccakState2
-//     libcrux_ml_kem_hash_functions_neon_Simd128Hash[2U];
+  //   typedef libcrux_sha3_neon_x2_incremental_KeccakState2
+  //     libcrux_ml_kem_hash_functions_neon_Simd128Hash[2U];
 
-//   extern void libcrux_sha3_neon_sha512(Eurydice_slice x0, Eurydice_slice x1);
+  //   extern void libcrux_sha3_neon_sha512(Eurydice_slice x0, Eurydice_slice
+  //   x1);
 
-//   extern void libcrux_sha3_neon_sha256(Eurydice_slice x0, Eurydice_slice x1);
+  //   extern void libcrux_sha3_neon_sha256(Eurydice_slice x0, Eurydice_slice
+  //   x1);
 
-// #define libcrux_sha3_neon_shake256(x_0, x_1, x_2, _ret_t)                      \
+  // #define libcrux_sha3_neon_shake256(x_0, x_1, x_2, _ret_t)                      \
 //   libcrux_sha3_neon_shake256_(x_0, x_1, x_2)
 
-//   extern void libcrux_sha3_neon_shake256_(size_t x0,
-//                                           uint8_t* x1,
-//                                           Eurydice_slice x2);
+  //   extern void libcrux_sha3_neon_shake256_(size_t x0,
+  //                                           uint8_t* x1,
+  //                                           Eurydice_slice x2);
 
-//   extern void libcrux_sha3_neon_x2_shake256(Eurydice_slice x0,
-//                                             Eurydice_slice x1,
-//                                             Eurydice_slice x2,
-//                                             Eurydice_slice x3);
+  //   extern void libcrux_sha3_neon_x2_shake256(Eurydice_slice x0,
+  //                                             Eurydice_slice x1,
+  //                                             Eurydice_slice x2,
+  //                                             Eurydice_slice x3);
 
-//   extern libcrux_sha3_neon_x2_incremental_KeccakState2
-//   libcrux_sha3_neon_x2_incremental_shake128_init(void);
+  //   extern libcrux_sha3_neon_x2_incremental_KeccakState2
+  //   libcrux_sha3_neon_x2_incremental_shake128_init(void);
 
-//   extern void libcrux_sha3_neon_x2_incremental_shake128_absorb_final(
-//     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
-//     Eurydice_slice x1,
-//     Eurydice_slice x2);
+  //   extern void libcrux_sha3_neon_x2_incremental_shake128_absorb_final(
+  //     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
+  //     Eurydice_slice x1,
+  //     Eurydice_slice x2);
 
-//   extern void
-//   libcrux_sha3_neon_x2_incremental_shake128_squeeze_first_three_blocks(
-//     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
-//     Eurydice_slice x1,
-//     Eurydice_slice x2);
+  //   extern void
+  //   libcrux_sha3_neon_x2_incremental_shake128_squeeze_first_three_blocks(
+  //     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
+  //     Eurydice_slice x1,
+  //     Eurydice_slice x2);
 
-//   extern void libcrux_sha3_neon_x2_incremental_shake128_squeeze_next_block(
-//     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
-//     Eurydice_slice x1,
-//     Eurydice_slice x2);
+  //   extern void libcrux_sha3_neon_x2_incremental_shake128_squeeze_next_block(
+  //     libcrux_sha3_neon_x2_incremental_KeccakState2* x0,
+  //     Eurydice_slice x1,
+  //     Eurydice_slice x2);
 
 #define LIBCRUX_ML_KEM_IND_CCA_KEY_GENERATION_SEED_SIZE                        \
   (LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE +                 \

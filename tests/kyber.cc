@@ -127,20 +127,27 @@ TEST(Kyber768Test, ConsistencyTest)
 
   generate_random(randomness, 64);
   auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
-
-  uint8_t ciphertext[LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768];
-  uint8_t sharedSecret[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
+  printf("pk: ");
+  print_hex_ln(1184, key_pair.pk);
+  printf("sk: ");
+  print_hex_ln(2400, key_pair.sk);
 
   generate_random(randomness, 32);
   auto ctxt = libcrux_ml_kem_mlkem768_encapsulate((uint8_t(*)[1184])key_pair.pk,
                                                   randomness);
+  printf("ctxt: ");
+  print_hex_ln(1088U, ctxt.fst);
+  printf("secret: ");
+  print_hex_ln(32, ctxt.snd);
 
   uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
   libcrux_ml_kem_mlkem768_decapsulate(
-    (uint8_t(*)[2400])key_pair.sk, &ciphertext, sharedSecret2);
+    (uint8_t(*)[2400])key_pair.sk, &ctxt.fst, sharedSecret2);
+  printf("secret2: ");
+  print_hex_ln(32, sharedSecret2);
 
   EXPECT_EQ(0,
-            memcmp(sharedSecret,
+            memcmp(ctxt.snd,
                    sharedSecret2,
                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
 }
