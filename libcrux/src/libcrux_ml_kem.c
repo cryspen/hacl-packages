@@ -492,39 +492,41 @@ libcrux_ml_kem_libcrux_polynomials_ntt_layer_1_step(int16_t v[16U],
                                                     int16_t zeta3,
                                                     int16_t ret[16U])
 {
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
   int16_t t = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[2U], zeta0);
-  v[2U] = v[0U] - t;
-  v[0U] = v[0U] + t;
+    v0[2U], zeta0);
+  v0[2U] = v0[0U] - t;
+  v0[0U] = v0[0U] + t;
   int16_t t0 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[3U], zeta0);
-  v[3U] = v[1U] - t0;
-  v[1U] = v[1U] + t0;
+    v0[3U], zeta0);
+  v0[3U] = v0[1U] - t0;
+  v0[1U] = v0[1U] + t0;
   int16_t t1 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[6U], zeta1);
-  v[6U] = v[4U] - t1;
-  v[4U] = v[4U] + t1;
+    v0[6U], zeta1);
+  v0[6U] = v0[4U] - t1;
+  v0[4U] = v0[4U] + t1;
   int16_t t2 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[7U], zeta1);
-  v[7U] = v[5U] - t2;
-  v[5U] = v[5U] + t2;
+    v0[7U], zeta1);
+  v0[7U] = v0[5U] - t2;
+  v0[5U] = v0[5U] + t2;
   int16_t t3 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[(size_t)8U + (size_t)2U], zeta2);
-  v[(size_t)8U + (size_t)2U] = v[(size_t)8U + (size_t)0U] - t3;
-  v[(size_t)8U + (size_t)0U] = v[(size_t)8U + (size_t)0U] + t3;
+    v0[(size_t)8U + (size_t)2U], zeta2);
+  v0[(size_t)8U + (size_t)2U] = v0[(size_t)8U + (size_t)0U] - t3;
+  v0[(size_t)8U + (size_t)0U] = v0[(size_t)8U + (size_t)0U] + t3;
   int16_t t4 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[(size_t)8U + (size_t)3U], zeta2);
-  v[(size_t)8U + (size_t)3U] = v[(size_t)8U + (size_t)1U] - t4;
-  v[(size_t)8U + (size_t)1U] = v[(size_t)8U + (size_t)1U] + t4;
+    v0[(size_t)8U + (size_t)3U], zeta2);
+  v0[(size_t)8U + (size_t)3U] = v0[(size_t)8U + (size_t)1U] - t4;
+  v0[(size_t)8U + (size_t)1U] = v0[(size_t)8U + (size_t)1U] + t4;
   int16_t t5 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[(size_t)8U + (size_t)6U], zeta3);
-  v[(size_t)8U + (size_t)6U] = v[(size_t)8U + (size_t)4U] - t5;
-  v[(size_t)8U + (size_t)4U] = v[(size_t)8U + (size_t)4U] + t5;
+    v0[(size_t)8U + (size_t)6U], zeta3);
+  v0[(size_t)8U + (size_t)6U] = v0[(size_t)8U + (size_t)4U] - t5;
+  v0[(size_t)8U + (size_t)4U] = v0[(size_t)8U + (size_t)4U] + t5;
   int16_t t6 = libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    v[(size_t)8U + (size_t)7U], zeta3);
-  v[(size_t)8U + (size_t)7U] = v[(size_t)8U + (size_t)5U] - t6;
-  v[(size_t)8U + (size_t)5U] = v[(size_t)8U + (size_t)5U] + t6;
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+    v0[(size_t)8U + (size_t)7U], zeta3);
+  v0[(size_t)8U + (size_t)7U] = v0[(size_t)8U + (size_t)5U] - t6;
+  v0[(size_t)8U + (size_t)5U] = v0[(size_t)8U + (size_t)5U] + t6;
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
@@ -658,71 +660,77 @@ libcrux_ml_kem_libcrux_polynomials_inv_ntt_layer_1_step(int16_t v[16U],
                                                         int16_t zeta3,
                                                         int16_t ret[16U])
 {
-  int16_t a_minus_b = v[2U] - v[0U];
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
+  int16_t a_minus_b = v0[2U] - v0[0U];
   int16_t uu____0 =
-    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v[0U] + v[2U]);
-  v[0U] = uu____0;
+    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v0[0U] + v0[2U]);
+  v0[0U] = uu____0;
   int16_t uu____1 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b,
                                                                      zeta0);
-  v[2U] = uu____1;
-  int16_t a_minus_b0 = v[3U] - v[1U];
+  v0[2U] = uu____1;
+  int16_t a_minus_b0 = v0[3U] - v0[1U];
   int16_t uu____2 =
-    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v[1U] + v[3U]);
-  v[1U] = uu____2;
+    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v0[1U] + v0[3U]);
+  v0[1U] = uu____2;
   int16_t uu____3 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b0,
                                                                      zeta0);
-  v[3U] = uu____3;
-  int16_t a_minus_b1 = v[6U] - v[4U];
+  v0[3U] = uu____3;
+  int16_t a_minus_b1 = v0[6U] - v0[4U];
   int16_t uu____4 =
-    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v[4U] + v[6U]);
-  v[4U] = uu____4;
+    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v0[4U] + v0[6U]);
+  v0[4U] = uu____4;
   int16_t uu____5 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b1,
                                                                      zeta1);
-  v[6U] = uu____5;
-  int16_t a_minus_b2 = v[7U] - v[5U];
+  v0[6U] = uu____5;
+  int16_t a_minus_b2 = v0[7U] - v0[5U];
   int16_t uu____6 =
-    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v[5U] + v[7U]);
-  v[5U] = uu____6;
+    libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(v0[5U] + v0[7U]);
+  v0[5U] = uu____6;
   int16_t uu____7 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b2,
                                                                      zeta1);
-  v[7U] = uu____7;
-  int16_t a_minus_b3 = v[(size_t)8U + (size_t)2U] - v[(size_t)8U + (size_t)0U];
+  v0[7U] = uu____7;
+  int16_t a_minus_b3 =
+    v0[(size_t)8U + (size_t)2U] - v0[(size_t)8U + (size_t)0U];
   int16_t uu____8 = libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(
-    v[(size_t)8U + (size_t)0U] + v[(size_t)8U + (size_t)2U]);
-  v[(size_t)8U + (size_t)0U] = uu____8;
+    v0[(size_t)8U + (size_t)0U] + v0[(size_t)8U + (size_t)2U]);
+  v0[(size_t)8U + (size_t)0U] = uu____8;
   int16_t uu____9 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b3,
                                                                      zeta2);
-  v[(size_t)8U + (size_t)2U] = uu____9;
-  int16_t a_minus_b4 = v[(size_t)8U + (size_t)3U] - v[(size_t)8U + (size_t)1U];
+  v0[(size_t)8U + (size_t)2U] = uu____9;
+  int16_t a_minus_b4 =
+    v0[(size_t)8U + (size_t)3U] - v0[(size_t)8U + (size_t)1U];
   int16_t uu____10 = libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(
-    v[(size_t)8U + (size_t)1U] + v[(size_t)8U + (size_t)3U]);
-  v[(size_t)8U + (size_t)1U] = uu____10;
+    v0[(size_t)8U + (size_t)1U] + v0[(size_t)8U + (size_t)3U]);
+  v0[(size_t)8U + (size_t)1U] = uu____10;
   int16_t uu____11 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b4,
                                                                      zeta2);
-  v[(size_t)8U + (size_t)3U] = uu____11;
-  int16_t a_minus_b5 = v[(size_t)8U + (size_t)6U] - v[(size_t)8U + (size_t)4U];
+  v0[(size_t)8U + (size_t)3U] = uu____11;
+  int16_t a_minus_b5 =
+    v0[(size_t)8U + (size_t)6U] - v0[(size_t)8U + (size_t)4U];
   int16_t uu____12 = libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(
-    v[(size_t)8U + (size_t)4U] + v[(size_t)8U + (size_t)6U]);
-  v[(size_t)8U + (size_t)4U] = uu____12;
+    v0[(size_t)8U + (size_t)4U] + v0[(size_t)8U + (size_t)6U]);
+  v0[(size_t)8U + (size_t)4U] = uu____12;
   int16_t uu____13 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b5,
                                                                      zeta3);
-  v[(size_t)8U + (size_t)6U] = uu____13;
-  int16_t a_minus_b6 = v[(size_t)8U + (size_t)7U] - v[(size_t)8U + (size_t)5U];
+  v0[(size_t)8U + (size_t)6U] = uu____13;
+  int16_t a_minus_b6 =
+    v0[(size_t)8U + (size_t)7U] - v0[(size_t)8U + (size_t)5U];
   int16_t uu____14 = libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(
-    v[(size_t)8U + (size_t)5U] + v[(size_t)8U + (size_t)7U]);
-  v[(size_t)8U + (size_t)5U] = uu____14;
+    v0[(size_t)8U + (size_t)5U] + v0[(size_t)8U + (size_t)7U]);
+  v0[(size_t)8U + (size_t)5U] = uu____14;
   int16_t uu____15 =
     libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(a_minus_b6,
                                                                      zeta3);
-  v[(size_t)8U + (size_t)7U] = uu____15;
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+  v0[(size_t)8U + (size_t)7U] = uu____15;
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
@@ -4616,6 +4624,8 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___10int32_t
   int16_t v[16U],
   int16_t ret[16U])
 {
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
   for (
     size_t i = (size_t)0U;
     i <
@@ -4623,13 +4633,13 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___10int32_t
     i++) {
     size_t i0 = i;
     int32_t decompressed =
-      (int32_t)v[i0] *
+      (int32_t)v0[i0] *
       (int32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_MODULUS;
     decompressed = (decompressed << 1U) + ((int32_t)1 << (uint32_t)(int32_t)10);
     decompressed = decompressed >> (uint32_t)((int32_t)10 + (int32_t)1);
-    v[i0] = (int16_t)decompressed;
+    v0[i0] = (int16_t)decompressed;
   }
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
@@ -4682,6 +4692,8 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___11int32_t
   int16_t v[16U],
   int16_t ret[16U])
 {
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
   for (
     size_t i = (size_t)0U;
     i <
@@ -4689,13 +4701,13 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___11int32_t
     i++) {
     size_t i0 = i;
     int32_t decompressed =
-      (int32_t)v[i0] *
+      (int32_t)v0[i0] *
       (int32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_MODULUS;
     decompressed = (decompressed << 1U) + ((int32_t)1 << (uint32_t)(int32_t)11);
     decompressed = decompressed >> (uint32_t)((int32_t)11 + (int32_t)1);
-    v[i0] = (int16_t)decompressed;
+    v0[i0] = (int16_t)decompressed;
   }
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
@@ -4834,6 +4846,8 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___4int32_t(
   int16_t v[16U],
   int16_t ret[16U])
 {
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
   for (
     size_t i = (size_t)0U;
     i <
@@ -4841,13 +4855,13 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___4int32_t(
     i++) {
     size_t i0 = i;
     int32_t decompressed =
-      (int32_t)v[i0] *
+      (int32_t)v0[i0] *
       (int32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_MODULUS;
     decompressed = (decompressed << 1U) + ((int32_t)1 << (uint32_t)(int32_t)4);
     decompressed = decompressed >> (uint32_t)((int32_t)4 + (int32_t)1);
-    v[i0] = (int16_t)decompressed;
+    v0[i0] = (int16_t)decompressed;
   }
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
@@ -4899,6 +4913,8 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___5int32_t(
   int16_t v[16U],
   int16_t ret[16U])
 {
+  int16_t v0[16U];
+  memcpy(v0, v, (size_t)16U * sizeof(int16_t));
   for (
     size_t i = (size_t)0U;
     i <
@@ -4906,13 +4922,13 @@ libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___5int32_t(
     i++) {
     size_t i0 = i;
     int32_t decompressed =
-      (int32_t)v[i0] *
+      (int32_t)v0[i0] *
       (int32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_MODULUS;
     decompressed = (decompressed << 1U) + ((int32_t)1 << (uint32_t)(int32_t)5);
     decompressed = decompressed >> (uint32_t)((int32_t)5 + (int32_t)1);
-    v[i0] = (int16_t)decompressed;
+    v0[i0] = (int16_t)decompressed;
   }
-  memcpy(ret, v, (size_t)16U * sizeof(int16_t));
+  memcpy(ret, v0, (size_t)16U * sizeof(int16_t));
 }
 
 void
