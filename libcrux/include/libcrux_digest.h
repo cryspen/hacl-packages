@@ -15,9 +15,9 @@ extern "C" {
 #include "eurydice_glue.h"
 #include "libcrux_hacl_glue.h"
 
-extern void libcrux_digest_sha3_512(Eurydice_slice x0, uint8_t x1[64U]);
+extern void libcrux_sha3_portable_sha512(Eurydice_slice x0, uint8_t x1[64U]);
 
-extern void libcrux_digest_sha3_256(Eurydice_slice x0, uint8_t x1[32U]);
+extern void libcrux_sha3_portable_sha256(Eurydice_slice x0, uint8_t x1[32U]);
 
 #define libcrux_digest_shake256(x_0, x_1, x_2, _ret_t) libcrux_digest_shake256_(x_0, x_1, x_2)
 
