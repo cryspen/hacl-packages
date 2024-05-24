@@ -11,7 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Hacl_Hash_SHA3.h"
-#include "Libcrux_Kem_Kyber_Kyber768.h"
+#include "libcrux_ml_kem.h"
 #include "util.h"
 
 using namespace std;

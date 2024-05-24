@@ -344,16 +344,7 @@
     "libcrux_sources": {
         "kyber": [
             {
-                "file": "Libcrux_Kem_Kyber_Kyber768.c"
-            },
-            {
-                "file": "libcrux_kyber512.c"
-            },
-            {
-                "file": "libcrux_kyber768.c"
-            },
-            {
-                "file": "libcrux_kyber1024.c"
+                "file": "libcrux_ml_kem.c"
             },
             {
                 "file": "libcrux_hacl_glue.c"

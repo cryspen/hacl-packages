@@ -5,23 +5,27 @@
   KaRaMeL version: <unknown>
  */
 
-#ifndef __Eurydice_H
-#define __Eurydice_H
+#ifndef __internal_libcrux_ml_kem_H
+#define __internal_libcrux_ml_kem_H
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#include "core.h"
+#include "internal/core.h"
+#include "../libcrux_ml_kem.h"
 #include "eurydice_glue.h"
 
-extern uint8_t Eurydice_bitand_pv_u8(uint8_t *x, uint8_t y);
-
-extern uint8_t Eurydice_shr_pv_u8(uint8_t *x, int32_t y);
+typedef struct core_option_Option__Eurydice_slice_uint8_t_s
+{
+  core_option_Option__size_t_tags tag;
+  Eurydice_slice f0;
+}
+core_option_Option__Eurydice_slice_uint8_t;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __Eurydice_H_DEFINED
+#define __internal_libcrux_ml_kem_H_DEFINED
 #endif
