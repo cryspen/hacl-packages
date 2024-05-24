@@ -15,30 +15,13 @@ extern "C" {
 #include "eurydice_glue.h"
 #include "libcrux_hacl_glue.h"
 
-extern void libcrux_sha3_portable_sha512(Eurydice_slice x0, uint8_t x1[64U]);
+void libcrux_sha3_portable_sha512(Eurydice_slice x0, Eurydice_slice x1);
 
-extern void libcrux_sha3_portable_sha256(Eurydice_slice x0, uint8_t x1[32U]);
+void libcrux_sha3_portable_sha256(Eurydice_slice x0, Eurydice_slice x1);
 
 #define libcrux_digest_shake256(x_0, x_1, x_2, _ret_t) libcrux_digest_shake256_(x_0, x_1, x_2)
 
-extern void libcrux_digest_shake256_(size_t x0, Eurydice_slice x1, uint8_t *x2);
-
-extern libcrux_digest_incremental_x4_Shake128StateX4
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__new(void);
-
-#define libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final(x_0, x_1, x_2, _ret_t) libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(x_0, x_1, x_2)
-
-extern void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__absorb_final_(
-  size_t x0,
-  libcrux_digest_incremental_x4_Shake128StateX4 *x1,
-  Eurydice_slice *x2
-);
-
-extern void
-libcrux_digest_incremental_x4__libcrux__digest__incremental_x4__Shake128StateX4__free_memory(
-  libcrux_digest_incremental_x4_Shake128StateX4 x0
-);
+void libcrux_sha3_portable_shake256_(size_t x0, uint8_t *x2, Eurydice_slice x1);
 
 #if defined(__cplusplus)
 }
