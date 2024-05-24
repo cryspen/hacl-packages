@@ -105,11 +105,12 @@ libb2_blake2b_oneshot(benchmark::State& state)
 {
   bytes input(state.range(0), 0xAB);
 
-  for (auto _ : state)
-    blake2b(digest2b.data(), (const void*)input.data(), NULL, digest2b.size(), input.size(), 0);
+  for (auto _ : state) {
+      blake2b(digest2b.data(), (const void*)input.data(), NULL, digest2b.size(), input.size(), 0);
+  }
 }
 
-BENCHMARK(libb2_blake2b_oneshot)->Setup(DoSetup);
+BENCHMARK(libb2_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -249,7 +250,7 @@ libb2_blake2s_oneshot(benchmark::State& state)
     blake2s(digest2s.data(), (const void*)input.data(), NULL, digest2s.size(), input.size(), 0);
 }
 
-BENCHMARK(libb2_blake2s_oneshot)->Setup(DoSetup);
+BENCHMARK(libb2_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
 #endif
 
 // -----------------------------------------------------------------------------
@@ -345,28 +346,6 @@ HACL_blake2b_32_streaming(benchmark::State& state)
 
 BENCHMARK(HACL_blake2b_32_streaming)->Setup(DoSetup);
 
-static void
-BLAKE2_blake2b_ref_streaming(benchmark::State& state)
-{
-  for (auto _ : state) {
-    uint8_t digest[64];
-
-    // Init
-    blake2b_state s;
-    blake2b_init(&s,64);
-
-    // Update
-    for (auto chunk : chunk(input, chunk_len)) {
-      blake2b_update(&s, (uint8_t*)chunk.data(), chunk.size());
-    }
-
-    // Finish
-    blake2b_final(&s,digest,64);
-  }
-}
-
-BENCHMARK(BLAKE2_blake2b_ref_streaming)->Setup(DoSetup);
-
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
 HACL_blake2b_vec256_streaming(benchmark::State& state)
@@ -455,28 +434,6 @@ HACL_blake2s_32_streaming(benchmark::State& state)
 }
 
 BENCHMARK(HACL_blake2s_32_streaming)->Setup(DoSetup);
-
-static void
-BLAKE2_blake2s_ref_streaming(benchmark::State& state)
-{
-  for (auto _ : state) {
-    uint8_t digest[32];
-
-    // Init
-    blake2s_state s;
-    blake2s_init(&s,32);
-
-    // Update
-    for (auto chunk : chunk(input, chunk_len)) {
-      blake2s_update(&s, (uint8_t*)chunk.data(), chunk.size());
-    }
-
-    // Finish
-    blake2s_final(&s,digest,32);
-  }
-}
-
-BENCHMARK(BLAKE2_blake2s_ref_streaming)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC128
 static void
