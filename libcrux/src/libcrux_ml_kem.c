@@ -9,6 +9,16 @@
 
 #include "internal/core.h"
 
+void
+print_hex_ln(size_t bytes_len, uint8_t* bytes)
+{
+  for (int i = 0; i < bytes_len; ++i) {
+    printf("%02x", bytes[i]);
+  }
+
+  printf("\n");
+}
+
 uint8_t
 libcrux_ml_kem_constant_time_ops_is_non_zero(uint8_t value)
 {
@@ -8127,6 +8137,8 @@ libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_Port
   uint8_t hashed[64U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____G___3size_t(
     key_generation_seed, hashed);
+  printf("hashed: ");
+  print_hex_ln(64, hashed);
   K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t uu____0 =
     core_slice___Slice_T___split_at(
       Eurydice_array_to_slice((size_t)64U, hashed, uint8_t, Eurydice_slice),
@@ -8140,6 +8152,15 @@ libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_Port
   libcrux_ml_kem_ind_cpa_into_padded_array___34size_t(seed_for_A, ret);
   libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     ret, true, A_transpose);
+  printf("A_transpose[0][0]: ");
+  print_hex_ln(16 * sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector),
+               A_transpose[0][0]);
+  printf("A_transpose[0][1]: ");
+  print_hex_ln(16 * sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector),
+               A_transpose[0][1]);
+  printf("A_transpose[1][1]: ");
+  print_hex_ln(16 * sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector),
+               A_transpose[1][1]);
   uint8_t prf_input[33U];
   libcrux_ml_kem_ind_cpa_into_padded_array___33size_t(seed_for_secret_and_error,
                                                       prf_input);
@@ -8149,6 +8170,8 @@ libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_Port
     uu____2 =
       libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
         uu____1, 0U);
+  printf("uu____1: ");
+  print_hex_ln(33, uu____1);
   libcrux_ml_kem_libcrux_polynomials_PortableVector secret_as_ntt[3U][16U];
   memcpy(secret_as_ntt,
          uu____2.fst,
@@ -8166,6 +8189,12 @@ libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_Port
     (size_t)3U *
       sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector[16U]));
   libcrux_ml_kem_libcrux_polynomials_PortableVector t_as_ntt[3U][16U];
+  printf("error_as_ntt[0]: ");
+  print_hex_ln(16 * sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector),
+               error_as_ntt[0]);
+  printf("error_as_ntt[1]: ");
+  print_hex_ln(16 * sizeof(libcrux_ml_kem_libcrux_polynomials_PortableVector),
+               error_as_ntt[1]);
   libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
     A_transpose, secret_as_ntt, error_as_ntt, t_as_ntt);
   libcrux_ml_kem_libcrux_polynomials_PortableVector uu____4[3U][16U];
@@ -8318,6 +8347,9 @@ libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_libcrux_polynomi
   K___uint8_t_1152size_t__uint8_t_1184size_t_ uu____0 =
     libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1152size_t_1184size_t_1152size_t_2size_t_128size_t(
       ind_cpa_keypair_randomness);
+  printf("key pair (uu____0): ");
+  print_hex_ln(1152U, uu____0.fst);
+  print_hex_ln(1184U, uu____0.snd);
   uint8_t ind_cpa_private_key[1152U];
   memcpy(ind_cpa_private_key, uu____0.fst, (size_t)1152U * sizeof(uint8_t));
   uint8_t public_key[1184U];
@@ -8356,6 +8388,8 @@ libcrux_ml_kem_ind_cca_generate_keypair___3size_t_1152size_t_2400size_t_1184size
     uint8_t,
     core_ops_range_Range__size_t,
     Eurydice_slice);
+  printf("ind_cpa_keypair_randomness: ");
+  print_hex_ln(ind_cpa_keypair_randomness.len, ind_cpa_keypair_randomness.ptr);
   Eurydice_slice implicit_rejection_value = Eurydice_array_to_subslice_from(
     (size_t)64U,
     randomness,
@@ -8363,6 +8397,8 @@ libcrux_ml_kem_ind_cca_generate_keypair___3size_t_1152size_t_2400size_t_1184size
     uint8_t,
     size_t,
     Eurydice_slice);
+  printf("implicit_rejection_value: ");
+  print_hex_ln(implicit_rejection_value.len, implicit_rejection_value.ptr);
   bool uu____0;
   uu____0 = false;
   bool uu____1;

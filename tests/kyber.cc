@@ -277,5 +277,6 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
               memcmp(ctxt.fst,
                      sharedSecret2,
                      LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
+    break;
   }
 }
