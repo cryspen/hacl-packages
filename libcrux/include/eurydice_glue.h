@@ -47,8 +47,8 @@ typedef struct {
 #define core_slice___Slice_T___copy_from_slice(dst, src, t, _ret_t) memcpy(dst.ptr, src.ptr, dst.len * sizeof(t))
 #define core_array___Array_T__N__23__as_slice(len_, ptr_, t, _ret_t) ((Eurydice_slice){ .ptr = ptr_, .len = len_ })
 
-#include <immintrin.h>
-#define core_core_arch_x86___m256i __m256i
+// #include <immintrin.h>
+#define core_core_arch_x86___m256i uint8_t
   
 #define core_array_TryFromSliceError uint8_t
 
