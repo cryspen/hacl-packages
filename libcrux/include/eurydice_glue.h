@@ -53,6 +53,8 @@ typedef struct {
 #define core_array_equality___core__cmp__PartialEq__Array_B__N___for__Array_A__N____eq Eurydice_array_eq
 
 #define core_convert___core__convert__AsMut__Slice_T___for__Slice_T___9__as_mut(subslice, _t, _ret_t) subslice
+// FIXME: This isn't great
+#define core_convert___core__convert__Into_U__for_T__3__into(src, srd_t, ret_t, _ret_t) core_convert___core__convert__Into_##ret_t(src)
 
 #define core_slice___Slice_T___split_at(slice, mid, element_type, ret_t) \
   ((ret_t){ \
