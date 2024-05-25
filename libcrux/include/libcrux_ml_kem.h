@@ -2196,6 +2196,7 @@ extern "C"
     libcrux_ml_kem_types_MlKemCiphertext____1088size_t* ciphertext,
     uint8_t ret[32U]);
 
+
   static inline libcrux_ml_kem_types_MlKemPublicKey____1184size_t
   core_convert___core__convert__Into_libcrux_ml_kem_types_MlKemPublicKey____1184size_t(
     uint8_t src[1184])
@@ -2220,6 +2221,16 @@ extern "C"
     memcpy(out.value, src, 1088);
     return out;
   }
+
+  static inline libcrux_ml_kem_types_MlKemCiphertext____768size_t
+  core_convert___core__convert__Into_libcrux_ml_kem_types_MlKemCiphertext____768size_t(
+    uint8_t src[768])
+  {
+    libcrux_ml_kem_types_MlKemCiphertext____768size_t out;
+    memcpy(out.value, src, 768);
+    return out;
+  }
+
   static inline libcrux_ml_kem_types_MlKemPublicKey____800size_t
   core_convert___core__convert__Into_libcrux_ml_kem_types_MlKemPublicKey____800size_t(
     uint8_t src[800])
