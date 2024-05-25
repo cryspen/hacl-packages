@@ -7743,11 +7743,13 @@ libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_Port
   uint8_t randomness0[3U][504U];
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____shake128_squeeze_three_blocks___3size_t(
     &xof_state, randomness0);
+
   uint8_t uu____1[3U][504U];
   memcpy(uu____1, randomness0, (size_t)3U * sizeof(uint8_t[504U]));
   bool done =
     libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_504size_t(
       uu____1, sampled_coefficients, out);
+
   while (true) {
     if (!!done) {
       break;
@@ -7763,15 +7765,18 @@ libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_Port
   }
   int16_t uu____3[3U][272U];
   memcpy(uu____3, out, (size_t)3U * sizeof(int16_t[272U]));
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
-    *uu____4)(int16_t x0[272U]) =
-    libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t;
+
   libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
     uu____5[3U];
+
+  // XXX: Karthik hand-edited the map here.  
   for (size_t i_array_map = (size_t)0U; i_array_map < (size_t)3U;
        i_array_map++) {
-    uu____5[i_array_map] = uu____4(uu____3[i_array_map]);
+      for (int coeff = 0; coeff < 256; coeff++) {
+        uu____5[i_array_map].coefficients[coeff/16].elements[coeff%16] = uu____3[i_array_map][coeff];
+      }
   }
+
   memcpy(
     ret,
     uu____5,
@@ -7812,6 +7817,10 @@ libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_Portab
       sampled[3U];
     libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
       uu____1, sampled);
+    printf("sampled[%d][0][0..16] (sample matrix A):",i0);
+    for (int jj = 0; jj < 16; jj++) printf("%02x",sampled[0].coefficients[0].elements[jj]);
+    printf("\n");
+
     for (
       size_t i = (size_t)0U;
       i <

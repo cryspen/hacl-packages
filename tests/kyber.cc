@@ -124,15 +124,15 @@ compute_implicit_rejection_shared_secret(uint8_t* ciphertext,
 TEST(Kyber768Test, ConsistencyTest)
 {
   uint8_t randomness[64];
-
-  generate_random(randomness, 64);
+  for (int i = 0; i < 64; i++) randomness[i] = 13;
+//  generate_random(randomness, 64);
   auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
   printf("pk: ");
   print_hex_ln(1184, key_pair.pk.value);
   printf("sk: ");
   print_hex_ln(2400, key_pair.sk.value);
 
-  generate_random(randomness, 32);
+//  generate_random(randomness, 32);
   auto ctxt = libcrux_ml_kem_mlkem768_encapsulate(&key_pair.pk, randomness);
   printf("ctxt: ");
   print_hex_ln(1088U, ctxt.fst.value);
