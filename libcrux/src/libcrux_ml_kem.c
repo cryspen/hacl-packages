@@ -2452,13 +2452,10 @@ libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vec
   libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
     result =
       libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___ZERO__libcrux_ml_kem_libcrux_polynomials_PortableVector();
-  for (size_t i = (size_t)0U;
-       i < 256;
-       i++) {
-          result.coefficients[i / 16].elements[i % 16] = ((uint16_t*)a.ptr)[i];
-
-        }
-   return result;
+  for (size_t i = (size_t)0U; i < 256; i++) {
+    result.coefficients[i / 16].elements[i % 16] = ((uint16_t*)a.ptr)[i];
+  }
+  return result;
 }
 
 libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
@@ -2706,7 +2703,6 @@ libcrux_ml_kem_sampling_sample_from_binomial_distribution_2__libcrux_ml_kem_libc
       sampled_i16s[(size_t)8U * chunk_number + offset] = outcome_1 - outcome_2;
     }
   }
-
 
   return libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___from_i16_array__libcrux_ml_kem_libcrux_polynomials_PortableVector(
     Eurydice_array_to_slice(
@@ -7762,12 +7758,13 @@ libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_Port
   libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
     uu____5[3U];
 
-  // XXX: Karthik hand-edited the map here.  
+  // XXX: Karthik hand-edited the map here.
   for (size_t i_array_map = (size_t)0U; i_array_map < (size_t)3U;
        i_array_map++) {
-      for (int coeff = 0; coeff < 256; coeff++) {
-        uu____5[i_array_map].coefficients[coeff/16].elements[coeff%16] = uu____3[i_array_map][coeff];
-      }
+    for (int coeff = 0; coeff < 256; coeff++) {
+      uu____5[i_array_map].coefficients[coeff / 16].elements[coeff % 16] =
+        uu____3[i_array_map][coeff];
+    }
   }
 
   memcpy(
@@ -7810,9 +7807,9 @@ libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_Portab
       sampled[3U];
     libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
       uu____1, sampled);
-    printf("sampled[%d][0][0..16] (sample matrix A):",i0);
-    for (int jj = 0; jj < 16; jj++) printf("%02x",sampled[0].coefficients[0].elements[jj]);
-    printf("\n");
+    // printf("sampled[%d][0][0..16] (sample matrix A):",i0);
+    // for (int jj = 0; jj < 16; jj++)
+    // printf("%02x",sampled[0].coefficients[0].elements[jj]); printf("\n");
 
     for (
       size_t i = (size_t)0U;
@@ -7896,7 +7893,6 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
   libcrux_ml_kem_hash_functions_portable___libcrux_ml_kem__hash_functions__Hash_K__for_libcrux_ml_kem__hash_functions__portable__PortableHash_K____PRFxN___3size_t_128size_t(
     prf_inputs, prf_outputs);
 
-
   for (size_t i = (size_t)0U; i < (size_t)3U; i++) {
     size_t i0 = i;
     libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
@@ -7908,7 +7904,6 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polyno
     libcrux_ml_kem_ntt_ntt_binomially_sampled_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector(
       &re_as_ntt[i0]);
   }
-   
 
   libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
     uu____2[3U];
@@ -8068,9 +8063,10 @@ libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_Port
       sizeof(
         libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector));
 
-  printf("secret_as_ntt[0][0..16] (ind-cpa keygen):");
-    for (int jj = 0; jj < 16; jj++) printf("%02x",secret_as_ntt[0].coefficients[0].elements[jj]);
-    printf("\n");
+  // printf("secret_as_ntt[0][0..16] (ind-cpa keygen):");
+  // for (int jj = 0; jj < 16; jj++)
+  //   printf("%02x", secret_as_ntt[0].coefficients[0].elements[jj]);
+  // printf("\n");
 
   uint8_t domain_separator = uu____2.snd;
   uint8_t uu____3[33U];

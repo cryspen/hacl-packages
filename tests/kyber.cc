@@ -124,25 +124,26 @@ compute_implicit_rejection_shared_secret(uint8_t* ciphertext,
 TEST(Kyber768Test, ConsistencyTest)
 {
   uint8_t randomness[64];
-  for (int i = 0; i < 64; i++) randomness[i] = 13;
-//  generate_random(randomness, 64);
+  for (int i = 0; i < 64; i++)
+    randomness[i] = 13;
+  //  generate_random(randomness, 64);
   auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
-  printf("pk: ");
-  print_hex_ln(1184, key_pair.pk.value);
-  printf("sk: ");
-  print_hex_ln(2400, key_pair.sk.value);
+  // printf("pk: ");
+  // print_hex_ln(1184, key_pair.pk.value);
+  // printf("sk: ");
+  // print_hex_ln(2400, key_pair.sk.value);
 
-//  generate_random(randomness, 32);
+  //  generate_random(randomness, 32);
   auto ctxt = libcrux_ml_kem_mlkem768_encapsulate(&key_pair.pk, randomness);
-  printf("ctxt: ");
-  print_hex_ln(1088U, ctxt.fst.value);
-  printf("secret: ");
-  print_hex_ln(32, ctxt.snd);
+  // printf("ctxt: ");
+  // print_hex_ln(1088U, ctxt.fst.value);
+  // printf("secret: ");
+  // print_hex_ln(32, ctxt.snd);
 
   uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
   libcrux_ml_kem_mlkem768_decapsulate(&key_pair.sk, &ctxt.fst, sharedSecret2);
-  printf("secret2: ");
-  print_hex_ln(32, sharedSecret2);
+  // printf("secret2: ");
+  // print_hex_ln(32, sharedSecret2);
 
   EXPECT_EQ(0,
             memcmp(ctxt.snd,
@@ -150,93 +151,74 @@ TEST(Kyber768Test, ConsistencyTest)
                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
 }
 
-// TEST(Kyber768Test, ModifiedCiphertextTest)
-// {
-//   uint8_t randomness[64];
-//   uint8_t publicKey[LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_KEY_SIZE_768];
-//   uint8_t secretKey[LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768];
+TEST(Kyber768Test, ModifiedCiphertextTest)
+{
+  uint8_t randomness[64];
+  generate_random(randomness, 64);
+  auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
 
-//   generate_random(randomness, 64);
-//   auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
+  generate_random(randomness, 32);
+  auto ctxt = libcrux_ml_kem_mlkem768_encapsulate(&key_pair.pk, randomness);
 
-//   uint8_t ciphertext[LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768];
-//   uint8_t sharedSecret[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
+  uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
+  modify_ciphertext(ctxt.fst.value,
+                    LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768);
+  libcrux_ml_kem_mlkem768_decapsulate(&key_pair.sk, &ctxt.fst, sharedSecret2);
 
-//   generate_random(randomness, 32);
-//   auto ctxt =
-//   libcrux_ml_kem_mlkem768_encapsulate((uint8_t(*)[1184])key_pair.pk,
-//                                                   randomness);
+  EXPECT_NE(0,
+            memcmp(ctxt.snd,
+                   sharedSecret2,
+                   LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
 
-//   uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
-//   modify_ciphertext(ciphertext,
-//                     LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768);
-//   libcrux_ml_kem_mlkem768_decapsulate(
-//     (uint8_t(*)[2400])key_pair.sk, &ciphertext, sharedSecret2);
+  uint8_t* implicitRejectionSharedSecret =
+    compute_implicit_rejection_shared_secret(
+      ctxt.fst.value,
+      LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768,
+      key_pair.sk.value,
+      LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768);
 
-//   EXPECT_NE(0,
-//             memcmp(sharedSecret,
-//                    sharedSecret2,
-//                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
+  EXPECT_EQ(0,
+            memcmp(implicitRejectionSharedSecret,
+                   sharedSecret2,
+                   LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
+  delete[] implicitRejectionSharedSecret;
+}
 
-//   uint8_t* implicitRejectionSharedSecret =
-//     compute_implicit_rejection_shared_secret(
-//       ciphertext,
-//       LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768,
-//       secretKey,
-//       LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768);
+TEST(Kyber768Test, ModifiedSecretKeyTest)
+{
+  uint8_t randomness[64];
+  generate_random(randomness, 64);
+  auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
 
-//   EXPECT_EQ(0,
-//             memcmp(implicitRejectionSharedSecret,
-//                    sharedSecret2,
-//                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
-//   delete[] implicitRejectionSharedSecret;
-// }
+  generate_random(randomness, 32);
+  auto ctxt = libcrux_ml_kem_mlkem768_encapsulate(&key_pair.pk, randomness);
 
-// TEST(Kyber768Test, ModifiedSecretKeyTest)
-// {
-//   uint8_t randomness[64];
-//   uint8_t publicKey[LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_KEY_SIZE_768];
-//   uint8_t secretKey[LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768];
+  uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
+  modify_secret_key(
+    key_pair.sk.value, LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768, false);
+  libcrux_ml_kem_mlkem768_decapsulate(&key_pair.sk, &ctxt.fst, sharedSecret2);
 
-//   generate_random(randomness, 64);
-//   auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
+  EXPECT_NE(0,
+            memcmp(ctxt.snd,
+                   sharedSecret2,
+                   LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
 
-//   uint8_t ciphertext[LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768];
-//   uint8_t sharedSecret[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
+  modify_secret_key(
+    ctxt.snd, LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768, true);
+  libcrux_ml_kem_mlkem768_decapsulate(&key_pair.sk, &ctxt.fst, sharedSecret2);
 
-//   generate_random(randomness, 32);
-//   auto ctxt =
-//   libcrux_ml_kem_mlkem768_encapsulate((uint8_t(*)[1184])key_pair.pk,
-//                                                   randomness);
-
-//   uint8_t sharedSecret2[LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE];
-//   modify_secret_key(
-//     secretKey, LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768, false);
-//   libcrux_ml_kem_mlkem768_decapsulate(
-//     (uint8_t(*)[2400])key_pair.sk, &ciphertext, sharedSecret2);
-
-//   EXPECT_NE(0,
-//             memcmp(sharedSecret,
-//                    sharedSecret2,
-//                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
-
-//   modify_secret_key(
-//     secretKey, LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768, true);
-//   libcrux_ml_kem_mlkem768_decapsulate(
-//     (uint8_t(*)[2400])key_pair.sk, &ciphertext, sharedSecret2);
-
-//   uint8_t* implicitRejectionSharedSecret =
-//     compute_implicit_rejection_shared_secret(
-//       ciphertext,
-//       LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768,
-//       secretKey,
-//       LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768);
-//   EXPECT_EQ(0,
-//             memcmp(implicitRejectionSharedSecret,
-//                    sharedSecret2,
-//                    LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
-//   delete[] implicitRejectionSharedSecret;
-// }
+  uint8_t* implicitRejectionSharedSecret =
+    compute_implicit_rejection_shared_secret(
+      ctxt.fst.value,
+      LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768,
+      key_pair.sk.value,
+      LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE_768);
+  EXPECT_EQ(0,
+            memcmp(implicitRejectionSharedSecret,
+                   sharedSecret2,
+                   LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
+  delete[] implicitRejectionSharedSecret;
+}
 
 TEST(Kyber768Test, NISTKnownAnswerTest)
 {
@@ -276,6 +258,5 @@ TEST(Kyber768Test, NISTKnownAnswerTest)
               memcmp(ctxt.snd,
                      sharedSecret2,
                      LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE));
-    break;
   }
 }
