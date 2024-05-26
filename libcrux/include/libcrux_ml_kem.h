@@ -80,35 +80,33 @@ extern "C"
     libcrux_sha3_portable_KeccakState1* x0,
     Eurydice_slice x1);
 
-  // typedef libcrux_sha3_avx2_x4_incremental_KeccakState4
-  //   libcrux_ml_kem_hash_functions_avx2_Simd256Hash;
+//   typedef libcrux_sha3_avx2_x4_incremental_KeccakState4
+//     libcrux_ml_kem_hash_functions_avx2_Simd256Hash;
 
-  // typedef struct libcrux_ml_kem_hash_functions_neon_Simd128Hash_s
-  // {
-  //   libcrux_sha3_neon_x2_incremental_KeccakState2 shake128_state[2U];
-  // } libcrux_ml_kem_hash_functions_neon_Simd128Hash;
+//   typedef struct libcrux_ml_kem_hash_functions_neon_Simd128Hash_s
+//   {
+//     libcrux_sha3_neon_x2_incremental_KeccakState2 shake128_state[2U];
+//   } libcrux_ml_kem_hash_functions_neon_Simd128Hash;
 
-  //   extern void libcrux_sha3_neon_sha512(Eurydice_slice x0, Eurydice_slice
-  //   x1);
+//   extern void libcrux_sha3_neon_sha512(Eurydice_slice x0, Eurydice_slice x1);
 
-  //   extern void libcrux_sha3_neon_sha256(Eurydice_slice x0, Eurydice_slice
-  //   x1);
+//   extern void libcrux_sha3_neon_sha256(Eurydice_slice x0, Eurydice_slice x1);
 
-  // #define libcrux_sha3_neon_shake256(x_0, x_1, x_2, _ret_t)                      \
+// #define libcrux_sha3_neon_shake256(x_0, x_1, x_2, _ret_t)                      \
 //   libcrux_sha3_neon_shake256_(x_0, x_1, x_2)
 
-  //   extern void libcrux_sha3_neon_shake256_(size_t x0,
-  //                                           uint8_t* x1,
-  //                                           Eurydice_slice x2);
+//   extern void libcrux_sha3_neon_shake256_(size_t x0,
+//                                           uint8_t* x1,
+//                                           Eurydice_slice x2);
 
-  // #define libcrux_sha3_neon_x2_incremental_shake128_absorb_finalxN(              \
+// #define libcrux_sha3_neon_x2_incremental_shake128_absorb_finalxN(              \
 //   x_0, x_1, x_2, _ret_t)                                                       \
 //   libcrux_sha3_neon_x2_incremental_shake128_absorb_finalxN_(x_0, x_1, x_2)
 
-  //   extern void libcrux_sha3_neon_x2_incremental_shake128_absorb_finalxN_(
-  //     size_t x0,
-  //     uint8_t (*x1)[34U],
-  //     libcrux_sha3_neon_x2_incremental_KeccakState2 x2[2U]);
+//   extern void libcrux_sha3_neon_x2_incremental_shake128_absorb_finalxN_(
+//     size_t x0,
+//     uint8_t (*x1)[34U],
+//     libcrux_sha3_neon_x2_incremental_KeccakState2 x2[2U]);
 
 #define LIBCRUX_ML_KEM_IND_CCA_KEY_GENERATION_SEED_SIZE                        \
   (LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE +                 \
@@ -119,230 +117,216 @@ extern "C"
 
   extern bool libcrux_platform_platform_simd256_support(void);
 
-#define LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT ((size_t)16U)
+#define LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR ((size_t)16U)
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_MODULUS        \
-  ((int16_t)3329)
+#define LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT                      \
+  (LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT /                     \
+   LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR)
 
-  typedef struct libcrux_ml_kem_libcrux_polynomials_PortableVector_s
+#define LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS ((int16_t)3329)
+
+  typedef struct libcrux_ml_kem_vector_PortableVector_s
   {
     int16_t elements[16U];
-  } libcrux_ml_kem_libcrux_polynomials_PortableVector;
+  } libcrux_ml_kem_vector_PortableVector;
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___core__clone__Clone_for_libcrux_ml_kem__libcrux_polynomials__PortableVector__1__clone(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* self);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___core__clone__Clone_for_libcrux_ml_kem__vector__PortableVector__1__clone(
+    libcrux_ml_kem_vector_PortableVector* self);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_zero(void);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_zero(void);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___ZERO(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___ZERO(
     void);
 
-  void libcrux_ml_kem_libcrux_polynomials_to_i16_array(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_to_i16_array(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t ret[16U]);
 
   void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___to_i16_array(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___to_i16_array(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t ret[16U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_from_i16_array(Eurydice_slice array);
-
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___from_i16_array(
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_from_i16_array(
     Eurydice_slice array);
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_FIELD_ELEMENTS_IN_VECTOR \
-  ((size_t)16U)
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___from_i16_array(
+    Eurydice_slice array);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_add(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_add(
+    libcrux_ml_kem_vector_PortableVector lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___add(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___add(
+    libcrux_ml_kem_vector_PortableVector lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_sub(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_sub(
+    libcrux_ml_kem_vector_PortableVector lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___sub(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___sub(
+    libcrux_ml_kem_vector_PortableVector lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_multiply_by_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_multiply_by_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t c);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___multiply_by_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___multiply_by_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t c);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_bitwise_and_with_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_bitwise_and_with_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t c);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___bitwise_and_with_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___bitwise_and_with_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t c);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_cond_subtract_3329(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_cond_subtract_3329(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___cond_subtract_3329(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___cond_subtract_3329(
+    libcrux_ml_kem_vector_PortableVector v);
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_BARRETT_MULTIPLIER ((int32_t)20159)
+#define LIBCRUX_ML_KEM_VECTOR_BARRETT_MULTIPLIER ((int32_t)20159)
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_BARRETT_SHIFT ((int32_t)26)
+#define LIBCRUX_ML_KEM_VECTOR_BARRETT_SHIFT ((int32_t)26)
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_BARRETT_R                           \
-  ((int32_t)1 << (uint32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_BARRETT_SHIFT)
+#define LIBCRUX_ML_KEM_VECTOR_BARRETT_R                                        \
+  ((int32_t)1 << (uint32_t)LIBCRUX_ML_KEM_VECTOR_BARRETT_SHIFT)
 
-  int16_t libcrux_ml_kem_libcrux_polynomials_barrett_reduce_element(
-    int16_t value);
+  int16_t libcrux_ml_kem_vector_barrett_reduce_element(int16_t value);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_barrett_reduce(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_barrett_reduce(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___barrett_reduce(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___barrett_reduce(
+    libcrux_ml_kem_vector_PortableVector v);
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_MONTGOMERY_SHIFT (16U)
+#define LIBCRUX_ML_KEM_VECTOR_MONTGOMERY_SHIFT (16U)
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_MONTGOMERY_R                        \
-  ((int32_t)1 << (uint32_t)LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_MONTGOMERY_SHIFT)
+#define LIBCRUX_ML_KEM_VECTOR_MONTGOMERY_R                                     \
+  ((int32_t)1 << (uint32_t)LIBCRUX_ML_KEM_VECTOR_MONTGOMERY_SHIFT)
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R \
+#define LIBCRUX_ML_KEM_VECTOR_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R       \
   (62209U)
 
-  int16_t libcrux_ml_kem_libcrux_polynomials_montgomery_reduce_element(
-    int32_t value);
+  int16_t libcrux_ml_kem_vector_montgomery_reduce_element(int32_t value);
 
-  int16_t libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_fe_by_fer(
-    int16_t fe,
-    int16_t fer);
+  int16_t libcrux_ml_kem_vector_montgomery_multiply_fe_by_fer(int16_t fe,
+                                                              int16_t fer);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_montgomery_multiply_by_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_montgomery_multiply_by_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t c);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___montgomery_multiply_by_constant(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___montgomery_multiply_by_constant(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t r);
 
-  uint8_t libcrux_ml_kem_libcrux_polynomials_compress_message_coefficient(
-    uint16_t fe);
+  uint8_t libcrux_ml_kem_vector_compress_message_coefficient(uint16_t fe);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_compress_1(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_compress_1(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___compress_1(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___compress_1(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  uint32_t libcrux_ml_kem_libcrux_polynomials_get_n_least_significant_bits(
-    uint8_t n,
-    uint32_t value);
+  uint32_t libcrux_ml_kem_vector_get_n_least_significant_bits(uint8_t n,
+                                                              uint32_t value);
 
-  int16_t libcrux_ml_kem_libcrux_polynomials_compress_ciphertext_coefficient(
+  int16_t libcrux_ml_kem_vector_compress_ciphertext_coefficient(
     uint8_t coefficient_bits,
     uint16_t fe);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_ntt_layer_1_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_ntt_layer_1_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___ntt_layer_1_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___ntt_layer_1_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_ntt_layer_2_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_ntt_layer_2_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta0,
     int16_t zeta1);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___ntt_layer_2_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___ntt_layer_2_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta0,
     int16_t zeta1);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_ntt_layer_3_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_ntt_layer_3_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___ntt_layer_3_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___ntt_layer_3_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_inv_ntt_layer_1_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_inv_ntt_layer_1_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___inv_ntt_layer_1_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___inv_ntt_layer_1_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_inv_ntt_layer_2_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_inv_ntt_layer_2_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta0,
     int16_t zeta1);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___inv_ntt_layer_2_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___inv_ntt_layer_2_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta0,
     int16_t zeta1);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_inv_ntt_layer_3_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_inv_ntt_layer_3_step(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t zeta);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___inv_ntt_layer_3_step(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___inv_ntt_layer_3_step(
+    libcrux_ml_kem_vector_PortableVector a,
     int16_t zeta);
 
   typedef struct K___int16_t_int16_t_s
@@ -351,130 +335,126 @@ extern "C"
     int16_t snd;
   } K___int16_t_int16_t;
 
-  K___int16_t_int16_t libcrux_ml_kem_libcrux_polynomials_ntt_multiply_binomials(
+  K___int16_t_int16_t libcrux_ml_kem_vector_ntt_multiply_binomials(
     K___int16_t_int16_t _,
     K___int16_t_int16_t _0,
     int16_t zeta);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_ntt_multiply(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs,
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_ntt_multiply(
+    libcrux_ml_kem_vector_PortableVector* lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___ntt_multiply(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* lhs,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector* rhs,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___ntt_multiply(
+    libcrux_ml_kem_vector_PortableVector* lhs,
+    libcrux_ml_kem_vector_PortableVector* rhs,
     int16_t zeta0,
     int16_t zeta1,
     int16_t zeta2,
     int16_t zeta3);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_1(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_serialize_1(libcrux_ml_kem_vector_PortableVector v,
+                                         uint8_t ret[2U]);
+
+  void
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_1(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[2U]);
 
-  void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_1(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
-    uint8_t ret[2U]);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_1(
+    Eurydice_slice v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_1(Eurydice_slice v);
-
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_1(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_1(
     Eurydice_slice a);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_4(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_serialize_4(libcrux_ml_kem_vector_PortableVector v,
+                                         uint8_t ret[8U]);
+
+  void
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_4(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[8U]);
 
-  void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_4(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
-    uint8_t ret[8U]);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_4(
+    Eurydice_slice bytes);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_4(Eurydice_slice bytes);
-
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_4(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_4(
     Eurydice_slice a);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_5(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
-    uint8_t ret[10U]);
+  void libcrux_ml_kem_vector_serialize_5(libcrux_ml_kem_vector_PortableVector v,
+                                         uint8_t ret[10U]);
 
   void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_5(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_5(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[10U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_5(Eurydice_slice bytes);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_5(
+    Eurydice_slice bytes);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_5(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_5(
     Eurydice_slice a);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_10(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_serialize_10(
+    libcrux_ml_kem_vector_PortableVector v,
     uint8_t ret[20U]);
 
   void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_10(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_10(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[20U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_10(Eurydice_slice bytes);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_10(
+    Eurydice_slice bytes);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_10(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_10(
     Eurydice_slice a);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_11(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_serialize_11(
+    libcrux_ml_kem_vector_PortableVector v,
     uint8_t ret[22U]);
 
   void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_11(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_11(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[22U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_11(Eurydice_slice bytes);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_11(
+    Eurydice_slice bytes);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_11(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_11(
     Eurydice_slice a);
 
-  void libcrux_ml_kem_libcrux_polynomials_serialize_12(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  void libcrux_ml_kem_vector_serialize_12(
+    libcrux_ml_kem_vector_PortableVector v,
     uint8_t ret[24U]);
 
   void
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___serialize_12(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___serialize_12(
+    libcrux_ml_kem_vector_PortableVector a,
     uint8_t ret[24U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_deserialize_12(Eurydice_slice bytes);
+  libcrux_ml_kem_vector_PortableVector libcrux_ml_kem_vector_deserialize_12(
+    Eurydice_slice bytes);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___deserialize_12(
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___deserialize_12(
     Eurydice_slice a);
 
-  size_t libcrux_ml_kem_libcrux_polynomials_rej_sample(Eurydice_slice a,
-                                                       Eurydice_slice result);
+  size_t libcrux_ml_kem_vector_rej_sample(Eurydice_slice a,
+                                          Eurydice_slice result);
 
   size_t
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___rej_sample(
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___rej_sample(
     Eurydice_slice a,
     Eurydice_slice out);
 
@@ -482,7 +462,7 @@ extern "C"
 
   extern const int16_t libcrux_ml_kem_polynomial_ZETAS_TIMES_MONTGOMERY_R[128U];
 
-#define LIBCRUX_ML_KEM_LIBCRUX_POLYNOMIALS_LIBCRUX_TRAITS_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS \
+#define LIBCRUX_ML_KEM_VECTOR_TRAITS_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS    \
   ((int16_t)1353)
 
 #define LIBCRUX_ML_KEM_MLKEM1024_RANK_1024 ((size_t)4U)
@@ -545,62 +525,62 @@ extern "C"
    LIBCRUX_ML_KEM_MLKEM1024_CPA_PKE_CIPHERTEXT_SIZE_1024)
 
   typedef struct
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_s
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_s
   {
-    libcrux_ml_kem_libcrux_polynomials_PortableVector coefficients[16U];
-  } libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector;
+    libcrux_ml_kem_vector_PortableVector coefficients[16U];
+  } libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector;
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___ZERO__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___ZERO__libcrux_ml_kem_vector_PortableVector(
     void);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_1568size_t_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_1568size_t_4size_t(
     size_t _i);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_to_reduced_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_to_reduced_ring_element__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_1568size_t_4size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_1568size_t_4size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_shift_right___15int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_shift_right___15int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___shift_right___15int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___shift_right___15int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_libcrux_traits_to_unsigned_representative__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_traits_to_unsigned_representative__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector a);
 
   void
-  libcrux_ml_kem_serialize_serialize_uncompressed_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_serialize_uncompressed_ring_element__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[384U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1536size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_vector_PortableVector_4size_t_1536size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       key[4U],
     uint8_t ret[1536U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1536size_t_1568size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_vector_PortableVector_4size_t_1536size_t_1568size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       t_as_ntt[4U],
     Eurydice_slice seed_for_a,
     uint8_t ret[1568U]);
 
   bool
-  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1536size_t_1568size_t(
+  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_vector_PortableVector_4size_t_1536size_t_1568size_t(
     uint8_t* public_key);
 
   bool
@@ -628,14 +608,14 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[64U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
     size_t _j);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
     size_t _i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
   typedef struct
@@ -654,7 +634,7 @@ extern "C"
     uint8_t ret[4U][504U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_504size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_4size_t_504size_t(
     uint8_t randomness[4U][504U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
@@ -665,30 +645,30 @@ extern "C"
     uint8_t ret[4U][168U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_168size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_4size_t_168size_t(
     uint8_t randomness[4U][168U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___from_i16_array__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___from_i16_array__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice a);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
     int16_t s[272U]);
 
   void
-  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
+  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
     uint8_t seeds[4U][34U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t(
     uint8_t seed[34U],
     bool transpose,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U][4U]);
 
   void libcrux_ml_kem_ind_cpa_into_padded_array___34size_t(Eurydice_slice slice,
@@ -697,8 +677,8 @@ extern "C"
   void libcrux_ml_kem_ind_cpa_into_padded_array___33size_t(Eurydice_slice slice,
                                                            uint8_t ret[33U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_2size_t_128size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_2size_t_128size_t(
     size_t _i);
 
   void
@@ -706,133 +686,129 @@ extern "C"
       uint8_t (*input)[33U],
       uint8_t ret[4U][128U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_binomial_distribution_2__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_binomial_distribution_2__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice randomness);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_binomial_distribution_3__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_binomial_distribution_3__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice randomness);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_binomial_distribution__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_binomial_distribution__libcrux_ml_kem_vector_PortableVector_2size_t(
     Eurydice_slice randomness);
 
-  void
-  libcrux_ml_kem_ntt_ntt_at_layer_7__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  void libcrux_ml_kem_ntt_ntt_at_layer_7__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_libcrux_traits_montgomery_multiply_fe__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v,
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_traits_montgomery_multiply_fe__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector v,
     int16_t fer);
 
   typedef struct
-    K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector_s
+    K___libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_vector_PortableVector_s
   {
-    libcrux_ml_kem_libcrux_polynomials_PortableVector fst;
-    libcrux_ml_kem_libcrux_polynomials_PortableVector snd;
-  } K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector;
+    libcrux_ml_kem_vector_PortableVector fst;
+    libcrux_ml_kem_vector_PortableVector snd;
+  } K___libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_vector_PortableVector;
 
-  K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ntt_ntt_layer_int_vec_step__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector b,
+  K___libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ntt_ntt_layer_int_vec_step__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector a,
+    libcrux_ml_kem_vector_PortableVector b,
     int16_t zeta_r);
 
   void
-  libcrux_ml_kem_ntt_ntt_at_layer_4_plus__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_ntt_ntt_at_layer_4_plus__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t layer,
     size_t _initial_coefficient_bound);
 
-  void
-  libcrux_ml_kem_ntt_ntt_at_layer_3__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  void libcrux_ml_kem_ntt_ntt_at_layer_3__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
+      re,
+    size_t _layer,
+    size_t _initial_coefficient_bound);
+
+  void libcrux_ml_kem_ntt_ntt_at_layer_2__libcrux_ml_kem_vector_PortableVector(
+    size_t* zeta_i,
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
+      re,
+    size_t _layer,
+    size_t _initial_coefficient_bound);
+
+  void libcrux_ml_kem_ntt_ntt_at_layer_1__libcrux_ml_kem_vector_PortableVector(
+    size_t* zeta_i,
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t _layer,
     size_t _initial_coefficient_bound);
 
   void
-  libcrux_ml_kem_ntt_ntt_at_layer_2__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
-      re,
-    size_t _layer,
-    size_t _initial_coefficient_bound);
-
-  void
-  libcrux_ml_kem_ntt_ntt_at_layer_1__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
-      re,
-    size_t _layer,
-    size_t _initial_coefficient_bound);
-
-  void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___poly_barrett_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___poly_barrett_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self);
 
   void
-  libcrux_ml_kem_ntt_ntt_binomially_sampled_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_ntt_ntt_binomially_sampled_ring_element__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
   typedef struct
-    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t__uint8_t_s
+    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_4size_t__uint8_t_s
   {
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       fst[4U];
     uint8_t snd;
-  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t__uint8_t;
+  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_4size_t__uint8_t;
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_2size_t_128size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_4size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_2size_t_128size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_vector_PortableVector_4size_t(
     size_t _i);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___ntt_multiply__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___ntt_multiply__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       rhs);
 
   void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       rhs);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_libcrux_traits_to_standard_domain__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_traits_to_standard_domain__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector v);
 
   void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_standard_error_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_standard_error_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error);
 
-  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *matrix_A)[4U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       s_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
   typedef struct K___uint8_t_1536size_t__uint8_t_1568size_t__s
@@ -848,7 +824,7 @@ extern "C"
   } K___Eurydice_slice_uint8_t_Eurydice_slice_uint8_t;
 
   K___uint8_t_1536size_t__uint8_t_1568size_t_
-  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1536size_t_1568size_t_1536size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1536size_t_1568size_t_1536size_t_2size_t_128size_t(
     Eurydice_slice key_generation_seed);
 
   void
@@ -884,7 +860,7 @@ extern "C"
     libcrux_ml_kem_types_MlKemPublicKey____1568size_t pk);
 
   libcrux_ml_kem_types_MlKemKeyPair____3168size_t__1568size_t
-  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1536size_t_3168size_t_1568size_t_1536size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1536size_t_3168size_t_1568size_t_1536size_t_2size_t_128size_t(
     Eurydice_slice ind_cpa_keypair_randomness,
     Eurydice_slice implicit_rejection_value);
 
@@ -902,22 +878,22 @@ extern "C"
   libcrux_ml_kem_types__libcrux_ml_kem__types__MlKemPublicKey_SIZE__18__as_slice___1568size_t(
     libcrux_ml_kem_types_MlKemPublicKey____1568size_t* self);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_1536size_t_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_1536size_t_4size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_1536size_t_4size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_1536size_t_4size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_128size_t_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_128size_t_2size_t(
     size_t _i);
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_128size_t_2size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_4size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_128size_t_2size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
@@ -926,170 +902,170 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[128U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_vector_PortableVector_4size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_1__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_1__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t _layer);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_2__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_2__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t _layer);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_3__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_3__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t _layer);
 
-  K___libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_invert_ntt_inv_ntt_layer_int_vec_step_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector a,
-    libcrux_ml_kem_libcrux_polynomials_PortableVector b,
+  K___libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_invert_ntt_inv_ntt_layer_int_vec_step_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector a,
+    libcrux_ml_kem_vector_PortableVector b,
     int16_t zeta_r);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_4_plus__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_4_plus__libcrux_ml_kem_vector_PortableVector(
     size_t* zeta_i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     size_t layer);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
   void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_error_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_error_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error);
 
-  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *a_as_ntt)[4U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_1,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_libcrux_traits_decompress_1__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_traits_decompress_1__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_message__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_message__libcrux_ml_kem_vector_PortableVector(
     uint8_t serialized[32U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_message_error_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_message_error_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       message,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       result);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       t_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_2,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       message);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_compress___10int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_compress___10int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___compress___10int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___compress___10int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_10__libcrux_ml_kem_libcrux_polynomials_PortableVector_352size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_compress_then_serialize_10__libcrux_ml_kem_vector_PortableVector_352size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[352U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_compress___11int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_compress___11int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___compress___11int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
-
-  void
-  libcrux_ml_kem_serialize_compress_then_serialize_11__libcrux_ml_kem_libcrux_polynomials_PortableVector_352size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
-      re,
-    uint8_t ret[352U]);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___compress___11int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_11size_t_352size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_compress_then_serialize_11__libcrux_ml_kem_vector_PortableVector_352size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[352U]);
 
   void
-  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1408size_t_11size_t_352size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u__libcrux_ml_kem_vector_PortableVector_11size_t_352size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
+      re,
+    uint8_t ret[352U]);
+
+  void
+  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_vector_PortableVector_4size_t_1408size_t_11size_t_352size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       input[4U],
     Eurydice_slice out);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_compress___4int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_compress___4int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___compress___4int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___compress___4int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_4__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_4__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       re,
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_compress___5int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_compress___5int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___compress___5int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___compress___5int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_5__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_5__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       re,
     Eurydice_slice serialized);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_5size_t_160size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_v__libcrux_ml_kem_vector_PortableVector_5size_t_160size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       re,
     Eurydice_slice out);
 
   void
-  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t(
     Eurydice_slice public_key,
     uint8_t message[32U],
     Eurydice_slice randomness,
@@ -1108,7 +1084,7 @@ extern "C"
   } K___libcrux_ml_kem_types_MlKemCiphertext___1568size_t___uint8_t_32size_t_;
 
   K___libcrux_ml_kem_types_MlKemCiphertext___1568size_t___uint8_t_32size_t_
-  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1568size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_1568size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t(
     libcrux_ml_kem_types_MlKemPublicKey____1568size_t* public_key,
     uint8_t randomness[32U]);
 
@@ -1127,115 +1103,115 @@ extern "C"
     libcrux_ml_kem_types_MlKemPrivateKey____3168size_t* self,
     size_t mid);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1568size_t_11size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_vector_PortableVector_4size_t_1568size_t_11size_t(
     size_t _);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___10int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_decompress_ciphertext_coefficient___10int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___decompress_ciphertext_coefficient___10int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___decompress_ciphertext_coefficient___10int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_10__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_10__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___11int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_decompress_ciphertext_coefficient___11int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___decompress_ciphertext_coefficient___11int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___decompress_ciphertext_coefficient___11int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_11__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_11__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_11size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u__libcrux_ml_kem_vector_PortableVector_11size_t(
     Eurydice_slice serialized);
 
   void
-  libcrux_ml_kem_ntt_ntt_vector_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_11size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_ntt_ntt_vector_u__libcrux_ml_kem_vector_PortableVector_11size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1568size_t_11size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_vector_PortableVector_4size_t_1568size_t_11size_t(
     uint8_t* ciphertext,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___4int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_decompress_ciphertext_coefficient___4int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___decompress_ciphertext_coefficient___4int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___decompress_ciphertext_coefficient___4int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_4__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_4__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials_decompress_ciphertext_coefficient___5int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector_decompress_ciphertext_coefficient___5int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_libcrux_polynomials___libcrux_ml_kem__libcrux_polynomials__libcrux_traits__Operations_for_libcrux_ml_kem__libcrux_polynomials__PortableVector___decompress_ciphertext_coefficient___5int32_t(
-    libcrux_ml_kem_libcrux_polynomials_PortableVector v);
+  libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_vector___libcrux_ml_kem__vector__traits__Operations_for_libcrux_ml_kem__vector__PortableVector___decompress_ciphertext_coefficient___5int32_t(
+    libcrux_ml_kem_vector_PortableVector v);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_5__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_5__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_5size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v__libcrux_ml_kem_vector_PortableVector_5size_t(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_vector_PortableVector_4size_t(
     size_t _);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element__libcrux_ml_kem_vector_PortableVector(
     Eurydice_slice serialized);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_vector_PortableVector_4size_t(
     Eurydice_slice secret_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[4U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___subtract_reduce__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___subtract_reduce__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       b);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_vector_PortableVector_4size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       v,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       secret_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       u_as_ntt);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_message__libcrux_ml_kem_libcrux_polynomials_PortableVector(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_message__libcrux_ml_kem_vector_PortableVector(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       re,
     uint8_t ret[32U]);
 
   void
-  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_1568size_t_1408size_t_11size_t_5size_t(
+  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_vector_PortableVector_4size_t_1568size_t_1408size_t_11size_t_5size_t(
     Eurydice_slice secret_key,
     uint8_t* ciphertext,
     uint8_t ret[32U]);
@@ -1259,7 +1235,7 @@ extern "C"
     Eurydice_slice rhs);
 
   void
-  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_3168size_t_1536size_t_1568size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t_1600size_t(
+  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___4size_t___4size_t_3168size_t_1536size_t_1568size_t_1568size_t_1536size_t_1408size_t_160size_t_11size_t_5size_t_352size_t_2size_t_128size_t_2size_t_128size_t_1600size_t(
     libcrux_ml_kem_types_MlKemPrivateKey____3168size_t* private_key,
     libcrux_ml_kem_types_MlKemCiphertext____1568size_t* ciphertext,
     uint8_t ret[32U]);
@@ -1332,31 +1308,31 @@ extern "C"
   (LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE +                               \
    LIBCRUX_ML_KEM_MLKEM512_CPA_PKE_CIPHERTEXT_SIZE_512)
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_800size_t_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_800size_t_2size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_800size_t_2size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_800size_t_2size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       key[2U],
     uint8_t ret[768U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t_800size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t_800size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       t_as_ntt[2U],
     Eurydice_slice seed_for_a,
     uint8_t ret[800U]);
 
   bool
-  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t_800size_t(
+  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t_800size_t(
     uint8_t* public_key);
 
   bool libcrux_ml_kem_ind_cca_validate_public_key___2size_t_768size_t_800size_t(
@@ -1383,14 +1359,14 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[64U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
     size_t _j);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
     size_t _i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
   typedef struct
@@ -1409,7 +1385,7 @@ extern "C"
     uint8_t ret[2U][504U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_504size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_2size_t_504size_t(
     uint8_t randomness[2U][504U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
@@ -1420,30 +1396,30 @@ extern "C"
     uint8_t ret[2U][168U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_168size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_2size_t_168size_t(
     uint8_t randomness[2U][168U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
     int16_t s[272U]);
 
   void
-  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
+  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
     uint8_t seeds[2U][34U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t(
     uint8_t seed[34U],
     bool transpose,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U][2U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_3size_t_192size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_3size_t_192size_t(
     size_t _i);
 
   void
@@ -1451,42 +1427,42 @@ extern "C"
       uint8_t (*input)[33U],
       uint8_t ret[2U][192U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_binomial_distribution__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_binomial_distribution__libcrux_ml_kem_vector_PortableVector_3size_t(
     Eurydice_slice randomness);
 
   typedef struct
-    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t__uint8_t_s
+    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_2size_t__uint8_t_s
   {
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       fst[2U];
     uint8_t snd;
-  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t__uint8_t;
+  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_2size_t__uint8_t;
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_3size_t_192size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_2size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_3size_t_192size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_vector_PortableVector_2size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       rhs);
 
-  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *matrix_A)[2U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       s_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
   typedef struct K___uint8_t_768size_t__uint8_t_800size_t__s
@@ -1496,7 +1472,7 @@ extern "C"
   } K___uint8_t_768size_t__uint8_t_800size_t_;
 
   K___uint8_t_768size_t__uint8_t_800size_t_
-  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_800size_t_768size_t_3size_t_192size_t(
+  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_800size_t_768size_t_3size_t_192size_t(
     Eurydice_slice key_generation_seed);
 
   void
@@ -1532,7 +1508,7 @@ extern "C"
     libcrux_ml_kem_types_MlKemPublicKey____800size_t pk);
 
   libcrux_ml_kem_types_MlKemKeyPair____1632size_t__800size_t
-  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_1632size_t_800size_t_768size_t_3size_t_192size_t(
+  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_1632size_t_800size_t_768size_t_3size_t_192size_t(
     Eurydice_slice ind_cpa_keypair_randomness,
     Eurydice_slice implicit_rejection_value);
 
@@ -1547,18 +1523,18 @@ extern "C"
   libcrux_ml_kem_types__libcrux_ml_kem__types__MlKemPublicKey_SIZE__18__as_slice___800size_t(
     libcrux_ml_kem_types_MlKemPublicKey____800size_t* self);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_768size_t_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_768size_t_2size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_768size_t_2size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_768size_t_2size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_128size_t_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_128size_t_2size_t(
     size_t _i);
 
   void
@@ -1566,8 +1542,8 @@ extern "C"
       uint8_t (*input)[33U],
       uint8_t ret[2U][128U]);
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_128size_t_2size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_2size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_128size_t_2size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
@@ -1576,68 +1552,68 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[128U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_vector_PortableVector_2size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
-  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *a_as_ntt)[2U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_1,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       t_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_2,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       message);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_10__libcrux_ml_kem_libcrux_polynomials_PortableVector_320size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_compress_then_serialize_10__libcrux_ml_kem_vector_PortableVector_320size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[320U]);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_11__libcrux_ml_kem_libcrux_polynomials_PortableVector_320size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_compress_then_serialize_11__libcrux_ml_kem_vector_PortableVector_320size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[320U]);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_10size_t_320size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u__libcrux_ml_kem_vector_PortableVector_10size_t_320size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re,
     uint8_t ret[320U]);
 
   void
-  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_640size_t_10size_t_320size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_vector_PortableVector_2size_t_640size_t_10size_t_320size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       input[2U],
     Eurydice_slice out);
 
   void
-  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t_128size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_serialize_compress_then_serialize_ring_element_v__libcrux_ml_kem_vector_PortableVector_4size_t_128size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       re,
     Eurydice_slice out);
 
   void
-  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t(
     Eurydice_slice public_key,
     uint8_t message[32U],
     Eurydice_slice randomness,
@@ -1656,7 +1632,7 @@ extern "C"
   } K___libcrux_ml_kem_types_MlKemCiphertext___768size_t___uint8_t_32size_t_;
 
   K___libcrux_ml_kem_types_MlKemCiphertext___768size_t___uint8_t_32size_t_
-  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_800size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_768size_t_800size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t(
     libcrux_ml_kem_types_MlKemPublicKey____800size_t* public_key,
     uint8_t randomness[32U]);
 
@@ -1675,50 +1651,50 @@ extern "C"
     libcrux_ml_kem_types_MlKemPrivateKey____1632size_t* self,
     size_t mid);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t_10size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t_10size_t(
     size_t _);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_10size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u__libcrux_ml_kem_vector_PortableVector_10size_t(
     Eurydice_slice serialized);
 
   void
-  libcrux_ml_kem_ntt_ntt_vector_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_10size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_ntt_ntt_vector_u__libcrux_ml_kem_vector_PortableVector_10size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t_10size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t_10size_t(
     uint8_t* ciphertext,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_4size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v__libcrux_ml_kem_vector_PortableVector_4size_t(
     Eurydice_slice serialized);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_vector_PortableVector_2size_t(
     size_t _);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_vector_PortableVector_2size_t(
     Eurydice_slice secret_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[2U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_vector_PortableVector_2size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       v,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       secret_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       u_as_ntt);
 
   void
-  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_2size_t_768size_t_640size_t_10size_t_4size_t(
+  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_vector_PortableVector_2size_t_768size_t_640size_t_10size_t_4size_t(
     Eurydice_slice secret_key,
     uint8_t* ciphertext,
     uint8_t ret[32U]);
@@ -1742,7 +1718,7 @@ extern "C"
     Eurydice_slice rhs);
 
   void
-  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_1632size_t_768size_t_800size_t_768size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t_800size_t(
+  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___2size_t___2size_t_1632size_t_768size_t_800size_t_768size_t_768size_t_640size_t_128size_t_10size_t_4size_t_320size_t_3size_t_192size_t_2size_t_128size_t_800size_t(
     libcrux_ml_kem_types_MlKemPrivateKey____1632size_t* private_key,
     libcrux_ml_kem_types_MlKemCiphertext____768size_t* ciphertext,
     uint8_t ret[32U]);
@@ -1815,31 +1791,31 @@ extern "C"
   (LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE +                               \
    LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE_768)
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_1184size_t_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_1184size_t_3size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_1184size_t_3size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_1184size_t_3size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1152size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_secret_key__libcrux_ml_kem_vector_PortableVector_3size_t_1152size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       key[3U],
     uint8_t ret[1152U]);
 
   void
-  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1152size_t_1184size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_serialize_public_key__libcrux_ml_kem_vector_PortableVector_3size_t_1152size_t_1184size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       t_as_ntt[3U],
     Eurydice_slice seed_for_a,
     uint8_t ret[1184U]);
 
   bool
-  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1152size_t_1184size_t(
+  libcrux_ml_kem_ind_cca_validate_public_key_generic__libcrux_ml_kem_vector_PortableVector_3size_t_1152size_t_1184size_t(
     uint8_t* public_key);
 
   bool
@@ -1867,14 +1843,14 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[64U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_sample_matrix_A_closure_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     size_t _j);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     size_t _i,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
   typedef struct
@@ -1893,7 +1869,7 @@ extern "C"
     uint8_t ret[3U][504U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_504size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_3size_t_504size_t(
     uint8_t randomness[3U][504U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
@@ -1904,30 +1880,30 @@ extern "C"
     uint8_t ret[3U][168U]);
 
   bool
-  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_168size_t(
+  libcrux_ml_kem_sampling_sample_from_uniform_distribution_next__libcrux_ml_kem_vector_PortableVector_3size_t_168size_t(
     uint8_t randomness[3U][168U],
     size_t* sampled_coefficients,
     int16_t (*out)[272U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_sampling_sample_from_xof_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     int16_t s[272U]);
 
   void
-  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
+  libcrux_ml_kem_sampling_sample_from_xof__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     uint8_t seeds[3U][34U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
   void
-  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
+  libcrux_ml_kem_matrix_sample_matrix_A__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t(
     uint8_t seed[34U],
     bool transpose,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U][3U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
     size_t _i);
 
   void
@@ -1936,37 +1912,37 @@ extern "C"
       uint8_t ret[3U][128U]);
 
   typedef struct
-    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t__uint8_t_s
+    K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_3size_t__uint8_t_s
   {
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       fst[3U];
     uint8_t snd;
-  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t__uint8_t;
+  } K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_3size_t__uint8_t;
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_3size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2size_t_128size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_As_plus_e_closure__libcrux_ml_kem_vector_PortableVector_3size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial__libcrux_ml_kem__polynomial__PolynomialRingElement_Vector__TraitClause_0___add_to_ring_element__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       self,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       rhs);
 
-  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_As_plus_e__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *matrix_A)[3U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       s_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
   typedef struct K___uint8_t_1152size_t__uint8_t_1184size_t__s
@@ -1976,7 +1952,7 @@ extern "C"
   } K___uint8_t_1152size_t__uint8_t_1184size_t_;
 
   K___uint8_t_1152size_t__uint8_t_1184size_t_
-  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1152size_t_1184size_t_1152size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cpa_generate_keypair__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1152size_t_1184size_t_1152size_t_2size_t_128size_t(
     Eurydice_slice key_generation_seed);
 
   void
@@ -2012,7 +1988,7 @@ extern "C"
     libcrux_ml_kem_types_MlKemPublicKey____1184size_t pk);
 
   libcrux_ml_kem_types_MlKemKeyPair____2400size_t__1184size_t
-  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cca_generate_keypair_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1152size_t_2400size_t_1184size_t_1152size_t_2size_t_128size_t(
     Eurydice_slice ind_cpa_keypair_randomness,
     Eurydice_slice implicit_rejection_value);
 
@@ -2027,22 +2003,22 @@ extern "C"
   libcrux_ml_kem_types__libcrux_ml_kem__types__MlKemPublicKey_SIZE__18__as_slice___1184size_t(
     libcrux_ml_kem_types_MlKemPublicKey____1184size_t* self);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_1152size_t_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_closure__libcrux_ml_kem_vector_PortableVector_1152size_t_3size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_libcrux_polynomials_PortableVector_1152size_t_3size_t(
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced__libcrux_ml_kem_vector_PortableVector_1152size_t_3size_t(
     Eurydice_slice public_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_128size_t_2size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_closure__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_128size_t_2size_t(
     size_t _i);
 
-  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t__uint8_t
-  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_128size_t_2size_t(
+  K___libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector_3size_t__uint8_t
+  libcrux_ml_kem_ind_cpa_sample_ring_element_cbd__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_128size_t_2size_t(
     uint8_t prf_input[33U],
     uint8_t domain_separator);
 
@@ -2051,44 +2027,44 @@ extern "C"
     Eurydice_slice input,
     uint8_t ret[128U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_vector_u_closure__libcrux_ml_kem_vector_PortableVector_3size_t(
     size_t _i);
 
   void
-  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_invert_ntt_invert_ntt_montgomery__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       re);
 
-  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector (
+  void libcrux_ml_kem_matrix_compute_vector_u__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector (
       *a_as_ntt)[3U],
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_1,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_ring_element_v__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       t_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       r_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       error_2,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       message);
 
   void
-  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_960size_t_10size_t_320size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+  libcrux_ml_kem_ind_cpa_compress_then_serialize_u__libcrux_ml_kem_vector_PortableVector_3size_t_960size_t_10size_t_320size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       input[3U],
     Eurydice_slice out);
 
   void
-  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cpa_encrypt__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t(
     Eurydice_slice public_key,
     uint8_t message[32U],
     Eurydice_slice randomness,
@@ -2107,7 +2083,7 @@ extern "C"
   } K___libcrux_ml_kem_types_MlKemCiphertext___1088size_t___uint8_t_32size_t_;
 
   K___libcrux_ml_kem_types_MlKemCiphertext___1088size_t___uint8_t_32size_t_
-  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1088size_t_1184size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t(
+  libcrux_ml_kem_ind_cca_encapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_1088size_t_1184size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t(
     libcrux_ml_kem_types_MlKemPublicKey____1184size_t* public_key,
     uint8_t randomness[32U]);
 
@@ -2126,37 +2102,37 @@ extern "C"
     libcrux_ml_kem_types_MlKemPrivateKey____2400size_t* self,
     size_t mid);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1088size_t_10size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_closure__libcrux_ml_kem_vector_PortableVector_3size_t_1088size_t_10size_t(
     size_t _);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1088size_t_10size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u__libcrux_ml_kem_vector_PortableVector_3size_t_1088size_t_10size_t(
     uint8_t* ciphertext,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key_closure__libcrux_ml_kem_vector_PortableVector_3size_t(
     size_t _);
 
   void
-  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
+  libcrux_ml_kem_ind_cpa_deserialize_secret_key__libcrux_ml_kem_vector_PortableVector_3size_t(
     Eurydice_slice secret_key,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
       ret[3U]);
 
-  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector
-  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t(
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+  libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector
+  libcrux_ml_kem_matrix_compute_message__libcrux_ml_kem_vector_PortableVector_3size_t(
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       v,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       secret_as_ntt,
-    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_libcrux_polynomials_PortableVector*
+    libcrux_ml_kem_polynomial_PolynomialRingElement__libcrux_ml_kem_vector_PortableVector*
       u_as_ntt);
 
   void
-  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_libcrux_polynomials_PortableVector_3size_t_1088size_t_960size_t_10size_t_4size_t(
+  libcrux_ml_kem_ind_cpa_decrypt__libcrux_ml_kem_vector_PortableVector_3size_t_1088size_t_960size_t_10size_t_4size_t(
     Eurydice_slice secret_key,
     uint8_t* ciphertext,
     uint8_t ret[32U]);
@@ -2180,7 +2156,7 @@ extern "C"
     Eurydice_slice rhs);
 
   void
-  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_libcrux_polynomials_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t_1120size_t(
+  libcrux_ml_kem_ind_cca_decapsulate_generic__libcrux_ml_kem_vector_PortableVector_libcrux_ml_kem_hash_functions_portable_PortableHash___3size_t___3size_t_2400size_t_1152size_t_1184size_t_1088size_t_1152size_t_960size_t_128size_t_10size_t_4size_t_320size_t_2size_t_128size_t_2size_t_128size_t_1120size_t(
     libcrux_ml_kem_types_MlKemPrivateKey____2400size_t* private_key,
     libcrux_ml_kem_types_MlKemCiphertext____1088size_t* ciphertext,
     uint8_t ret[32U]);
