@@ -14,11 +14,11 @@ kyber768_key_generation(benchmark::State& state)
 {
   uint8_t randomness[64];
   generate_random(randomness, 64);
-  auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);  
+  auto key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
 
-  for (auto _ : state) { 
-    key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);  
-   }
+  for (auto _ : state) {
+    key_pair = libcrux_ml_kem_mlkem768_generate_key_pair(randomness);
+  }
 }
 
 static void
