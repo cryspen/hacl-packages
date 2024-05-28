@@ -79,8 +79,19 @@ extern "C"
     Eurydice_slice snd[2U];
   } K___Eurydice_slice_uint8_t_2size_t__Eurydice_slice_uint8_t_2size_t_;
 
-  extern K___Eurydice_slice_uint8_t_2size_t__Eurydice_slice_uint8_t_2size_t_
-  libcrux_sha3_simd_arm64_split_at_mut_2(Eurydice_slice x0[2U], size_t x1);
+  static inline K___Eurydice_slice_uint8_t_2size_t__Eurydice_slice_uint8_t_2size_t_
+  libcrux_sha3_simd_arm64_split_at_mut_2(Eurydice_slice x0[2U], size_t x1) {
+    K___Eurydice_slice_uint8_t_2size_t__Eurydice_slice_uint8_t_2size_t_ ret;
+    ret.fst[0].ptr = x0[0].ptr;
+    ret.fst[0].len = x1;
+    ret.fst[1].ptr = x0[0].ptr;
+    ret.fst[1].len = x1;
+    ret.snd[0].ptr = x0[0].ptr+x1;
+    ret.snd[0].len = x0[0].len - x1;
+    ret.snd[1].ptr = x0[1].ptr+x1;
+    ret.snd[1].len = x0[1].len - x1;
+    return ret;
+  }
 
   core_core_arch_arm_shared_neon_uint64x2_t
   libcrux_sha3_simd_arm64___libcrux_sha3__traits__KeccakItem_2__usize__for_core__core_arch__arm_shared__neon__uint64x2_t___zero(

@@ -32,9 +32,13 @@ core_option_Option__size_t;
 
 typedef uint8_t core_result_Result_____core_fmt_Error_tags;
 
-static inline uint64_t core_num__u64_9__from_le_bytes(uint8_t x0[8U]);
+static inline uint64_t core_num__u64_9__from_le_bytes(uint8_t* buf) {
+	return load64_le(buf);
+}
 
-static inline void core_num__u64_9__to_le_bytes(uint64_t x0, uint8_t x1[8U]);
+static inline void core_num__u64_9__to_le_bytes(uint64_t v,uint8_t* buf) {
+	store64_le(buf,v);
+}
 
 #define core_array___core__clone__Clone_for__Array_T__N___20__clone(len, src, dst, elem_type, _ret_t) \
   (memcpy(dst, src, len * sizeof(elem_type)))
