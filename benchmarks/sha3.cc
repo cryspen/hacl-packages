@@ -142,7 +142,7 @@ Libcrux_Sha3_256(benchmark::State& state)
   slice.len = input.size();
 
   for (auto _ : state) {
-    libcrux_sha3_sha256(input, digest256_0.data());
+    libcrux_sha3_sha256(slice, digest256_0.data());
   }
   if (digest256_0 != expected_digest_sha3_256) {
     state.SkipWithError("Incorrect digest.");
@@ -151,6 +151,30 @@ Libcrux_Sha3_256(benchmark::State& state)
 }
 
 BENCHMARK(Libcrux_Sha3_256)->Setup(DoSetup);
+
+#ifdef HACL_CAN_COMPILE_VEC128
+static void
+Libcrux_Sha3_Neon_256(benchmark::State& state)
+{
+  Eurydice_slice slice;
+  slice.ptr = (void*)input.data();
+  slice.len = input.size();
+
+  Eurydice_slice dig;
+  dig.ptr = (void*)digest256_0.data();
+  dig.len = 32;
+
+  for (auto _ : state) {
+    libcrux_sha3_neon_sha256(dig, slice);
+  }
+  if (digest256_0 != expected_digest_sha3_256) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Libcrux_Sha3_Neon_256)->Setup(DoSetup);
+#endif
 
 #include "sha3.h"
 
