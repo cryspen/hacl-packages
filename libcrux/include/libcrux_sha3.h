@@ -86,9 +86,9 @@ extern "C"
     ret.fst[0].len = x1;
     ret.fst[1].ptr = x0[0].ptr;
     ret.fst[1].len = x1;
-    ret.snd[0].ptr = x0[0].ptr+x1;
+    ret.snd[0].ptr = ((uint8_t*)x0[0].ptr)+x1;
     ret.snd[0].len = x0[0].len - x1;
-    ret.snd[1].ptr = x0[1].ptr+x1;
+    ret.snd[1].ptr = ((uint8_t*)x0[1].ptr)+x1;
     ret.snd[1].len = x0[1].len - x1;
     return ret;
   }

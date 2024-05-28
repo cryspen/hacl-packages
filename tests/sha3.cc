@@ -22,6 +22,8 @@
 #include "config.h"
 #include "util.h"
 
+#include "libcrux_sha3.h"
+
 using json = nlohmann::json;
 
 // ANCHOR(example define)
@@ -215,6 +217,60 @@ TEST(ApiSuite, ApiTest)
       strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
   }
 
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example libcrux_sha3_sha256)
+    // This example uses libcrux SHA3-256.
+
+    // TESTING HELLO-WORLD for LIBCRUX
+
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+    Eurydice_slice input;
+    input.ptr = (void*) message;
+    input.len = message_size;
+
+    libcrux_sha3_sha256(input,digest);
+    // ANCHOR_END(example libcrux_sha3_sha256)
+
+    bytes expected_digest = from_hex(
+      "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+    EXPECT_EQ(strncmp((char*)digest,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_SHA3_256_DIGEST_LENGTH),
+              0);
+  }
+
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example scalar_shake128)
+    // This example uses Scalar SHAKE-128.
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    // SHAKE will generate as many bytes as requested.
+    uint32_t digest_size = 42;
+    uint8_t digest[42];
+
+    Hacl_Hash_SHA3_Scalar_shake128(
+      digest, digest_size, (uint8_t*)message, message_size);
+    // ANCHOR_END(example scalar_shake128)
+
+    bytes expected_digest =
+      from_hex("2bf5e6dee6079fad604f573194ba8426bd4d30eb13e8ba2edae70e529b570cb"
+               "dd588f2c5dd4e465dfbaf");
+
+    EXPECT_EQ(
+      strncmp((char*)digest, (char*)expected_digest.data(), digest_size), 0);
+  }
+
 #ifdef HACL_CAN_COMPILE_VEC256
   hacl_init_cpu_features();
   if (hacl_vec256_support()) {
@@ -366,6 +422,26 @@ TEST_P(Sha3KAT, TryKAT)
     } else if (test_case.md.size() == 512 / 8) {
       Hacl_Hash_SHA3_Scalar_sha3_512(
         digest.data(), test_case.msg.data(), test_case.msg.size());
+    }
+
+    EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                    << bytes_to_hex(digest) << std::endl;
+  }
+
+  {
+    // TESTING KATS for LIBCRUX
+    bytes digest(test_case.md.size(), 0);
+    Eurydice_slice input;
+    input.ptr = test_case.msg.data();
+    input.len = test_case.msg.size();
+    if (test_case.md.size() == 224 / 8) {
+      libcrux_sha3_sha224(input,digest.data());
+    } else if (test_case.md.size() == 256 / 8) {
+      libcrux_sha3_sha256(input,digest.data());
+    } else if (test_case.md.size() == 384 / 8) {
+      libcrux_sha3_sha384(input,digest.data());
+    } else if (test_case.md.size() == 512 / 8) {
+      libcrux_sha3_sha512(input,digest.data());
     }
 
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl

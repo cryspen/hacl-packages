@@ -154,33 +154,33 @@ extern "C"
   static inline core_core_arch_arm_shared_neon_int16x8_t
   libcrux_intrinsics_arm64__vld1q_s16(Eurydice_slice slice)
   {
-    return vld1q_s16(slice.ptr);
+    return vld1q_s16((int16_t*)slice.ptr);
   }
 
   static inline core_core_arch_arm_shared_neon_uint8x16_t
   libcrux_intrinsics_arm64__vld1q_u8(Eurydice_slice slice)
   {
-    return vld1q_u8(slice.ptr);
+    return vld1q_u8((uint8_t*)slice.ptr);
   }
 
   static inline core_core_arch_arm_shared_neon_uint16x8_t
   libcrux_intrinsics_arm64__vld1q_u16(Eurydice_slice slice)
   {
-    return vld1q_u16(slice.ptr);
+    return vld1q_u16((uint16_t*)slice.ptr);
   }
 
   static inline void libcrux_intrinsics_arm64__vst1q_s16(
     Eurydice_slice out,
     core_core_arch_arm_shared_neon_int16x8_t a)
   {
-    vst1q_s16(out.ptr, a);
+    vst1q_s16((int16_t*)out.ptr, a);
   }
 
   static inline void libcrux_intrinsics_arm64__vst1q_u8(
     Eurydice_slice out,
     core_core_arch_arm_shared_neon_uint8x16_t a)
   {
-    vst1q_u8(out.ptr, a);
+    vst1q_u8((uint8_t*)out.ptr, a);
   }
 
   // Arithmetic: Add, Sub
@@ -512,7 +512,7 @@ extern "C"
   static inline core_core_arch_arm_shared_neon_uint64x2_t
   libcrux_intrinsics_arm64__vld1q_bytes_u64(Eurydice_slice x0)
   {
-    return vld1q_u64(x0.ptr);
+    return vld1q_u64((uint64_t*)x0.ptr);
   }
 
   static inline core_core_arch_arm_shared_neon_uint64x2_t
@@ -534,14 +534,14 @@ extern "C"
   static inline core_core_arch_arm_shared_neon_uint64x2_t
   libcrux_intrinsics_arm64__vld1q_u64(Eurydice_slice x0)
   {
-    return vld1q_u64(x0.ptr);
+    return vld1q_u64((uint64_t*)x0.ptr);
   }
 
   static inline void libcrux_intrinsics_arm64__vst1q_bytes_u64(
     Eurydice_slice x0,
     core_core_arch_arm_shared_neon_uint64x2_t x1)
   {
-    vst1q_u64(x0.ptr, x1);
+    vst1q_u64((uint64_t*)x0.ptr, x1);
   }
 
 #if defined(__cplusplus)
