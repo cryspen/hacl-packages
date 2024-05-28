@@ -9,6 +9,8 @@
 #include "Hacl_Hash_SHA3_Simd256.h"
 #endif
 
+#include "libcrux_sha3.h"
+
 const bytes input(1000, 0x37);
 
 static bytes digest224_0(28, 0);
@@ -131,6 +133,24 @@ Hacl_Sha3_256(benchmark::State& state)
 }
 
 BENCHMARK(Hacl_Sha3_256)->Setup(DoSetup);
+
+static void
+Libcrux_Sha3_256(benchmark::State& state)
+{
+  Eurydice_slice slice;
+  slice.ptr = (void*)input.data();
+  slice.len = input.size();
+
+  for (auto _ : state) {
+    libcrux_sha3_sha256(input, digest256_0.data());
+  }
+  if (digest256_0 != expected_digest_sha3_256) {
+    state.SkipWithError("Incorrect digest.");
+    return;
+  }
+}
+
+BENCHMARK(Libcrux_Sha3_256)->Setup(DoSetup);
 
 #include "sha3.h"
 
