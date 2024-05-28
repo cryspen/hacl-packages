@@ -342,12 +342,9 @@
         ]
     },
     "libcrux_sources": {
-        "kyber": [
+        "sha3": [
             {
-                "file": "libcrux_ml_kem.c"
-            },
-            {
-                "file": "libcrux_hacl_glue.c"
+                "file": "libcrux_sha3.c"
             },
             {
                 "file": "core.c"
@@ -527,9 +524,7 @@
         ]
     },
     "libcrux_tests": {
-        "kyber": [
-            "kyber.cc"
-        ]
+        
     },
     "benchmarks": {
         "blake2": [
@@ -579,8 +574,5 @@
         ]
     },
     "libcrux_benchmarks": {
-        "kyber": [
-            "kyber.cc"
-        ]
     }
 }

@@ -52,15 +52,10 @@ typedef struct {
 #define Eurydice_array_eq(sz, a1, a2, t, _, _ret_t) (memcmp(a1, a2, sz * sizeof(t)) == 0)
 #define core_array_equality___core__cmp__PartialEq__Array_B__N___for__Array_A__N____eq Eurydice_array_eq
 
-#define core_convert___core__convert__AsMut__Slice_T___for__Slice_T___9__as_mut(subslice, _t, _ret_t) subslice
-// FIXME: This isn't great
-#define core_convert___core__convert__Into_U__for_T__3__into(src, srd_t, ret_t, _ret_t) core_convert___core__convert__Into_##ret_t(src)
-
 #define core_slice___Slice_T___split_at(slice, mid, element_type, ret_t) \
   ((ret_t){ \
     .fst = EURYDICE_SLICE((element_type*)slice.ptr, 0, mid), \
     .snd = EURYDICE_SLICE((element_type*)slice.ptr, mid, slice.len)})
-
 #define core_slice___Slice_T___split_at_mut(slice, mid, element_type, ret_t) \
   ((ret_t){ \
     .fst = EURYDICE_SLICE((element_type*)slice.ptr, 0, mid), \
