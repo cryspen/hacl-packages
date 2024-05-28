@@ -246,6 +246,45 @@ TEST(ApiSuite, ApiTest)
               0);
   }
 
+
+#ifdef HACL_CAN_COMPILE_VEC128
+  hacl_init_cpu_features();
+  if (hacl_vec128_support()) {
+  // Documentation.
+  // Lines after START and before END are used in documentation.
+  {
+    // ANCHOR(example libcrux_sha3_neon_sha256)
+    // This example uses libcrux Neon SHA3-256.
+
+    //  printf(" TESTING HELLO-WORLD for LIBCRUX Neon \n");
+
+    const char* message = "Hello, World!";
+    uint32_t message_size = strlen(message);
+
+    uint8_t digest[HACL_HASH_SHA3_256_DIGEST_LENGTH];
+
+    Eurydice_slice input;
+    input.ptr = (void*) message;
+    input.len = message_size;
+
+    Eurydice_slice output;
+    output.ptr = (void*) digest;
+    output.len = 32;
+
+    libcrux_sha3_neon_sha256(output,input);
+    // ANCHOR_END(example libcrux_sha3_neon_sha256)
+
+    bytes expected_digest = from_hex(
+      "1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef");
+
+    EXPECT_EQ(strncmp((char*)digest,
+                      (char*)expected_digest.data(),
+                      HACL_HASH_SHA3_256_DIGEST_LENGTH),
+              0);
+  }
+}
+#endif
+
   // Documentation.
   // Lines after START and before END are used in documentation.
   {
@@ -447,6 +486,35 @@ TEST_P(Sha3KAT, TryKAT)
     EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
                                     << bytes_to_hex(digest) << std::endl;
   }
+
+#ifdef HACL_CAN_COMPILE_VEC128
+  hacl_init_cpu_features();
+  if (hacl_vec128_support()) {
+  {
+    // TESTING KATS for LIBCRUX
+    bytes digest(test_case.md.size(), 0);
+    Eurydice_slice input;
+    input.ptr = test_case.msg.data();
+    input.len = test_case.msg.size();
+    Eurydice_slice output;
+    output.ptr = (void*) digest.data();
+    output.len = test_case.md.size();
+
+    if (test_case.md.size() == 224 / 8) {
+      libcrux_sha3_neon_sha224(output,input);
+    } else if (test_case.md.size() == 256 / 8) {
+      libcrux_sha3_neon_sha256(output,input);
+    } else if (test_case.md.size() == 384 / 8) {
+      libcrux_sha3_neon_sha384(output,input);
+    } else if (test_case.md.size() == 512 / 8) {
+      libcrux_sha3_neon_sha512(output,input);
+    }
+
+    EXPECT_EQ(test_case.md, digest) << bytes_to_hex(test_case.md) << std::endl
+                                    << bytes_to_hex(digest) << std::endl;
+  }
+  }
+#endif
 
 #ifdef HACL_CAN_COMPILE_VEC256
   hacl_init_cpu_features();
