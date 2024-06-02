@@ -286,35 +286,35 @@ Hacl_Bignum_Addition_bn_add_eq_len_u64(uint32_t aLen, uint64_t *a, uint64_t *b, 
 
 static inline uint64_t bn_mul_add4_u64_u128(uint64_t* n, uint64_t qj, uint64_t* res_j0, uint64_t c1) {
       FStar_UInt128_uint128 ab0 = FStar_UInt128_mul_wide(n[0], qj);
-      ab0 = FStar_UInt128_add(ab0, FStar_UInt128_uint64_to_uint128(res_j0[0]));
       FStar_UInt128_uint128 ab1 = FStar_UInt128_mul_wide(n[1], qj);
+      ab0 = FStar_UInt128_add(ab0, FStar_UInt128_uint64_to_uint128(res_j0[0]));
       ab1 = FStar_UInt128_add(ab1, FStar_UInt128_uint64_to_uint128(res_j0[1]));
       FStar_UInt128_uint128 ab2 = FStar_UInt128_mul_wide(n[2], qj);
-      ab2 = FStar_UInt128_add(ab2, FStar_UInt128_uint64_to_uint128(res_j0[2]));
       FStar_UInt128_uint128 ab3 = FStar_UInt128_mul_wide(n[3], qj);
+      ab2 = FStar_UInt128_add(ab2, FStar_UInt128_uint64_to_uint128(res_j0[2]));
       ab3 = FStar_UInt128_add(ab3, FStar_UInt128_uint64_to_uint128(res_j0[3]));
 
-      ab0 = FStar_UInt128_add(ab0, FStar_UInt128_uint64_to_uint128(c1));
-      c1 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(ab0, 64U));
+      uint64_t carry = c1;
+      ab0 = FStar_UInt128_add(ab0, carry);
+      carry = FStar_UInt128_shift_right(ab0, 64U);
+      ab1 = FStar_UInt128_add(ab1, carry);
+      carry = FStar_UInt128_shift_right(ab1, 64U);
+      ab2 = FStar_UInt128_add(ab2, carry);
+      carry = FStar_UInt128_shift_right(ab2, 64U);
+      ab3 = FStar_UInt128_add(ab3, carry);
+      carry = FStar_UInt128_shift_right(ab3, 64U);
+      c1 = carry;
 
-      ab1 = FStar_UInt128_add(ab1, FStar_UInt128_uint64_to_uint128(c1));
-      c1 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(ab1, 64U));
-
-      ab2 = FStar_UInt128_add(ab2, FStar_UInt128_uint64_to_uint128(c1));
-      c1 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(ab2, 64U));
-
-      ab3 = FStar_UInt128_add(ab3, FStar_UInt128_uint64_to_uint128(c1));
-      c1 = FStar_UInt128_uint128_to_uint64(FStar_UInt128_shift_right(ab3, 64U));
-
-      res_j0[0] = FStar_UInt128_uint128_to_uint64(ab0);
-      res_j0[1] = FStar_UInt128_uint128_to_uint64(ab1);
-      res_j0[2] = FStar_UInt128_uint128_to_uint64(ab2);
-      res_j0[3] = FStar_UInt128_uint128_to_uint64(ab3);
+      res_j0[0] = ab0;
+      res_j0[1] = ab1;
+      res_j0[2] = ab2;
+      res_j0[3] = ab3;
       return c1;
 }
 
 static inline uint64_t bn_mul_add4_u64_intrin(uint64_t* n, uint64_t qj, uint64_t* res_j0, uint64_t c1) {
-      FStar_UInt128_uint128 ab0 = FStar_UInt128_mul_wide(n[0], qj);
+     return bn_mul_add4_u64_u128(n,qj,res_j0,c1);
+/*      FStar_UInt128_uint128 ab0 = FStar_UInt128_mul_wide(n[0], qj);
       FStar_UInt128_uint128 ab1 = FStar_UInt128_mul_wide(n[1], qj);
       FStar_UInt128_uint128 ab2 = FStar_UInt128_mul_wide(n[2], qj);
       FStar_UInt128_uint128 ab3 = FStar_UInt128_mul_wide(n[3], qj);
@@ -345,7 +345,7 @@ static inline uint64_t bn_mul_add4_u64_intrin(uint64_t* n, uint64_t qj, uint64_t
       
       x = Lib_IntTypes_Intrinsics_add_carry_u64(x, ab3h, c, &c1);
       return c1;
-
+*/
       /*
 More experiments:
       uint64_t ab0l = FStar_UInt128_mul_wide(ab[8*i], a_j);
