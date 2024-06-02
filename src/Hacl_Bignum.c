@@ -1465,6 +1465,22 @@ uint64_t testing_almost_red_mul_u64(
       uint64_t ab2h = FStar_UInt128_mul_wide(n[4*i+2], qj) >> 64;
       uint64_t ab3h = FStar_UInt128_mul_wide(n[4*i+3], qj) >> 64;
 
+      uint64_t c = 0;
+
+      uint64_t abo0l = __builtin_addcll(ab0l, res_j0[4*i],c,&c);
+      uint64_t abo1l = __builtin_addcll(ab1l, res_j0[4*i+1],c,&c);
+      uint64_t abo2l = __builtin_addcll(ab2l, res_j0[4*i+2],c,&c);
+      uint64_t abo3l = __builtin_addcll(ab3l, res_j0[4*i+3],c,&c);
+
+      uint64_t x = 0;
+      res_j0[4*i] = __builtin_addcll(abo0l, c1, x, &x);
+      res_j0[4*i+1] = __builtin_addcll(abo1l, ab0h, x, &x);
+      res_j0[4*i+2] = __builtin_addcll(abo2l, ab1h, x, &x);
+      res_j0[4*i+3] = __builtin_addcll(abo3l, ab2h, x, &x);
+
+      c1 = __builtin_addcll(ab3h, c, x, &x);
+
+
 /*
       FStar_UInt128_uint128 ab0 = FStar_UInt128_mul_wide(n[4*i], qj);
       FStar_UInt128_uint128 ab1 = FStar_UInt128_mul_wide(n[4*i+1], qj);
@@ -1480,20 +1496,6 @@ uint64_t testing_almost_red_mul_u64(
       FStar_UInt128_uint128 abo3 = FStar_UInt128_add(ab3, FStar_UInt128_uint64_to_uint128(res_j0[4*i+3]));
 */
 
-      uint64_t c = 0;
-
-      uint64_t abo0l = __builtin_addcll(ab0l, res_j0[4*i],c,&c);
-      uint64_t abo1l = __builtin_addcll(ab1l, res_j0[4*i+1],c,&c);
-      uint64_t abo2l = __builtin_addcll(ab2l, res_j0[4*i+2],c,&c);
-      uint64_t abo3l = __builtin_addcll(ab3l, res_j0[4*i+3],c,&c);
-
-      uint64_t x = 0;
-      res_j0[4*i] = __builtin_addcll(abo0l, c1, x, &x);
-      res_j0[4*i+1] = __builtin_addcll(abo1l, ab0h, x, &x);
-      res_j0[4*i+2] = __builtin_addcll(abo2l, ab1h, x, &x);
-      res_j0[4*i+3] = __builtin_addcll(abo3l, ab2h, x, &x);
-
-      c1 = __builtin_addcll(ab3h, c, x, &x);
 
 /*
       FStar_UInt128_uint128 abo0 = FStar_UInt128_add(ab0, FStar_UInt128_uint64_to_uint128(res_j0[4*i]));
