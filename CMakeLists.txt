@@ -95,7 +95,7 @@ if(NOT MSVC)
         # -Wsign-conversion
         $<$<CONFIG:DEBUG>:-g>
         $<$<CONFIG:DEBUG>:-Og>
-        $<$<CONFIG:RELEASE>:-O3>
+        $<$<CONFIG:RELEASE>:-O2>
     )
 endif()
 

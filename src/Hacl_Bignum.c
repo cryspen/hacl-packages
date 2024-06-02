@@ -1200,18 +1200,7 @@ bn_mont_reduction_u64(uint32_t len, uint64_t *n, uint64_t nInv, uint64_t *c, uin
     uint64_t c1 = 0ULL;
     for (uint32_t i = 0U; i < len / 4U; i++)
     {
-      uint64_t a_i = n[4U * i];
-      uint64_t *res_i0 = res_j0 + 4U * i;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i, qj, c1, res_i0);
-      uint64_t a_i0 = n[4U * i + 1U];
-      uint64_t *res_i1 = res_j0 + 4U * i + 1U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i0, qj, c1, res_i1);
-      uint64_t a_i1 = n[4U * i + 2U];
-      uint64_t *res_i2 = res_j0 + 4U * i + 2U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i1, qj, c1, res_i2);
-      uint64_t a_i2 = n[4U * i + 3U];
-      uint64_t *res_i = res_j0 + 4U * i + 3U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i2, qj, c1, res_i);
+      c1 = bn_mul_add4_u64_intrin(n+4*i,qj,res_j0+4*i,c1);
     }
     for (uint32_t i = len / 4U * 4U; i < len; i++)
     {
@@ -1439,13 +1428,16 @@ bn_almost_mont_sqr_u32(
   Hacl_Bignum_AlmostMontgomery_bn_almost_mont_reduction_u32(len, n, nInv_u64, c, resM);
 }
 
-uint64_t testing_almost_red_mul_u64(
+
+void
+Hacl_Bignum_AlmostMontgomery_bn_almost_mont_reduction_u64(
   uint32_t len,
   uint64_t *n,
   uint64_t nInv,
   uint64_t *c,
   uint64_t *res
-) {
+)
+{
   uint64_t c0 = 0ULL;
   for (uint32_t i0 = 0U; i0 < len; i0++)
   {
@@ -1454,6 +1446,9 @@ uint64_t testing_almost_red_mul_u64(
     uint64_t c1 = 0ULL;
     for (uint32_t i = 0U; i < len / 4U; i++)
     {
+      c1 = bn_mul_add4_u64_intrin(n+4*i,qj,res_j0+4*i,c1);
+
+      /*
 	
       uint64_t ab0l = FStar_UInt128_mul_wide(n[4*i], qj);
       uint64_t ab1l = FStar_UInt128_mul_wide(n[4*i+1], qj);
@@ -1480,7 +1475,7 @@ uint64_t testing_almost_red_mul_u64(
 
       c1 = __builtin_addcll(ab3h, c, x, &x);
 
-
+      */
 /*
       FStar_UInt128_uint128 ab0 = FStar_UInt128_mul_wide(n[4*i], qj);
       FStar_UInt128_uint128 ab1 = FStar_UInt128_mul_wide(n[4*i+1], qj);
@@ -1521,7 +1516,7 @@ uint64_t testing_almost_red_mul_u64(
       res_j0[4*i+3] = FStar_UInt128_uint128_to_uint64(abco3);
 */
     }
-    for (uint32_t i = len / 4U * 4U; i < len; i++)
+    for (uint32_t i = len / 8U * 8U; i < len; i++)
     {
       uint64_t a_i = n[i];
       uint64_t *res_i = res_j0 + i;
@@ -1533,64 +1528,6 @@ uint64_t testing_almost_red_mul_u64(
     uint64_t res_j = c[len + i0];
     c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, c10, res_j, resb);
   }
-  return c0;
-}
-
-
-uint64_t testing_almost_red_mul_u64_2(
-  uint32_t len,
-  uint64_t *n,
-  uint64_t nInv,
-  uint64_t *c,
-  uint64_t *res
-) {
-  uint64_t c0 = 0ULL;
-  for (uint32_t i0 = 0U; i0 < len; i0++)
-  {
-    uint64_t qj = nInv * c[i0];
-    uint64_t *res_j0 = c + i0;
-    uint64_t c1 = 0ULL;
-    for (uint32_t i = 0U; i < len / 4U; i++)
-    {
-      uint64_t a_i = n[4U * i];
-      uint64_t *res_i0 = res_j0 + 4U * i;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i, qj, c1, res_i0);
-      uint64_t a_i0 = n[4U * i + 1U];
-      uint64_t *res_i1 = res_j0 + 4U * i + 1U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i0, qj, c1, res_i1);
-      uint64_t a_i1 = n[4U * i + 2U];
-      uint64_t *res_i2 = res_j0 + 4U * i + 2U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i1, qj, c1, res_i2);
-      uint64_t a_i2 = n[4U * i + 3U];
-      uint64_t *res_i = res_j0 + 4U * i + 3U;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i2, qj, c1, res_i);
-    }
-    for (uint32_t i = len / 4U * 4U; i < len; i++)
-    {
-      uint64_t a_i = n[i];
-      uint64_t *res_i = res_j0 + i;
-      c1 = Hacl_Bignum_Base_mul_wide_add2_u64(a_i, qj, c1, res_i);
-    }
-    uint64_t r = c1;
-    uint64_t c10 = r;
-    uint64_t *resb = c + len + i0;
-    uint64_t res_j = c[len + i0];
-    c0 = Lib_IntTypes_Intrinsics_add_carry_u64(c0, c10, res_j, resb);
-  }
-  return c0;
-}
-
-
-void
-Hacl_Bignum_AlmostMontgomery_bn_almost_mont_reduction_u64(
-  uint32_t len,
-  uint64_t *n,
-  uint64_t nInv,
-  uint64_t *c,
-  uint64_t *res
-)
-{
-  uint64_t c0 = testing_almost_red_mul_u64(len,n,nInv,c,res);
   memcpy(res, c + len, (len + len - len) * sizeof (uint64_t));
   uint64_t c00 = c0;
   KRML_CHECK_SIZE(sizeof (uint64_t), len);

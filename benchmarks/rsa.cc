@@ -166,7 +166,7 @@ cleanup:
     EVP_PKEY_CTX_free(ctx);
 }
 
-BENCHMARK(OPENSSL_RSA_enc)->Setup(DoSetup);
+//BENCHMARK(OPENSSL_RSA_enc)->Setup(DoSetup);
 
 
 void
@@ -207,7 +207,7 @@ HACL_RSA_dec(benchmark::State& state)
   free(e);
 }
 
-BENCHMARK(HACL_RSA_dec)->Setup(DoSetup);
+//BENCHMARK(HACL_RSA_dec)->Setup(DoSetup);
 
 static EVP_PKEY *get_priv_key(OSSL_LIB_CTX *libctx, const char *propq)
 {
@@ -326,6 +326,6 @@ cleanup:
     EVP_PKEY_CTX_free(pctx);
 }
 
-BENCHMARK(OPENSSL_RSA_dec)->Setup(DoSetup);
+//BENCHMARK(OPENSSL_RSA_dec)->Setup(DoSetup);
 
 BENCHMARK_MAIN();

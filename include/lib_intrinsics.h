@@ -18,6 +18,9 @@
    See https://bugs.llvm.org/show_bug.cgi?id=24943
 */
 
+// FOR SOME REASON THIS IS NOT WORKING FROM MACH on Intel
+#define HACL_CAN_COMPILE_INTRINSICS
+
 #if !defined(HACL_CAN_COMPILE_INTRINSICS) || \
     (defined(__clang__) && (__clang_major__ < 5)) || \
     (defined(__GNUC__) && !defined(__clang__) &&  \
