@@ -30,7 +30,7 @@ jobs:
 
       - name: Setup | System
         run: |
-          brew install doxygen sphinx-doc gmp ninja node
+          brew install doxygen gmp ninja node
           pip install --upgrade pip
 
       - name: Setup | OCaml | 1/2
