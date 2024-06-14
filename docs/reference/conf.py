@@ -24,7 +24,7 @@ copyright = '2022, Cryspen'
 author = 'Cryspen'
 
 # The full version, including alpha/beta/rc tags
-#release = ""
+release = "5.0.2"
 
 
 # -- General configuration ---------------------------------------------------
