@@ -13,7 +13,8 @@
     "protz": "",
     "ma-ilsi": "",
     "xvzcf": "Cryspen",
-    "msprotz": "Microsoft"
+    "msprotz": "Microsoft",
+    "R1kM": "Inria"
   },
   "contributors": [
     "franziskuskiefer",
@@ -29,6 +30,7 @@
     "protz",
     "ma-ilsi",
     "xvzcf",
-    "msprotz"
+    "msprotz",
+    "R1kM"
   ]
 }
