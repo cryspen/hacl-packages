@@ -36,6 +36,7 @@ extern "C" {
 #include "krml/internal/target.h"
 
 #include "internal/Hacl_Impl_Blake2_Constants.h"
+#include "internal/Hacl_Hash_Blake2b.h"
 #include "../Hacl_Hash_Blake2b_Simd256.h"
 #include "libintvector.h"
 
@@ -57,6 +58,7 @@ Hacl_Hash_Blake2b_Simd256_update_last(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec256 *wv,
   Lib_IntVector_Intrinsics_vec256 *hash,
+  bool last_node,
   FStar_UInt128_uint128 prev,
   uint32_t rem,
   uint8_t *d

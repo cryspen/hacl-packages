@@ -55,12 +55,20 @@ Hacl_Hash_Blake2b_update_last(
   uint32_t len,
   uint64_t *wv,
   uint64_t *hash,
+  bool last_node,
   FStar_UInt128_uint128 prev,
   uint32_t rem,
   uint8_t *d
 );
 
 void Hacl_Hash_Blake2b_finish(uint32_t nn, uint8_t *output, uint64_t *hash);
+
+typedef struct K____Hacl_Impl_Blake2_Core_blake2_params___uint8_t__s
+{
+  Hacl_Hash_Blake2b_blake2_params *fst;
+  uint8_t *snd;
+}
+K____Hacl_Impl_Blake2_Core_blake2_params___uint8_t_;
 
 #if defined(__cplusplus)
 }
