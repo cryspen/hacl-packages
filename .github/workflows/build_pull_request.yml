@@ -39,7 +39,7 @@ jobs:
 
       - name: Setup | Install multilib libraries
         if: ${{ matrix.bits == 32 }}
-        run: sudo apt-get install gcc-multilib g++-multilib libc6-i386
+        run: sudo apt-get install gcc-multilib g++-multilib
 
       - name: Setup GCC
         if: ${{ matrix.compiler == 'gcc' }}
@@ -54,6 +54,7 @@ jobs:
           echo "CXX=clang++" >> $GITHUB_ENV
 
       - name: Setup libb2
+        if: ${{ matrix.bits == 64 }}
         run: sudo apt-get install libb2-dev
 
       - name: Checkout
