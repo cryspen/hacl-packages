@@ -39,7 +39,7 @@ jobs:
 
       - name: Setup | Install multilib libraries
         if: ${{ matrix.bits == 32 }}
-        run: sudo apt-get install gcc-multilib g++-multilib
+        run: sudo apt-get install gcc-multilib g++-multilib libc6:i386
 
       - name: Setup GCC
         if: ${{ matrix.compiler == 'gcc' }}
