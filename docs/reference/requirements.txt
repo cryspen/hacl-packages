@@ -1,3 +1,5 @@
+sphinx >= 5.0.0
+
 myst-parser
 sphinx-multiversion
 
@@ -5,4 +7,4 @@ pydata-sphinx-theme
 sphinx-book-theme
 
 sphinx-tabs
-breathe==4.33.1
+breathe
