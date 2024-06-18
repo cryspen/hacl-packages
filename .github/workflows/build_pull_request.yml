@@ -53,6 +53,9 @@ jobs:
           echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
 
+      - name: Setup libb2
+        run: sudo apt-get install libb2-dev
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -99,6 +102,9 @@ jobs:
 
       - name: Setup | Install OpenSSL3
         run: brew install openssl@3
+
+      - name: Setup | Install libb2 
+        run: brew install libb2 
 
       - name: Checkout
         uses: actions/checkout@v3
