@@ -20,8 +20,6 @@
 #include "Hacl_Hash_Blake2b_Simd256.h"
 #endif
 
-#include "blake2.h"
-
 #define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
 #define HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX 32
 

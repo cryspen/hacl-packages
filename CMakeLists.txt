@@ -527,6 +527,8 @@ if(ENABLE_BENCHMARKS)
           target_link_directories(${BENCH_NAME} PRIVATE ${LIBB2_LIBRARY_DIRS})
           target_include_directories(${BENCH_NAME} PUBLIC ${LIBB2_INCLUDE_DIRS})
           target_compile_options(${BENCH_NAME} PUBLIC ${LIBB2_CFLAGS_OTHER})
+        else()
+          target_compile_definitions(${BENCH_NAME} PUBLIC NO_LIBB2)
         endif(ENABLE_LIBB2_BENCHMARKS)
 
         if(ENABLE_LIBTOMCRYPT_BENCHMARKS)
