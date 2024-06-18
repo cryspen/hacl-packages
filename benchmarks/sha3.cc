@@ -27,7 +27,8 @@ static void
 Hacl_Sha3_224(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_224(digest224.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_224(
+      digest224.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest224 != expected_digest_sha3_224) {
     state.SkipWithError("Incorrect digest.");
@@ -51,7 +52,8 @@ static void
 Hacl_Sha3_256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_256(digest256.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_256(
+      digest256.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest256 != expected_digest_sha3_256) {
     state.SkipWithError("Incorrect digest.");
@@ -102,7 +104,8 @@ static void
 Hacl_Sha3_384(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_384(digest384.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_384(
+      digest384.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest384 != expected_digest_sha3_384) {
     state.SkipWithError("Incorrect digest.");
@@ -126,7 +129,8 @@ static void
 Hacl_Sha3_512(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_sha3_512(digest512.data(), (uint8_t*)input.data(), input.size());
+    Hacl_Hash_SHA3_sha3_512(
+      digest512.data(), (uint8_t*)input.data(), input.size());
   }
   if (digest512 != expected_digest_sha3_512) {
     state.SkipWithError("Incorrect digest.");
@@ -242,8 +246,10 @@ static void
 Hacl_Sha3_shake128(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_shake128_hacl(
-      input.size(), (uint8_t*)input.data(), digest_shake.size(), digest_shake.data());
+    Hacl_Hash_SHA3_shake128(digest_shake.data(),
+                            digest_shake.size(),
+                            (uint8_t*)input.data(),
+                            input.size());
   }
 }
 
@@ -253,8 +259,10 @@ static void
 Hacl_Sha3_shake256(benchmark::State& state)
 {
   for (auto _ : state) {
-    Hacl_Hash_SHA3_shake256_hacl(
-      input.size(), (uint8_t*)input.data(), digest_shake.size(), digest_shake.data());
+    Hacl_Hash_SHA3_shake256(digest_shake.data(),
+                            digest_shake.size(),
+                            (uint8_t*)input.data(),
+                            input.size());
   }
 }
 

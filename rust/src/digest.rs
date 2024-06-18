@@ -420,11 +420,11 @@ pub fn hash(alg: Algorithm, data: &[u8]) -> Vec<u8> {
 pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_Hash_SHA3_shake128_hacl(
-            data.len() as u32,
-            data.as_ptr() as _,
-            BYTES as u32,
+        Hacl_Hash_SHA3_shake128(
             out.as_mut_ptr(),
+            BYTES as u32,
+            data.as_ptr() as _,
+            data.len() as u32,
         );
     }
     out
@@ -437,11 +437,11 @@ pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
 pub fn shake256<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_Hash_SHA3_shake256_hacl(
-            data.len() as u32,
-            data.as_ptr() as _,
-            BYTES as u32,
+        Hacl_Hash_SHA3_shake256(
             out.as_mut_ptr(),
+            BYTES as u32,
+            data.as_ptr() as _,
+            data.len() as u32,
         );
     }
     out

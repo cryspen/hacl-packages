@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Hash_Blake2s_Simd128_H
-#define __internal_Hacl_Hash_Blake2s_Simd128_H
+#ifndef __Hacl_SHA2_Types_H
+#define __Hacl_SHA2_Types_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,58 +35,34 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
-#include "internal/Hacl_Hash_Blake2b.h"
-#include "../Hacl_Hash_Blake2s_Simd128.h"
-#include "libintvector.h"
+typedef struct Hacl_Hash_SHA2_uint8_2p_s
+{
+  uint8_t *fst;
+  uint8_t *snd;
+}
+Hacl_Hash_SHA2_uint8_2p;
 
-void
-Hacl_Hash_Blake2s_Simd128_init(Lib_IntVector_Intrinsics_vec128 *hash, uint32_t kk, uint32_t nn);
+typedef struct Hacl_Hash_SHA2_uint8_3p_s
+{
+  uint8_t *fst;
+  Hacl_Hash_SHA2_uint8_2p snd;
+}
+Hacl_Hash_SHA2_uint8_3p;
 
-void
-Hacl_Hash_Blake2s_Simd128_update_multi(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec128 *wv,
-  Lib_IntVector_Intrinsics_vec128 *hash,
-  uint64_t prev,
-  uint8_t *blocks,
-  uint32_t nb
-);
+typedef struct Hacl_Hash_SHA2_uint8_4p_s
+{
+  uint8_t *fst;
+  Hacl_Hash_SHA2_uint8_3p snd;
+}
+Hacl_Hash_SHA2_uint8_4p;
 
-void
-Hacl_Hash_Blake2s_Simd128_update_last(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec128 *wv,
-  Lib_IntVector_Intrinsics_vec128 *hash,
-  uint64_t prev,
-  uint32_t rem,
-  uint8_t *d
-);
+typedef uint8_t *Hacl_Hash_SHA2_bufx1;
 
-void
-Hacl_Hash_Blake2s_Simd128_finish(
-  uint32_t nn,
-  uint8_t *output,
-  Lib_IntVector_Intrinsics_vec128 *hash
-);
-
-void
-Hacl_Hash_Blake2s_Simd128_store_state128s_to_state32(
-  uint32_t *st32,
-  Lib_IntVector_Intrinsics_vec128 *st
-);
-
-void
-Hacl_Hash_Blake2s_Simd128_load_state128s_from_state32(
-  Lib_IntVector_Intrinsics_vec128 *st,
-  uint32_t *st32
-);
-
-Lib_IntVector_Intrinsics_vec128 *Hacl_Hash_Blake2s_Simd128_malloc_with_key(void);
+typedef Hacl_Hash_SHA2_uint8_4p Hacl_Hash_SHA2_bufx4;
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Hash_Blake2s_Simd128_H_DEFINED
+#define __Hacl_SHA2_Types_H_DEFINED
 #endif
