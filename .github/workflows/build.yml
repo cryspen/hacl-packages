@@ -72,7 +72,7 @@ jobs:
         run: sudo apt-get install gcc-multilib g++-multilib
 
       - name: Setup | Install libb2
-        run: sudo apt-get install libb2-1
+        run: sudo apt-get install libb2-dev
 
       - name: Checkout
         uses: actions/checkout@v3
