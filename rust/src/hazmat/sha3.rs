@@ -1,6 +1,6 @@
 use hacl_sys::{
-    Hacl_Hash_SHA3_sha3_224, Hacl_Hash_SHA3_sha3_256, Hacl_Hash_SHA3_sha3_384, Hacl_Hash_SHA3_sha3_512,
-    Hacl_Hash_SHA3_shake128_hacl, Hacl_Hash_SHA3_shake256_hacl,
+    Hacl_Hash_SHA3_sha3_224, Hacl_Hash_SHA3_sha3_256, Hacl_Hash_SHA3_sha3_384,
+    Hacl_Hash_SHA3_sha3_512, Hacl_Hash_SHA3_shake128, Hacl_Hash_SHA3_shake256,
 };
 
 /// SHA3 224
@@ -59,11 +59,11 @@ pub fn sha512(payload: &[u8]) -> [u8; 64] {
 pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_Hash_SHA3_shake128_hacl(
-            data.len() as u32,
-            data.as_ptr() as _,
-            BYTES as u32,
+        Hacl_Hash_SHA3_shake128(
             out.as_mut_ptr(),
+            BYTES as u32,
+            data.as_ptr() as _,
+            data.len() as u32,
         );
     }
     out
@@ -76,11 +76,11 @@ pub fn shake128<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
 pub fn shake256<const BYTES: usize>(data: &[u8]) -> [u8; BYTES] {
     let mut out = [0u8; BYTES];
     unsafe {
-        Hacl_Hash_SHA3_shake256_hacl(
-            data.len() as u32,
-            data.as_ptr() as _,
-            BYTES as u32,
+        Hacl_Hash_SHA3_shake256(
             out.as_mut_ptr(),
+            BYTES as u32,
+            data.as_ptr() as _,
+            data.len() as u32,
         );
     }
     out
