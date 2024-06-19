@@ -20,8 +20,6 @@
 #include "Hacl_Hash_Blake2b_Simd256.h"
 #endif
 
-#include "blake2.h"
-
 #define HACL_HASH_BLAKE2B_DIGEST_LENGTH_MAX 64
 #define HACL_HASH_BLAKE2S_DIGEST_LENGTH_MAX 32
 
@@ -97,6 +95,22 @@ BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
   ->Setup(DoSetup);
 #endif
 
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2b_oneshot(benchmark::State& state)
+{
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state) {
+      blake2b(digest2b.data(), (const void*)input.data(), NULL, digest2b.size(), input.size(), 0);
+  }
+}
+
+BENCHMARK(libb2_blake2b_oneshot)->Setup(DoSetup)->Apply(Range);
+#endif
+
 // -----------------------------------------------------------------------------
 
 static void
@@ -148,6 +162,19 @@ OpenSSL_blake2b_oneshot_keyed(benchmark::State& state)
 }
 
 BENCHMARK(OpenSSL_blake2b_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2b_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state)
+    blake2b(digest2b.data(), (const void*)input.data(), (const void*)key.data(), digest2b.size(), input.size(), key.size());
+}
+
+BENCHMARK(libb2_blake2b_oneshot_keyed)->Setup(DoSetup);
 #endif
 
 
@@ -209,6 +236,21 @@ BENCHMARK_CAPTURE(OpenSSL_hash_oneshot,
   ->Setup(DoSetup);
 #endif
 
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2s_oneshot(benchmark::State& state)
+{
+  bytes input(state.range(0), 0xAB);
+
+  for (auto _ : state)
+    blake2s(digest2s.data(), (const void*)input.data(), NULL, digest2s.size(), input.size(), 0);
+}
+
+BENCHMARK(libb2_blake2s_oneshot)->Setup(DoSetup)->Apply(Range);
+#endif
+
 // -----------------------------------------------------------------------------
 
 static void
@@ -262,6 +304,20 @@ OpenSSL_blake2s_oneshot_keyed(benchmark::State& state)
 BENCHMARK(OpenSSL_blake2s_oneshot_keyed)->Setup(DoSetup);
 #endif
 
+#ifndef NO_LIBB2
+#include <blake2.h>
+
+static void
+libb2_blake2s_oneshot_keyed(benchmark::State& state)
+{
+  for (auto _ : state)
+    blake2s(digest2s.data(), (const void*)input.data(), (const void*)key.data(), digest2s.size(), input.size(), key.size());
+}
+
+BENCHMARK(libb2_blake2s_oneshot_keyed)->Setup(DoSetup);
+#endif
+
+
 // -----------------------------------------------------------------------------
 
 static void
@@ -287,28 +343,6 @@ HACL_blake2b_32_streaming(benchmark::State& state)
 }
 
 BENCHMARK(HACL_blake2b_32_streaming)->Setup(DoSetup);
-
-static void
-BLAKE2_blake2b_ref_streaming(benchmark::State& state)
-{
-  for (auto _ : state) {
-    uint8_t digest[64];
-
-    // Init
-    blake2b_state s;
-    blake2b_init(&s,64);
-
-    // Update
-    for (auto chunk : chunk(input, chunk_len)) {
-      blake2b_update(&s, (uint8_t*)chunk.data(), chunk.size());
-    }
-
-    // Finish
-    blake2b_final(&s,digest,64);
-  }
-}
-
-BENCHMARK(BLAKE2_blake2b_ref_streaming)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC256
 static void
@@ -398,28 +432,6 @@ HACL_blake2s_32_streaming(benchmark::State& state)
 }
 
 BENCHMARK(HACL_blake2s_32_streaming)->Setup(DoSetup);
-
-static void
-BLAKE2_blake2s_ref_streaming(benchmark::State& state)
-{
-  for (auto _ : state) {
-    uint8_t digest[32];
-
-    // Init
-    blake2s_state s;
-    blake2s_init(&s,32);
-
-    // Update
-    for (auto chunk : chunk(input, chunk_len)) {
-      blake2s_update(&s, (uint8_t*)chunk.data(), chunk.size());
-    }
-
-    // Finish
-    blake2s_final(&s,digest,32);
-  }
-}
-
-BENCHMARK(BLAKE2_blake2s_ref_streaming)->Setup(DoSetup);
 
 #ifdef HACL_CAN_COMPILE_VEC128
 static void

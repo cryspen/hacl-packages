@@ -25,6 +25,7 @@ runs:
     - run: |
         echo "BITS_FLAG=-m32" >> $GITHUB_ENV
         echo "OPENSSL_FLAG=--no-openssl" >> $GITHUB_ENV
+        echo "LIBB2_FLAG=--no-libb2" >> $GITHUB_ENV
       shell: bash
       if: ${{ inputs.bits == '32' }}
     - run: echo "BITS_FLAG=" > $GITHUB_ENV
@@ -54,4 +55,4 @@ runs:
       shell: bash
       run: |
         echo OPENSSL_HOME = $OPENSSL_HOME
-        ./mach build -v $BENCHMARK_COMMAND --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG $OPENSSL_FLAG ${{ inputs.args }}
+        ./mach build -v $BENCHMARK_COMMAND --release $BITS_FLAG $EDITION_FLAG $TARGET_FLAG $OPENSSL_FLAG $LIBB2_FLAG ${{ inputs.args }}
