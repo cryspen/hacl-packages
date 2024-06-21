@@ -11,7 +11,11 @@
     "mamonet": "",
     "emillon": "",
     "protz": "",
-    "ma-ilsi": ""
+    "ma-ilsi": "",
+    "xvzcf": "Cryspen",
+    "msprotz": "Microsoft",
+    "R1kM": "Inria",
+    "samuel-lee-msft": "Microsoft"
   },
   "contributors": [
     "franziskuskiefer",
@@ -25,6 +29,10 @@
     "mamonet",
     "emillon",
     "protz",
-    "ma-ilsi"
+    "ma-ilsi",
+    "xvzcf",
+    "msprotz",
+    "R1kM",
+    "samuel-lee-msft"
   ]
 }
