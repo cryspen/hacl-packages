@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Hash_Blake2b_Simd256_H
-#define __internal_Hacl_Hash_Blake2b_Simd256_H
+#ifndef __Hacl_AES_128_CTR32_NI_H
+#define __Hacl_AES_128_CTR32_NI_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,59 +35,72 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
-#include "internal/Hacl_Hash_Blake2b.h"
-#include "../Hacl_Hash_Blake2b_Simd256.h"
 #include "libintvector.h"
 
-void
-Hacl_Hash_Blake2b_Simd256_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk, uint32_t nn);
+typedef Lib_IntVector_Intrinsics_vec128 *Hacl_AES_128_CTR32_NI_aes_ctx;
 
+typedef uint8_t *Hacl_AES_128_CTR32_NI_skey;
+
+/**
+Allocate AES-128 context buffer using malloc for key expansion and nonce
+*/
+Lib_IntVector_Intrinsics_vec128 *Hacl_AES_128_CTR32_NI_context_malloc(void);
+
+/**
+Free AES-128 context buffer
+*/
+void Hacl_AES_128_CTR32_NI_context_free(Lib_IntVector_Intrinsics_vec128 *s);
+
+/**
+Initiate AES-128 context buffer with key expansion and nonce
+*/
 void
-Hacl_Hash_Blake2b_Simd256_update_multi(
+Hacl_AES_128_CTR32_NI_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key, uint8_t *nonce);
+
+/**
+Set nonce in AES-128 context buffer
+*/
+void Hacl_AES_128_CTR32_NI_set_nonce(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *nonce);
+
+/**
+Initiate AES-CTR32-128 context with key and nonce, and
+
+  encrypt number of bytes in AES-CTR32 mode.
+  
+  `counter` is the initial value of counter state.
+*/
+void
+Hacl_AES_128_CTR32_NI_ctr_encrypt(
   uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  FStar_UInt128_uint128 prev,
-  uint8_t *blocks,
-  uint32_t nb
+  uint8_t *out,
+  uint8_t *inp,
+  uint8_t *k,
+  uint8_t *n,
+  uint32_t c
 );
 
+/**
+Initiate AES-CTR32-128 context with key and nonce, and
+
+  decrypt number of bytes in AES-CTR32 mode.
+  
+  `counter` is the initial value of counter state.
+  
+  Decryption uses the forward version of AES cipher
+*/
 void
-Hacl_Hash_Blake2b_Simd256_update_last(
+Hacl_AES_128_CTR32_NI_ctr_decrypt(
   uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  bool last_node,
-  FStar_UInt128_uint128 prev,
-  uint32_t rem,
-  uint8_t *d
+  uint8_t *out,
+  uint8_t *inp,
+  uint8_t *k,
+  uint8_t *n,
+  uint32_t c
 );
-
-void
-Hacl_Hash_Blake2b_Simd256_finish(
-  uint32_t nn,
-  uint8_t *output,
-  Lib_IntVector_Intrinsics_vec256 *hash
-);
-
-void
-Hacl_Hash_Blake2b_Simd256_load_state256b_from_state32(
-  Lib_IntVector_Intrinsics_vec256 *st,
-  uint64_t *st32
-);
-
-void
-Hacl_Hash_Blake2b_Simd256_store_state256b_to_state32(
-  uint64_t *st32,
-  Lib_IntVector_Intrinsics_vec256 *st
-);
-
-Lib_IntVector_Intrinsics_vec256 *Hacl_Hash_Blake2b_Simd256_malloc_with_key(void);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Hash_Blake2b_Simd256_H_DEFINED
+#define __Hacl_AES_128_CTR32_NI_H_DEFINED
 #endif
