@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __internal_Hacl_Hash_Blake2b_Simd256_H
-#define __internal_Hacl_Hash_Blake2b_Simd256_H
+#ifndef __Hacl_Gf128_NI_H
+#define __Hacl_Gf128_NI_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,59 +35,31 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
-#include "internal/Hacl_Hash_Blake2b.h"
-#include "../Hacl_Hash_Blake2b_Simd256.h"
 #include "libintvector.h"
 
-void
-Hacl_Hash_Blake2b_Simd256_init(Lib_IntVector_Intrinsics_vec256 *hash, uint32_t kk, uint32_t nn);
+void Hacl_Gf128_NI_gcm_init(Lib_IntVector_Intrinsics_vec128 *ctx, uint8_t *key);
 
 void
-Hacl_Hash_Blake2b_Simd256_update_multi(
+Hacl_Gf128_NI_gcm_update_blocks(
+  Lib_IntVector_Intrinsics_vec128 *ctx,
   uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  FStar_UInt128_uint128 prev,
-  uint8_t *blocks,
-  uint32_t nb
+  uint8_t *text
 );
 
-void
-Hacl_Hash_Blake2b_Simd256_update_last(
-  uint32_t len,
-  Lib_IntVector_Intrinsics_vec256 *wv,
-  Lib_IntVector_Intrinsics_vec256 *hash,
-  bool last_node,
-  FStar_UInt128_uint128 prev,
-  uint32_t rem,
-  uint8_t *d
+extern void
+(*Hacl_Gf128_NI_gcm_update_padded)(
+  Lib_IntVector_Intrinsics_vec128 *x0,
+  uint32_t x1,
+  uint8_t *x2
 );
 
-void
-Hacl_Hash_Blake2b_Simd256_finish(
-  uint32_t nn,
-  uint8_t *output,
-  Lib_IntVector_Intrinsics_vec256 *hash
-);
+void Hacl_Gf128_NI_gcm_emit(uint8_t *tag, Lib_IntVector_Intrinsics_vec128 *ctx);
 
-void
-Hacl_Hash_Blake2b_Simd256_load_state256b_from_state32(
-  Lib_IntVector_Intrinsics_vec256 *st,
-  uint64_t *st32
-);
-
-void
-Hacl_Hash_Blake2b_Simd256_store_state256b_to_state32(
-  uint64_t *st32,
-  Lib_IntVector_Intrinsics_vec256 *st
-);
-
-Lib_IntVector_Intrinsics_vec256 *Hacl_Hash_Blake2b_Simd256_malloc_with_key(void);
+void Hacl_Gf128_NI_ghash(uint8_t *tag, uint32_t len, uint8_t *text, uint8_t *key);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#define __internal_Hacl_Hash_Blake2b_Simd256_H_DEFINED
+#define __Hacl_Gf128_NI_H_DEFINED
 #endif
