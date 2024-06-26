@@ -49,14 +49,19 @@ endif()
 
 set(hacl_VERSION_TWEAK "")
 
-# Load global config from exteral file.
-# This file must be generated before running cmake with ./mach.py --configure
+# Load global config from external file.
+# For a Clang build, this file can be generated before running cmake with
+# ./mach.py --configure
 # If the build is invoked through ./mach.py, a separate configuration is not
 # needed.
-# If the file is not present, i.e. cmake was invoked directly, we copy the default
-# config from config/default_config.cmake
+# We copy a default config from config/default_config.cmake or
+# config/default_config_msvc.cmake
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/build/config.cmake)
-    configure_file(${PROJECT_SOURCE_DIR}/config/default_config.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+    if(USE_MSVC)
+        configure_file(${PROJECT_SOURCE_DIR}/config/default_config_msvc.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+    else()
+        configure_file(${PROJECT_SOURCE_DIR}/config/default_config.cmake ${PROJECT_SOURCE_DIR}/build/config.cmake COPYONLY)
+    endif()
 endif()
 
 # Now include the config.
@@ -85,8 +90,11 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 include(build/config.cmake)
 
 # Configure different targets
-# TODO: Set flags for MSVC
-if(NOT MSVC)
+if(MSVC)
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:C,CXX>:/Ob3>
+    )
+else()
     add_compile_options(
         # -Wall
         # -Wextra
@@ -99,12 +107,20 @@ if(NOT MSVC)
     )
 endif()
 
-if(WIN32 AND NOT MSVC)
-    # Enable everywhere for windows as long as libintvector.h is not included correctly.
-    add_compile_options(
-        -mavx
-        -mavx2
-    )
+if(WIN32)
+    # Enable AVX and AVX2 everywhere for Windows as long as libintvector.h is not included correctly.
+    if(MSVC)
+        add_compile_options(
+            $<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX>
+            $<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX2>
+        )
+    else()
+        # On Windows with clang-cl (our default) we take the Linux assembly
+        add_compile_options(
+            -mavx
+            -mavx2
+        )
+    endif()
 endif()
 
 # Set include paths
