@@ -200,8 +200,34 @@ function testBignumMontgomery64(Hacl) {
   assert(Hacl.Bignum_Montgomery_64.from_field(ctx, aInvM)[0][0] == 0x21n);
 }
 
+function testAesGcm128(Hacl) {
+  // Basic roundtripping test
+  let iv = hex2buf("00000000000000000000000000000000");
+  let [ ctx ] = Hacl.AES128_GCM.expand(hex2buf("00000000000000000000000000000000"));
+  let plain = (new TextEncoder()).encode("hello", "ascii");
+  let aad = (new TextEncoder()).encode("world", "ascii");
+  let [ cipher_and_tag ] = Hacl.AES128_GCM.encrypt(ctx, plain, aad, iv);
+  let [ success, plain1 ] = Hacl.AES128_GCM.decrypt(ctx, cipher_and_tag, aad, iv);
+  assert(success);
+  assert((new TextDecoder()).decode(plain1, "ascii") == "hello");
+
+  // Whatever I found... https://datatracker.ietf.org/doc/html/rfc7714#section-16.1.1
+  {
+    let plain = hex2buf("47616c6c696120657374206f6d6e69732064697669736120696e207061727465732074726573");
+    let iv = hex2buf("51753c6580c2726f20718414");
+    let key = hex2buf("000102030405060708090a0b0c0d0e0f");
+    let aad = hex2buf("8040f17b8041f8d35501a0b2");
+    let [ ctx ] = Hacl.AES128_GCM.expand(key);
+    let [ cipher_and_tag ] = Hacl.AES128_GCM.encrypt(ctx, plain, aad, iv); 
+    console.log(buf2hex(cipher_and_tag));
+    console.log("f24de3a3fb34de6cacba861c9d7e4bcabe633bd50d294e6f42a5f47a51c7d19b36de3adf8833899d7f27beb16a9152cf765ee4390cce");
+    assert(buf2hex(cipher_and_tag) == "f24de3a3fb34de6cacba861c9d7e4bcabe633bd50d294e6f42a5f47a51c7d19b36de3adf8833899d7f27beb16a9152cf765ee4390cce");
+  }
+}
+
 // Main test driver
 HaclWasm.getInitializedHaclModule().then(function(Hacl) {
+  testAesGcm128(Hacl);
   testBignumMontgomery64(Hacl);
   testBignum64(Hacl);
 

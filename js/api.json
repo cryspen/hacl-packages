@@ -3767,5 +3767,164 @@
         ]
       }
     }
+  },
+  "AES128_GCM": {
+    "expand": {
+      "module": "Hacl_AES_128_GCM_CT64",
+      "name": "aes128_gcm_init",
+      "args": [
+        {
+          "name": "ctx",
+          "kind": "output",
+          "type": "buffer(uint64)",
+          "size": 116,
+          "tests": []
+        },
+        {
+          "name": "key",
+          "kind": "input",
+          "type": "buffer",
+          "size": 16,
+          "interface_index": 0,
+          "tests": []
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "encrypt": {
+      "module": "Hacl_AES_128_GCM_CT64",
+      "name": "aes128_gcm_encrypt",
+      "args": [
+        {
+          "name": "ctx",
+          "kind": "input",
+          "type": "buffer(uint64)",
+          "size": 116,
+          "interface_index": 0,
+          "tests": []
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "out",
+          "kind": "output",
+          "type": "buffer",
+          "size": "len+16",
+          "tests": []
+        },
+        {
+          "name": "plaintext",
+          "kind": "input",
+          "type": "buffer",
+          "size": "len",
+          "interface_index": 1,
+          "tests": []
+        },
+        {
+          "name": "aad_len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "aad_len",
+          "interface_index": 2,
+          "tests": []
+        },
+        {
+          "name": "iv_len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "iv",
+          "kind": "input",
+          "type": "buffer",
+          "size": "iv_len",
+          "interface_index": 3,
+          "tests": []
+        }
+      ],
+      "return": {
+        "type": "void"
+      }
+    },
+    "decrypt": {
+      "module": "Hacl_AES_128_GCM_CT64",
+      "name": "aes128_gcm_decrypt",
+      "args": [
+        {
+          "name": "ctx",
+          "kind": "input",
+          "type": "buffer(uint64)",
+          "size": 116,
+          "interface_index": 0,
+          "tests": []
+        },
+        {
+          "name": "len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "plaintext",
+          "kind": "output",
+          "type": "buffer",
+          "size": "len",
+          "tests": []
+        },
+        {
+          "name": "ciphertext",
+          "kind": "input",
+          "type": "buffer",
+          "size": "len+16",
+          "interface_index": 1,
+          "tests": []
+        },
+        {
+          "name": "aad_len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "aad",
+          "kind": "input",
+          "type": "buffer",
+          "size": "aad_len",
+          "interface_index": 2,
+          "tests": []
+        },
+        {
+          "name": "iv_len",
+          "kind": "input",
+          "type": "uint32",
+          "tests": []
+        },
+        {
+          "name": "iv",
+          "kind": "input",
+          "type": "buffer",
+          "size": "iv_len",
+          "interface_index": 3,
+          "tests": []
+        }
+      ],
+      "return": {
+        "type": "bool",
+        "tests": []
+      }
+    }
   }
 }
