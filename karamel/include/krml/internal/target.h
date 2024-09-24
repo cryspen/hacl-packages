@@ -1,5 +1,5 @@
 /* Copyright (c) INRIA and Microsoft Corporation. All rights reserved.
-   Licensed under the Apache 2.0 License. */
+   Licensed under the Apache 2.0 and MIT Licenses. */
 
 #ifndef __KRML_TARGET_H
 #define __KRML_TARGET_H
@@ -69,6 +69,14 @@
 #  endif
 #endif
 
+#ifndef KRML_ATTRIBUTE_TARGET
+#  if defined(__GNUC__)
+#    define KRML_ATTRIBUTE_TARGET(x) __attribute__((target(x)))
+#  else
+#    define KRML_ATTRIBUTE_TARGET(x)
+#  endif
+#endif
+
 #ifndef KRML_NOINLINE
 #  if defined(_MSC_VER)
 #    define KRML_NOINLINE __declspec(noinline)
@@ -78,6 +86,18 @@
 #    define KRML_NOINLINE
 #    warning "The KRML_NOINLINE macro is not defined for this toolchain!"
 #    warning "The compiler may defeat side-channel resistance with optimizations."
+#    warning "Please locate target.h and try to fill it out with a suitable definition for this compiler."
+#  endif
+#endif
+
+#ifndef KRML_MUSTINLINE
+#  if defined(_MSC_VER)
+#    define KRML_MUSTINLINE inline __forceinline
+#  elif defined (__GNUC__)
+#    define KRML_MUSTINLINE inline __attribute__((always_inline))
+#  else
+#    define KRML_MUSTINLINE inline
+#    warning "The KRML_MUSTINLINE macro defaults to plain inline for this toolchain!"
 #    warning "Please locate target.h and try to fill it out with a suitable definition for this compiler."
 #  endif
 #endif
