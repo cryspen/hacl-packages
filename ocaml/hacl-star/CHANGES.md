@@ -1,6 +1,9 @@
 ## 0.8.0 (Unreleased)
 - API changes for all hash functions
 
+## 0.7.2
+- Compatibility with newer ctypes versions (#421)
+
 ## 0.7.1
 - Significantly faster P-256 signature verification
 - Added SHA-3 to EverCrypt hashing interface

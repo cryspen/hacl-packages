@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "hacl-star-raw"
-version: "0.7.1"
+version: "0.7.2"
 synopsis: "Auto-generated low-level OCaml bindings for EverCrypt/HACL*"
 description: """
 This package contains a snapshot of the EverCrypt crypto provider and
@@ -24,10 +24,10 @@ depends: [
 conflicts: [
   "ocaml-option-bytecode-only"
 ]
-available: [
-  arch != "ppc64" & arch != "ppc32" & arch != "arm32" &
-  (os = "freebsd" | os-family != "bsd")
-]
+available:
+  arch != "ppc64" & arch != "ppc32" & arch != "arm32" & arch != "riscv64" &
+  os-family != "windows" &
+  os-family != "bsd"
 build: [
   [make "-C" "hacl-star-raw" "build-c" "-j" jobs]
   [make "-C" "hacl-star-raw" "build-bindings" "-j" jobs]

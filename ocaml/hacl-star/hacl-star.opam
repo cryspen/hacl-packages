@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "hacl-star"
-version: "0.7.1"
+version: "0.7.2"
 synopsis: "OCaml API for EverCrypt/HACL*"
 description: """
 Documentation for this library can be found
@@ -18,14 +18,11 @@ depends: [
   "hacl-star-raw" {= version}
   "zarith"
   "cppo" {build}
-  "alcotest" {with-test & >= "1.1.0"}
+  "alcotest" {with-test & >= "1.8.0"}
   "qcheck-core" {with-test & >= "0.20"}
   "secp256k1-internal" {with-test}
   "cstruct" {with-test}
   "odoc" {with-doc}
-]
-available: [
-  os = "freebsd" | os-family != "bsd"
 ]
 build: [
   ["dune" "subst"] {dev}
