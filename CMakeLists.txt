@@ -65,6 +65,9 @@ include(${PROJECT_SOURCE_DIR}/build/config.cmake)
 # Constants used throughout hacl and the build.
 include(config/constants.cmake)
 
+# for libb2
+include(FindPkgConfig)
+
 # Set system processor to 32-bit.
 # Note that this only works on intel for now.
 if(CMAKE_C_FLAGS MATCHES ".*-m32.*")
@@ -412,13 +415,6 @@ if(ENABLE_BENCHMARKS)
     add_library(ecckiila OBJECT ${SOURCES_ecckiila})
 endif(ENABLE_BENCHMARKS)
 
-# Add blake2 for benchmarks
-if(ENABLE_BENCHMARKS)
-    include(${PROJECT_SOURCE_DIR}/third-party/blake2/config.cmake)
-    add_library(blake2 OBJECT ${SOURCES_blake2_ref})
-    target_include_directories(blake2 PUBLIC ${PROJECT_SOURCE_DIR}/third-party/blake2/ref)
-endif(ENABLE_BENCHMARKS)
-
 # Add digestif for benchmarks
 if(ENABLE_BENCHMARKS)
     include(${PROJECT_SOURCE_DIR}/third-party/digestif/config.cmake)
@@ -525,6 +521,16 @@ if(ENABLE_BENCHMARKS)
             target_compile_definitions(${BENCH_NAME} PUBLIC NO_OPENSSL)
         endif(ENABLE_OPENSSL_BENCHMARKS)
 
+        if(ENABLE_LIBB2_BENCHMARKS)
+          pkg_check_modules (LIBB2 REQUIRED libb2)
+          target_link_libraries(${BENCH_NAME} PRIVATE ${LIBB2_LIBRARIES})
+          target_link_directories(${BENCH_NAME} PRIVATE ${LIBB2_LIBRARY_DIRS})
+          target_include_directories(${BENCH_NAME} PUBLIC ${LIBB2_INCLUDE_DIRS})
+          target_compile_options(${BENCH_NAME} PUBLIC ${LIBB2_CFLAGS_OTHER})
+        else()
+          target_compile_definitions(${BENCH_NAME} PUBLIC NO_LIBB2)
+        endif(ENABLE_LIBB2_BENCHMARKS)
+
         if(ENABLE_LIBTOMCRYPT_BENCHMARKS)
             if(DEFINED ENV{LIBTOMCRYPT_HOME})
                 target_include_directories(${BENCH_NAME} PUBLIC $ENV{LIBTOMCRYPT_HOME}/include/)
@@ -546,7 +552,6 @@ if(ENABLE_BENCHMARKS)
         target_link_libraries(${BENCH_NAME} PRIVATE
             hacl_static
             ecckiila
-            blake2
             digestif
             hacl_cpu_features
             benchmark::benchmark

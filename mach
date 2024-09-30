@@ -96,6 +96,11 @@ def install(args):
             action="store_true",
         ),
         argument(
+            "--no-libb2",
+            help="Don't build and run libb2 benchmarks.",
+            action="store_true",
+        ),
+        argument(
             "--libtomcrypt",
             help="Build and run LibTomCrypt benchmarks.",
             action="store_true",
@@ -340,6 +345,8 @@ def build(args):
             )
             exit(1)
         cmake_args.append("-DENABLE_BENCHMARKS=ON")
+        if not args.no_libb2:
+            cmake_args.append("-DENABLE_LIBB2_BENCHMARKS=ON")
         if not args.no_openssl:
             cmake_args.append("-DENABLE_OPENSSL_BENCHMARKS=ON")
             if platform.system() == "Darwin":

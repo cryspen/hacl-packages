@@ -20,6 +20,7 @@ jobs:
           sudo apt-get install clang
           echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
+          sudo apt-get install libb2-dev 
 
       - name: Checkout hacl-packages (${{ github.ref }})
         uses: actions/checkout@v3
