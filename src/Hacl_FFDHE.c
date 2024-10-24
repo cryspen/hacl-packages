@@ -140,8 +140,8 @@ static inline void ffdhe_precomp_p(Spec_FFDHE_ffdhe_alg a, uint64_t *p_r2_n)
   uint32_t len = ffdhe_len(a);
   for (uint32_t i = 0U; i < len; i++)
   {
-    uint8_t *os = p_s;
     uint8_t x = p[i];
+    uint8_t *os = p_s;
     os[i] = x;
   }
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(ffdhe_len(a), p_s, p_n);
@@ -202,7 +202,7 @@ static inline uint64_t ffdhe_check_pk(Spec_FFDHE_ffdhe_alg a, uint64_t *pk_n, ui
   {
     uint64_t beq = FStar_UInt64_eq_mask(b2[i], pk_n[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(b2[i], pk_n[i]);
-    acc0 = (beq & acc0) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc0 = (beq & acc0) | (~beq & blt);
   }
   uint64_t res = acc0;
   uint64_t m0 = res;
@@ -211,7 +211,7 @@ static inline uint64_t ffdhe_check_pk(Spec_FFDHE_ffdhe_alg a, uint64_t *pk_n, ui
   {
     uint64_t beq = FStar_UInt64_eq_mask(pk_n[i], p_n1[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(pk_n[i], p_n1[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc = (beq & acc) | (~beq & blt);
   }
   uint64_t m1 = acc;
   return m0 & m1;
@@ -279,8 +279,8 @@ Hacl_FFDHE_ffdhe_secret_to_public_precomp(
   memset(g_n, 0U, nLen * sizeof (uint64_t));
   uint8_t g = 0U;
   {
-    uint8_t *os = &g;
     uint8_t x = Hacl_Impl_FFDHE_Constants_ffdhe_g2[0U];
+    uint8_t *os = &g;
     os[0U] = x;
   }
   Hacl_Bignum_Convert_bn_from_bytes_be_uint64(1U, &g, g_n);

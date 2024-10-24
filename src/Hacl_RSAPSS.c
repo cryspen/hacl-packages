@@ -167,7 +167,7 @@ static inline uint64_t check_num_bits_u64(uint32_t bs, uint64_t *b)
   {
     uint64_t beq = FStar_UInt64_eq_mask(b[i], b2[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(b[i], b2[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc = (beq & acc) | (~beq & blt);
   }
   uint64_t res = acc;
   return res;
@@ -189,7 +189,7 @@ static inline uint64_t check_modulus_u64(uint32_t modBits, uint64_t *n)
   {
     uint64_t beq = FStar_UInt64_eq_mask(b2[i], n[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(b2[i], n[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc = (beq & acc) | (~beq & blt);
   }
   uint64_t res = acc;
   uint64_t m1 = res;
@@ -252,8 +252,8 @@ pss_encode(
   mgf_hash(a, hLen, m1Hash, dbLen, dbMask);
   for (uint32_t i = 0U; i < dbLen; i++)
   {
-    uint8_t *os = db;
     uint8_t x = (uint32_t)db[i] ^ (uint32_t)dbMask[i];
+    uint8_t *os = db;
     os[i] = x;
   }
   uint32_t msBits = emBits % 8U;
@@ -288,11 +288,7 @@ pss_verify(
     em_0 = 0U;
   }
   uint8_t em_last = em[emLen - 1U];
-  if (emLen < saltLen + hash_len(a) + 2U)
-  {
-    return false;
-  }
-  if (!(em_last == 0xbcU && em_0 == 0U))
+  if (emLen < saltLen + hash_len(a) + 2U || !(em_last == 0xbcU && em_0 == 0U))
   {
     return false;
   }
@@ -310,8 +306,8 @@ pss_verify(
   mgf_hash(a, hLen, m1Hash, dbLen, dbMask);
   for (uint32_t i = 0U; i < dbLen; i++)
   {
-    uint8_t *os = dbMask;
     uint8_t x = (uint32_t)dbMask[i] ^ (uint32_t)maskedDB[i];
+    uint8_t *os = dbMask;
     os[i] = x;
   }
   uint32_t msBits1 = emBits % 8U;
@@ -486,9 +482,9 @@ Hacl_RSAPSS_rsapss_sign(
     uint64_t eq_m = mask1;
     for (uint32_t i = 0U; i < nLen2; i++)
     {
-      uint64_t *os = s;
       uint64_t x = s[i];
       uint64_t x0 = eq_m & x;
+      uint64_t *os = s;
       os[i] = x0;
     }
     bool eq_b = eq_m == 0xFFFFFFFFFFFFFFFFULL;
@@ -553,7 +549,7 @@ Hacl_RSAPSS_rsapss_verify(
     {
       uint64_t beq = FStar_UInt64_eq_mask(s[i], n[i]);
       uint64_t blt = ~FStar_UInt64_gte_mask(s[i], n[i]);
-      acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+      acc = (beq & acc) | (~beq & blt);
     }
     uint64_t mask = acc;
     bool res;
@@ -568,10 +564,9 @@ Hacl_RSAPSS_rsapss_verify(
         eBits,
         e,
         m);
-      bool ite;
       if (!((modBits - 1U) % 8U == 0U))
       {
-        ite = true;
+        res = true;
       }
       else
       {
@@ -579,15 +574,7 @@ Hacl_RSAPSS_rsapss_verify(
         uint32_t j = (modBits - 1U) % 64U;
         uint64_t tmp = m[i];
         uint64_t get_bit = tmp >> j & 1ULL;
-        ite = get_bit == 0ULL;
-      }
-      if (ite)
-      {
-        res = true;
-      }
-      else
-      {
-        res = false;
+        res = get_bit == 0ULL;
       }
     }
     else

@@ -89,13 +89,13 @@ Hacl_HMAC_Blake2b_256_compute_blake2b_256(
   KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 s[4U] KRML_POST_ALIGN(32) = { 0U };
   Hacl_Hash_Blake2b_Simd256_init(s, 0U, 64U);
   Lib_IntVector_Intrinsics_vec256 *s0 = s;
-  uint8_t *dst1 = ipad;
   if (data_len == 0U)
   {
     KRML_PRE_ALIGN(32) Lib_IntVector_Intrinsics_vec256 wv[4U] KRML_POST_ALIGN(32) = { 0U };
     Hacl_Hash_Blake2b_Simd256_update_last(128U,
       wv,
       s0,
+      false,
       FStar_UInt128_uint64_to_uint128(0ULL),
       128U,
       ipad);
@@ -138,11 +138,13 @@ Hacl_HMAC_Blake2b_256_compute_blake2b_256(
     Hacl_Hash_Blake2b_Simd256_update_last(rem_len,
       wv1,
       s0,
+      false,
       FStar_UInt128_add(FStar_UInt128_uint64_to_uint128((uint64_t)128U),
         FStar_UInt128_uint64_to_uint128((uint64_t)full_blocks_len)),
       rem_len,
       rem);
   }
+  uint8_t *dst1 = ipad;
   Hacl_Hash_Blake2b_Simd256_finish(64U, dst1, s0);
   uint8_t *hash1 = ipad;
   Hacl_Hash_Blake2b_Simd256_init(s0, 0U, 64U);
@@ -182,6 +184,7 @@ Hacl_HMAC_Blake2b_256_compute_blake2b_256(
   Hacl_Hash_Blake2b_Simd256_update_last(rem_len,
     wv1,
     s0,
+    false,
     FStar_UInt128_add(FStar_UInt128_uint64_to_uint128((uint64_t)128U),
       FStar_UInt128_uint64_to_uint128((uint64_t)full_blocks_len)),
     rem_len,
