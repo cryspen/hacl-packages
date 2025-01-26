@@ -43,10 +43,8 @@ Hacl_HMAC_Blake2s_128_compute_blake2s_128(
   uint32_t data_len
 )
 {
-  uint32_t l = 64U;
-  KRML_CHECK_SIZE(sizeof (uint8_t), l);
-  uint8_t key_block[l];
-  memset(key_block, 0U, l * sizeof (uint8_t));
+  uint8_t key_block[64U];
+  memset(key_block, 0U, 64U * sizeof (uint8_t));
   uint8_t *nkey = key_block;
   uint32_t ite;
   if (key_len <= 64U)
@@ -67,19 +65,17 @@ Hacl_HMAC_Blake2s_128_compute_blake2s_128(
   {
     Hacl_Hash_Blake2s_Simd128_hash_with_key(nkey, 32U, key, key_len, NULL, 0U);
   }
-  KRML_CHECK_SIZE(sizeof (uint8_t), l);
-  uint8_t ipad[l];
-  memset(ipad, 0x36U, l * sizeof (uint8_t));
-  for (uint32_t i = 0U; i < l; i++)
+  uint8_t ipad[64U];
+  memset(ipad, 0x36U, 64U * sizeof (uint8_t));
+  for (uint32_t i = 0U; i < 64U; i++)
   {
     uint8_t xi = ipad[i];
     uint8_t yi = key_block[i];
     ipad[i] = (uint32_t)xi ^ (uint32_t)yi;
   }
-  KRML_CHECK_SIZE(sizeof (uint8_t), l);
-  uint8_t opad[l];
-  memset(opad, 0x5cU, l * sizeof (uint8_t));
-  for (uint32_t i = 0U; i < l; i++)
+  uint8_t opad[64U];
+  memset(opad, 0x5cU, 64U * sizeof (uint8_t));
+  for (uint32_t i = 0U; i < 64U; i++)
   {
     uint8_t xi = opad[i];
     uint8_t yi = key_block[i];
@@ -92,7 +88,7 @@ Hacl_HMAC_Blake2s_128_compute_blake2s_128(
   if (data_len == 0U)
   {
     KRML_PRE_ALIGN(16) Lib_IntVector_Intrinsics_vec128 wv[4U] KRML_POST_ALIGN(16) = { 0U };
-    Hacl_Hash_Blake2s_Simd128_update_last(64U, wv, s0, 0ULL, 64U, ipad);
+    Hacl_Hash_Blake2s_Simd128_update_last(64U, wv, s0, false, 0ULL, 64U, ipad);
   }
   else
   {
@@ -127,6 +123,7 @@ Hacl_HMAC_Blake2s_128_compute_blake2s_128(
     Hacl_Hash_Blake2s_Simd128_update_last(rem_len,
       wv1,
       s0,
+      false,
       (uint64_t)64U + (uint64_t)full_blocks_len,
       rem_len,
       rem);
@@ -165,6 +162,7 @@ Hacl_HMAC_Blake2s_128_compute_blake2s_128(
   Hacl_Hash_Blake2s_Simd128_update_last(rem_len,
     wv1,
     s0,
+    false,
     (uint64_t)64U + (uint64_t)full_blocks_len,
     rem_len,
     rem);

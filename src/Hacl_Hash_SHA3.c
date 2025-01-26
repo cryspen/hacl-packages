@@ -251,7 +251,8 @@ Hacl_Hash_SHA3_update_multi_sha3(
     uint8_t *bl0 = b_;
     uint8_t *uu____0 = b0 + i * block_len(a);
     memcpy(bl0, uu____0, block_len(a) * sizeof (uint8_t));
-    block_len(a);
+    uint32_t unused = block_len(a);
+    KRML_MAYBE_UNUSED_VAR(unused);
     absorb_inner_32(b_, s);
   }
 }
@@ -567,7 +568,10 @@ Hacl_Hash_SHA3_state_t *Hacl_Hash_SHA3_malloc(Spec_Hash_Definitions_hash_alg a)
   s = { .block_state = block_state, .buf = buf0, .total_len = (uint64_t)0U };
   Hacl_Hash_SHA3_state_t
   *p = (Hacl_Hash_SHA3_state_t *)KRML_HOST_MALLOC(sizeof (Hacl_Hash_SHA3_state_t));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   uint64_t *s1 = block_state.snd;
   memset(s1, 0U, 25U * sizeof (uint64_t));
   return p;
@@ -604,7 +608,10 @@ Hacl_Hash_SHA3_state_t *Hacl_Hash_SHA3_copy(Hacl_Hash_SHA3_state_t *state)
   s = { .block_state = block_state, .buf = buf1, .total_len = total_len0 };
   Hacl_Hash_SHA3_state_t
   *p = (Hacl_Hash_SHA3_state_t *)KRML_HOST_MALLOC(sizeof (Hacl_Hash_SHA3_state_t));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   return p;
 }
 
@@ -2166,7 +2173,7 @@ void Hacl_Hash_SHA3_state_free(uint64_t *s)
 Absorb number of input blocks and write the output state
 
   This function is intended to receive a hash state and input buffer.
-  It prcoesses an input of multiple of 168-bytes (SHAKE128 block size),
+  It processes an input of multiple of 168-bytes (SHAKE128 block size),
   any additional bytes of final partial block are ignored.
 
   The argument `state` (IN/OUT) points to hash state, i.e., uint64_t[25]
@@ -2191,14 +2198,14 @@ Hacl_Hash_SHA3_shake128_absorb_nblocks(uint64_t *state, uint8_t *input, uint32_t
 Absorb a final partial block of input and write the output state
 
   This function is intended to receive a hash state and input buffer.
-  It prcoesses a sequence of bytes at end of input buffer that is less 
+  It processes a sequence of bytes at end of input buffer that is less
   than 168-bytes (SHAKE128 block size),
   any bytes of full blocks at start of input buffer are ignored.
 
   The argument `state` (IN/OUT) points to hash state, i.e., uint64_t[25]
   The argument `input` (IN) points to `inputByteLen` bytes of valid memory,
   i.e., uint8_t[inputByteLen]
-  
+
   Note: Full size of input buffer must be passed to `inputByteLen` including
   the number of full-block bytes at start of input buffer that are ignored
 */

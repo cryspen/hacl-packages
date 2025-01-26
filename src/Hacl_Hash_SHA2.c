@@ -211,7 +211,7 @@ void Hacl_Hash_SHA2_sha224_init(uint32_t *hash)
     os[i] = x;);
 }
 
-static inline void sha224_update_nblocks(uint32_t len, uint8_t *b, uint32_t *st)
+void Hacl_Hash_SHA2_sha224_update_nblocks(uint32_t len, uint8_t *b, uint32_t *st)
 {
   Hacl_Hash_SHA2_sha256_update_nblocks(len, b, st);
 }
@@ -452,7 +452,10 @@ Hacl_Streaming_MD_state_32 *Hacl_Hash_SHA2_malloc_256(void)
   s = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
   Hacl_Streaming_MD_state_32
   *p = (Hacl_Streaming_MD_state_32 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_32));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   Hacl_Hash_SHA2_sha256_init(block_state);
   return p;
 }
@@ -477,7 +480,10 @@ Hacl_Streaming_MD_state_32 *Hacl_Hash_SHA2_copy_256(Hacl_Streaming_MD_state_32 *
   s = { .block_state = block_state, .buf = buf, .total_len = total_len0 };
   Hacl_Streaming_MD_state_32
   *p = (Hacl_Streaming_MD_state_32 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_32));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   return p;
 }
 
@@ -765,7 +771,10 @@ Hacl_Streaming_MD_state_32 *Hacl_Hash_SHA2_malloc_224(void)
   s = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
   Hacl_Streaming_MD_state_32
   *p = (Hacl_Streaming_MD_state_32 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_32));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   Hacl_Hash_SHA2_sha224_init(block_state);
   return p;
 }
@@ -825,7 +834,7 @@ void Hacl_Hash_SHA2_digest_224(Hacl_Streaming_MD_state_32 *state, uint8_t *outpu
   }
   uint8_t *buf_last = buf_1 + r - ite;
   uint8_t *buf_multi = buf_1;
-  sha224_update_nblocks(0U, buf_multi, tmp_block_state);
+  Hacl_Hash_SHA2_sha224_update_nblocks(0U, buf_multi, tmp_block_state);
   uint64_t prev_len_last = total_len - (uint64_t)r;
   Hacl_Hash_SHA2_sha224_update_last(prev_len_last + (uint64_t)r, r, buf_last, tmp_block_state);
   Hacl_Hash_SHA2_sha224_finish(tmp_block_state, output);
@@ -847,7 +856,7 @@ void Hacl_Hash_SHA2_hash_224(uint8_t *output, uint8_t *input, uint32_t input_len
   Hacl_Hash_SHA2_sha224_init(st);
   uint32_t rem = input_len % 64U;
   uint64_t len_ = (uint64_t)input_len;
-  sha224_update_nblocks(input_len, ib, st);
+  Hacl_Hash_SHA2_sha224_update_nblocks(input_len, ib, st);
   uint32_t rem1 = input_len % 64U;
   uint8_t *b0 = ib;
   uint8_t *lb = b0 + input_len - rem1;
@@ -863,7 +872,10 @@ Hacl_Streaming_MD_state_64 *Hacl_Hash_SHA2_malloc_512(void)
   s = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
   Hacl_Streaming_MD_state_64
   *p = (Hacl_Streaming_MD_state_64 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_64));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   Hacl_Hash_SHA2_sha512_init(block_state);
   return p;
 }
@@ -888,7 +900,10 @@ Hacl_Streaming_MD_state_64 *Hacl_Hash_SHA2_copy_512(Hacl_Streaming_MD_state_64 *
   s = { .block_state = block_state, .buf = buf, .total_len = total_len0 };
   Hacl_Streaming_MD_state_64
   *p = (Hacl_Streaming_MD_state_64 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_64));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   return p;
 }
 
@@ -1177,7 +1192,10 @@ Hacl_Streaming_MD_state_64 *Hacl_Hash_SHA2_malloc_384(void)
   s = { .block_state = block_state, .buf = buf, .total_len = (uint64_t)0U };
   Hacl_Streaming_MD_state_64
   *p = (Hacl_Streaming_MD_state_64 *)KRML_HOST_MALLOC(sizeof (Hacl_Streaming_MD_state_64));
-  p[0U] = s;
+  if (p != NULL)
+  {
+    p[0U] = s;
+  }
   Hacl_Hash_SHA2_sha384_init(block_state);
   return p;
 }
