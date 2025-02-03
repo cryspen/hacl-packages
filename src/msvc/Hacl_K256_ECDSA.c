@@ -351,7 +351,7 @@ static inline uint64_t load_qelem_check(uint64_t *f, uint8_t *b)
     1U,
     uint64_t beq = FStar_UInt64_eq_mask(f[i], n[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(f[i], n[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL))););
+    acc = (beq & acc) | (~beq & blt););
   uint64_t is_lt_q = acc;
   return ~is_zero & is_lt_q;
 }
@@ -372,11 +372,7 @@ static inline bool load_qelem_vartime(uint64_t *f, uint8_t *b)
   uint64_t a2 = f[2U];
   uint64_t a3 = f[3U];
   bool is_lt_q_b;
-  if (a3 < 0xffffffffffffffffULL)
-  {
-    is_lt_q_b = true;
-  }
-  else if (a2 < 0xfffffffffffffffeULL)
+  if (a3 < 0xffffffffffffffffULL || a2 < 0xfffffffffffffffeULL)
   {
     is_lt_q_b = true;
   }
@@ -510,12 +506,14 @@ static inline void modq(uint64_t *out, uint64_t *a)
   uint64_t *t01 = tmp;
   uint64_t m[7U] = { 0U };
   uint64_t p[5U] = { 0U };
-  mul_pow2_256_minus_q_add(4U, 7U, t01, a + 4U, a, m);
-  mul_pow2_256_minus_q_add(3U, 5U, t01, m + 4U, m, p);
+  uint64_t c0 = mul_pow2_256_minus_q_add(4U, 7U, t01, a + 4U, a, m);
+  KRML_MAYBE_UNUSED_VAR(c0);
+  uint64_t c10 = mul_pow2_256_minus_q_add(3U, 5U, t01, m + 4U, m, p);
+  KRML_MAYBE_UNUSED_VAR(c10);
   uint64_t c2 = mul_pow2_256_minus_q_add(1U, 4U, t01, p + 4U, p, r);
-  uint64_t c0 = c2;
+  uint64_t c00 = c2;
   uint64_t c1 = add4(r, tmp, out);
-  uint64_t mask = 0ULL - (c0 + c1);
+  uint64_t mask = 0ULL - (c00 + c1);
   KRML_MAYBE_FOR4(i,
     0U,
     4U,
@@ -567,11 +565,7 @@ static inline bool is_qelem_le_q_halved_vartime(uint64_t *f)
   {
     return false;
   }
-  if (a2 < 0xffffffffffffffffULL)
-  {
-    return true;
-  }
-  if (a1 < 0x5d576e7357a4501dULL)
+  if (a2 < 0xffffffffffffffffULL || a1 < 0x5d576e7357a4501dULL)
   {
     return true;
   }

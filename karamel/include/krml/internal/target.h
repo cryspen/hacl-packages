@@ -1,5 +1,5 @@
 /* Copyright (c) INRIA and Microsoft Corporation. All rights reserved.
-   Licensed under the Apache 2.0 License. */
+   Licensed under the Apache 2.0 and MIT Licenses. */
 
 #ifndef __KRML_TARGET_H
 #define __KRML_TARGET_H
@@ -17,6 +17,20 @@
  * __inline__ to ensure the code compiles with -std=c90 and earlier. */
 #ifdef __GNUC__
 #  define inline __inline__
+#endif
+
+/* There is no support for aligned_alloc() in macOS before Catalina, so
+ * let's make a macro to use _mm_malloc() and _mm_free() functions
+ * from mm_malloc.h. */
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <AvailabilityMacros.h>
+#  if defined(MAC_OS_X_VERSION_MIN_REQUIRED) &&                                \
+   (MAC_OS_X_VERSION_MIN_REQUIRED < 101500)
+#    include <mm_malloc.h>
+#    define LEGACY_MACOS
+#  else
+#    undef LEGACY_MACOS
+#endif
 #endif
 
 /******************************************************************************/
@@ -69,15 +83,39 @@
 #  endif
 #endif
 
+#ifndef KRML_ATTRIBUTE_TARGET
+#  if defined(__GNUC__)
+#    define KRML_ATTRIBUTE_TARGET(x) __attribute__((target(x)))
+#  else
+#    define KRML_ATTRIBUTE_TARGET(x)
+#  endif
+#endif
+
 #ifndef KRML_NOINLINE
 #  if defined(_MSC_VER)
 #    define KRML_NOINLINE __declspec(noinline)
 #  elif defined (__GNUC__)
 #    define KRML_NOINLINE __attribute__((noinline,unused))
+#  elif defined (__SUNPRO_C)
+#    define KRML_NOINLINE __attribute__((noinline))
 #  else
 #    define KRML_NOINLINE
 #    warning "The KRML_NOINLINE macro is not defined for this toolchain!"
 #    warning "The compiler may defeat side-channel resistance with optimizations."
+#    warning "Please locate target.h and try to fill it out with a suitable definition for this compiler."
+#  endif
+#endif
+
+#ifndef KRML_MUSTINLINE
+#  if defined(_MSC_VER)
+#    define KRML_MUSTINLINE inline __forceinline
+#  elif defined (__GNUC__)
+#    define KRML_MUSTINLINE inline __attribute__((always_inline))
+#  elif defined (__SUNPRO_C)
+#    define KRML_MUSTINLINE inline __attribute__((always_inline))
+#  else
+#    define KRML_MUSTINLINE inline
+#    warning "The KRML_MUSTINLINE macro defaults to plain inline for this toolchain!"
 #    warning "Please locate target.h and try to fill it out with a suitable definition for this compiler."
 #  endif
 #endif
@@ -109,6 +147,8 @@
       defined(_MSC_VER) ||                                                     \
       (defined(__MINGW32__) && defined(__MINGW64_VERSION_MAJOR)))
 #    define KRML_ALIGNED_MALLOC(X, Y) _aligned_malloc(Y, X)
+#  elif defined(LEGACY_MACOS)
+#    define KRML_ALIGNED_MALLOC(X, Y) _mm_malloc(Y, X)
 #  else
 #    define KRML_ALIGNED_MALLOC(X, Y) aligned_alloc(X, Y)
 #  endif
@@ -126,6 +166,8 @@
       defined(_MSC_VER) ||                                                     \
       (defined(__MINGW32__) && defined(__MINGW64_VERSION_MAJOR)))
 #    define KRML_ALIGNED_FREE(X) _aligned_free(X)
+#  elif defined(LEGACY_MACOS)
+#    define KRML_ALIGNED_FREE(X) _mm_free(X)
 #  else
 #    define KRML_ALIGNED_FREE(X) free(X)
 #  endif
@@ -191,6 +233,8 @@ inline static int32_t krml_time(void) {
 #elif defined(__GNUC__)
 /* deprecated attribute is not defined in GCC < 4.5. */
 #  define KRML_DEPRECATED(x)
+#elif defined(__SUNPRO_C)
+#  define KRML_DEPRECATED(x) __attribute__((deprecated(x)))
 #elif defined(_MSC_VER)
 #  define KRML_DEPRECATED(x) __declspec(deprecated(x))
 #endif
