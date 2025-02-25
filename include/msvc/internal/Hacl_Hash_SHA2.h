@@ -35,7 +35,6 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Krmllib.h"
 #include "../Hacl_Hash_SHA2.h"
 
 static const
@@ -122,6 +121,8 @@ Hacl_Hash_SHA2_sha256_update_last(uint64_t totlen, uint32_t len, uint8_t *b, uin
 void Hacl_Hash_SHA2_sha256_finish(uint32_t *st, uint8_t *h);
 
 void Hacl_Hash_SHA2_sha224_init(uint32_t *hash);
+
+void Hacl_Hash_SHA2_sha224_update_nblocks(uint32_t len, uint8_t *b, uint32_t *st);
 
 void
 Hacl_Hash_SHA2_sha224_update_last(uint64_t totlen, uint32_t len, uint8_t *b, uint32_t *st);

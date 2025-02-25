@@ -35,8 +35,6 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
-#include "internal/Hacl_Hash_Blake2b.h"
 #include "../Hacl_Hash_Blake2s_Simd128.h"
 #include "libintvector.h"
 
@@ -58,6 +56,7 @@ Hacl_Hash_Blake2s_Simd128_update_last(
   uint32_t len,
   Lib_IntVector_Intrinsics_vec128 *wv,
   Lib_IntVector_Intrinsics_vec128 *hash,
+  bool last_node,
   uint64_t prev,
   uint32_t rem,
   uint8_t *d
