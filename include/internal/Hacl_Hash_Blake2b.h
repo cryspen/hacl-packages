@@ -35,15 +35,15 @@ extern "C" {
 #include "krml/lowstar_endianness.h"
 #include "krml/internal/target.h"
 
-#include "internal/Hacl_Impl_Blake2_Constants.h"
+#include "internal/Hacl_Streaming_Types.h"
 #include "../Hacl_Hash_Blake2b.h"
 
-typedef struct Hacl_Hash_Blake2b_index_s
+typedef struct Hacl_Hash_Blake2b_params_and_key_s
 {
-  uint8_t key_length;
-  uint8_t digest_length;
+  Hacl_Hash_Blake2b_blake2_params *fst;
+  uint8_t *snd;
 }
-Hacl_Hash_Blake2b_index;
+Hacl_Hash_Blake2b_params_and_key;
 
 void Hacl_Hash_Blake2b_init(uint64_t *hash, uint32_t kk, uint32_t nn);
 
@@ -62,6 +62,7 @@ Hacl_Hash_Blake2b_update_last(
   uint32_t len,
   uint64_t *wv,
   uint64_t *hash,
+  bool last_node,
   FStar_UInt128_uint128 prev,
   uint32_t rem,
   uint8_t *d
@@ -69,12 +70,22 @@ Hacl_Hash_Blake2b_update_last(
 
 void Hacl_Hash_Blake2b_finish(uint32_t nn, uint8_t *output, uint64_t *hash);
 
-typedef struct K____Hacl_Impl_Blake2_Core_blake2_params___uint8_t__s
+typedef struct Hacl_Hash_Blake2b_block_state_t_s
 {
-  Hacl_Hash_Blake2b_blake2_params *fst;
-  uint8_t *snd;
+  uint8_t fst;
+  uint8_t snd;
+  bool thd;
+  Hacl_Streaming_Types_two_pointers f3;
 }
-K____Hacl_Impl_Blake2_Core_blake2_params___uint8_t_;
+Hacl_Hash_Blake2b_block_state_t;
+
+typedef struct Hacl_Hash_Blake2b_state_t_s
+{
+  Hacl_Hash_Blake2b_block_state_t block_state;
+  uint8_t *buf;
+  uint64_t total_len;
+}
+Hacl_Hash_Blake2b_state_t;
 
 #if defined(__cplusplus)
 }

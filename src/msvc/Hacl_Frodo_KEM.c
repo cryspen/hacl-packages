@@ -25,11 +25,15 @@
 
 #include "internal/Hacl_Frodo_KEM.h"
 
+#include "Lib_RandomBuffer_System.h"
+#include "Hacl_Krmllib.h"
+#include "Hacl_Hash_SHA3.h"
 #include "internal/Hacl_Spec.h"
 #include "internal/Hacl_Krmllib.h"
 
 void randombytes_(uint32_t len, uint8_t *res)
 {
-  Lib_RandomBuffer_System_randombytes(res, len);
+  bool b = Lib_RandomBuffer_System_randombytes(res, len);
+  KRML_MAYBE_UNUSED_VAR(b);
 }
 
