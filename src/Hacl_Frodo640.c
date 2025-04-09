@@ -25,6 +25,7 @@
 
 #include "Hacl_Frodo640.h"
 
+#include "Hacl_Hash_SHA3.h"
 #include "internal/Hacl_Spec.h"
 #include "internal/Hacl_Frodo_KEM.h"
 #include "lib_memzero0.h"
@@ -212,10 +213,10 @@ uint32_t Hacl_Frodo640_crypto_kem_dec(uint8_t *ss, uint8_t *ct, uint8_t *sk)
     0U,
     16U,
     1U,
-    uint8_t *os = kp_s;
     uint8_t uu____0 = s[i];
     uint8_t
     x = (uint32_t)uu____0 ^ ((uint32_t)(uint8_t)mask0 & ((uint32_t)kp[i] ^ (uint32_t)uu____0));
+    uint8_t *os = kp_s;
     os[i] = x;);
   uint32_t ss_init_len = 9736U;
   KRML_CHECK_SIZE(sizeof (uint8_t), ss_init_len);

@@ -25,6 +25,7 @@
 
 #include "Hacl_SHA2_Vec128.h"
 
+#include "Hacl_SHA2_Types.h"
 #include "internal/Hacl_SHA2_Types.h"
 #include "internal/Hacl_Hash_SHA2.h"
 #include "libintvector.h"
@@ -35,9 +36,9 @@ static inline void sha224_init4(Lib_IntVector_Intrinsics_vec128 *hash)
     0U,
     8U,
     1U,
-    Lib_IntVector_Intrinsics_vec128 *os = hash;
     uint32_t hi = Hacl_Hash_SHA2_h224[i];
     Lib_IntVector_Intrinsics_vec128 x = Lib_IntVector_Intrinsics_vec128_load32(hi);
+    Lib_IntVector_Intrinsics_vec128 *os = hash;
     os[i] = x;);
 }
 
@@ -286,9 +287,9 @@ sha224_update4(Hacl_Hash_SHA2_uint8_4p b, Lib_IntVector_Intrinsics_vec128 *hash)
     0U,
     8U,
     1U,
-    Lib_IntVector_Intrinsics_vec128 *os = hash;
     Lib_IntVector_Intrinsics_vec128
     x = Lib_IntVector_Intrinsics_vec128_add32(hash[i], hash_old[i]);
+    Lib_IntVector_Intrinsics_vec128 *os = hash;
     os[i] = x;);
 }
 
@@ -515,9 +516,9 @@ static inline void sha256_init4(Lib_IntVector_Intrinsics_vec128 *hash)
     0U,
     8U,
     1U,
-    Lib_IntVector_Intrinsics_vec128 *os = hash;
     uint32_t hi = Hacl_Hash_SHA2_h256[i];
     Lib_IntVector_Intrinsics_vec128 x = Lib_IntVector_Intrinsics_vec128_load32(hi);
+    Lib_IntVector_Intrinsics_vec128 *os = hash;
     os[i] = x;);
 }
 
@@ -766,9 +767,9 @@ sha256_update4(Hacl_Hash_SHA2_uint8_4p b, Lib_IntVector_Intrinsics_vec128 *hash)
     0U,
     8U,
     1U,
-    Lib_IntVector_Intrinsics_vec128 *os = hash;
     Lib_IntVector_Intrinsics_vec128
     x = Lib_IntVector_Intrinsics_vec128_add32(hash[i], hash_old[i]);
+    Lib_IntVector_Intrinsics_vec128 *os = hash;
     os[i] = x;);
 }
 

@@ -25,6 +25,7 @@
 
 #include "Hacl_AEAD_Chacha20Poly1305_Simd128.h"
 
+#include "Hacl_Chacha20_Vec128.h"
 #include "internal/Hacl_MAC_Poly1305_Simd128.h"
 #include "internal/Hacl_Krmllib.h"
 #include "libintvector.h"
@@ -1095,7 +1096,8 @@ Hacl_AEAD_Chacha20Poly1305_Simd128_encrypt(
 {
   Hacl_Chacha20_Vec128_chacha20_encrypt_128(input_len, output, input, key, nonce, 1U);
   uint8_t tmp[64U] = { 0U };
-  Hacl_Chacha20_Vec128_chacha20_encrypt_128(64U, tmp, tmp, key, nonce, 0U);
+  uint8_t tmp_copy[64U] = { 0U };
+  Hacl_Chacha20_Vec128_chacha20_encrypt_128(64U, tmp, tmp_copy, key, nonce, 0U);
   uint8_t *key1 = tmp;
   poly1305_do_128(key1, data_len, data, input_len, output, tag);
 }
@@ -1134,7 +1136,8 @@ Hacl_AEAD_Chacha20Poly1305_Simd128_decrypt(
 {
   uint8_t computed_tag[16U] = { 0U };
   uint8_t tmp[64U] = { 0U };
-  Hacl_Chacha20_Vec128_chacha20_encrypt_128(64U, tmp, tmp, key, nonce, 0U);
+  uint8_t tmp_copy[64U] = { 0U };
+  Hacl_Chacha20_Vec128_chacha20_encrypt_128(64U, tmp, tmp_copy, key, nonce, 0U);
   uint8_t *key1 = tmp;
   poly1305_do_128(key1, data_len, data, input_len, input, computed_tag);
   uint8_t res = 255U;
