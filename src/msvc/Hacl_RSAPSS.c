@@ -25,6 +25,9 @@
 
 #include "Hacl_RSAPSS.h"
 
+#include "Hacl_Streaming_Types.h"
+#include "Hacl_Krmllib.h"
+#include "Hacl_Hash_SHA2.h"
 #include "internal/Hacl_Krmllib.h"
 #include "internal/Hacl_Bignum_Base.h"
 #include "internal/Hacl_Bignum.h"
@@ -167,7 +170,7 @@ static inline uint64_t check_num_bits_u64(uint32_t bs, uint64_t *b)
   {
     uint64_t beq = FStar_UInt64_eq_mask(b[i], b2[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(b[i], b2[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc = (beq & acc) | (~beq & blt);
   }
   uint64_t res = acc;
   return res;
@@ -189,7 +192,7 @@ static inline uint64_t check_modulus_u64(uint32_t modBits, uint64_t *n)
   {
     uint64_t beq = FStar_UInt64_eq_mask(b2[i], n[i]);
     uint64_t blt = ~FStar_UInt64_gte_mask(b2[i], n[i]);
-    acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+    acc = (beq & acc) | (~beq & blt);
   }
   uint64_t res = acc;
   uint64_t m1 = res;
@@ -288,11 +291,7 @@ pss_verify(
     em_0 = 0U;
   }
   uint8_t em_last = em[emLen - 1U];
-  if (emLen < saltLen + hash_len(a) + 2U)
-  {
-    return false;
-  }
-  if (!(em_last == 0xbcU && em_0 == 0U))
+  if (emLen < saltLen + hash_len(a) + 2U || !(em_last == 0xbcU && em_0 == 0U))
   {
     return false;
   }
@@ -553,7 +552,7 @@ Hacl_RSAPSS_rsapss_verify(
     {
       uint64_t beq = FStar_UInt64_eq_mask(s[i], n[i]);
       uint64_t blt = ~FStar_UInt64_gte_mask(s[i], n[i]);
-      acc = (beq & acc) | (~beq & ((blt & 0xFFFFFFFFFFFFFFFFULL) | (~blt & 0ULL)));
+      acc = (beq & acc) | (~beq & blt);
     }
     uint64_t mask = acc;
     bool res;
@@ -568,10 +567,9 @@ Hacl_RSAPSS_rsapss_verify(
         eBits,
         e,
         m);
-      bool ite;
       if (!((modBits - 1U) % 8U == 0U))
       {
-        ite = true;
+        res = true;
       }
       else
       {
@@ -579,15 +577,7 @@ Hacl_RSAPSS_rsapss_verify(
         uint32_t j = (modBits - 1U) % 64U;
         uint64_t tmp = m[i];
         uint64_t get_bit = tmp >> j & 1ULL;
-        ite = get_bit == 0ULL;
-      }
-      if (ite)
-      {
-        res = true;
-      }
-      else
-      {
-        res = false;
+        res = get_bit == 0ULL;
       }
     }
     else
@@ -805,15 +795,13 @@ Hacl_RSAPSS_rsapss_skey_sign(
     2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U + (dBits - 1U) / 64U + 1U);
   uint64_t
   *skey =
-    (uint64_t *)alloca((2U
-      * ((modBits - 1U) / 64U + 1U)
-      + (eBits - 1U) / 64U + 1U
-      + (dBits - 1U) / 64U + 1U)
+    (uint64_t *)alloca((2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U +
+        (dBits - 1U) / 64U + 1U)
       * sizeof (uint64_t));
   memset(skey,
     0U,
-    (2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U + (dBits - 1U) / 64U + 1U)
-    * sizeof (uint64_t));
+    (2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U + (dBits - 1U) / 64U + 1U) *
+      sizeof (uint64_t));
   bool b = load_skey(modBits, eBits, dBits, nb, eb, db, skey);
   if (b)
   {
@@ -868,8 +856,8 @@ Hacl_RSAPSS_rsapss_pkey_verify(
   KRML_CHECK_SIZE(sizeof (uint64_t), 2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U);
   uint64_t
   *pkey =
-    (uint64_t *)alloca((2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U)
-      * sizeof (uint64_t));
+    (uint64_t *)alloca((2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U) *
+        sizeof (uint64_t));
   memset(pkey,
     0U,
     (2U * ((modBits - 1U) / 64U + 1U) + (eBits - 1U) / 64U + 1U) * sizeof (uint64_t));

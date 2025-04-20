@@ -25,6 +25,10 @@
 
 #include "internal/Hacl_Ed25519.h"
 
+#include "Hacl_Streaming_Types.h"
+#include "Hacl_Krmllib.h"
+#include "Hacl_Hash_SHA2.h"
+#include "internal/Hacl_Streaming_Types.h"
 #include "internal/Hacl_Krmllib.h"
 #include "internal/Hacl_Hash_SHA2.h"
 #include "internal/Hacl_Ed25519_PrecompTable.h"
@@ -425,11 +429,8 @@ static inline bool recover_x(uint64_t *x, uint64_t *y, uint64_t sign)
   uint64_t x4 = y[4U];
   bool
   b =
-    x00
-    >= 0x7ffffffffffedULL
-    && x1 == 0x7ffffffffffffULL
-    && x21 == 0x7ffffffffffffULL
-    && x30 == 0x7ffffffffffffULL
+    x00 >= 0x7ffffffffffedULL && x1 == 0x7ffffffffffffULL && x21 == 0x7ffffffffffffULL &&
+      x30 == 0x7ffffffffffffULL
     && x4 == 0x7ffffffffffffULL;
   bool res;
   if (b)
@@ -509,11 +510,7 @@ static inline bool recover_x(uint64_t *x, uint64_t *y, uint64_t sign)
       Hacl_Bignum25519_reduce_513(t01);
       reduce(t01);
       bool z1 = is_0(t01);
-      if (z1 == false)
-      {
-        res = false;
-      }
-      else
+      if (z1)
       {
         uint64_t *x32 = tmp + 5U;
         uint64_t *t0 = tmp + 10U;
@@ -534,6 +531,10 @@ static inline bool recover_x(uint64_t *x, uint64_t *y, uint64_t sign)
         memcpy(x, x32, 5U * sizeof (uint64_t));
         res = true;
       }
+      else
+      {
+        res = false;
+      }
     }
   }
   bool res0 = res;
@@ -551,11 +552,7 @@ bool Hacl_Impl_Ed25519_PointDecompress_point_decompress(uint64_t *out, uint8_t *
   Hacl_Bignum25519_load_51(y, s);
   bool z0 = recover_x(x, y, sign);
   bool res;
-  if (z0 == false)
-  {
-    res = false;
-  }
-  else
+  if (z0)
   {
     uint64_t *outx = out;
     uint64_t *outy = out + 5U;
@@ -570,6 +567,10 @@ bool Hacl_Impl_Ed25519_PointDecompress_point_decompress(uint64_t *out, uint8_t *
     outz[4U] = 0ULL;
     fmul0(outt, x, y);
     res = true;
+  }
+  else
+  {
+    res = false;
   }
   bool res0 = res;
   return res0;
@@ -787,8 +788,8 @@ static inline void barrett_reduction(uint64_t *z, uint64_t *t)
       56U);
   uint64_t
   t106 =
-    FStar_UInt128_uint128_to_uint64(FStar_UInt128_add_mod(FStar_UInt128_add_mod(xy01, xy10), c0))
-    & 0xffffffffffffffULL;
+    FStar_UInt128_uint128_to_uint64(FStar_UInt128_add_mod(FStar_UInt128_add_mod(xy01, xy10), c0)) &
+      0xffffffffffffffULL;
   FStar_UInt128_uint128 c11 = carry10;
   uint64_t t110 = t106;
   FStar_UInt128_uint128
@@ -1150,11 +1151,7 @@ static inline bool gte_q(uint64_t *s)
   {
     return false;
   }
-  if (s3 > 0x00000000000000ULL)
-  {
-    return true;
-  }
-  if (s2 > 0x000000000014deULL)
+  if (s3 > 0x00000000000000ULL || s2 > 0x000000000014deULL)
   {
     return true;
   }
@@ -1170,11 +1167,7 @@ static inline bool gte_q(uint64_t *s)
   {
     return false;
   }
-  if (s0 >= 0x12631a5cf5d3edULL)
-  {
-    return true;
-  }
-  return false;
+  return s0 >= 0x12631a5cf5d3edULL;
 }
 
 static inline bool eq(uint64_t *a, uint64_t *b)

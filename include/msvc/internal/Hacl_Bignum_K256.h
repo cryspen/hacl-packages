@@ -70,11 +70,7 @@ static inline bool Hacl_K256_Field_is_felem_lt_prime_minus_order_vartime(uint64_
   uint64_t f2 = f[2U];
   uint64_t f3 = f[3U];
   uint64_t f4 = f[4U];
-  if (f4 > 0ULL)
-  {
-    return false;
-  }
-  if (f3 > 0ULL)
+  if (f4 > 0ULL || f3 > 0ULL)
   {
     return false;
   }
@@ -141,11 +137,8 @@ static inline bool Hacl_K256_Field_load_felem_lt_prime_vartime(uint64_t *f, uint
   uint64_t f4 = f[4U];
   bool
   is_ge_p =
-    f0
-    >= 0xffffefffffc2fULL
-    && f1 == 0xfffffffffffffULL
-    && f2 == 0xfffffffffffffULL
-    && f3 == 0xfffffffffffffULL
+    f0 >= 0xffffefffffc2fULL && f1 == 0xfffffffffffffULL && f2 == 0xfffffffffffffULL &&
+      f3 == 0xfffffffffffffULL
     && f4 == 0xffffffffffffULL;
   return !is_ge_p;
 }
